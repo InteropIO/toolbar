@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html class="dark">
+
+<head>
+  <link rel="stylesheet" type="text/css" href="app.css" />
+  <title>Glue42 Launch Bar</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      $("#dropdownMenuButton").click(function () {
+        $("#menu-top").toggleClass("show");
+      });
+      $("#menu-tool-1").click(function () {
+        $("#menu-div-1").toggleClass("show");
+      });
+      $("#menu-tool-2").click(function () {
+        $("#menu-div-2").toggleClass("show");
+      });
+      $("#menu-tool-3").click(function () {
+        $("#menu-div-3").toggleClass("show");
+      });
+      $("#menu-tool-4").click(function () {
+        $("#menu-div-4").toggleClass("show");
+      });
+      $("#menu-tool-5").click(function () {
+        $("#menu-div-5").toggleClass("show");
+      });
+      $("#layout-menu-tool").click(function () {
+        $("#layout-menu-tool").addClass("active");
+
+        $("#app-content").addClass("hide");
+        $("#apps-chavron").removeClass("chavron-rotate");
+        $("#apps").removeClass("active");
+      });
+      $("#save").click(function () {
+        $("#layout-content").removeClass("hide");
+        $("#save").addClass("active");
+        $("#layout-load").addClass("hide");
+        $("#load").removeClass("active");
+      });
+      $("#load").click(function () {
+        $("#layout-content").addClass("hide");
+        $("#save").removeClass("active");
+        $("#layout-load").removeClass("hide");
+        $("#load").addClass("active");
+
+      });
+
+      $("#save-btn").click(function () {
+        $("#layout-content").addClass("hide");
+        $("#save").removeClass("active");
+        $("#layout-menu-tool").removeClass("active");
+      });
+
+      $("#apps").click(function () {
+        $("#apps").toggleClass("active");
+        $("#app-content").toggleClass("hide");
+        $("#apps-chavron").toggleClass("chavron-rotate");
+
+        $("#layout-menu-tool").removeClass("active");
+        $("#layout-content").addClass("hide");
+        $("#save").removeClass("active");
+        $("#layout-load").addClass("hide");
+        $("#load").removeClass("active");
+      });
+      $(".view-port").hover(function () {
+       //$(".view-port").toggleClass("pinned"); // toggle hover effect 
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <!-- for toggle effect needs to remove pinned class -->
+  <div class="view-port pinned horizontal"> 
+    <header class="view-port-header">
+      <div class="logo">
+          <img src="./logo.svg" width="120">
+      </div>
+      <div class="menu">
+        <button class="btn btn-icon secondary" type="button" id="dropdownMenuButton">
+          <i class="icon-ellipsis-vert"></i>
+        </button>
+        <div class="dropdown-menu" id="menu-top">
+          <a class="dropdown-item" href="#">Expand</a>
+          <a class="dropdown-item" href="#">Settings</a>
+          <a class="dropdown-item" href="#">About</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item disabled" href="#">Shut down</a>
+        </div>
+      </div>
+    </header>
+    <div class="accordion">
+      <ul class="nav nav-tabs menu-flex-direction applications-nav">
+        <li class="nav-item" id="apps">
+          <a class="nav-link" href="#">
+            <i class="icon-th-large ml-2 mr-2"></i>
+            <span class="text-animation ml-2">Applications</span>
+            <i class="icon-angle-down ml-2" id="apps-chavron"></i>
+          </a>
+        </li>
+
+        <li class="toggle-content hide" id="app-content">
+          <div class="p-2">
+            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+              placeholder="Search app...">
+          </div>
+
+          <ul class="nav nav-tabs menu-flex-direction">
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="icon-dev-tools ml-2 mr-4"></i>
+                <span class="icon-size-24 active-app text-success"><i class="icon-dot mr-2 "></i></span>
+                <span>Devtools</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <div class="nav-link action-menu">
+                <i class="icon-interop ml-2 mr-4"></i>
+                <span>Interop</span>
+                <div class="action-menu-tool">
+                  <button class="btn btn-icon secondary" id="menu-tool-1">
+                    <i class="icon-ellipsis-vert"></i>
+                  </button>
+                  <div class="dropdown-menu" id="menu-div-1">
+                    <a class="dropdown-item" href="#">Add to Favorite</a>
+                    <a class="dropdown-item" href="#">Settings</a>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li class="nav-item">
+              <div class="nav-link action-menu">
+                <i class="icon-performance-report ml-2 mr-4"></i>
+                <span>Performance report</span>
+                <div class="action-menu-tool">
+                  <button class="btn btn-icon secondary" id="menu-tool-2">
+                    <i class="icon-ellipsis-vert"></i>
+                  </button>
+                  <div class="dropdown-menu" id="menu-div-2">
+                    <a class="dropdown-item" href="#">Add to Favorite</a>
+                    <a class="dropdown-item" href="#">Settings</a>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li class="nav-item">
+              <div class="nav-link action-menu">
+                <i class="icon-context-viewer ml-2 mr-4"></i>
+                <span>Context Viewer</span>
+                <div class="action-menu-tool">
+                  <button class="btn btn-icon secondary" id="menu-tool-3">
+                    <i class="icon-ellipsis-vert"></i>
+                  </button>
+                  <div class="dropdown-menu" id="menu-div-3">
+                    <a class="dropdown-item" href="#">Add to Favorite</a>
+                    <a class="dropdown-item" href="#">Settings</a>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="nav nav-tabs menu-flex-direction layouts-nav">
+        <li class="nav-item show-actions " id="layout-menu-tool">
+          <div class="layout-menu-tool">
+            <div id="load">Load</div>
+            <div id="save">Save</div>
+          </div>
+          <a class="nav-link">
+            <i class="icon-03-context-viewer ml-2 mr-2"></i>
+            <span class="text-animation ml-2">Layouts</span>
+          </a>
+        </li>
+        <li class="toggle-content hide" id="layout-content">
+          <div class="p-2">
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="Layout name ...">
+              <div class="input-group-append">
+                <button class="btn btn-secondary" id="save-btn">
+                  <i class="icon-floppy"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <ul class="nav nav-tabs menu-flex-direction">
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="icon-dev-tools ml-2 mr-4"></i>
+                <span class="icon-size-24 active-app text-success">
+                  <i class="icon-dot mr-2"></i>
+                </span>
+                <span>Devtools</spanclass>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="icon-dev-tools ml-2 mr-4"></i>
+                <span class="icon-size-24 active-app text-success">
+                  <i class="icon-dot mr-2 "></i>
+                </span>
+                <span>Interop</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li class="toggle-content hide" id="layout-load">
+          <ul class="nav nav-tabs menu-flex-direction">
+            <li class="nav-item">
+              <div class="nav-link action-menu">
+                <i class="icon-03-context-viewer ml-2 mr-4"></i>
+                <span>Start of the day</span>
+                <div class="action-menu-tool">
+                  <button class="btn btn-icon secondary" id="menu-tool-4">
+                    <i class="icon-ellipsis-vert"></i>
+                  </button>
+                  <div class="dropdown-menu" id="menu-div-4">
+                    <a class="dropdown-item" href="#">Edit</a>
+                    <a class="dropdown-item" href="#">Delete</a>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li class="nav-item">
+              <div class="nav-link action-menu">
+                <i class="icon-03-context-viewer ml-2 mr-4"></i>
+                <span>Vurnan Portfolio</span>
+                <div class="action-menu-tool">
+                  <button class="btn btn-icon secondary" id="menu-tool-5">
+                    <i class="icon-ellipsis-vert"></i>
+                  </button>
+                  <div class="dropdown-menu" id="menu-div-5">
+                    <a class="dropdown-item" href="#">Edit</a>
+                    <a class="dropdown-item" href="#">Delete</a>
+                  </div>
+                </div>
+              </div>
+            </li>
+
+          </ul>
+        </li>
+      </ul>
+      <ul class="nav nav-tabs menu-flex-direction fav-app-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="#">
+            <i class="icon-dev-tools ml-2 mr-2"></i>
+            <span class="ml-2 text-animation">Devtools</span>
+            <span class="icon-size-24 active-app text-success">
+              <i class="icon-dot mr-2 "></i>
+            </span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">
+            <i class="icon-dev-tools ml-2 mr-2"></i>
+            <span class="ml-2 text-animation">Devtools2</span>
+            <span class="icon-size-24 active-app text-success">
+              <i class="icon-dot mr-2 "></i>
+            </span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">
+            <i class="icon-dev-tools ml-2 mr-2"></i>
+            <span class="ml-2 text-animation">Devtools3</span>
+            <span class="icon-size-24 active-app text-success">
+              <i class="icon-dot mr-2 "></i>
+            </span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">
+            <i class="icon-dev-tools ml-2 mr-2"></i>
+            <span class="ml-2 text-animation">Devtools4</span>
+            <span class="icon-size-24 active-app text-success">
+              <i class="icon-dot mr-2 "></i>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <footer class="view-port-footer">
+      <ul class="nav nav-tabs menu-flex-direction">
+        <li class="nav-item">
+          <a class="nav-link" href="#">
+            <i class="icon-bell-alt ml-2 mr-4"></i>
+            <span class="text-animation">Notification</span>
+            <span class="circle-index">8</span></a>
+        </li>
+      </ul>
+    </footer>
+  </div>
+</body>
+
+</html>
