@@ -1,4 +1,4 @@
-@import "./t42bootstrap.bundle.css";
+@import "../t42bootstrap.bundle.css";
 
 @mixin non-underline {
     text-decoration: none;
@@ -100,7 +100,10 @@ html {
                 }
             }
         }
-
+        .bookmarked {
+            position: absolute;
+            right: .5rem;
+        }
         &.menu-flex-direction {
             flex-direction: column;
         }
@@ -145,7 +148,7 @@ html {
         }
 
         .chavron-rotate {
-            transform: rotate(-180deg);
+            transform: rotate(-90deg);
         }
 
         .action-menu-tool {
@@ -291,7 +294,7 @@ html {
 
             .active-app {
                 position: absolute;
-                left: 56px;
+                left: 57px;
             }
         }
 
@@ -321,34 +324,33 @@ html {
             }
         }
 
-        &.pinned,
-        &:hover {
-            width: 200px;
-            transition: all 50ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+    }
+    .vertical {
+        width: 200px;
+        transition: all 50ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
 
-            .menu {
-                display: block;
-            }
+        .menu {
+            display: block;
+        }
 
-            .text-animation {
-                opacity: 1;
-                transform: translateX(0);
-            }
+        .text-animation {
+            opacity: 1;
+            transform: translateX(0);
+        }
 
-            .accordion {
-                .nav {
-                    .toggle-content {
-                        left: 200px;
-                        display: list-item;
-                        transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
-                        transition-delay: 0ms;
-                    }
+        .accordion {
+            .nav {
+                .toggle-content {
+                    left: 200px;
+                    display: list-item;
+                    transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+                    transition-delay: 0ms;
+                }
 
-                    .hide {
-                        width: 0;
-                        transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
-                        transition-delay: 0ms;
-                    }
+                .hide {
+                    width: 0;
+                    transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+                    transition-delay: 0ms;
                 }
             }
         }

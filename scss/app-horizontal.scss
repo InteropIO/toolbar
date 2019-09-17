@@ -16,7 +16,7 @@
 }
 
 html {
-    .view-port.horizontal {
+    .horizontal {
         display: flex;
         width: 100%;
 
@@ -45,6 +45,13 @@ html {
             .nav {
                 margin-right: 4px;
                 position: relative;
+
+                .bookmarked {
+                    position: absolute;
+                    left: .5rem;
+                    right: auto;
+                    
+                }
 
                 .nav-item {
                     width: 60px;
@@ -136,6 +143,10 @@ html {
                     }
                 }
 
+                .chavron-rotate {
+                    transform: rotate(-180deg);
+                }
+
                 li {
                     position: relative;
 
@@ -171,7 +182,7 @@ html {
                         padding: 0;
                     }
                 }
-
+                
                 &.nav-tabs {
                     .nav-link {
                         height: 3rem;

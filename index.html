@@ -2,7 +2,7 @@
 <html class="dark">
 
 <head>
-  <link rel="stylesheet" type="text/css" href="app.css" />
+  <link rel="stylesheet" type="text/css" href="scss/app.css" />
   <title>Glue42 Launch Bar</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script>
@@ -63,8 +63,16 @@
         $("#layout-load").addClass("hide");
         $("#load").removeClass("active");
       });
+      $('#toggle').click(function () {
+        $('.view-port').toggleClass('horizontal vertical');  //Adds 'a', removes 'b' and vice versa
+        $("#menu-top").toggleClass("show");
+      });
+      $("expand").click(function () {
+        $(".view-port").addClass("pinned")
+        $("#menu-top").toggleClass("show");
+      })
       $(".view-port").hover(function () {
-       //$(".view-port").toggleClass("pinned"); // toggle hover effect 
+        // $(".view-port").toggleClass("pinned"); // toggle hover effect 
       });
     });
   </script>
@@ -72,17 +80,18 @@
 
 <body>
   <!-- for toggle effect needs to remove pinned class -->
-  <div class="view-port pinned horizontal"> 
+  <div class="view-port pinned vertical">
     <header class="view-port-header">
       <div class="logo">
-          <img src="./logo.svg" width="120">
+        <img src="./logo.svg" width="120">
       </div>
       <div class="menu">
         <button class="btn btn-icon secondary" type="button" id="dropdownMenuButton">
           <i class="icon-ellipsis-vert"></i>
         </button>
         <div class="dropdown-menu" id="menu-top">
-          <a class="dropdown-item" href="#">Expand</a>
+          <a class="dropdown-item" href="#" id="toggle">Toggle</a>
+          <a class="dropdown-item" href="#" id="expand">Expand</a>
           <a class="dropdown-item" href="#">Settings</a>
           <a class="dropdown-item" href="#">About</a>
           <div class="dropdown-divider"></div>
@@ -197,8 +206,7 @@
             <li class="nav-item">
               <a class="nav-link" href="#">
                 <i class="icon-dev-tools ml-2 mr-4"></i>
-                <span class="icon-size-24 active-app text-success">
-                  <i class="icon-dot mr-2 "></i>
+                <span class="icon-size-24 active-app text-success"><i class="icon-dot mr-2 "></i>
                 </span>
                 <span>Interop</span>
               </a>
@@ -237,45 +245,39 @@
                 </div>
               </div>
             </li>
-
           </ul>
         </li>
       </ul>
       <ul class="nav nav-tabs menu-flex-direction fav-app-nav">
+          <span class="icon-size-12 bookmarked"><i class="icon-bookmark text-primary"></i></span>
         <li class="nav-item">
           <a class="nav-link" href="#">
-            <i class="icon-dev-tools ml-2 mr-2"></i>
+            <span class="icon-size-14"><i class="icon-dev-tools ml-2 mr-2"></i></span>
             <span class="ml-2 text-animation">Devtools</span>
-            <span class="icon-size-24 active-app text-success">
-              <i class="icon-dot mr-2 "></i>
-            </span>
+            <span class="icon-size-24 active-app text-success"><i class="icon-dot mr-2 "></i></span>
+            <!-- <span class="icon-size-12 ml-auto"><i class="icon-bookmark"></i></span> -->
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">
-            <i class="icon-dev-tools ml-2 mr-2"></i>
-            <span class="ml-2 text-animation">Devtools2</span>
-            <span class="icon-size-24 active-app text-success">
-              <i class="icon-dot mr-2 "></i>
-            </span>
+            <span class="icon-size-14"><i class="icon-interop ml-2 mr-2"></i></span>
+            <span class="ml-2 text-animation">Interop</span>
+            <span class="icon-size-24 active-app text-success"><i class="icon-dot mr-2 "></i></span>
+            <!-- <span class="icon-size-12 ml-auto  text-primary"><i class="icon-bookmark-empty"></i></span> -->
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">
-            <i class="icon-dev-tools ml-2 mr-2"></i>
-            <span class="ml-2 text-animation">Devtools3</span>
-            <span class="icon-size-24 active-app text-success">
-              <i class="icon-dot mr-2 "></i>
-            </span>
+              <span class="icon-size-14"><i class="icon-performance-report ml-2 mr-2"></i></span>
+              <span class="ml-2 text-animation">Performance report</span>
+              <!-- <span class="icon-size-12 ml-auto  text-primary"><i class="icon-bookmark-empty"></i></span> -->
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">
-            <i class="icon-dev-tools ml-2 mr-2"></i>
-            <span class="ml-2 text-animation">Devtools4</span>
-            <span class="icon-size-24 active-app text-success">
-              <i class="icon-dot mr-2 "></i>
-            </span>
+            <span class="icon-size-14"><i class="icon-context-viewer ml-2 mr-2"></i></span>
+            <span class="ml-2 text-animation">Context viewer</span>
+            <!-- <span class="icon-size-12 ml-auto"><i class="icon-bookmark"></i></span> -->
           </a>
         </li>
       </ul>
