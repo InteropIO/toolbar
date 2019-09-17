@@ -7,6 +7,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script>
     $(document).ready(function () {
+      var state = false; 
       $("#dropdownMenuButton").click(function () {
         $("#menu-top").toggleClass("show");
       });
@@ -54,6 +55,7 @@
 
       $("#apps").click(function () {
         $("#apps").toggleClass("active");
+        $("#apps .nav-link").toggleClass("active");
         $("#app-content").toggleClass("hide");
         $("#apps-chavron").toggleClass("chavron-rotate");
 
@@ -67,12 +69,22 @@
         $('.view-port').toggleClass('horizontal vertical');  //Adds 'a', removes 'b' and vice versa
         $("#menu-top").toggleClass("show");
       });
-      $("expand").click(function () {
-        $(".view-port").addClass("pinned")
+      $("#expand").click(function () {
+        if (state) {
+          state = false;
+        }
+        else {
+          state = true;
+        }
         $("#menu-top").toggleClass("show");
       })
-      $(".view-port").hover(function () {
-        // $(".view-port").toggleClass("pinned"); // toggle hover effect 
+      $(".view-port").hover(function () {   
+        if (state) {
+          return;
+        }
+       else {
+        $(".view-port").toggleClass("extend"); // toggle hover effect 
+       }
       });
     });
   </script>
@@ -80,7 +92,7 @@
 
 <body>
   <!-- for toggle effect needs to remove pinned class -->
-  <div class="view-port pinned vertical">
+  <div class="view-port vertical">
     <header class="view-port-header">
       <div class="logo">
         <img src="./logo.svg" width="120">

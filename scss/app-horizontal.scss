@@ -20,14 +20,12 @@ html {
         display: flex;
         width: 100%;
 
-        .menu {
-            display: block;
-        }
-
         .menu-flex-direction {
             flex-direction: row;
         }
-
+        .menu {
+            display: block;
+        }
         .view-port-header {
             .menu {
                 position: fixed;
@@ -36,7 +34,7 @@ html {
                 z-index: 11;
             }
         }
-
+        
         .accordion {
             display: flex;
             height: auto;
@@ -44,7 +42,7 @@ html {
 
             .nav {
                 margin-right: 4px;
-                position: relative;
+               // position: relative;
 
                 .bookmarked {
                     position: absolute;
@@ -53,67 +51,55 @@ html {
                     
                 }
 
-                .nav-item {
-                    width: 60px;
-                    @include transition(0);
-
-                    &:hover,
-                    &.active {
-                        background-color: hsla(0,0%,100%,.05);
+                &.nav-tabs {
+                    .nav-item {
+                        width: 60px;
+                        min-width:60px;
                         @include transition(0);
 
-                        i,
-                        .text-animation {
-                            opacity: 1;
+                        &:hover {
+                            .nav-link {
+                                .text-animation {
+                                    @include text-animation('on','', 50);
+                                }
+                            }
                         }
-
-                        .text-animation,
-                        .icon-angle-down {
-                            display: block;
+                        .nav-link {
+                            &.active {
+                                .text-animation {
+                                    @include text-animation('on','', 50);
+                                }
+                            }
                         }
                     }
                 }
 
+
                 &.applications-nav {
                     @include divider-horizontal();
-
                     .nav-item {
                         &:hover,
                         &.active {
                             width: 160px;
-                            background-color: hsla(0,0%,100%,.05);
-
-                            .nav-link::before {
-                                height: 3px;
-                            }
+                            
                         }
                     }
                 }
 
                 &.layouts-nav {
                     .show-actions {
-                        width: 60px;
-                        cursor: pointer;
-                        @include transition(0);
+                        // display: flex;
+                        // flex-direction: row-reverse;
 
                         &:hover,
                         &.active {
                             width: 260px;
-                            @include transition(0);
-
                             i,
                             .text-animation {
-                                opacity: 1;
+                              opacity:1;
                             }
-
                             .nav-link {
-                                background-color: hsla(0,0%,100%,.05);
                                 width: 100%;
-
-                                .text-animation,
-                                .icon-angle-down {
-                                    display: block;
-                                }
 
                                 &::before {
                                     top: auto;
@@ -125,8 +111,8 @@ html {
                         }
 
                         .layout-menu-tool {
-                            width:142px;
-                            left: 115px;
+                            width: 142px;
+                            right: 0;
                         }
                     }
                 }
@@ -148,22 +134,6 @@ html {
                 }
 
                 li {
-                    position: relative;
-
-                    .nav-link {
-                        .text-animation,
-                        .icon-angle-down {
-                            display: none;
-                        }
-
-                        &:hover {
-                            .text-animation,
-                            .icon-angle-down {
-                                display: block;
-                            }
-                        }
-                    }
-
                     &.toggle-content {
                         position: fixed;
                         top: 50px;
@@ -183,41 +153,7 @@ html {
                     }
                 }
                 
-                &.nav-tabs {
-                    .nav-link {
-                        height: 3rem;
-                        border: 0;
-                        width: 60px;
-                        @include transition(0);
-
-                        .text-animation {
-                            opacity: 0;
-                            @include transition(0);
-                        }
-
-                        &:hover {
-                            width: auto;
-                            @include transition(0);
-
-                            .text-animation {
-                                opacity: 1;
-                                @include transition(0);
-                            }
-                        }
-                    }
-
-                    .active {
-                        .nav-link {
-                            width: auto;
-                            @include transition(0);
-
-                            .text-animation {
-                                opacity: 1;
-                                @include transition(0);
-                            }
-                        }
-                    }
-                }
+                
             }
 
             .toggle-content {
@@ -290,13 +226,6 @@ html {
                         padding-right: 0;
 
                         position: relative;
-
-                        .text-animation {
-                            opacity: 0;
-                            transition: all 100ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
-                            transition-delay: 0ms;
-                        }
-
                         &::before {
                             top: auto;
                             width: 100%;
@@ -311,13 +240,9 @@ html {
                                 width: 100%;
                                 bottom: 0;
                                 height: 3px;
-                                @include transition(0);
                             }
 
-                            .text-animation {
-                                opacity: 1;
-                                @include transition(100);
-                            }
+
                         }
 
 
@@ -325,22 +250,7 @@ html {
 
                     &:hover {
                         width: 160px;
-                        @include transition(0);
                     }
-                }
-            }
-        }
-
-        .nav-link {
-            .text-animation {
-                opacity: 0;
-                transform: translateX(0);
-                @include transition(0);
-            }
-
-            &:hover {
-                .text-animation {
-                    opacity: 1;
                 }
             }
         }
