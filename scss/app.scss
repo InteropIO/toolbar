@@ -132,11 +132,13 @@ html {
 
     &.applications-nav {
       position: relative;
+      overflow: hidden;
       @include divider();
     }
 
     &.fav-app-nav {
       position: relative;
+      overflow: hidden;
       @include divider();
     }
 
@@ -345,7 +347,7 @@ html {
       }
     }
   }
-  .extend {
+  .vertical.expand {
     width: 200px;
     @include transition(0);
     transition-duration: 50ms;

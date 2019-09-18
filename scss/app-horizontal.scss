@@ -119,7 +119,7 @@ html {
 
                 &.fav-app-nav {
                     @include divider-horizontal();
-
+                    flex-wrap: nowrap;
                     .nav-item {
                         &:hover,
                         &.active {
@@ -241,15 +241,18 @@ html {
                                 bottom: 0;
                                 height: 3px;
                             }
-
-
                         }
 
 
                     }
 
-                    &:hover {
+                    &:hover,
+                    &.active {
                         width: 160px;
+                        .text-animation {
+                            @include text-animation('on','',0);
+                        }
+            
                     }
                 }
             }
@@ -262,14 +265,47 @@ html {
                     width: 100%;
                     bottom: 0;
                     height: 0;
-                    @include transition(0);
+              //      @include transition(0);
                 }
 
                 &:hover::before,
                 &.active::before {
                     height: 3px;
-                    @include transition(0);
+            //        @include transition(0);
                 }
+            }
+        }
+
+        &.expand {
+            width: auto;
+
+            .text-animation {
+                @include text-animation('on','',0);
+            }
+
+            .accordion {
+                .applications-nav {
+                    .nav-item {
+                        width: 160px;
+                    }
+                }
+                .layouts-nav .show-actions {
+                    width: 118px;
+                }
+                .fav-app-nav {
+                    .nav-item {
+                        width: auto;
+                        min-width: 150px;
+                    }
+                }
+                .toggle-content {
+                    .nav-item {
+                        width: 25%;
+                    }
+                }
+            }
+            .view-port-footer .nav .nav-item {
+                width: 160px;
             }
         }
     }

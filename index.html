@@ -7,7 +7,8 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script>
     $(document).ready(function () {
-      var state = false; 
+      var state = false;
+      var orientation = 'vertical';
       $("#dropdownMenuButton").click(function () {
         $("#menu-top").toggleClass("show");
       });
@@ -68,8 +69,17 @@
       $('#toggle').click(function () {
         $('.view-port').toggleClass('horizontal vertical');  //Adds 'a', removes 'b' and vice versa
         $("#menu-top").toggleClass("show");
+
+        if (orientation == 'vertical') {
+          orientation = 'horizontal';
+          $(".view-port").removeClass("expand");
+        }
+        else {
+          orientation = 'vertical';
+        }
       });
       $("#expand").click(function () {
+        console.log('state:' + state);
         if (state) {
           state = false;
         }
@@ -77,13 +87,21 @@
           state = true;
         }
         $("#menu-top").toggleClass("show");
+
+        if (orientation == 'horizontal' && state) {
+          $(".view-port").addClass("expand");
+        }
+        else if(orientation == 'horizontal') {
+          $(".view-port").removeClass("expand");
+        }
       })
-      $(".view-port").hover(function () {   
-        if (state) {
-          return;
+      $(".view-port").hover(function () {  
+        console.log('orientation:' + orientation)
+        if (!state && orientation == 'vertical') {
+          $(".view-port").toggleClass("expand"); // toggle hover effect 
         }
        else {
-        $(".view-port").toggleClass("extend"); // toggle hover effect 
+        return;
        }
       });
     });
