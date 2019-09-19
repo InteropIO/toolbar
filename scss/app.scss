@@ -1,5 +1,3 @@
-@import "../t42bootstrap.bundle.css";
-
 @mixin non-underline {
   text-decoration: none;
   &:hover {
@@ -28,7 +26,7 @@
   transition-delay: #{$d}ms;
 }
 
-@mixin text-animation($status, $derection,$t-delay) {
+@mixin text-animation($status, $derection, $t-delay) {
   @include transition($t-delay);
 
   @if $status == "off" {
@@ -41,8 +39,7 @@
     transform: translateX(-1rem);
   } @else if $derection == "right" {
     transform: translateX(1rem);
-  }
-  @else {
+  } @else {
     transform: translateX(0);
   }
 }
@@ -83,7 +80,7 @@ html {
   }
 
   .text-animation {
-    @include text-animation('off','left',0);
+    @include text-animation("off", "left", 0);
   }
 
   .nav {
@@ -91,6 +88,7 @@ html {
       .nav-link {
         height: 3rem;
         border: 0;
+        padding-left: 14px;
 
         &::before {
           @include transition(0);
@@ -103,23 +101,23 @@ html {
           width: 0;
         }
         i {
-            @include transition(0)
+          @include transition(0);
         }
         .icon-angle-down {
-            opacity: 0;
+          opacity: 0;
         }
 
         &.active,
         &:hover {
-            .icon-angle-down {
-                opacity: 1;
-            }
+          .icon-angle-down {
+            opacity: 1;
+          }
           &::before {
             height: 48px;
             width: 3px;
             @include transition(0);
           }
-        }        
+        }
       }
     }
     .bookmarked {
@@ -357,7 +355,7 @@ html {
     }
 
     .text-animation {
-        @include text-animation('on','',0);
+      @include text-animation("on", "", 0);
     }
 
     .accordion {
@@ -381,4 +379,400 @@ html {
   }
 }
 
-@import "./app-horizontal.scss";
+.app-active {
+  position: relative;
+
+  &::before {
+    content: "";
+    width: 3px;
+    position: absolute;
+    top: 30%;
+    bottom: 30%;
+    left: 0;
+    background-color: #2080d3;
+    transition: all .3s ease;
+  }
+
+  &:hover {
+    &::before {
+      top: 0;
+      bottom: 0;
+    }
+  }
+}
+
+.horizontal {
+  .app-active {
+    &::before {
+      width: unset;
+      height: 3px;
+      top: unset;
+      right: 30%;
+      bottom: 0;
+      left: 30%;
+    }
+
+    &:hover {
+      &::before {
+        right: 0;
+        left: 0;
+      }
+    }  
+  }
+}
+
+@mixin divider-horizontal {
+  &::before {
+    background-color: rgba(255, 255, 255, 0.075);
+    content: "";
+    position: absolute;
+    height: 36px;
+    width: 1px;
+    top: 6px;
+    left: 0;
+  }
+  &:hover {
+    &::before {
+      background-color: transparent;
+    }
+  }
+}
+
+html {
+  .horizontal {
+    display: flex;
+    width: 100%;
+
+    .menu-flex-direction {
+      flex-direction: row;
+    }
+    .menu {
+      display: block;
+    }
+    .view-port-header {
+      .menu {
+        position: fixed;
+        top: 10px;
+        right: 4px;
+        z-index: 11;
+      }
+    }
+
+    .accordion {
+      display: flex;
+      height: auto;
+      width: calc(100vw - 331px);
+
+      .nav {
+        margin-right: 4px;
+        // position: relative;
+
+        .bookmarked {
+          position: absolute;
+          left: 0.5rem;
+          right: auto;
+        }
+
+        &.nav-tabs {
+          .nav-item {
+            width: 60px;
+            min-width: 60px;
+            @include transition(0);
+
+            &:hover {
+              .nav-link {
+                .text-animation {
+                  @include text-animation("on", "", 50);
+                }
+              }
+            }
+            .nav-link {
+              &.active {
+                .text-animation {
+                  @include text-animation("on", "", 50);
+                }
+              }
+            }
+          }
+        }
+
+        &.applications-nav {
+          @include divider-horizontal();
+          .nav-item {
+            &:hover,
+            &.active {
+              width: 160px;
+            }
+          }
+        }
+
+        &.layouts-nav {
+          .show-actions {
+            // display: flex;
+            // flex-direction: row-reverse;
+
+            &:hover,
+            &.active {
+              width: 260px;
+              i,
+              .text-animation {
+                opacity: 1;
+              }
+              .nav-link {
+                width: 100%;
+
+                &::before {
+                  top: auto;
+                  width: 100%;
+                  bottom: 0;
+                  height: 3px;
+                }
+              }
+            }
+
+            .layout-menu-tool {
+              width: 142px;
+              right: 0;
+            }
+          }
+        }
+
+        &.fav-app-nav {
+          @include divider-horizontal();
+          flex-wrap: nowrap;
+          .nav-item {
+            &:hover,
+            &.active {
+              width: auto;
+              min-width: 150px;
+            }
+          }
+        }
+
+        .chavron-rotate {
+          transform: rotate(-180deg);
+        }
+
+        li {
+          &.toggle-content {
+            position: fixed;
+            top: 50px;
+            left: 0;
+            height: calc(100vh - 48px);
+            width: 100vw;
+
+            li {
+              white-space: nowrap;
+            }
+          }
+
+          &.hide {
+            height: 0;
+            width: 100vw;
+            padding: 0;
+          }
+        }
+      }
+
+      .toggle-content {
+        position: absolute;
+        top: 3rem;
+        left: 0;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+
+        .nav {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: flex-start;
+          flex-direction: row;
+          max-height: calc(100vh - 96px);
+
+          .nav-item,
+          .nav-item:hover {
+            width: 25%;
+
+            .nav-link {
+              width: 100%;
+
+              &::before {
+                height: 0;
+              }
+            }
+          }
+        }
+
+        &.hide {
+          width: 0;
+        }
+
+        .nav-tabs.menu-flex-direction {
+          .nav-link:hover::before,
+          .nav-link.active::before {
+            height: 0;
+          }
+        }
+      }
+    }
+
+    .view-port-footer {
+      position: fixed;
+      right: 38px;
+      @include divider-horizontal();
+
+      &::after {
+        background-color: rgba(255, 255, 255, 0.075);
+        content: "";
+        position: absolute;
+        height: 36px;
+        width: 1px;
+        top: 6px;
+        right: 0;
+      }
+
+      &:hover::after {
+        background-color: transparent;
+      }
+
+      .nav {
+        .nav-item {
+          width: 60px;
+          @include transition(0);
+
+          .nav-link {
+            padding-right: 0;
+
+            position: relative;
+            &::before {
+              top: auto;
+              width: 100%;
+              bottom: 0;
+              height: 0;
+            }
+
+            &:hover,
+            &.active {
+              &::before {
+                top: auto;
+                width: 100%;
+                bottom: 0;
+                height: 3px;
+              }
+            }
+          }
+
+          &:hover,
+          &.active {
+            width: 160px;
+            .text-animation {
+              @include text-animation("on", "", 0);
+            }
+          }
+        }
+      }
+    }
+
+    .nav-tabs.menu-flex-direction {
+      .nav-link {
+        &::before {
+          top: auto;
+          width: 100%;
+          bottom: 0;
+          height: 0;
+          //      @include transition(0);
+        }
+
+        &:hover::before,
+        &.active::before {
+          height: 3px;
+          //        @include transition(0);
+        }
+      }
+    }
+
+    &.expand {
+      width: auto;
+
+      .text-animation {
+        @include text-animation("on", "", 0);
+      }
+
+      .accordion {
+        .applications-nav {
+          .nav-item {
+            width: 160px;
+          }
+        }
+        .layouts-nav .show-actions {
+          width: 118px;
+        }
+        .fav-app-nav {
+          .nav-item {
+            width: auto;
+            min-width: 150px;
+          }
+        }
+        .toggle-content {
+          .nav-item {
+            width: 25%;
+          }
+        }
+      }
+      .view-port-footer .nav .nav-item {
+        width: 160px;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 1370px) {
+  html {
+    .view-port.horizontal {
+      .accordion {
+        .toggle-content {
+          .nav {
+            .nav-item,
+            .nav-item:hover {
+              width: 33%;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 1190px) {
+  html {
+    .view-port.horizontal {
+      .accordion {
+        .toggle-content {
+          .nav {
+            .nav-item,
+            .nav-item:hover {
+              width: 50%;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 640px) {
+  html {
+    .view-port.horizontal {
+      .accordion {
+        .toggle-content {
+          .nav {
+            .nav-item,
+            .nav-item:hover {
+              width: 100%;
+            }
+          }
+        }
+      }
+    }
+  }
+}
