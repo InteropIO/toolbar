@@ -1,5 +1,6 @@
 @mixin non-underline {
   text-decoration: none;
+
   &:hover {
     text-decoration: none;
   }
@@ -14,6 +15,7 @@
     position: absolute;
     width: calc(100% - 16px);
   }
+
   &:hover {
     &::before {
       background-color: transparent;
@@ -49,6 +51,7 @@
     opacity: 0;
     transform: translateX(1rem);
   }
+
   100% {
     opacity: 1;
     transform: translateX(0);
@@ -60,6 +63,7 @@
     opacity: 0;
     transform: translateX(-1rem);
   }
+
   100% {
     opacity: 1;
     transform: translateX(0);
@@ -74,7 +78,6 @@ html {
     overflow: hidden;
 
     &.hide {
-      //height: 0;
       width: 0;
     }
   }
@@ -85,6 +88,10 @@ html {
 
   .nav {
     &.nav-tabs {
+      .nav-item {
+        white-space: nowrap;
+      }
+
       .nav-link {
         height: 3rem;
         border: 0;
@@ -96,13 +103,16 @@ html {
           bottom: 0;
           content: "";
           height: 48px;
-          margin-left: -1rem;
+          margin-left: 0;
           position: absolute;
           width: 0;
+          left: 0;
         }
+
         i {
           @include transition(0);
         }
+
         .icon-angle-down {
           opacity: 0;
         }
@@ -112,6 +122,7 @@ html {
           .icon-angle-down {
             opacity: 1;
           }
+
           &::before {
             height: 48px;
             width: 3px;
@@ -120,10 +131,7 @@ html {
         }
       }
     }
-    .bookmarked {
-      position: absolute;
-      right: 0.5rem;
-    }
+
     &.menu-flex-direction {
       flex-direction: column;
     }
@@ -214,11 +222,11 @@ html {
       background: rgba(255, 255, 255, 0.05);
       display: flex;
       height: 100%;
-      margin-left: 3px;
+      // margin-left: 3px;
       opacity: 0;
-      position: absolute;
+      // position: absolute;
       visibility: hidden;
-      width: calc(100% - 3px);
+      width: 100%;
 
       div {
         align-items: center;
@@ -241,6 +249,8 @@ html {
     }
 
     .show-actions {
+      display: flex;
+
       &:hover,
       &.active {
         i,
@@ -250,6 +260,7 @@ html {
 
         .nav-link {
           pointer-events: none;
+
           &::before {
             width: 3px;
           }
@@ -263,6 +274,7 @@ html {
             &:first-of-type {
               animation: runleft 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
             }
+
             &:last-of-type {
               animation: runright 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
             }
@@ -272,11 +284,24 @@ html {
     }
   }
 
+  .nav-item {
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+  }
+
+  .nav-link {
+    &:hover {
+      background-color: transparent !important;
+    }
+  }
+
   .view-port {
     @include transition(0);
     border: 1px solid rgba(255, 255, 255, 0.075);
     overflow: hidden;
     width: 60px;
+    @include transition(0);
 
     .menu {
       display: none;
@@ -345,13 +370,16 @@ html {
       }
     }
   }
+
   .vertical.expand {
     width: 200px;
-    @include transition(0);
-    transition-duration: 50ms;
 
     .menu {
       display: block;
+    }
+
+    .layout-menu-tool {
+      position: absolute;
     }
 
     .text-animation {
@@ -407,16 +435,15 @@ html {
     &::before {
       width: unset;
       height: 3px;
-      top: unset;
+      top: 0;
       right: 30%;
-      bottom: 0;
+      bottom: unset;
       left: 30%;
     }
 
     &:hover {
       &::before {
-        right: 0;
-        left: 0;
+        top: -3px;
       }
     }  
   }
@@ -432,6 +459,7 @@ html {
     top: 6px;
     left: 0;
   }
+
   &:hover {
     &::before {
       background-color: transparent;
@@ -447,9 +475,11 @@ html {
     .menu-flex-direction {
       flex-direction: row;
     }
+
     .menu {
       display: block;
     }
+
     .view-port-header {
       .menu {
         position: fixed;
@@ -465,8 +495,7 @@ html {
       width: calc(100vw - 331px);
 
       .nav {
-        margin-right: 4px;
-        // position: relative;
+        // margin-right: 4px;
 
         .bookmarked {
           position: absolute;
@@ -476,21 +505,21 @@ html {
 
         &.nav-tabs {
           .nav-item {
-            width: 60px;
-            min-width: 60px;
+            max-width: 60px;
             @include transition(0);
 
             &:hover {
               .nav-link {
                 .text-animation {
-                  @include text-animation("on", "", 50);
+                  @include text-animation("on", "", 100);
                 }
               }
             }
+
             .nav-link {
               &.active {
                 .text-animation {
-                  @include text-animation("on", "", 50);
+                  @include text-animation("on", "", 100);
                 }
               }
             }
@@ -499,26 +528,27 @@ html {
 
         &.applications-nav {
           @include divider-horizontal();
+
           .nav-item {
             &:hover,
             &.active {
-              width: 160px;
+              max-width: 160px;
             }
           }
         }
 
         &.layouts-nav {
           .show-actions {
-            // display: flex;
-            // flex-direction: row-reverse;
-
             &:hover,
             &.active {
               width: 260px;
+              max-width: 260px;
+
               i,
               .text-animation {
                 opacity: 1;
               }
+
               .nav-link {
                 width: 100%;
 
@@ -530,22 +560,17 @@ html {
                 }
               }
             }
-
-            .layout-menu-tool {
-              width: 142px;
-              right: 0;
-            }
           }
         }
 
         &.fav-app-nav {
           @include divider-horizontal();
           flex-wrap: nowrap;
+
           .nav-item {
             &:hover,
             &.active {
-              width: auto;
-              min-width: 150px;
+              max-width: 200px;
             }
           }
         }
@@ -592,7 +617,7 @@ html {
 
           .nav-item,
           .nav-item:hover {
-            width: 25%;
+            max-width: 25%;
 
             .nav-link {
               width: 100%;
@@ -643,8 +668,8 @@ html {
 
           .nav-link {
             padding-right: 0;
-
             position: relative;
+
             &::before {
               top: auto;
               width: 100%;
@@ -665,7 +690,9 @@ html {
 
           &:hover,
           &.active {
+            max-width: 160px;
             width: 160px;
+
             .text-animation {
               @include text-animation("on", "", 0);
             }
@@ -681,47 +708,12 @@ html {
           width: 100%;
           bottom: 0;
           height: 0;
-          //      @include transition(0);
         }
 
         &:hover::before,
         &.active::before {
           height: 3px;
-          //        @include transition(0);
         }
-      }
-    }
-
-    &.expand {
-      width: auto;
-
-      .text-animation {
-        @include text-animation("on", "", 0);
-      }
-
-      .accordion {
-        .applications-nav {
-          .nav-item {
-            width: 160px;
-          }
-        }
-        .layouts-nav .show-actions {
-          width: 118px;
-        }
-        .fav-app-nav {
-          .nav-item {
-            width: auto;
-            min-width: 150px;
-          }
-        }
-        .toggle-content {
-          .nav-item {
-            width: 25%;
-          }
-        }
-      }
-      .view-port-footer .nav .nav-item {
-        width: 160px;
       }
     }
   }
@@ -735,7 +727,7 @@ html {
           .nav {
             .nav-item,
             .nav-item:hover {
-              width: 33%;
+              max-width: 33%;
             }
           }
         }
@@ -752,7 +744,7 @@ html {
           .nav {
             .nav-item,
             .nav-item:hover {
-              width: 50%;
+              max-width: 50%;
             }
           }
         }
@@ -769,7 +761,7 @@ html {
           .nav {
             .nav-item,
             .nav-item:hover {
-              width: 100%;
+              max-width: 100%;
             }
           }
         }

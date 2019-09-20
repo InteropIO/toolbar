@@ -74,6 +74,10 @@ html .text-animation {
           transform: translateX(-1rem);
 }
 
+html .nav.nav-tabs .nav-item {
+  white-space: nowrap;
+}
+
 html .nav.nav-tabs .nav-link {
   height: 3rem;
   border: 0;
@@ -89,9 +93,10 @@ html .nav.nav-tabs .nav-link::before {
   bottom: 0;
   content: "";
   height: 48px;
-  margin-left: -1rem;
+  margin-left: 0;
   position: absolute;
   width: 0;
+  left: 0;
 }
 
 html .nav.nav-tabs .nav-link i {
@@ -116,11 +121,6 @@ html .nav.nav-tabs .nav-link.active::before, html .nav.nav-tabs .nav-link:hover:
   transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   -webkit-transition-delay: 0ms;
           transition-delay: 0ms;
-}
-
-html .nav .bookmarked {
-  position: absolute;
-  right: 0.5rem;
 }
 
 html .nav.menu-flex-direction {
@@ -253,11 +253,9 @@ html .nav .layout-menu-tool {
   display: -ms-flexbox;
   display: flex;
   height: 100%;
-  margin-left: 3px;
   opacity: 0;
-  position: absolute;
   visibility: hidden;
-  width: calc(100% - 3px);
+  width: 100%;
 }
 
 html .nav .layout-menu-tool div {
@@ -282,6 +280,12 @@ html .nav .layout-menu-tool div:first-of-type {
 html .nav .layout-menu-tool div:hover, html .nav .layout-menu-tool div.active {
   background-color: rgba(255, 255, 255, 0.05);
   color: white;
+}
+
+html .nav .show-actions {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
 }
 
 html .nav .show-actions:hover i,
@@ -313,6 +317,14 @@ html .nav .show-actions:hover .layout-menu-tool div:last-of-type, html .nav .sho
           animation: runright 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
 }
 
+html .nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+html .nav-link:hover {
+  background-color: transparent !important;
+}
+
 html .view-port {
   -webkit-transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
@@ -321,6 +333,8 @@ html .view-port {
   border: 1px solid rgba(255, 255, 255, 0.075);
   overflow: hidden;
   width: 60px;
+  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition-delay: 0ms;
 }
 
 html .view-port .menu {
@@ -422,16 +436,14 @@ html .view-port .view-port-footer .circle-index {
 
 html .vertical.expand {
   width: 200px;
-  -webkit-transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
-  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
-  -webkit-transition-delay: 0ms;
-          transition-delay: 0ms;
-  -webkit-transition-duration: 50ms;
-          transition-duration: 50ms;
 }
 
 html .vertical.expand .menu {
   display: block;
+}
+
+html .vertical.expand .layout-menu-tool {
+  position: absolute;
 }
 
 html .vertical.expand .text-animation {
@@ -490,15 +502,14 @@ html .active-app {
 .horizontal .app-active::before {
   width: unset;
   height: 3px;
-  top: unset;
+  top: 0;
   right: 30%;
-  bottom: 0;
+  bottom: unset;
   left: 30%;
 }
 
 .horizontal .app-active:hover::before {
-  right: 0;
-  left: 0;
+  top: -3px;
 }
 
 html .horizontal {
@@ -534,10 +545,6 @@ html .horizontal .accordion {
   width: calc(100vw - 331px);
 }
 
-html .horizontal .accordion .nav {
-  margin-right: 4px;
-}
-
 html .horizontal .accordion .nav .bookmarked {
   position: absolute;
   left: 0.5rem;
@@ -545,8 +552,7 @@ html .horizontal .accordion .nav .bookmarked {
 }
 
 html .horizontal .accordion .nav.nav-tabs .nav-item {
-  width: 60px;
-  min-width: 60px;
+  max-width: 60px;
   -webkit-transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   -webkit-transition-delay: 0ms;
@@ -556,8 +562,8 @@ html .horizontal .accordion .nav.nav-tabs .nav-item {
 html .horizontal .accordion .nav.nav-tabs .nav-item:hover .nav-link .text-animation {
   -webkit-transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
-  -webkit-transition-delay: 50ms;
-          transition-delay: 50ms;
+  -webkit-transition-delay: 100ms;
+          transition-delay: 100ms;
   opacity: 1;
   -webkit-transform: translateX(0);
           transform: translateX(0);
@@ -566,8 +572,8 @@ html .horizontal .accordion .nav.nav-tabs .nav-item:hover .nav-link .text-animat
 html .horizontal .accordion .nav.nav-tabs .nav-item .nav-link.active .text-animation {
   -webkit-transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
-  -webkit-transition-delay: 50ms;
-          transition-delay: 50ms;
+  -webkit-transition-delay: 100ms;
+          transition-delay: 100ms;
   opacity: 1;
   -webkit-transform: translateX(0);
           transform: translateX(0);
@@ -588,11 +594,12 @@ html .horizontal .accordion .nav.applications-nav:hover::before {
 }
 
 html .horizontal .accordion .nav.applications-nav .nav-item:hover, html .horizontal .accordion .nav.applications-nav .nav-item.active {
-  width: 160px;
+  max-width: 160px;
 }
 
 html .horizontal .accordion .nav.layouts-nav .show-actions:hover, html .horizontal .accordion .nav.layouts-nav .show-actions.active {
   width: 260px;
+  max-width: 260px;
 }
 
 html .horizontal .accordion .nav.layouts-nav .show-actions:hover i,
@@ -610,11 +617,6 @@ html .horizontal .accordion .nav.layouts-nav .show-actions:hover .nav-link::befo
   width: 100%;
   bottom: 0;
   height: 3px;
-}
-
-html .horizontal .accordion .nav.layouts-nav .show-actions .layout-menu-tool {
-  width: 142px;
-  right: 0;
 }
 
 html .horizontal .accordion .nav.fav-app-nav {
@@ -637,8 +639,7 @@ html .horizontal .accordion .nav.fav-app-nav:hover::before {
 }
 
 html .horizontal .accordion .nav.fav-app-nav .nav-item:hover, html .horizontal .accordion .nav.fav-app-nav .nav-item.active {
-  width: auto;
-  min-width: 150px;
+  max-width: 200px;
 }
 
 html .horizontal .accordion .nav .chavron-rotate {
@@ -696,7 +697,7 @@ html .horizontal .accordion .toggle-content .nav {
 
 html .horizontal .accordion .toggle-content .nav .nav-item,
 html .horizontal .accordion .toggle-content .nav .nav-item:hover {
-  width: 25%;
+  max-width: 25%;
 }
 
 html .horizontal .accordion .toggle-content .nav .nav-item .nav-link,
@@ -779,6 +780,7 @@ html .horizontal .view-port-footer .nav .nav-item .nav-link:hover::before, html 
 }
 
 html .horizontal .view-port-footer .nav .nav-item:hover, html .horizontal .view-port-footer .nav .nav-item.active {
+  max-width: 160px;
   width: 160px;
 }
 
@@ -803,59 +805,24 @@ html .horizontal .nav-tabs.menu-flex-direction .nav-link:hover::before, html .ho
   height: 3px;
 }
 
-html .horizontal.expand {
-  width: auto;
-}
-
-html .horizontal.expand .text-animation {
-  -webkit-transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
-  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
-  -webkit-transition-delay: 0ms;
-          transition-delay: 0ms;
-  opacity: 1;
-  -webkit-transform: translateX(0);
-          transform: translateX(0);
-}
-
-html .horizontal.expand .accordion .applications-nav .nav-item {
-  width: 160px;
-}
-
-html .horizontal.expand .accordion .layouts-nav .show-actions {
-  width: 118px;
-}
-
-html .horizontal.expand .accordion .fav-app-nav .nav-item {
-  width: auto;
-  min-width: 150px;
-}
-
-html .horizontal.expand .accordion .toggle-content .nav-item {
-  width: 25%;
-}
-
-html .horizontal.expand .view-port-footer .nav .nav-item {
-  width: 160px;
-}
-
 @media screen and (max-width: 1370px) {
   html .view-port.horizontal .accordion .toggle-content .nav .nav-item,
   html .view-port.horizontal .accordion .toggle-content .nav .nav-item:hover {
-    width: 33%;
+    max-width: 33%;
   }
 }
 
 @media screen and (max-width: 1190px) {
   html .view-port.horizontal .accordion .toggle-content .nav .nav-item,
   html .view-port.horizontal .accordion .toggle-content .nav .nav-item:hover {
-    width: 50%;
+    max-width: 50%;
   }
 }
 
 @media screen and (max-width: 640px) {
   html .view-port.horizontal .accordion .toggle-content .nav .nav-item,
   html .view-port.horizontal .accordion .toggle-content .nav .nav-item:hover {
-    width: 100%;
+    max-width: 100%;
   }
 }
 /*# sourceMappingURL=app.css.map */
