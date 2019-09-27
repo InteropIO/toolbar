@@ -110,8 +110,9 @@
 </head>
 
 <body>
+  <button type="button" id="layoutSwitch" class="btn btn-primary layout-switch">Switch Layout</button>
   <!-- for toggle effect needs to remove pinned class -->
-  <div class="view-port vertical">
+  <div id="applicationLauncher" class="view-port vertical">
     <header class="view-port-header">
       <div class="logo">
         <img src="./logo.svg" width="120">
@@ -327,6 +328,17 @@
       </ul>
     </footer>
   </div>
+
+  <script>
+    (function() {
+      var $applicationLauncherContainer = $('#applicationLauncher');
+      var $layoutSwitchButton = $('#layoutSwitch');
+
+      $layoutSwitchButton.click(function() {
+        $applicationLauncherContainer.toggleClass('vertical horizontal');
+      });
+    })();
+  </script>
 </body>
 
 </html>

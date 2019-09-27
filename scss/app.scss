@@ -70,6 +70,13 @@
   }
 }
 
+.layout-switch {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 html {
   .toggle-content {
     @include transition(0);
