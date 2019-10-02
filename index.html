@@ -72,7 +72,7 @@
 
         if (orientation == 'vertical') {
           orientation = 'horizontal';
-          $(".view-port").removeClass("expand");
+          // $(".view-port").removeClass("expand");
         }
         else {
           orientation = 'vertical';
@@ -95,25 +95,26 @@
           $(".view-port").removeClass("expand");
         }
       })
-      $(".view-port").hover(function () {  
-        console.log('orientation:' + orientation)
-        if (!state && orientation == 'vertical') {
-          $(".view-port").toggleClass("expand"); // toggle hover effect 
-        }
-       else {
-        return;
-       }
-      });
+      // $(".view-port").hover(function () {
+      //   console.log('orientation:' + orientation)
+      //   if (!state && orientation == 'vertical') {
+      //     $(".view-port").toggleClass("expand"); // toggle hover effect
+      //   }
+      //  else {
+      //   return;
+      //  }
+      // });
     });
   </script>
+
 </head>
 
 <body>
   <!-- for toggle effect needs to remove pinned class -->
-  <div class="view-port vertical">
+  <div class="view-port vertical expand">
     <header class="view-port-header">
       <div class="logo">
-        <img src="./logo.svg" width="120">
+        <img src="./assets/logo.svg" width="120">
       </div>
       <div class="menu">
         <button class="btn btn-icon secondary" type="button" id="dropdownMenuButton">
@@ -139,13 +140,13 @@
           </a>
         </li>
 
-        <li class="toggle-content hide" id="app-content">
+        <li class="toggle-content" id="app-content">
           <div class="p-2">
             <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
               placeholder="Search app...">
           </div>
 
-          <ul class="nav nav-tabs menu-flex-direction">
+          <ul id="applications" class="nav nav-tabs menu-flex-direction">
             <li class="nav-item">
               <a class="nav-link" href="#">
                 <i class="icon-dev-tools ml-2 mr-4"></i>
@@ -156,6 +157,7 @@
             <li class="nav-item">
               <div class="nav-link action-menu">
                 <i class="icon-interop ml-2 mr-4"></i>
+                <span class="icon-size-24 active-app text-success"><i class="icon-dot mr-2 "></i></span>
                 <span>Interop</span>
                 <div class="action-menu-tool">
                   <button class="btn btn-icon secondary" id="menu-tool-1">
@@ -324,6 +326,8 @@
       </ul>
     </footer>
   </div>
+  <script src="assets/@glue42-desktop.min.js"></script>
+  <script src="assets/rxjs.umd.min.js"></script>
+  <script src="js/index.js" type="module"></script>
 </body>
-
 </html>
