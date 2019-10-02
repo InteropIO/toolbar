@@ -1,7 +1,6 @@
-@import "../t42bootstrap.bundle.css";
-
 @mixin non-underline {
   text-decoration: none;
+
   &:hover {
     text-decoration: none;
   }
@@ -16,6 +15,7 @@
     position: absolute;
     width: calc(100% - 16px);
   }
+
   &:hover {
     &::before {
       background-color: transparent;
@@ -28,7 +28,7 @@
   transition-delay: #{$d}ms;
 }
 
-@mixin text-animation($status, $derection,$t-delay) {
+@mixin text-animation($status, $derection, $t-delay) {
   @include transition($t-delay);
 
   @if $status == "off" {
@@ -41,8 +41,7 @@
     transform: translateX(-1rem);
   } @else if $derection == "right" {
     transform: translateX(1rem);
-  }
-  @else {
+  } @else {
     transform: translateX(0);
   }
 }
@@ -52,6 +51,7 @@
     opacity: 0;
     transform: translateX(1rem);
   }
+
   100% {
     opacity: 1;
     transform: translateX(0);
@@ -63,10 +63,18 @@
     opacity: 0;
     transform: translateX(-1rem);
   }
+
   100% {
     opacity: 1;
     transform: translateX(0);
   }
+}
+
+.layout-switch {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 html {
@@ -77,20 +85,24 @@ html {
     overflow: hidden;
 
     &.hide {
-      //height: 0;
       width: 0;
     }
   }
 
   .text-animation {
-    @include text-animation('off','left',0);
+    @include text-animation("off", "left", 0);
   }
 
   .nav {
     &.nav-tabs {
+      .nav-item {
+        white-space: nowrap;
+      }
+
       .nav-link {
         height: 3rem;
         border: 0;
+        padding-left: 14px;
 
         &::before {
           @include transition(0);
@@ -98,34 +110,35 @@ html {
           bottom: 0;
           content: "";
           height: 48px;
-          margin-left: -1rem;
+          margin-left: 0;
           position: absolute;
           width: 0;
+          left: 0;
         }
+
         i {
-            @include transition(0)
+          @include transition(0);
         }
+
         .icon-angle-down {
-            opacity: 0;
+          opacity: 0;
         }
 
         &.active,
         &:hover {
-            .icon-angle-down {
-                opacity: 1;
-            }
+          .icon-angle-down {
+            opacity: 1;
+          }
+
           &::before {
             height: 48px;
             width: 3px;
             @include transition(0);
           }
-        }        
+        }
       }
     }
-    .bookmarked {
-      position: absolute;
-      right: 0.5rem;
-    }
+
     &.menu-flex-direction {
       flex-direction: column;
     }
@@ -216,11 +229,11 @@ html {
       background: rgba(255, 255, 255, 0.05);
       display: flex;
       height: 100%;
-      margin-left: 3px;
+      // margin-left: 3px;
       opacity: 0;
-      position: absolute;
+      // position: absolute;
       visibility: hidden;
-      width: calc(100% - 3px);
+      width: 100%;
 
       div {
         align-items: center;
@@ -243,6 +256,8 @@ html {
     }
 
     .show-actions {
+      display: flex;
+
       &:hover,
       &.active {
         i,
@@ -252,6 +267,7 @@ html {
 
         .nav-link {
           pointer-events: none;
+
           &::before {
             width: 3px;
           }
@@ -265,6 +281,7 @@ html {
             &:first-of-type {
               animation: runleft 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
             }
+
             &:last-of-type {
               animation: runright 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
             }
@@ -274,11 +291,24 @@ html {
     }
   }
 
+  .nav-item {
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+  }
+
+  .nav-link {
+    &:hover {
+      background-color: transparent !important;
+    }
+  }
+
   .view-port {
     @include transition(0);
     border: 1px solid rgba(255, 255, 255, 0.075);
     overflow: hidden;
     width: 60px;
+    @include transition(0);
 
     .menu {
       display: none;
@@ -347,17 +377,20 @@ html {
       }
     }
   }
+
   .vertical.expand {
     width: 200px;
-    @include transition(0);
-    transition-duration: 50ms;
 
     .menu {
       display: block;
     }
 
+    .layout-menu-tool {
+      position: absolute;
+    }
+
     .text-animation {
-        @include text-animation('on','',0);
+      @include text-animation("on", "", 0);
     }
 
     .accordion {
@@ -381,4 +414,365 @@ html {
   }
 }
 
-@import "./app-horizontal.scss";
+.app-active {
+  position: relative;
+  background-color: rgba(255, 255, 255, .025);
+
+  &::before {
+    content: "";
+    width: 3px;
+    position: absolute;
+    top: 30%;
+    bottom: 30%;
+    left: 0;
+    background-color: #2080d3;
+    transition: all .3s ease;
+  }
+
+  &:hover {
+    &::before {
+      top: 0;
+      bottom: 0;
+    }
+  }
+}
+
+.horizontal {
+  .app-active {
+    &::before {
+      width: unset;
+      height: 3px;
+      top: 0;
+      right: 30%;
+      bottom: unset;
+      left: 30%;
+    }
+
+    &:hover {
+      &::before {
+        top: -3px;
+      }
+    }  
+  }
+}
+
+@mixin divider-horizontal {
+  &::before {
+    background-color: rgba(255, 255, 255, 0.075);
+    content: "";
+    position: absolute;
+    height: 36px;
+    width: 1px;
+    top: 6px;
+    left: 0;
+  }
+
+  &:hover {
+    &::before {
+      background-color: transparent;
+    }
+  }
+}
+
+html {
+  .horizontal {
+    display: flex;
+    width: 100%;
+
+    .menu-flex-direction {
+      flex-direction: row;
+    }
+
+    .menu {
+      display: block;
+    }
+
+    .view-port-header {
+      .menu {
+        position: fixed;
+        top: 10px;
+        right: 4px;
+        z-index: 11;
+      }
+    }
+
+    .accordion {
+      display: flex;
+      height: auto;
+      width: calc(100vw - 331px);
+
+      .nav {
+        // margin-right: 4px;
+
+        .bookmarked {
+          position: absolute;
+          left: 0.5rem;
+          right: auto;
+        }
+
+        &.nav-tabs {
+          .nav-item {
+            max-width: 60px;
+            @include transition(0);
+
+            &:hover {
+              .nav-link {
+                .text-animation {
+                  @include text-animation("on", "", 100);
+                }
+              }
+            }
+
+            .nav-link {
+              &.active {
+                .text-animation {
+                  @include text-animation("on", "", 100);
+                }
+              }
+            }
+          }
+        }
+
+        &.applications-nav {
+          @include divider-horizontal();
+
+          .nav-item {
+            &:hover,
+            &.active {
+              max-width: 160px;
+            }
+          }
+        }
+
+        &.layouts-nav {
+          .show-actions {
+            &:hover,
+            &.active {
+              width: 260px;
+              max-width: 260px;
+
+              i,
+              .text-animation {
+                opacity: 1;
+              }
+
+              .nav-link {
+                width: 100%;
+
+                &::before {
+                  top: auto;
+                  width: 100%;
+                  bottom: 0;
+                  height: 3px;
+                }
+              }
+            }
+          }
+        }
+
+        &.fav-app-nav {
+          @include divider-horizontal();
+          flex-wrap: nowrap;
+
+          .nav-item {
+            &:hover,
+            &.active {
+              max-width: 200px;
+            }
+          }
+        }
+
+        .chavron-rotate {
+          transform: rotate(-180deg);
+        }
+
+        li {
+          &.toggle-content {
+            position: fixed;
+            top: 50px;
+            left: 0;
+            height: calc(100vh - 48px);
+            width: 100vw;
+
+            li {
+              white-space: nowrap;
+            }
+          }
+
+          &.hide {
+            height: 0;
+            width: 100vw;
+            padding: 0;
+          }
+        }
+      }
+
+      .toggle-content {
+        position: absolute;
+        top: 3rem;
+        left: 0;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+
+        .nav {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: flex-start;
+          flex-direction: row;
+          max-height: calc(100vh - 96px);
+
+          .nav-item,
+          .nav-item:hover {
+            max-width: 25%;
+
+            .nav-link {
+              width: 100%;
+
+              &::before {
+                height: 0;
+              }
+            }
+          }
+        }
+
+        &.hide {
+          width: 0;
+        }
+
+        .nav-tabs.menu-flex-direction {
+          .nav-link:hover::before,
+          .nav-link.active::before {
+            height: 0;
+          }
+        }
+      }
+    }
+
+    .view-port-footer {
+      position: fixed;
+      right: 38px;
+      @include divider-horizontal();
+
+      &::after {
+        background-color: rgba(255, 255, 255, 0.075);
+        content: "";
+        position: absolute;
+        height: 36px;
+        width: 1px;
+        top: 6px;
+        right: 0;
+      }
+
+      &:hover::after {
+        background-color: transparent;
+      }
+
+      .nav {
+        .nav-item {
+          width: 60px;
+          @include transition(0);
+
+          .nav-link {
+            padding-right: 0;
+            position: relative;
+
+            &::before {
+              top: auto;
+              width: 100%;
+              bottom: 0;
+              height: 0;
+            }
+
+            &:hover,
+            &.active {
+              &::before {
+                top: auto;
+                width: 100%;
+                bottom: 0;
+                height: 3px;
+              }
+            }
+          }
+
+          &:hover,
+          &.active {
+            max-width: 160px;
+            width: 160px;
+
+            .text-animation {
+              @include text-animation("on", "", 0);
+            }
+          }
+        }
+      }
+    }
+
+    .nav-tabs.menu-flex-direction {
+      .nav-link {
+        &::before {
+          top: auto;
+          width: 100%;
+          bottom: 0;
+          height: 0;
+        }
+
+        &:hover::before,
+        &.active::before {
+          height: 3px;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 1370px) {
+  html {
+    .view-port.horizontal {
+      .accordion {
+        .toggle-content {
+          .nav {
+            .nav-item,
+            .nav-item:hover {
+              max-width: 33%;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 1190px) {
+  html {
+    .view-port.horizontal {
+      .accordion {
+        .toggle-content {
+          .nav {
+            .nav-item,
+            .nav-item:hover {
+              max-width: 50%;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 640px) {
+  html {
+    .view-port.horizontal {
+      .accordion {
+        .toggle-content {
+          .nav {
+            .nav-item,
+            .nav-item:hover {
+              max-width: 100%;
+            }
+          }
+        }
+      }
+    }
+  }
+}
