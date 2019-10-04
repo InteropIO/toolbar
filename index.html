@@ -2,7 +2,7 @@
 <html class="dark">
 
 <head>
-  <link rel="stylesheet" type="text/css" href="t42bootstrap.bundle.css" />
+  <link rel="stylesheet" type="text/css" href="./assets/t42bootstrap.bundle.css" />
   <link rel="stylesheet" type="text/css" href="scss/app.css" />
   <title>Glue42 Launch Bar</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -96,22 +96,32 @@
           $(".view-port").removeClass("expand");
         }
       })
-      // $(".view-port").hover(function () {
-      //   console.log('orientation:' + orientation)
+      $(".view-port").click(() => {
+        if (!state && orientation == 'vertical') {
+          $(".view-port").addClass("expand"); // toggle hover effect
+        }
+      })
+      // $(".view-port").mouseenter(() => {
+      //   console.log('mouseenter');
       //   if (!state && orientation == 'vertical') {
-      //     $(".view-port").toggleClass("expand"); // toggle hover effect
+      //     $(".view-port").addClass("expand"); // toggle hover effect
       //   }
-      //  else {
-      //   return;
-      //  }
-      // });
+      // })
+
+      // $(".view-port").mouseleave(() => {
+      //   console.log('mouseleave');
+      //   if (!state && orientation == 'vertical') {
+      //     $(".view-port").removeClass("expand"); // toggle hover effect
+      //     // $('.toggle-content').addClass('hide');
+      //   }
+      // })
     });
   </script>
 
 </head>
 
 <body>
-  <button type="button" id="layoutSwitch" class="btn btn-primary layout-switch">Switch Layout</button>
+  <!-- <button type="button" id="layoutSwitch" class="btn btn-primary layout-switch">Switch Layout</button> -->
   <!-- for toggle effect needs to remove pinned class -->
   <div id="applicationLauncher" class="view-port vertical">
     <header class="view-port-header">
@@ -144,66 +154,14 @@
           </a>
         </li>
 
-        <li class="toggle-content" id="app-content">
+        <li class="toggle-content hide" id="app-content">
           <div class="p-2">
             <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
               placeholder="Search app...">
           </div>
 
           <ul id="applications" class="nav nav-tabs menu-flex-direction">
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <i class="icon-dev-tools ml-2 mr-4"></i>
-                <span class="icon-size-24 active-app text-primary"><i class="icon-dot mr-2 "></i></span>
-                <span>Devtools</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <div class="nav-link action-menu">
-                <i class="icon-interop ml-2 mr-4"></i>
-                <span class="icon-size-24 active-app text-success"><i class="icon-dot mr-2 "></i></span>
-                <span>Interop</span>
-                <div class="action-menu-tool">
-                  <button class="btn btn-icon secondary" id="menu-tool-1">
-                    <i class="icon-ellipsis-vert"></i>
-                  </button>
-                  <div class="dropdown-menu" id="menu-div-1">
-                    <a class="dropdown-item" href="#">Add to Favorite</a>
-                    <a class="dropdown-item" href="#">Settings</a>
-                  </div>
-                </div>
-              </div>
-            </li>
-            <li class="nav-item">
-              <div class="nav-link action-menu">
-                <i class="icon-performance-report ml-2 mr-4"></i>
-                <span>Performance report</span>
-                <div class="action-menu-tool">
-                  <button class="btn btn-icon secondary" id="menu-tool-2">
-                    <i class="icon-ellipsis-vert"></i>
-                  </button>
-                  <div class="dropdown-menu" id="menu-div-2">
-                    <a class="dropdown-item" href="#">Add to Favorite</a>
-                    <a class="dropdown-item" href="#">Settings</a>
-                  </div>
-                </div>
-              </div>
-            </li>
-            <li class="nav-item">
-              <div class="nav-link action-menu">
-                <i class="icon-context-viewer ml-2 mr-4"></i>
-                <span>Context Viewer</span>
-                <div class="action-menu-tool">
-                  <button class="btn btn-icon secondary" id="menu-tool-3">
-                    <i class="icon-ellipsis-vert"></i>
-                  </button>
-                  <div class="dropdown-menu" id="menu-div-3">
-                    <a class="dropdown-item" href="#">Add to Favorite</a>
-                    <a class="dropdown-item" href="#">Settings</a>
-                  </div>
-                </div>
-              </div>
-            </li>
+
           </ul>
         </li>
       </ul>

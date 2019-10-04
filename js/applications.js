@@ -42,6 +42,23 @@ function orderApps(a, b) {
   }
 }
 
+function applicationHTMLTemplate(app, isFavorite) {
+  return `
+    <li class="nav-item" app-name="${app.name}">
+      <div class="nav-link action-menu">
+        <!-- <i class="icon-interop ml-2 mr-4"></i> -->
+        ${app.icon ? '<img src="' + app.icon + '" class="ml-2 mr-4" style="width:12px; height:12px"/>' : ''}
+        ${app.instances.length > 0 ? '<span class="icon-size-24 active-app text-success"><i class="icon-dot mr-2 "></i></span>' : ''}
+        <span>${app.title || app.name}</span>
+        <div class="action-menu-tool">
+          <button class="btn btn-icon secondary add-favorite">
+            <i class="icon-star-empty-1"></i>
+          </button>
+        </div>
+      </div>
+    </li>`;
+}
+
 function extendAppInfo(app) {
   return {
     app,
@@ -53,5 +70,6 @@ function extendAppInfo(app) {
 
 export {
   applicationsObs,
-  favoriteAppsObs
+  favoriteAppsObs,
+  applicationHTMLTemplate
 }

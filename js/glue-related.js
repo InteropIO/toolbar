@@ -36,9 +36,19 @@ function trackLayouts() {
   layoutsObs.next(glue.layouts.list())
 }
 
+function startApp(appName) {
+  let glueApp = glue.appManager.application(appName);
+  if (glueApp){
+    glueApp.start();
+  } else {
+    throw new Error(`Cannot find app with name "${appName}"`)
+  }
+}
+
 export {
   gluePromise,
   glueAppsObs,
   runningAppsObs,
-  layoutsObs
+  layoutsObs,
+  startApp
 };
