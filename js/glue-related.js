@@ -16,7 +16,6 @@ const notificationsCountObs = new rxjs.BehaviorSubject(null);
 
 gluePromise.then((glue) => {
   trackApplications();
-  // trackApplicationInstances();
   trackLayouts();
   trackNotificationCount();
 })

@@ -93,13 +93,6 @@ function applicationHTMLTemplate(app, isFavorite) {
     </li>`;
 }
 
-function extendAppInfo(app) {
-  return {
-    app,
-    isFavorite: false,
-  };
-}
-
 
 
 export {
