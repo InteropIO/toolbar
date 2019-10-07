@@ -156,7 +156,7 @@
 
         <li class="toggle-content hide" id="app-content">
           <div class="p-2">
-            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+            <input class="form-control" id="app-search" aria-describedby="emailHelp"
               placeholder="Search app...">
           </div>
 
@@ -279,11 +279,12 @@
 
     <footer class="view-port-footer">
       <ul class="nav nav-tabs menu-flex-direction">
-        <li class="nav-item">
+        <li class="nav-item" id="notification-panel">
           <a class="nav-link" href="#">
             <i class="icon-bell-alt ml-2 mr-4"></i>
             <span class="text-animation">Notification</span>
-            <span class="circle-index">8</span></a>
+            <span id="notifications-count" class="circle-index" ></span>
+          </a>
         </li>
       </ul>
     </footer>

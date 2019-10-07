@@ -12,11 +12,13 @@ const gluePromise = new Promise(async (res, rej) => {
 const glueAppsObs = new rxjs.BehaviorSubject([]);
 const runningAppsObs = new rxjs.BehaviorSubject([]);
 const layoutsObs = new rxjs.BehaviorSubject([]);
+const notificationsCountObs = new rxjs.BehaviorSubject(null);
 
 gluePromise.then((glue) => {
   trackApplications();
   // trackApplicationInstances();
   trackLayouts();
+  trackNotificationCount();
 })
 
 function trackApplications() {
@@ -33,7 +35,24 @@ function pushAllApps() {
 }
 
 function trackLayouts() {
+  pushAllLayouts();
+  glue.layouts.onAdded(pushAllLayouts);
+  glue.layouts.onRemoved(pushAllLayouts);
+  glue.layouts.onChanged(pushAllLayouts);
+  glue.layouts.onRenamed(pushAllLayouts);
+}
+
+function pushAllLayouts() {
   layoutsObs.next(glue.layouts.list())
+}
+
+function trackNotificationCount() {
+  glue.agm.subscribe('T42.Notifications.Counter')
+    .then(subscription => {
+      subscription.onData(({data}) => {
+        notificationsCountObs.next(data.count);
+      })
+    })
 }
 
 function startApp(appName) {
@@ -45,10 +64,30 @@ function startApp(appName) {
   }
 }
 
+function removeLayout(type, name) {
+  glue.layouts.remove(type, name);
+}
+
+function restoreLayout(type, name) {
+  if (type === 'Global') {
+    glue.layouts.restore({name});
+  } else {
+    glue42gd.canvas.openWorkspace(name);
+  }
+}
+
+function openNotificationPanel() {
+  glue.agm.invoke('T42.Notifications.Show');
+}
+
 export {
   gluePromise,
   glueAppsObs,
   runningAppsObs,
   layoutsObs,
-  startApp
+  startApp,
+  notificationsCountObs,
+  openNotificationPanel,
+  removeLayout,
+  restoreLayout
 };

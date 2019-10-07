@@ -1,12 +1,14 @@
 
-import { glueAppsObs} from './glue-related.js';
+import { glueAppsObs, startApp} from './glue-related.js';
 
+const searchInputObs = new rxjs.BehaviorSubject('');
 const favoriteAppsObs = new rxjs.BehaviorSubject([]);
 
 let {
   filter: rxFilter,
   map: rxMap,
-  distinctUntilChanged: rxDistinctUntilChanged
+  distinctUntilChanged: rxDistinctUntilChanged,
+  combineLatest: rxCombineLatest
 } = rxjs.operators;
 
 const applicationsObs = glueAppsObs
@@ -16,7 +18,12 @@ const applicationsObs = glueAppsObs
     // distinct apps have changed by creating a "hash" containing app titles + instance ids
     return apps.map(app => app.title + app.instances.map(i => i.id).join()).join();
   }))
-  .pipe(rxMap(apps => apps.sort(orderApps)));
+  .pipe(rxMap(apps => apps.sort(orderApps)))
+  .pipe(rxCombineLatest(searchInputObs))
+  .pipe(rxMap(([apps, searchInput]) => {
+    let search = searchInput.toLowerCase().trim();
+    return apps.filter(app => app.title.toLowerCase().indexOf(search) >= 0);
+  }))
 
 function shouldAppBeVisible(app) {
   let shouldBeVisible = true;
@@ -40,6 +47,33 @@ function orderApps(a, b) {
   } else {
     return a.title.localeCompare(b.title);
   }
+}
+
+function handleAppClick() {
+  q('#applications').addEventListener('click', (e) => {
+    let appName = e.path.reduce((name, el) => {
+      return (el.getAttribute && el.getAttribute('app-name')) ? el.getAttribute('app-name') : name;
+    }, '');
+
+    if (e.target.matches('.add-favorite, .add-favorite *')) {
+      console.log('add to favorite ', appName);
+    } else {
+      startApp(appName);
+      console.log(e);
+      if (e.ctrlKey) {
+        return;
+      } else {
+        searchInputObs.next('');
+        q('#app-search').value = '';
+      }
+    }
+  })
+}
+
+function handleSearchChange() {
+  q('#app-search').addEventListener('keyup', (event) => {
+    searchInputObs.next(event.target.value);
+  })
 }
 
 function applicationHTMLTemplate(app, isFavorite) {
@@ -71,5 +105,7 @@ function extendAppInfo(app) {
 export {
   applicationsObs,
   favoriteAppsObs,
-  applicationHTMLTemplate
+  applicationHTMLTemplate,
+  handleAppClick,
+  handleSearchChange
 }

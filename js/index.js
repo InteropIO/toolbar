@@ -2,70 +2,98 @@
 // import {applicationsObservable} from './applications.js';
 console.log('js loaded');
 
-import {applicationsObs, applicationHTMLTemplate} from './applications.js';
-import {startApp} from './glue-related.js';
+import {applicationsObs, applicationHTMLTemplate, handleAppClick, handleSearchChange} from './applications.js';
+import {allLayouts, layoutHTMLTemplate, handleLayoutClick} from './layouts.js';
+import {notificationsCountObs, openNotificationPanel} from './glue-related.js';
 
 window.q = document.querySelector.bind(document);
 window.qa = document.querySelectorAll.bind(document);
 
 window.a = applicationsObs;
 
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
   console.log('window loaded');
-  console.log(applicationsObs);
-  applicationsObs.subscribe(apps => {
-    console.warn('apps changed', apps.length);
-    let newApplicationsHTML = '';
-    q('#applications').innerHTML = '';
-    apps.forEach(app => newApplicationsHTML += applicationHTMLTemplate(app));
-    q('#applications').innerHTML = newApplicationsHTML;
-  })
+  printApps();
+  printLayouts();
+  // printFavoriteApps();
+  printNotificationCount();
 
-  trackWidth();
-  trackAppClick();
-
+  handleWidthChange();
+  handleAppClick();
+  handleSearchChange()
+  handleLayoutClick();
+  handleNotificationClick();
 })
 
-
-function trackWidth() {
-  let menuWidth = 0, contentWidth = 0;
-
-  const menuWidthObserver = new ResizeObserver((elements) => {
-    menuWidth = elements[0].contentRect.right;
-    console.log(menuWidth, contentWidth, 1);
-    resizeVisibleArea(menuWidth + contentWidth);
-  })
-
-  menuWidthObserver.observe(q('.view-port'));
-
-  const toggleContentsObserve = new ResizeObserver((elements) => {
-    console.debug(menuWidth, contentWidth, 2);
-    if (elements.length > 1) {
-      return;
-    }
-
-    contentWidth = elements[0].contentRect.width;
-    resizeVisibleArea(menuWidth + contentWidth);
-  });
-
-  qa('.toggle-content').forEach(content => {
-    toggleContentsObserve.observe(content);
-  })
-}
-
-function trackAppClick() {
-  q('#applications').addEventListener('click', (e) => {
-    let appName = e.path.reduce((name, el) => {
-      return (el.getAttribute && el.getAttribute('app-name')) ? el.getAttribute('app-name') : name;
-    }, '');
-
-    if (e.target.matches('.add-favorite, .add-favorite *')) {
-      console.log('add to favorite ', appName);
+function printApps() {
+  applicationsObs.subscribe(apps => {
+    let newApplicationsHTML = '';
+    if (apps.length > 0) {
+      apps.forEach(app => newApplicationsHTML += applicationHTMLTemplate(app));
+      q('#applications').innerHTML = newApplicationsHTML;
     } else {
-      startApp(appName);
+      q('#applications').innerHTML = 'No apps';
     }
   })
 }
+
+function printLayouts() {
+  allLayouts.subscribe(layouts => {
+    console.log(layouts);
+    let newLayoutsHTML = '';
+    if (layouts.length > 0) {
+      layouts.forEach(layout =>  newLayoutsHTML += layoutHTMLTemplate(layout))
+      q('#layout-load>ul').innerHTML = newLayoutsHTML;
+    } else {
+      q('#layout-load>ul').innerHTML = 'No layouts';
+    }
+  });
+}
+
+function printNotificationCount() {
+  notificationsCountObs.subscribe((count) => {
+    if (count !== null) {
+      q('#notifications-count').innerHTML = count;
+    }
+  })
+}
+
+function handleNotificationClick() {
+  q('#notification-panel').addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    openNotificationPanel();
+  })
+}
+
+function handleWidthChange() {
+  // let menuWidth = 0, contentWidth = 0;
+
+  // const menuWidthObserver = new ResizeObserver((elements) => {
+  //   menuWidth = elements[0].contentRect.right;
+  //   console.log(menuWidth, contentWidth, 1);
+  //   resizeVisibleArea(menuWidth + contentWidth);
+  // })
+
+  // menuWidthObserver.observe(q('.view-port'));
+
+  // const toggleContentsObserve = new ResizeObserver((elements) => {
+  //   console.debug(menuWidth, contentWidth, 2);
+  //   if (elements.length > 1) {
+  //     return;
+  //   }
+
+  //   contentWidth = elements[0].contentRect.width;
+  //   resizeVisibleArea(menuWidth + contentWidth);
+  // });
+
+  // qa('.toggle-content').forEach(content => {
+  //   toggleContentsObserve.observe(content);
+  // })
+}
+
+
 
 function resizeVisibleArea(width) {
   // if (!window.glue) {
