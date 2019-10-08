@@ -1,4 +1,4 @@
-import {layoutsObs, removeLayout, restoreLayout, glueAppsObs} from './glue-related.js';
+import {layoutsObs, removeLayout, restoreLayout, saveLayout} from './glue-related.js';
 
 
 const allLayouts = layoutsObs
@@ -22,6 +22,18 @@ function handleLayoutClick() {
   })
 }
 
+function handleLayoutSave(){
+  q('#layout-save-btn').addEventListener('click', saveCurrentLayout);
+  q('#layout-save-name').addEventListener('keyup', (e) => e.key === 'Enter' ? saveCurrentLayout() : null);
+}
+
+function saveCurrentLayout() {
+  saveLayout(q('#layout-save-name').value);
+  q('#layout-save-name').value = '';
+  q('#layout-content').classList.add('hide');
+  q('#layout-load').classList.remove('hide');
+}
+
 function layoutHTMLTemplate(layout) {
   return `
   <li class="nav-item" layout-name="${layout.name}" layout-type="${layout.type}">
@@ -40,5 +52,6 @@ function layoutHTMLTemplate(layout) {
 export {
   allLayouts,
   layoutHTMLTemplate,
-  handleLayoutClick
+  handleLayoutClick,
+  handleLayoutSave
 }

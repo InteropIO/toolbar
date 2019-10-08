@@ -11,19 +11,27 @@ let {
   combineLatest: rxCombineLatest
 } = rxjs.operators;
 
-const applicationsObs = glueAppsObs
+const allApps = glueAppsObs
   .pipe(rxFilter(apps => apps.length > 0))
   .pipe(rxMap(allApps => allApps.filter(app => shouldAppBeVisible(app))))
   .pipe(rxDistinctUntilChanged(undefined, (apps) => {
     // distinct apps have changed by creating a "hash" containing app titles + instance ids
     return apps.map(app => app.title + app.instances.map(i => i.id).join()).join();
   }))
-  .pipe(rxMap(apps => apps.sort(orderApps)))
+  .pipe(rxMap(apps => apps.sort(orderApps)));
+
+const applicationsObs = allApps
   .pipe(rxCombineLatest(searchInputObs))
   .pipe(rxMap(([apps, searchInput]) => {
     let search = searchInput.toLowerCase().trim();
     return apps.filter(app => app.title.toLowerCase().indexOf(search) >= 0);
+  }));
+
+const runningApps = allApps
+  .pipe(rxMap((apps) => {
+    return apps.filter(app => app.instances.length > 0)
   }))
+
 
 function shouldAppBeVisible(app) {
   let shouldBeVisible = true;
@@ -76,7 +84,8 @@ function handleSearchChange() {
   })
 }
 
-function applicationHTMLTemplate(app, isFavorite) {
+function applicationHTMLTemplate(app, options = {}) {
+  let {favorite} = options;
   return `
     <li class="nav-item" app-name="${app.name}">
       <div class="nav-link action-menu">
@@ -84,11 +93,8 @@ function applicationHTMLTemplate(app, isFavorite) {
         ${app.icon ? '<img src="' + app.icon + '" class="ml-2 mr-4" style="width:12px; height:12px"/>' : ''}
         ${app.instances.length > 0 ? '<span class="icon-size-24 active-app text-success"><i class="icon-dot mr-2 "></i></span>' : ''}
         <span>${app.title || app.name}</span>
-        <div class="action-menu-tool">
-          <button class="btn btn-icon secondary add-favorite">
-            <i class="icon-star-empty-1"></i>
-          </button>
-        </div>
+        ${favorite ? '<div class="action-menu-tool"><button class="btn btn-icon secondary add-favorite"><i class="icon-star-empty-1"></i></button></div>' : ''}
+
       </div>
     </li>`;
 }
@@ -100,5 +106,6 @@ export {
   favoriteAppsObs,
   applicationHTMLTemplate,
   handleAppClick,
-  handleSearchChange
+  handleSearchChange,
+  runningApps
 }

@@ -75,6 +75,10 @@ function restoreLayout(type, name) {
   }
 }
 
+function saveLayout(name) {
+  glue.layouts.save({name});
+}
+
 function openNotificationPanel() {
   glue.agm.invoke('T42.Notifications.Show');
 }
@@ -82,11 +86,11 @@ function openNotificationPanel() {
 export {
   gluePromise,
   glueAppsObs,
-  runningAppsObs,
   layoutsObs,
   startApp,
   notificationsCountObs,
   openNotificationPanel,
   removeLayout,
-  restoreLayout
+  restoreLayout,
+  saveLayout
 };
