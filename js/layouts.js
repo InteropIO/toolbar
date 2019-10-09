@@ -49,9 +49,15 @@ function layoutHTMLTemplate(layout) {
   </li>`;
 }
 
+const noLayoutsHTML = `
+<li class="text-center">
+    <span>No Layouts Saved</span>
+</li>`;
+
 export {
   allLayouts,
   layoutHTMLTemplate,
   handleLayoutClick,
-  handleLayoutSave
+  handleLayoutSave,
+  noLayoutsHTML
 }

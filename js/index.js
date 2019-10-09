@@ -2,8 +2,8 @@
 // import {applicationsObservable} from './applications.js';
 console.log('js loaded');
 
-import {applicationsObs, applicationHTMLTemplate, handleAppClick, handleSearchChange, runningApps} from './applications.js';
-import {allLayouts, layoutHTMLTemplate, handleLayoutClick, handleLayoutSave} from './layouts.js';
+import {applicationsObs, applicationHTMLTemplate, handleAppClick, handleSearchChange, runningApps, noRunningAppsHTML, noApplicationsHTML} from './applications.js';
+import {allLayouts, layoutHTMLTemplate, handleLayoutClick, handleLayoutSave, noLayoutsHTML} from './layouts.js';
 import {notificationsCountObs, openNotificationPanel} from './glue-related.js';
 
 window.q = document.querySelector.bind(document);
@@ -31,10 +31,10 @@ function printApps() {
   applicationsObs.subscribe(apps => {
     let newApplicationsHTML = '';
     if (apps.length > 0) {
-      apps.forEach(app => newApplicationsHTML += applicationHTMLTemplate(app));
+      apps.forEach(app => newApplicationsHTML += applicationHTMLTemplate(app, {favorite: true}));
       q('#applications').innerHTML = newApplicationsHTML;
     } else {
-      q('#applications').innerHTML = 'No apps';
+      q('#applications').innerHTML = noApplicationsHTML;
     }
   })
 }
@@ -46,7 +46,7 @@ function printRunningApps() {
       runningApps.forEach(runningApp => newRunningAppsHTML += applicationHTMLTemplate(runningApp, {favorite: false}));
       q('#running-apps').innerHTML = newRunningAppsHTML;
     } else {
-      q('#running-apps').innerHTML = 'No running apps';
+      q('#running-apps').innerHTML = noRunningAppsHTML;
     }
   })
 }
@@ -59,7 +59,7 @@ function printLayouts() {
       layouts.forEach(layout =>  newLayoutsHTML += layoutHTMLTemplate(layout))
       q('#layout-load>ul').innerHTML = newLayoutsHTML;
     } else {
-      q('#layout-load>ul').innerHTML = 'No layouts';
+      q('#layout-load>ul').innerHTML = noLayoutsHTML;
     }
   });
 }

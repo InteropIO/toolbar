@@ -18,6 +18,7 @@ const allApps = glueAppsObs
     // distinct apps have changed by creating a "hash" containing app titles + instance ids
     return apps.map(app => app.title + app.instances.map(i => i.id).join()).join();
   }))
+  // .pipe(rxMap(apps => []));
   .pipe(rxMap(apps => apps.sort(orderApps)));
 
 const applicationsObs = allApps
@@ -99,6 +100,8 @@ function applicationHTMLTemplate(app, options = {}) {
     </li>`;
 }
 
+const noApplicationsHTML = `<li class="text-center">No applications</li>`;
+const noRunningAppsHTML =  `<li class="text-center">No running applications</li>`;
 
 
 export {
@@ -107,5 +110,7 @@ export {
   applicationHTMLTemplate,
   handleAppClick,
   handleSearchChange,
-  runningApps
+  runningApps,
+  noApplicationsHTML,
+  noRunningAppsHTML
 }

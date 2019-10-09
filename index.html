@@ -13,21 +13,6 @@
       $("#dropdownMenuButton").click(function () {
         $("#menu-top").toggleClass("show");
       });
-      $("#menu-tool-1").click(function () {
-        $("#menu-div-1").toggleClass("show");
-      });
-      $("#menu-tool-2").click(function () {
-        $("#menu-div-2").toggleClass("show");
-      });
-      $("#menu-tool-3").click(function () {
-        $("#menu-div-3").toggleClass("show");
-      });
-      $("#menu-tool-4").click(function () {
-        $("#menu-div-4").toggleClass("show");
-      });
-      $("#menu-tool-5").click(function () {
-        $("#menu-div-5").toggleClass("show");
-      });
       $("#layout-menu-tool").click(function () {
         $("#layout-menu-tool").addClass("active");
 
@@ -79,23 +64,7 @@
           orientation = 'vertical';
         }
       });
-      $("#expand").click(function () {
-        console.log('state:' + state);
-        if (state) {
-          state = false;
-        }
-        else {
-          state = true;
-        }
-        $("#menu-top").toggleClass("show");
 
-        if (orientation == 'horizontal' && state) {
-          $(".view-port").addClass("expand");
-        }
-        else if(orientation == 'horizontal') {
-          $(".view-port").removeClass("expand");
-        }
-      })
       $(".view-port").click(() => {
         if (!state && orientation == 'vertical') {
           $(".view-port").addClass("expand"); // toggle hover effect
