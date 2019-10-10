@@ -79,171 +79,175 @@
 <body>
   <!-- <button type="button" id="layoutSwitch" class="btn btn-primary layout-switch">Switch Layout</button> -->
   <!-- for toggle effect needs to remove pinned class -->
-  <div id="applicationLauncher" class="view-port vertical">
-    <header class="view-port-header">
-      <div class="logo">
-        <img src="./assets/logo.svg" width="120">
-      </div>
-      <div class="menu">
-        <button class="btn btn-icon secondary" type="button" id="dropdownMenuButton">
-          <i class="icon-ellipsis-vert"></i>
-        </button>
-        <div class="dropdown-menu" id="menu-top">
-          <a class="dropdown-item" href="#" id="toggle">Toggle</a>
-          <a class="dropdown-item" href="#" id="expand">Expand</a>
-          <a class="dropdown-item" href="#">Settings</a>
-          <a class="dropdown-item" href="#">About</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item disabled" href="#">Shut down</a>
+  <div class="app d-flex">
+    <div id="applicationLauncher" class="view-port vertical">
+      <header class="view-port-header">
+        <div class="logo">
+          <img src="./assets/logo.svg" width="120">
         </div>
+        <div class="menu">
+          <button class="btn btn-icon secondary" type="button" id="dropdownMenuButton">
+            <i class="icon-ellipsis-vert"></i>
+          </button>
+          <div class="dropdown-menu" id="menu-top">
+            <a class="dropdown-item" href="#" id="toggle">Toggle</a>
+            <a class="dropdown-item" href="#" id="expand">Expand</a>
+            <a class="dropdown-item" href="#">Settings</a>
+            <a class="dropdown-item" href="#">About</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item disabled" href="#">Shut down</a>
+          </div>
+        </div>
+      </header>
+      <div class="accordion">
+        <ul class="nav nav-tabs menu-flex-direction applications-nav">
+          <li class="nav-item" id="apps">
+            <a class="nav-link" href="#">
+              <span class="icon-size-14">
+                <i class="icon-th-large ml-2 mr-2"></i>
+              </span>
+              <span class="text-animation ml-2">Applications</span>
+              <i class="icon-angle-down ml-2" id="apps-chavron"></i>
+            </a>
+          </li>
+        </ul>
+        <ul class="nav nav-tabs menu-flex-direction layouts-nav">
+          <li class="nav-item show-actions " id="layout-menu-tool">
+            <a class="nav-link">
+              <i class="icon-03-context-viewer ml-2 mr-2"></i>
+              <span class="text-animation mx-2">Layouts</span>
+            </a>
+            <div class="layout-menu-tool">
+              <div id="load">Load</div>
+              <div id="save">Save</div>
+            </div>
+          </li>          
+        </ul>
+        <ul class="nav nav-tabs menu-flex-direction fav-app-nav">
+            <!-- <span class="icon-size-12 bookmarked"><i class="icon-bookmark text-primary"></i></span> -->
+          <li class="nav-item app-active">
+            <a class="nav-link" href="#">
+              <span class="icon-size-14"><i class="icon-dev-tools ml-2 mr-2"></i></span>
+              <span class="text-animation mx-2">Devtools</span>
+              <!-- <span class="icon-size-24 active-app text-success"><i class="icon-dot mr-2 "></i></span> -->
+              <!-- <span class="icon-size-12 ml-auto"><i class="icon-bookmark"></i></span> -->
+            </a>
+          </li>
+          <li class="nav-item app-active">
+            <a class="nav-link" href="#">
+              <span class="icon-size-14"><i class="icon-interop ml-2 mr-2"></i></span>
+              <span class="text-animation mx-2">Interop</span>
+              <!-- <span class="icon-size-24 active-app text-success"><i class="icon-dot mr-2 "></i></span> -->
+              <!-- <span class="icon-size-12 ml-auto  text-primary"><i class="icon-bookmark-empty"></i></span> -->
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+                <span class="icon-size-14"><i class="icon-performance-report ml-2 mr-2"></i></span>
+                <span class="text-animation mx-2">Performance report</span>
+                <!-- <span class="icon-size-12 ml-auto  text-primary"><i class="icon-bookmark-empty"></i></span> -->
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <span class="icon-size-14"><i class="icon-context-viewer ml-2 mr-2"></i></span>
+              <span class="text-animation mx-2">Context viewer</span>
+              <!-- <span class="icon-size-12 ml-auto"><i class="icon-bookmark"></i></span> -->
+            </a>
+          </li>
+        </ul>
       </div>
-    </header>
-    <div class="accordion">
-      <ul class="nav nav-tabs menu-flex-direction applications-nav">
-        <li class="nav-item" id="apps">
-          <a class="nav-link" href="#">
-            <span class="icon-size-14">
-              <i class="icon-th-large ml-2 mr-2"></i>
-            </span>
-            <span class="text-animation ml-2">Applications</span>
-            <i class="icon-angle-down ml-2" id="apps-chavron"></i>
-          </a>
-        </li>
+  
+      <footer class="view-port-footer">
+        <ul class="nav nav-tabs menu-flex-direction">
+          <li class="nav-item" id="notification-panel">
+            <a class="nav-link" href="#">
+              <i class="icon-bell-alt ml-2 mr-4"></i>
+              <span class="text-animation">Notification</span>
+              <span id="notifications-count" class="circle-index" ></span>
+            </a>
+          </li>
+        </ul>
+      </footer>
+    </div>
 
-        <li class="toggle-content hide" id="app-content">
-          <div class="p-2">
-            <input class="form-control" id="app-search" aria-describedby="emailHelp"
-              placeholder="Search app...">
-          </div>
+    <div class="toggle-content hide" id="app-content">
+      <div class="p-2">
+        <input class="form-control" id="app-search" aria-describedby="emailHelp"
+          placeholder="Search app...">
+      </div>
 
-          <ul id="applications" class="nav nav-tabs menu-flex-direction">
+      <ul id="applications" class="nav nav-tabs menu-flex-direction">
 
-          </ul>
-        </li>
       </ul>
-      <ul class="nav nav-tabs menu-flex-direction layouts-nav">
-        <li class="nav-item show-actions " id="layout-menu-tool">
-          <a class="nav-link">
-            <i class="icon-03-context-viewer ml-2 mr-2"></i>
-            <span class="text-animation mx-2">Layouts</span>
-          </a>
-          <div class="layout-menu-tool">
-            <div id="load">Load</div>
-            <div id="save">Save</div>
-          </div>
-        </li>
-        <li class="toggle-content hide" id="layout-content">
-          <div class="p-2">
-            <div class="input-group">
-              <input type="text" id="layout-save-name" class="form-control" placeholder="Layout name ...">
-              <div class="input-group-append">
-                <button class="btn btn-secondary" id="layout-save-btn">
-                  <i class="icon-floppy"></i>
-                </button>
+    </div>
+
+    <div class="toggle-content hide" id="layout-load">
+      <ul class="nav nav-tabs menu-flex-direction">
+        <li class="nav-item">
+          <div class="nav-link action-menu">
+            <i class="icon-03-context-viewer ml-2 mr-4"></i>
+            <span>Start of the day</span>
+            <div class="action-menu-tool">
+              <button class="btn btn-icon secondary" id="menu-tool-4">
+                <i class="icon-ellipsis-vert"></i>
+              </button>
+              <div class="dropdown-menu" id="menu-div-4">
+                <a class="dropdown-item" href="#">Edit</a>
+                <a class="dropdown-item" href="#">Delete</a>
               </div>
             </div>
           </div>
-          <ul id="running-apps" class="nav nav-tabs menu-flex-direction">
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <i class="icon-dev-tools ml-2 mr-4"></i>
-                <span class="icon-size-24 active-app text-primary">
-                  <i class="icon-dot mr-2"></i>
-                </span>
-                <span>Devtools</spanclass>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <i class="icon-dev-tools ml-2 mr-4"></i>
-                <span class="icon-size-24 active-app text-primary"><i class="icon-dot mr-2 "></i>
-                </span>
-                <span>Interop</span>
-              </a>
-            </li>
-          </ul>
-        </li>
-        <li class="toggle-content hide" id="layout-load">
-          <ul class="nav nav-tabs menu-flex-direction">
-            <li class="nav-item">
-              <div class="nav-link action-menu">
-                <i class="icon-03-context-viewer ml-2 mr-4"></i>
-                <span>Start of the day</span>
-                <div class="action-menu-tool">
-                  <button class="btn btn-icon secondary" id="menu-tool-4">
-                    <i class="icon-ellipsis-vert"></i>
-                  </button>
-                  <div class="dropdown-menu" id="menu-div-4">
-                    <a class="dropdown-item" href="#">Edit</a>
-                    <a class="dropdown-item" href="#">Delete</a>
-                  </div>
-                </div>
-              </div>
-            </li>
-            <li class="nav-item">
-              <div class="nav-link action-menu">
-                <i class="icon-03-context-viewer ml-2 mr-4"></i>
-                <span>Vurnan Portfolio</span>
-                <div class="action-menu-tool">
-                  <button class="btn btn-icon secondary" id="menu-tool-5">
-                    <i class="icon-ellipsis-vert"></i>
-                  </button>
-                  <div class="dropdown-menu" id="menu-div-5">
-                    <a class="dropdown-item" href="#">Edit</a>
-                    <a class="dropdown-item" href="#">Delete</a>
-                  </div>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </li>
-      </ul>
-      <ul class="nav nav-tabs menu-flex-direction fav-app-nav">
-          <!-- <span class="icon-size-12 bookmarked"><i class="icon-bookmark text-primary"></i></span> -->
-        <li class="nav-item app-active">
-          <a class="nav-link" href="#">
-            <span class="icon-size-14"><i class="icon-dev-tools ml-2 mr-2"></i></span>
-            <span class="text-animation mx-2">Devtools</span>
-            <!-- <span class="icon-size-24 active-app text-success"><i class="icon-dot mr-2 "></i></span> -->
-            <!-- <span class="icon-size-12 ml-auto"><i class="icon-bookmark"></i></span> -->
-          </a>
-        </li>
-        <li class="nav-item app-active">
-          <a class="nav-link" href="#">
-            <span class="icon-size-14"><i class="icon-interop ml-2 mr-2"></i></span>
-            <span class="text-animation mx-2">Interop</span>
-            <!-- <span class="icon-size-24 active-app text-success"><i class="icon-dot mr-2 "></i></span> -->
-            <!-- <span class="icon-size-12 ml-auto  text-primary"><i class="icon-bookmark-empty"></i></span> -->
-          </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">
-              <span class="icon-size-14"><i class="icon-performance-report ml-2 mr-2"></i></span>
-              <span class="text-animation mx-2">Performance report</span>
-              <!-- <span class="icon-size-12 ml-auto  text-primary"><i class="icon-bookmark-empty"></i></span> -->
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">
-            <span class="icon-size-14"><i class="icon-context-viewer ml-2 mr-2"></i></span>
-            <span class="text-animation mx-2">Context viewer</span>
-            <!-- <span class="icon-size-12 ml-auto"><i class="icon-bookmark"></i></span> -->
-          </a>
+          <div class="nav-link action-menu">
+            <i class="icon-03-context-viewer ml-2 mr-4"></i>
+            <span>Vurnan Portfolio</span>
+            <div class="action-menu-tool">
+              <button class="btn btn-icon secondary" id="menu-tool-5">
+                <i class="icon-ellipsis-vert"></i>
+              </button>
+              <div class="dropdown-menu" id="menu-div-5">
+                <a class="dropdown-item" href="#">Edit</a>
+                <a class="dropdown-item" href="#">Delete</a>
+              </div>
+            </div>
+          </div>
         </li>
       </ul>
     </div>
 
-    <footer class="view-port-footer">
-      <ul class="nav nav-tabs menu-flex-direction">
-        <li class="nav-item" id="notification-panel">
+    <div class="toggle-content hide" id="layout-content">
+      <div class="p-2">
+        <div class="input-group">
+          <input type="text" id="layout-save-name" class="form-control" placeholder="Layout name ...">
+          <div class="input-group-append">
+            <button class="btn btn-secondary" id="layout-save-btn">
+              <i class="icon-floppy"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <ul id="running-apps" class="nav nav-tabs menu-flex-direction">
+        <li class="nav-item">
           <a class="nav-link" href="#">
-            <i class="icon-bell-alt ml-2 mr-4"></i>
-            <span class="text-animation">Notification</span>
-            <span id="notifications-count" class="circle-index" ></span>
+            <i class="icon-dev-tools ml-2 mr-4"></i>
+            <span class="icon-size-24 active-app text-primary">
+              <i class="icon-dot mr-2"></i>
+            </span>
+            <span>Devtools</spanclass>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">
+            <i class="icon-dev-tools ml-2 mr-4"></i>
+            <span class="icon-size-24 active-app text-primary"><i class="icon-dot mr-2 "></i>
+            </span>
+            <span>Interop</span>
           </a>
         </li>
       </ul>
-    </footer>
+    </div>
   </div>
   <script src="assets/@glue42-desktop.min.js"></script>
   <script src="assets/rxjs.umd.min.js"></script>

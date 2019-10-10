@@ -49,10 +49,7 @@ function layoutHTMLTemplate(layout) {
   </li>`;
 }
 
-const noLayoutsHTML = `
-<li class="text-center">
-    <span>No Layouts Saved</span>
-</li>`;
+const noLayoutsHTML = `<li class="text-center pt-3">No Layouts Saved</li><li class="text-center pt-3"><button class="btn btn-secondary">Add Layouts</button></li>`;
 
 export {
   allLayouts,

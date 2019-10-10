@@ -81,11 +81,20 @@ html {
   .toggle-content {
     @include transition(0);
     background-color: #272b35;
-    height: calc(100vh - 15.125rem);
+    height: 100vh;
+    width: calc(100vw - 200px);
     overflow: hidden;
 
     &.hide {
       width: 0;
+    }
+    > .nav,
+    > div {
+      width: calc(100vw - 200px);
+    }
+    > .nav {
+      overflow: auto;
+      height: calc(100vh - 3rem);
     }
   }
 
@@ -141,6 +150,7 @@ html {
 
     &.menu-flex-direction {
       flex-direction: column;
+      flex-wrap: nowrap;
     }
 
     &.applications-nav {
@@ -207,6 +217,7 @@ html {
       cursor: pointer;
       height: 3rem;
       padding-right: 1.5rem;
+      overflow: hidden;
 
       .dropdown-menu {
         min-width: auto;
@@ -489,7 +500,7 @@ html {
 
     .view-port-header {
       .menu {
-        position: fixed;
+        //position: fixed;
         top: 10px;
         right: 4px;
         z-index: 11;
