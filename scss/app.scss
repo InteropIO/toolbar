@@ -272,12 +272,15 @@ html {
       &:hover,
       &.active {
         i,
-        .text-animation {
+        .text-animation,
+        span {
           opacity: 0;
         }
 
         .nav-link {
           pointer-events: none;
+          width: 3px;
+          padding: 0;
 
           &::before {
             width: 3px;

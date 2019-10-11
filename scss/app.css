@@ -209,12 +209,16 @@ html .nav .show-actions {
   display: flex;
 }
 html .nav .show-actions:hover i,
-html .nav .show-actions:hover .text-animation, html .nav .show-actions.active i,
-html .nav .show-actions.active .text-animation {
+html .nav .show-actions:hover .text-animation,
+html .nav .show-actions:hover span, html .nav .show-actions.active i,
+html .nav .show-actions.active .text-animation,
+html .nav .show-actions.active span {
   opacity: 0;
 }
 html .nav .show-actions:hover .nav-link, html .nav .show-actions.active .nav-link {
   pointer-events: none;
+  width: 3px;
+  padding: 0;
 }
 html .nav .show-actions:hover .nav-link::before, html .nav .show-actions.active .nav-link::before {
   width: 3px;
