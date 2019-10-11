@@ -15,7 +15,13 @@ function handleLayoutClick() {
     const type = layoutElement.getAttribute('layout-type');
 
     if (e.target.matches('.delete-layout, .delete-layout *')) {
-      removeLayout(type, name);
+      layoutElement.classList.add('show-actions');
+    } else if(e.target.matches('.layout-menu-tool, .layout-menu-tool *')) {
+      if (e.target.matches('.layout-menu-tool .delete')) {
+        removeLayout(type, name);
+      }
+
+      layoutElement.classList.remove('show-actions');
     } else {
       restoreLayout(type, name);
     }
@@ -46,7 +52,13 @@ function layoutHTMLTemplate(layout) {
         </button>
       </div>
     </div>
-  </li>`;
+    <div class="layout-menu-tool">
+      <div class="delete">Delete</div>
+      <div class="cancel">Cancel</div>
+    </div>
+  </li>
+
+  `;
 }
 
 const noLayoutsHTML = `<li class="text-center pt-3">No Layouts Saved</li><li class="text-center pt-3"><button class="btn btn-secondary">Add Layouts</button></li>`;
