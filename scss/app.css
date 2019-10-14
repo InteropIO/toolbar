@@ -120,24 +120,6 @@ html .nav.fav-app-nav::before {
 html .nav.fav-app-nav:hover::before {
   background-color: transparent;
 }
-html .nav li {
-  position: relative;
-}
-html .nav li.toggle-content {
-  position: fixed;
-  top: 0;
-  left: 60px;
-  height: 100vh;
-  width: 300px;
-  display: none;
-}
-html .nav li.toggle-content li {
-  white-space: nowrap;
-  width: 100%;
-}
-html .nav li.hide {
-  width: 0;
-}
 html .nav ul.nav .nav-item .nav-link.active::before,
 html .nav ul.nav .nav-item .nav-link:hover::before {
   width: 0;
@@ -207,6 +189,7 @@ html .nav .layout-menu-tool div:hover, html .nav .layout-menu-tool div.active {
 }
 html .nav .show-actions {
   display: flex;
+  position: relative;
 }
 html .nav .show-actions:hover i,
 html .nav .show-actions:hover .text-animation,
@@ -379,6 +362,53 @@ html .active-app {
   top: -3px;
 }
 
+html .app.flex-column .toggle-content {
+  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition-delay: 0ms;
+  background-color: #272b35;
+  height: calc(100vh - 50px);
+  width: 100%;
+  overflow: hidden;
+}
+html .app.flex-column .toggle-content.hide {
+  width: auto;
+  height: 0;
+}
+html .app.flex-column .toggle-content > .nav,
+html .app.flex-column .toggle-content > div {
+  width: 100%;
+}
+html .app.flex-column .toggle-content > .nav {
+  overflow: auto;
+  height: auto;
+}
+html .app.flex-column .nav-tabs.menu-flex-direction .nav-link:hover::before,
+html .app.flex-column .nav-tabs.menu-flex-direction .nav-link.active::before {
+  height: 0;
+}
+html .app.flex-column .nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  flex-direction: row;
+  max-height: calc(100vh - 96px);
+}
+html .app.flex-column .nav .nav-item {
+  max-width: 25%;
+  width: 100%;
+}
+html .app.flex-column .nav .nav-item .nav-link::before {
+  height: 0;
+}
+html .app.flex-column .nav-tabs.menu-flex-direction .nav-link::before {
+  top: auto;
+  width: 100%;
+  bottom: 0;
+  height: 0;
+}
+html .app.flex-column .nav-tabs.menu-flex-direction .nav-link:hover::before, html .app.flex-column .nav-tabs.menu-flex-direction .nav-link.active::before {
+  height: 3px;
+}
 html .horizontal {
   display: flex;
   width: 100%;
@@ -390,6 +420,7 @@ html .horizontal .menu {
   display: block;
 }
 html .horizontal .view-port-header .menu {
+  position: fixed;
   top: 10px;
   right: 4px;
   z-index: 11;
@@ -475,55 +506,6 @@ html .horizontal .accordion .nav.fav-app-nav .nav-item:hover, html .horizontal .
 html .horizontal .accordion .nav .chavron-rotate {
   transform: rotate(-180deg);
 }
-html .horizontal .accordion .nav li.toggle-content {
-  position: fixed;
-  top: 50px;
-  left: 0;
-  height: calc(100vh - 48px);
-  width: 100vw;
-}
-html .horizontal .accordion .nav li.toggle-content li {
-  white-space: nowrap;
-}
-html .horizontal .accordion .nav li.hide {
-  height: 0;
-  width: 100vw;
-  padding: 0;
-}
-html .horizontal .accordion .toggle-content {
-  position: absolute;
-  top: 3rem;
-  left: 0;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-}
-html .horizontal .accordion .toggle-content .nav {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  flex-direction: row;
-  max-height: calc(100vh - 96px);
-}
-html .horizontal .accordion .toggle-content .nav .nav-item,
-html .horizontal .accordion .toggle-content .nav .nav-item:hover {
-  max-width: 25%;
-}
-html .horizontal .accordion .toggle-content .nav .nav-item .nav-link,
-html .horizontal .accordion .toggle-content .nav .nav-item:hover .nav-link {
-  width: 100%;
-}
-html .horizontal .accordion .toggle-content .nav .nav-item .nav-link::before,
-html .horizontal .accordion .toggle-content .nav .nav-item:hover .nav-link::before {
-  height: 0;
-}
-html .horizontal .accordion .toggle-content.hide {
-  width: 0;
-}
-html .horizontal .accordion .toggle-content .nav-tabs.menu-flex-direction .nav-link:hover::before,
-html .horizontal .accordion .toggle-content .nav-tabs.menu-flex-direction .nav-link.active::before {
-  height: 0;
-}
 html .horizontal .view-port-footer {
   position: fixed;
   right: 38px;
@@ -583,31 +565,19 @@ html .horizontal .view-port-footer .nav .nav-item:hover .text-animation, html .h
   opacity: 1;
   transform: translateX(0);
 }
-html .horizontal .nav-tabs.menu-flex-direction .nav-link::before {
-  top: auto;
-  width: 100%;
-  bottom: 0;
-  height: 0;
-}
-html .horizontal .nav-tabs.menu-flex-direction .nav-link:hover::before, html .horizontal .nav-tabs.menu-flex-direction .nav-link.active::before {
-  height: 3px;
-}
 
 @media screen and (max-width: 1370px) {
-  html .view-port.horizontal .accordion .toggle-content .nav .nav-item,
-html .view-port.horizontal .accordion .toggle-content .nav .nav-item:hover {
+  html .app.flex-column .nav .nav-item {
     max-width: 33%;
   }
 }
 @media screen and (max-width: 1190px) {
-  html .view-port.horizontal .accordion .toggle-content .nav .nav-item,
-html .view-port.horizontal .accordion .toggle-content .nav .nav-item:hover {
+  html .app.flex-column .nav .nav-item {
     max-width: 50%;
   }
 }
 @media screen and (max-width: 640px) {
-  html .view-port.horizontal .accordion .toggle-content .nav .nav-item,
-html .view-port.horizontal .accordion .toggle-content .nav .nav-item:hover {
+  html .app.flex-column .nav .nav-item {
     max-width: 100%;
   }
 }

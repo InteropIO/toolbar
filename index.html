@@ -55,6 +55,7 @@
       $('#toggle').click(function () {
         $('.view-port').toggleClass('horizontal vertical');  //Adds 'a', removes 'b' and vice versa
         $("#menu-top").toggleClass("show");
+        $(".app").toggleClass("flex-column");
 
         if (orientation == 'vertical') {
           orientation = 'horizontal';
@@ -123,6 +124,9 @@
             </div>
           </li>
         </ul>
+        <div class="text-center" style="display: none">
+          <span class="text-white-50 pl-2"><i class="icon-pin"></i> Pin apps</span>
+        </div>
         <ul class="nav nav-tabs menu-flex-direction fav-app-nav">
             <!-- <span class="icon-size-12 bookmarked"><i class="icon-bookmark text-primary"></i></span> -->
           <li class="nav-item app-active">

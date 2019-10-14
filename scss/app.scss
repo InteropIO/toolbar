@@ -165,27 +165,27 @@ html {
       @include divider();
     }
 
-    li {
-      position: relative;
+    // li {
+    //   position: relative;
 
-      &.toggle-content {
-        position: fixed;
-        top: 0;
-        left: 60px;
-        height: 100vh;
-        width: 300px;
-        display: none;
+    //   &.toggle-content {
+    //     position: fixed;
+    //     top: 0;
+    //     left: 60px;
+    //     height: 100vh;
+    //     width: 300px;
+    //     display: none;
 
-        li {
-          white-space: nowrap;
-          width: 100%;
-        }
-      }
+    //     li {
+    //       white-space: nowrap;
+    //       width: 100%;
+    //     }
+    //   }
 
-      &.hide {
-        width: 0;
-      }
-    }
+    //   &.hide {
+    //     width: 0;
+    //   }
+    // }
 
     ul.nav .nav-item .nav-link.active::before,
     ul.nav .nav-item .nav-link:hover::before {
@@ -268,6 +268,7 @@ html {
 
     .show-actions {
       display: flex;
+      position: relative;
 
       &:hover,
       &.active {
@@ -489,6 +490,71 @@ html {
 }
 
 html {
+
+  .app.flex-column {
+    .toggle-content {
+      @include transition(0);
+      background-color: #272b35;
+      height: calc(100vh - 50px);
+      width: 100%;
+      overflow: hidden;
+
+      &.hide {
+        width: auto;
+        height: 0;
+      }
+      > .nav,
+      > div {
+        width: 100%;
+      }
+      > .nav {
+        overflow: auto;
+        height: auto;
+      }
+    }
+    .nav-tabs.menu-flex-direction {
+      .nav-link:hover::before,
+      .nav-link.active::before {
+        height: 0;
+      }
+    }
+
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      flex-direction: row;
+      max-height: calc(100vh - 96px);
+
+      .nav-item {
+        max-width: 25%;
+        width: 100%;
+
+        .nav-link {
+          &::before {
+            height: 0;
+          }
+        }
+      }
+    }
+
+    .nav-tabs.menu-flex-direction {
+      .nav-link {
+        &::before {
+          top: auto;
+          width: 100%;
+          bottom: 0;
+          height: 0;
+        }
+
+        &:hover::before,
+        &.active::before {
+          height: 3px;
+        }
+      }
+    }
+  }
+
   .horizontal {
     display: flex;
     width: 100%;
@@ -503,7 +569,7 @@ html {
 
     .view-port-header {
       .menu {
-        //position: fixed;
+        position: fixed;
         top: 10px;
         right: 4px;
         z-index: 11;
@@ -600,67 +666,67 @@ html {
           transform: rotate(-180deg);
         }
 
-        li {
-          &.toggle-content {
-            position: fixed;
-            top: 50px;
-            left: 0;
-            height: calc(100vh - 48px);
-            width: 100vw;
+        // li {
+        //   &.toggle-content {
+        //     position: fixed;
+        //     top: 50px;
+        //     left: 0;
+        //     height: calc(100vh - 48px);
+        //     width: 100vw;
 
-            li {
-              white-space: nowrap;
-            }
-          }
+        //     li {
+        //       white-space: nowrap;
+        //     }
+        //   }
 
-          &.hide {
-            height: 0;
-            width: 100vw;
-            padding: 0;
-          }
-        }
+        //   &.hide {
+        //     height: 0;
+        //     width: 100vw;
+        //     padding: 0;
+        //   }
+        // }
       }
 
-      .toggle-content {
-        position: absolute;
-        top: 3rem;
-        left: 0;
-        width: 100%;
-        display: flex;
-        flex-direction: column;
+      // .toggle-content {
+      //   position: absolute;
+      //   top: 3rem;
+      //   left: 0;
+      //   width: 100%;
+      //   display: flex;
+      //   flex-direction: column;
 
-        .nav {
-          display: flex;
-          flex-wrap: wrap;
-          align-items: flex-start;
-          flex-direction: row;
-          max-height: calc(100vh - 96px);
+      //   .nav {
+      //     display: flex;
+      //     flex-wrap: wrap;
+      //     align-items: flex-start;
+      //     flex-direction: row;
+      //     max-height: calc(100vh - 96px);
 
-          .nav-item,
-          .nav-item:hover {
-            max-width: 25%;
+      //     .nav-item,
+      //     .nav-item:hover {
+      //       max-width: 25%;
 
-            .nav-link {
-              width: 100%;
+      //       .nav-link {
+      //         width: 100%;
 
-              &::before {
-                height: 0;
-              }
-            }
-          }
-        }
+      //         &::before {
+      //           height: 0;
+      //         }
+      //       }
+      //     }
+      //   }
 
-        &.hide {
-          width: 0;
-        }
+      //   &.hide {
+      //     width: 0;
+      //   }
 
-        .nav-tabs.menu-flex-direction {
-          .nav-link:hover::before,
-          .nav-link.active::before {
-            height: 0;
-          }
-        }
-      }
+      //   .nav-tabs.menu-flex-direction {
+      //     .nav-link:hover::before,
+      //     .nav-link.active::before {
+      //       height: 0;
+      //     }
+      //   }
+      // }
     }
 
     .view-port-footer {
@@ -721,72 +787,29 @@ html {
         }
       }
     }
-
-    .nav-tabs.menu-flex-direction {
-      .nav-link {
-        &::before {
-          top: auto;
-          width: 100%;
-          bottom: 0;
-          height: 0;
-        }
-
-        &:hover::before,
-        &.active::before {
-          height: 3px;
-        }
-      }
-    }
   }
 }
 
 @media screen and (max-width: 1370px) {
   html {
-    .view-port.horizontal {
-      .accordion {
-        .toggle-content {
-          .nav {
-            .nav-item,
-            .nav-item:hover {
-              max-width: 33%;
-            }
-          }
-        }
-      }
+    .app.flex-column .nav .nav-item {
+      max-width: 33%;
     }
   }
 }
 
 @media screen and (max-width: 1190px) {
   html {
-    .view-port.horizontal {
-      .accordion {
-        .toggle-content {
-          .nav {
-            .nav-item,
-            .nav-item:hover {
-              max-width: 50%;
-            }
-          }
-        }
-      }
+    .app.flex-column .nav .nav-item {
+      max-width: 50%;
     }
   }
 }
 
 @media screen and (max-width: 640px) {
   html {
-    .view-port.horizontal {
-      .accordion {
-        .toggle-content {
-          .nav {
-            .nav-item,
-            .nav-item:hover {
+    .app.flex-column .nav .nav-item {
               max-width: 100%;
-            }
-          }
-        }
-      }
     }
   }
 }
