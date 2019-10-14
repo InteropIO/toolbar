@@ -167,7 +167,7 @@ html .nav .layout-menu-tool {
   transition-delay: 0ms;
   background: rgba(255, 255, 255, 0.05);
   display: flex;
-  height: 100%;
+  height: 3rem;
   opacity: 0;
   visibility: hidden;
   width: 100%;
@@ -467,9 +467,12 @@ html .horizontal .accordion .nav.applications-nav:hover::before {
 html .horizontal .accordion .nav.applications-nav .nav-item:hover, html .horizontal .accordion .nav.applications-nav .nav-item.active {
   max-width: 160px;
 }
+html .horizontal .accordion .nav.layouts-nav .show-actions .layout-menu-tool {
+  width: 200px;
+}
 html .horizontal .accordion .nav.layouts-nav .show-actions:hover, html .horizontal .accordion .nav.layouts-nav .show-actions.active {
-  width: 260px;
   max-width: 260px;
+  width: 260px;
 }
 html .horizontal .accordion .nav.layouts-nav .show-actions:hover i,
 html .horizontal .accordion .nav.layouts-nav .show-actions:hover .text-animation, html .horizontal .accordion .nav.layouts-nav .show-actions.active i,
@@ -477,7 +480,7 @@ html .horizontal .accordion .nav.layouts-nav .show-actions.active .text-animatio
   opacity: 1;
 }
 html .horizontal .accordion .nav.layouts-nav .show-actions:hover .nav-link, html .horizontal .accordion .nav.layouts-nav .show-actions.active .nav-link {
-  width: 100%;
+  width: 160px;
 }
 html .horizontal .accordion .nav.layouts-nav .show-actions:hover .nav-link::before, html .horizontal .accordion .nav.layouts-nav .show-actions.active .nav-link::before {
   top: auto;
