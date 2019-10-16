@@ -100,8 +100,8 @@ function applicationHTMLTemplate(app, options = {}) {
     </li>`;
 }
 
-const noApplicationsHTML = `<li class="text-center pt-3">No applications</li>`;
-const noRunningAppsHTML =  `<li class="text-center pt-3">No running applications</li><li class="text-center pt-3"><button class="btn btn-secondary">Add applications</button></li>`;
+const noApplicationsHTML = `<li class="text-center w-100 pt-3">No applications</li>`;
+const noRunningAppsHTML =  `<li class="text-center w-100 pt-3">No running applications</li><li class="text-center w-100 pt-3"><button class="btn btn-secondary">Add applications</button></li>`;
 
 
 export {

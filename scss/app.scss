@@ -78,7 +78,7 @@
 }
 
 body {
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 html {
@@ -104,6 +104,8 @@ html {
 
   .text-animation {
     @include text-animation("off", "left", 0);
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .nav {
@@ -139,10 +141,6 @@ html {
 
         &.active,
         &:hover {
-          .icon-angle-down {
-            opacity: 1;
-          }
-
           &::before {
             height: 48px;
             width: 3px;
@@ -168,28 +166,6 @@ html {
       overflow: hidden;
       @include divider();
     }
-
-    // li {
-    //   position: relative;
-
-    //   &.toggle-content {
-    //     position: fixed;
-    //     top: 0;
-    //     left: 60px;
-    //     height: 100vh;
-    //     width: 300px;
-    //     display: none;
-
-    //     li {
-    //       white-space: nowrap;
-    //       width: 100%;
-    //     }
-    //   }
-
-    //   &.hide {
-    //     width: 0;
-    //   }
-    // }
 
     ul.nav .nav-item .nav-link.active::before,
     ul.nav .nav-item .nav-link:hover::before {
@@ -423,6 +399,19 @@ html {
     }
   }
 
+  .expand {
+    .applications-nav {
+      .nav-item {
+        &:hover,
+        &.active {
+          .icon-angle-down {
+            opacity: 1;
+          }
+        }
+      }
+    }
+  }
+
   .active-app {
     margin-left: -14px;
   }
@@ -430,7 +419,7 @@ html {
 
 .app-active {
   position: relative;
-  background-color: rgba(255, 255, 255, .025);
+  background-color: rgba(255, 255, 255, 0.025);
 
   &::before {
     content: "";
@@ -440,7 +429,7 @@ html {
     bottom: 30%;
     left: 0;
     background-color: #2080d3;
-    transition: all .3s ease;
+    transition: all 0.3s ease;
   }
 
   &:hover {
@@ -466,7 +455,7 @@ html {
       &::before {
         top: -3px;
       }
-    }  
+    }
   }
 }
 
@@ -489,7 +478,6 @@ html {
 }
 
 html {
-
   .app.flex-column {
     .toggle-content {
       @include transition(0);
@@ -502,15 +490,18 @@ html {
         width: auto;
         height: 0;
       }
+
       > .nav,
       > div {
         width: 100%;
       }
+
       > .nav {
         overflow: auto;
         height: auto;
       }
     }
+
     .nav-tabs.menu-flex-direction {
       .nav-link:hover::before,
       .nav-link.active::before {
@@ -578,11 +569,8 @@ html {
     .accordion {
       display: flex;
       height: auto;
-      // width: calc(100vw - 331px);
 
       .nav {
-        // margin-right: 4px;
-
         .bookmarked {
           position: absolute;
           left: 0.5rem;
@@ -591,7 +579,7 @@ html {
 
         &.nav-tabs {
           .nav-item {
-            max-width: 60px;
+            width: 60px;
             @include transition(0);
 
             &:hover {
@@ -614,30 +602,31 @@ html {
 
         .text-animation {
           max-width: calc(100% - 30px);
-          overflow: hidden;
-          text-overflow: ellipsis;
         }
 
         &.applications-nav {
           @include divider-horizontal();
 
           .nav-item {
+            max-width: 100%;
+
             &:hover,
             &.active {
-              max-width: 260px;
+              max-width: 200px;
+              width: 200px;
             }
           }
         }
 
         &.layouts-nav {
           .show-actions {
-           .layout-menu-tool {
-             width: 200px;
-           }
+            .layout-menu-tool {
+              width: 200px;
+            }
+
             &:hover,
-            &.active { 
-             max-width: 260px;
-            //  width: 200px;
+            &.active {
+              width: 200px;
 
               i,
               .text-animation {
@@ -666,7 +655,7 @@ html {
           .nav-item {
             &:hover,
             &.active {
-              max-width: 200px;
+              width: 200px;
             }
           }
         }
@@ -674,68 +663,7 @@ html {
         .chavron-rotate {
           transform: rotate(-180deg);
         }
-
-        // li {
-        //   &.toggle-content {
-        //     position: fixed;
-        //     top: 50px;
-        //     left: 0;
-        //     height: calc(100vh - 48px);
-        //     width: 100vw;
-
-        //     li {
-        //       white-space: nowrap;
-        //     }
-        //   }
-
-        //   &.hide {
-        //     height: 0;
-        //     width: 100vw;
-        //     padding: 0;
-        //   }
-        // }
       }
-
-      // .toggle-content {
-      //   position: absolute;
-      //   top: 3rem;
-      //   left: 0;
-      //   width: 100%;
-      //   display: flex;
-      //   flex-direction: column;
-
-      //   .nav {
-      //     display: flex;
-      //     flex-wrap: wrap;
-      //     align-items: flex-start;
-      //     flex-direction: row;
-      //     max-height: calc(100vh - 96px);
-
-      //     .nav-item,
-      //     .nav-item:hover {
-      //       max-width: 25%;
-
-      //       .nav-link {
-      //         width: 100%;
-
-      //         &::before {
-      //           height: 0;
-      //         }
-      //       }
-      //     }
-      //   }
-
-      //   &.hide {
-      //     width: 0;
-      //   }
-
-      //   .nav-tabs.menu-flex-direction {
-      //     .nav-link:hover::before,
-      //     .nav-link.active::before {
-      //       height: 0;
-      //     }
-      //   }
-      // }
     }
 
     .view-port-footer {
@@ -818,7 +746,7 @@ html {
 @media screen and (max-width: 640px) {
   html {
     .app.flex-column .nav .nav-item {
-              max-width: 100%;
+      max-width: 100%;
     }
   }
 }
