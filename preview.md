@@ -5,5 +5,5 @@ To preview this toolbar in Glue Desktop:
 3. open devtools of the old appmanager
 4. run
 ```javascript
-  glue.windows.open('App Manager Vanilla', 'http://127.0.0.1:8080/', {isSticky: false, mode:'html', allowClose: false, allowMinimize: false, allowMaximize: false, allowCollapse: false, hasSizeAreas: true, width: 500})
+  glue.windows.open('App Manager Vanilla', 'http://127.0.0.1:5500/', {isSticky: false, mode:'html', allowClose: false, allowMinimize: false, allowMaximize: false, allowCollapse: false, hasSizeAreas: true, width: 500})
 ```
