@@ -10,7 +10,6 @@ const gluePromise = new Promise(async (res, rej) => {
 });
 
 const glueAppsObs = new rxjs.BehaviorSubject([]);
-const runningAppsObs = new rxjs.BehaviorSubject([]);
 const layoutsObs = new rxjs.BehaviorSubject([]);
 const notificationsCountObs = new rxjs.BehaviorSubject(null);
 
@@ -83,6 +82,18 @@ function openNotificationPanel() {
   glue.agm.invoke('T42.Notifications.Show');
 }
 
+async function registerHotkey() {
+  await gluePromise;
+  glue.hotkeys.register('Ctrl+Shift+B', () => {
+    glue.windows.my().focus();
+  })
+}
+
+async function shutdown() {
+  await gluePromise;
+  glue.appManager.exit();
+}
+
 export {
   gluePromise,
   glueAppsObs,
@@ -92,5 +103,7 @@ export {
   openNotificationPanel,
   removeLayout,
   restoreLayout,
-  saveLayout
+  saveLayout,
+  registerHotkey,
+  shutdown
 };

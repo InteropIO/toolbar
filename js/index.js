@@ -1,22 +1,28 @@
-// import {gluePromise} from './glue-related.js';
-// import {applicationsObservable} from './applications.js';
-console.log('js loaded');
-
-import {applicationsObs, applicationHTMLTemplate, handleAppClick, handleSearchChange, runningApps, noRunningAppsHTML, noApplicationsHTML} from './applications.js';
+import {
+  applicationsObs,
+  applicationHTMLTemplate,
+  favoriteApplicationHTMLTemplate,
+  handleAppClick,
+  handleSearchChange,
+  runningApps,
+  noRunningAppsHTML,
+  noApplicationsHTML,
+  noFavoriteAppsHTML} from './applications.js';
+import {favoriteApps, updateFavoriteApps} from './favorites.js';
 import {allLayouts, layoutHTMLTemplate, handleLayoutClick, handleLayoutSave, noLayoutsHTML} from './layouts.js';
 import {notificationsCountObs, openNotificationPanel} from './glue-related.js';
+import * as glueModule from './glue-related.js';
+import * as utils from './utils.js';
 
 window.q = document.querySelector.bind(document);
 window.qa = document.querySelectorAll.bind(document);
-
-window.a = applicationsObs;
 
 document.addEventListener('DOMContentLoaded', () => {
   console.log('window loaded');
   printApps();
   printRunningApps();
   printLayouts();
-  // printFavoriteApps();
+  printFavoriteApps();
   printNotificationCount();
 
   handleWidthChange();
@@ -25,17 +31,23 @@ document.addEventListener('DOMContentLoaded', () => {
   handleLayoutClick();
   handleLayoutSave();
   handleNotificationClick();
+  utils.handleThemeChange();
+  utils.handleShutdownClick();
+  glueModule.registerHotkey();
 })
+
 
 function printApps() {
   applicationsObs.subscribe(apps => {
     let newApplicationsHTML = '';
     if (apps.length > 0) {
-      apps.forEach(app => newApplicationsHTML += applicationHTMLTemplate(app, {favorite: true}));
+      apps.forEach(app => newApplicationsHTML += applicationHTMLTemplate(app, {favoriteBtn: true}));
       q('#applications').innerHTML = newApplicationsHTML;
     } else {
       q('#applications').innerHTML = noApplicationsHTML;
     }
+
+    updateFavoriteApps();
   })
 }
 
@@ -43,7 +55,7 @@ function printRunningApps() {
   runningApps.subscribe((runningApps) => {
     let newRunningAppsHTML = '';
     if (runningApps.length > 0) {
-      runningApps.forEach(runningApp => newRunningAppsHTML += applicationHTMLTemplate(runningApp, {favorite: false}));
+      runningApps.forEach(runningApp => newRunningAppsHTML += applicationHTMLTemplate(runningApp, {favoriteBtn: false}));
       q('#running-apps').innerHTML = newRunningAppsHTML;
     } else {
       q('#running-apps').innerHTML = noRunningAppsHTML;
@@ -61,6 +73,26 @@ function printLayouts() {
       q('#layout-load>ul').innerHTML = noLayoutsHTML;
     }
   });
+}
+
+function printFavoriteApps() {
+  favoriteApps
+  .pipe(rxjs.operators.combineLatest(applicationsObs))
+  .subscribe(([favApps, allApps]) => {
+    let favAppsHtml = ``;
+
+    if (favApps.length > 0) {
+      favApps.forEach(favApp => {
+        let fullApp = allApps.find(a => a.name === favApp);
+        favAppsHtml += favoriteApplicationHTMLTemplate(fullApp, {favoriteBtn: false})
+      });
+
+    } else {
+      favAppsHtml = noFavoriteAppsHTML;
+    }
+
+    q('#fav-apps').innerHTML = favAppsHtml;
+  })
 }
 
 function printNotificationCount() {
@@ -91,6 +123,40 @@ function handleWidthChange() {
 
 
 function resizeVisibleArea(width) {
-  // console.log(width);
+  width = Math.round(width);
+  console.log(width);
+  if (window.glue && !window.stopResizing) {
+    window.glue.agm.invoke("T42.Wnd.Execute", {
+      command: "updateVisibleAreas",
+      windowId: glue.windows.my().id,
+      options: {
+        areas: [{
+          top: 0,
+          left: 0,
+          width,
+          height: window.outerHeight
+        }]
+      }
+    })
+      .then(() => {})
+      .catch(console.error);
+  }
 }
+
+function expandWindow() {
+  window.glue.agm.invoke("T42.Wnd.Execute", {
+    command: "updateVisibleAreas",
+    windowId: glue.windows.my().id,
+    options: {
+      areas: [{
+        top: 0,
+        left: 0,
+        width: 500,
+        height: 800
+      }]
+    }
+  })
+}
+
+window.expandWindow = expandWindow;
 

@@ -500,6 +500,15 @@ html {
         overflow: auto;
         height: auto;
       }
+
+      .nav-link {
+        &:hover,
+        &.active {
+          &::before {
+            display: none;
+          }
+        }
+      }
     }
 
     .nav-tabs.menu-flex-direction {

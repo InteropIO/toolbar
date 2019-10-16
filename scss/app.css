@@ -546,6 +546,10 @@ html .app.flex-column .toggle-content > .nav {
   height: auto;
 }
 
+html .app.flex-column .toggle-content .nav-link:hover::before, html .app.flex-column .toggle-content .nav-link.active::before {
+  display: none;
+}
+
 html .app.flex-column .nav-tabs.menu-flex-direction .nav-link:hover::before,
 html .app.flex-column .nav-tabs.menu-flex-direction .nav-link.active::before {
   height: 0;

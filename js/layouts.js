@@ -16,12 +16,14 @@ function handleLayoutClick() {
 
     if (e.target.matches('.delete-layout, .delete-layout *')) {
       layoutElement.classList.add('show-actions');
+      layoutElement.classList.add('active');
     } else if(e.target.matches('.layout-menu-tool, .layout-menu-tool *')) {
       if (e.target.matches('.layout-menu-tool .delete')) {
         removeLayout(type, name);
       }
 
       layoutElement.classList.remove('show-actions');
+      layoutElement.classList.remove('active');
     } else {
       restoreLayout(type, name);
     }
