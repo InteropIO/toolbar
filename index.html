@@ -72,6 +72,18 @@
         }
       })
 
+      document.querySelector('.app').addEventListener('mouseenter', (e) => {
+        document.querySelector('.view-port').classList.add('expand');
+      })
+
+      document.querySelector('.app').addEventListener('mouseleave', (e) => {
+        console.log(e.x);
+        if (!document.querySelectorAll('.toggle-content:not(.hide)').length > 0) {
+          document.querySelector('.view-port').classList.remove('expand');
+          document.querySelectorAll('.toggle-content').forEach(e => e.classList.add('hide'));
+        }
+      })
+
     });
   </script>
 
@@ -80,7 +92,7 @@
 <body>
   <!-- <button type="button" id="layoutSwitch" class="btn btn-primary layout-switch">Switch Layout</button> -->
   <!-- for toggle effect needs to remove pinned class -->
-  <div class="app d-inline-flex w-100">
+  <div class="app d-inline-flex">
     <div id="applicationLauncher" class="view-port vertical">
       <header class="view-port-header">
         <div class="logo">
@@ -92,11 +104,11 @@
           </button>
           <div class="dropdown-menu" id="menu-top">
             <a class="dropdown-item" href="#" id="toggle">Toggle</a>
-            <a class="dropdown-item" href="#" id="expand">Expand</a>
+            <a class="dropdown-item" href="#" id="change-theme">Change Theme</a>
             <a class="dropdown-item" href="#">Settings</a>
             <a class="dropdown-item" href="#">About</a>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item disabled" href="#">Shut down</a>
+            <a class="dropdown-item" href="#" id="shutdown">Shut down</a>
           </div>
         </div>
       </header>
@@ -127,38 +139,32 @@
         <div class="text-center" style="display: none">
           <span class="text-white-50 pl-2"><i class="icon-pin"></i> Pin apps</span>
         </div>
-        <ul class="nav nav-tabs menu-flex-direction fav-app-nav">
+        <ul id="fav-apps" class="nav nav-tabs menu-flex-direction fav-app-nav">
             <!-- <span class="icon-size-12 bookmarked"><i class="icon-bookmark text-primary"></i></span> -->
-          <li class="nav-item app-active">
+          <!-- <li class="nav-item app-active">
             <a class="nav-link" href="#">
               <span class="icon-size-14"><i class="icon-dev-tools ml-2 mr-2"></i></span>
               <span class="text-animation mx-2">Devtools</span>
-              <!-- <span class="icon-size-24 active-app text-success"><i class="icon-dot mr-2 "></i></span> -->
-              <!-- <span class="icon-size-12 ml-auto"><i class="icon-bookmark"></i></span> -->
             </a>
           </li>
           <li class="nav-item app-active">
             <a class="nav-link" href="#">
               <span class="icon-size-14"><i class="icon-interop ml-2 mr-2"></i></span>
               <span class="text-animation mx-2">Interop</span>
-              <!-- <span class="icon-size-24 active-app text-success"><i class="icon-dot mr-2 "></i></span> -->
-              <!-- <span class="icon-size-12 ml-auto  text-primary"><i class="icon-bookmark-empty"></i></span> -->
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">
                 <span class="icon-size-14"><i class="icon-performance-report ml-2 mr-2"></i></span>
                 <span class="text-animation mx-2">Performance report</span>
-                <!-- <span class="icon-size-12 ml-auto  text-primary"><i class="icon-bookmark-empty"></i></span> -->
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">
               <span class="icon-size-14"><i class="icon-context-viewer ml-2 mr-2"></i></span>
               <span class="text-animation mx-2">Context viewer</span>
-              <!-- <span class="icon-size-12 ml-auto"><i class="icon-bookmark"></i></span> -->
             </a>
-          </li>
+          </li> -->
         </ul>
       </div>
 
@@ -253,6 +259,9 @@
       </ul>
     </div>
   </div>
+  <!-- <div style="width: 50px;height:50px;">
+
+  </div> -->
   <script src="assets/@glue42-desktop.min.js"></script>
   <script src="assets/rxjs.umd.min.js"></script>
   <script src="js/index.js" type="module"></script>

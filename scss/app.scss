@@ -359,7 +359,7 @@ html {
     }
 
     .accordion {
-      height: calc(100vh - 6.125rem);
+      height: calc((100vh - 6.125rem) - 50px);
       overflow-x: hidden;
       overflow-y: auto;
 
@@ -466,7 +466,7 @@ html {
       &::before {
         top: -3px;
       }
-    }  
+    }
   }
 }
 
@@ -635,7 +635,7 @@ html {
              width: 200px;
            }
             &:hover,
-            &.active { 
+            &.active {
              max-width: 260px;
             //  width: 200px;
 
