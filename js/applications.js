@@ -134,7 +134,7 @@ function getAppIcon(app, options = {}) {
     return `<img src="${app.icon}" class="ml-${marginLeft} mr-${marginRight}" style="width:12px; height:12px"/>`;
   } else {
     return `<span class="icon-size-14 ml-${marginLeft} mr-${marginRight}">
-    <i class="icon-tick42-icon-monochrome"></i>
+    <i class="icon-app"></i>
   </span>`;
   }
 }
