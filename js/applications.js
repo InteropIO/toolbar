@@ -108,6 +108,7 @@ function applicationHTMLTemplate(app, options = {}) {
         <div class="action-menu-tool">
           <button class="btn btn-icon secondary add-favorite">
           <i class="icon-star-empty-1"></i>
+          <i class="icon-star-full"></i>
           </button>
         </div>` : '') +
       `</div>

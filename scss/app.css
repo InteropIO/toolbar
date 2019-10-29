@@ -343,6 +343,12 @@ html .expand .applications-nav:hover .icon-angle-down, html .expand .application
 html .active-app {
   margin-left: -14px;
 }
+html #applications .nav-item.fav-app i.icon-star-empty-1 {
+  display: none;
+}
+html #applications .nav-item:not(.fav-app) i.icon-star-full {
+  display: none;
+}
 
 .app-active {
   position: relative;

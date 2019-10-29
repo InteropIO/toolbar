@@ -423,6 +423,21 @@ html {
   .active-app {
     margin-left: -14px;
   }
+
+  #applications {
+    .nav-item.fav-app {
+      i.icon-star-empty-1 {
+        display:none;
+      }
+    }
+
+    .nav-item:not(.fav-app) {
+      i.icon-star-full {
+        display: none;
+      }
+    }
+
+  }
 }
 
 .app-active {
