@@ -118,7 +118,7 @@ function favoriteApplicationHTMLTemplate(app) {
   return `
   <li class="nav-item ${app.instances.length > 0 ? 'app-active' : ''}">
     <a class="nav-link" href="#">
-      ${getAppIcon(app, {marginRight: 2, marginLeft: 1})}
+      ${getAppIcon(app, {marginRight: 2, marginLeft: 2})}
       <span class="text-animation mx-2">${app.title}</span>
     </a>
   </li>
@@ -131,9 +131,9 @@ function getAppIcon(app, options = {}) {
     marginLeft = 2} = options;
 
   if (app.icon) {
-    return `<img src="${app.icon}" class="ml-${marginLeft} mr-${marginRight}" style="width:12px; height:12px"/>`;
+    return `<img src="${app.icon}" class="ml-${marginLeft} mr-${marginRight}" style="width:16px;"/>`;
   } else {
-    return `<span class="icon-size-14 ml-${marginLeft} mr-${marginRight}">
+    return `<span class="icon-size-16 ml-${marginLeft} mr-${marginRight}">
     <i class="icon-app"></i>
   </span>`;
   }

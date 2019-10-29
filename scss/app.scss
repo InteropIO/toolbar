@@ -112,6 +112,7 @@ html {
     &.nav-tabs {
       .nav-item {
         white-space: nowrap;
+        user-select: none;
       }
 
       .nav-link {
@@ -134,7 +135,9 @@ html {
         i {
           @include transition(0);
         }
-
+        img {
+          filter: grayscale(100%) brightness(1);
+        }
         .icon-angle-down {
           opacity: 0;
         }
@@ -146,6 +149,9 @@ html {
             width: 3px;
             @include transition(0);
           }
+          img {
+            filter:grayscale(100%) brightness(2);
+          }
         }
       }
     }
@@ -155,7 +161,7 @@ html {
       flex-wrap: nowrap;
     }
 
-    &.applications-nav {
+    .applications-nav {
       position: relative;
       overflow: hidden;
       @include divider();
@@ -164,7 +170,10 @@ html {
     &.fav-app-nav {
       position: relative;
       overflow: hidden;
-      @include divider();
+      li:first-child {
+        @include divider();
+      }
+      
     }
 
     ul.nav .nav-item .nav-link.active::before,
@@ -335,9 +344,10 @@ html {
     }
 
     .accordion {
-      height: calc(100vh - 6.125rem);
+      height: calc(100vh - 12.125rem);
       overflow-x: hidden;
       overflow-y: auto;
+      @include transition(0);
 
       .active-app {
         position: absolute;
@@ -401,14 +411,12 @@ html {
 
   .expand {
     .applications-nav {
-      .nav-item {
         &:hover,
         &.active {
           .icon-angle-down {
             opacity: 1;
           }
         }
-      }
     }
   }
 
