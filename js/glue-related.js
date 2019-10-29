@@ -53,7 +53,8 @@ function trackNotificationCount() {
     })
 }
 
-function startApp(appName) {
+async function startApp(appName) {
+  await gluePromise;
   let glueApp = glue.appManager.application(appName);
   if (glueApp){
     glueApp.start();
@@ -62,11 +63,13 @@ function startApp(appName) {
   }
 }
 
-function removeLayout(type, name) {
+async function removeLayout(type, name) {
+  await gluePromise;
   glue.layouts.remove(type, name);
 }
 
-function restoreLayout(type, name) {
+async function restoreLayout(type, name) {
+  await gluePromise;
   if (type === 'Global') {
     glue.layouts.restore({name});
   } else {
@@ -74,11 +77,13 @@ function restoreLayout(type, name) {
   }
 }
 
-function saveLayout(name) {
+async function saveLayout(name) {
+  await gluePromise;
   glue.layouts.save({name});
 }
 
-function openNotificationPanel() {
+async function openNotificationPanel() {
+  await gluePromise;
   glue.agm.invoke('T42.Notifications.Show');
 }
 
@@ -94,6 +99,22 @@ async function shutdown() {
   glue.appManager.exit();
 }
 
+async function resizeWindowVisibleArea(width) {
+  await gluePromise;
+  window.glue.agm.invoke("T42.Wnd.Execute", {
+    command: "updateVisibleAreas",
+    windowId: glue.windows.my().id,
+    options: {
+      areas: [{
+        top: 0,
+        left: 0,
+        width,
+        height: window.outerHeight
+      }]
+    }
+  })
+}
+
 export {
   gluePromise,
   glueAppsObs,
@@ -105,5 +126,6 @@ export {
   restoreLayout,
   saveLayout,
   registerHotkey,
-  shutdown
+  shutdown,
+  resizeWindowVisibleArea
 };

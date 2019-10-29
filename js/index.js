@@ -10,7 +10,7 @@ import {
   noFavoriteAppsHTML} from './applications.js';
 import {favoriteApps, updateFavoriteApps} from './favorites.js';
 import {allLayouts, layoutHTMLTemplate, handleLayoutClick, handleLayoutSave, noLayoutsHTML} from './layouts.js';
-import {notificationsCountObs, openNotificationPanel} from './glue-related.js';
+import {notificationsCountObs, openNotificationPanel, resizeWindowVisibleArea} from './glue-related.js';
 import * as glueModule from './glue-related.js';
 import * as utils from './utils.js';
 
@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
   handleNotificationClick();
   utils.handleThemeChange();
   utils.handleShutdownClick();
+  utils.handleTopMenuClicks();
   glueModule.registerHotkey();
 })
 
@@ -113,6 +114,7 @@ function handleNotificationClick() {
 }
 
 function handleWidthChange() {
+  resizeVisibleArea(q('body .app').offsetWidth);
   const widthObserver = new ResizeObserver((elements) => {
     resizeVisibleArea(elements[0].contentRect.right);
   })
@@ -124,23 +126,7 @@ function handleWidthChange() {
 
 function resizeVisibleArea(width) {
   width = Math.round(width);
-  console.log(width);
-  if (window.glue && !window.stopResizing) {
-    window.glue.agm.invoke("T42.Wnd.Execute", {
-      command: "updateVisibleAreas",
-      windowId: glue.windows.my().id,
-      options: {
-        areas: [{
-          top: 0,
-          left: 0,
-          width,
-          height: window.outerHeight
-        }]
-      }
-    })
-      .then(() => {})
-      .catch(console.error);
-  }
+  resizeWindowVisibleArea(width);
 }
 
 function expandWindow() {

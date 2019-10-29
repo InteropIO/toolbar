@@ -40,7 +40,7 @@ function addFavoriteApp(appName) {
   newApps.push(appName);
   favoriteApps.next(newApps);
   localStorage.setItem('favorite-apps', JSON.stringify(newApps));
-  // q(`#applications [app-name="${appName}"]`)
+  updateFavoriteApps();
 }
 
 function removeFavoriteApp(appName) {
@@ -50,7 +50,7 @@ function removeFavoriteApp(appName) {
   currentApps = currentApps.filter(checkedAppName => checkedAppName !== appName);
   favoriteApps.next(currentApps);
   localStorage.setItem('favorite-apps', JSON.stringify(currentApps));
-  // q(`#applications [app-name="${appName}"]`)
+  updateFavoriteApps();
 }
 
 export {
