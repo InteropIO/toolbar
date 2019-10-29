@@ -169,13 +169,32 @@ html {
 
     &.fav-app-nav {
       position: relative;
-      overflow: hidden;
-      li:first-child {
-        @include divider();
-      }
-      
+      overflow: hidden;      
     }
-
+    .favorite {
+      white-space: nowrap;
+      padding-left: .5rem;
+      height: 1.25rem;
+      @include transition(0);
+      user-select: none;
+      i {        
+        position: absolute;
+        right: 1.375rem;
+        bottom: .25rem;
+      }
+      span {
+        @include text-animation("off", "left", 0);
+      }
+      &::after {
+        background-color: rgba(255, 255, 255, 0.075);
+        content: "";
+        height: 1px;
+        left: 8px;
+        position: absolute;
+        width: calc(100% - 16px);
+        bottom: 0;
+      }
+    }
     ul.nav .nav-item .nav-link.active::before,
     ul.nav .nav-item .nav-link:hover::before {
       width: 0;
@@ -323,7 +342,7 @@ html {
       height: 3rem;
       justify-content: space-between;
       padding-left: 1.125rem;
-      padding-right: 0.5rem;
+      padding-right: 0.25rem;
 
       a {
         @include non-underline();
@@ -344,7 +363,7 @@ html {
     }
 
     .accordion {
-      height: calc(100vh - 12.125rem);
+      height: calc(100vh - 13.375rem);
       overflow-x: hidden;
       overflow-y: auto;
       @include transition(0);
@@ -392,7 +411,14 @@ html {
     .text-animation {
       @include text-animation("on", "", 0);
     }
-
+    .favorite {
+      span {
+        @include text-animation("on", "", 0);
+      }
+      i {
+        right: .875rem;
+      }
+    }
     .accordion {
       .nav {
         .toggle-content {
