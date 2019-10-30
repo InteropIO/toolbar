@@ -70,6 +70,12 @@ html.dark .nav .layout-menu-tool div:hover, html.dark .nav .layout-menu-tool div
   background-color: rgba(255, 255, 255, 0.05);
   color: white;
 }
+html.dark .nav .nav-link img {
+  filter: grayscale(100%) brightness(1);
+}
+html.dark .nav .nav-link.active img, html.dark .nav .nav-link:hover img {
+  filter: grayscale(100%) brightness(2);
+}
 
 html.light .view-port {
   border: 1px solid rgba(219, 222, 230, 0.8);
@@ -114,6 +120,12 @@ html.light .nav .layout-menu-tool div:first-of-type {
 html.light .nav .layout-menu-tool div:hover, html.light .nav .layout-menu-tool div.active {
   background-color: rgba(219, 222, 230, 0.8);
   color: black;
+}
+html.light .nav .nav-link img {
+  filter: grayscale(100%) brightness(0.5);
+}
+html.light .nav .nav-link.active img, html.light .nav .nav-link:hover img {
+  filter: grayscale(100%) brightness(0);
 }
 
 html .toggle-content {
@@ -167,9 +179,6 @@ html .nav.nav-tabs .nav-link i {
   transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 0ms;
 }
-html .nav.nav-tabs .nav-link img {
-  filter: grayscale(100%) brightness(1);
-}
 html .nav.nav-tabs .nav-link .icon-angle-down {
   opacity: 0;
 }
@@ -178,9 +187,6 @@ html .nav.nav-tabs .nav-link.active::before, html .nav.nav-tabs .nav-link:hover:
   width: 3px;
   transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 0ms;
-}
-html .nav.nav-tabs .nav-link.active img, html .nav.nav-tabs .nav-link:hover img {
-  filter: grayscale(100%) brightness(2);
 }
 html .nav.menu-flex-direction {
   flex-direction: column;
