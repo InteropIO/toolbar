@@ -63,6 +63,12 @@ async function startApp(appName) {
   }
 }
 
+async function focusApp(appName) {
+  await gluePromise;
+  let app = glue.appManager.application(appName);
+  app.instances.forEach(i => i.activate());
+}
+
 async function removeLayout(type, name) {
   await gluePromise;
   glue.layouts.remove(type, name);
@@ -120,6 +126,7 @@ export {
   glueAppsObs,
   layoutsObs,
   startApp,
+  focusApp,
   notificationsCountObs,
   openNotificationPanel,
   removeLayout,

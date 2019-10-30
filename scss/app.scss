@@ -169,7 +169,7 @@ html {
 
     &.fav-app-nav {
       position: relative;
-      overflow: hidden;      
+      overflow: hidden;
     }
     .favorite {
       white-space: nowrap;
@@ -177,7 +177,7 @@ html {
       height: 1.25rem;
       @include transition(0);
       user-select: none;
-      i {        
+      i {
         position: absolute;
         right: 1.375rem;
         bottom: .25rem;
@@ -195,6 +195,15 @@ html {
         bottom: 0;
       }
     }
+
+    #fav-apps {
+      &>li:not(.nav-item) {
+        @include transition(0);
+        opacity: 0;
+        white-space: nowrap;
+      }
+    }
+
     ul.nav .nav-item .nav-link.active::before,
     ul.nav .nav-item .nav-link:hover::before {
       width: 0;
@@ -431,6 +440,12 @@ html {
           width: 0;
           @include transition(50);
         }
+      }
+    }
+
+    #fav-apps {
+      &>li:not(.nav-item) {
+        opacity: 1;
       }
     }
   }

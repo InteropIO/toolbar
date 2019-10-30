@@ -3,7 +3,6 @@ import { glueAppsObs, startApp} from './glue-related.js';
 import { favoriteApps, addFavoriteApp, removeFavoriteApp } from './favorites.js';
 
 const searchInputObs = new rxjs.BehaviorSubject('');
-// const favoriteAppsObs = new rxjs.BehaviorSubject([]);
 
 let {
   filter: rxFilter,
@@ -117,7 +116,7 @@ function applicationHTMLTemplate(app, options = {}) {
 
 function favoriteApplicationHTMLTemplate(app) {
   return `
-  <li class="nav-item ${app.instances.length > 0 ? 'app-active' : ''}">
+  <li class="nav-item ${app.instances.length > 0 ? 'app-active' : ''}" app-name="${app.name}">
     <a class="nav-link" href="#">
       ${getAppIcon(app, {marginRight: 2, marginLeft: 2})}
       <span class="text-animation mx-2">${app.title}</span>

@@ -10,79 +10,69 @@
     $(document).ready(function () {
       var state = false;
       var orientation = 'vertical';
-      $("#dropdownMenuButton").click(function () {
-        $("#menu-top").toggleClass("show");
-      });
-      $("#layout-menu-tool").click(function () {
-        $("#layout-menu-tool").addClass("active");
+      // $("#dropdownMenuButton").click(function () {
+      //   $("#menu-top").toggleClass("show");
+      // });
+      // $("#layout-menu-tool").click(function () {
+      //   $("#layout-menu-tool").addClass("active");
 
-        $("#app-content").addClass("hide");
-        $("#apps-chavron").removeClass("chavron-rotate");
-        $("#apps").removeClass("active");
-      });
-      $("#save").click(function () {
-        $("#layout-content").removeClass("hide");
-        $("#save").addClass("active");
-        $("#layout-load").addClass("hide");
-        $("#load").removeClass("active");
-      });
-      $("#load").click(function () {
-        $("#layout-content").addClass("hide");
-        $("#save").removeClass("active");
-        $("#layout-load").removeClass("hide");
-        $("#load").addClass("active");
+      //   $("#app-content").addClass("hide");
+      //   $("#apps-chavron").removeClass("chavron-rotate");
+      //   $("#apps").removeClass("active");
+      // });
+      // $("#save").click(function () {
+      //   $("#layout-content").removeClass("hide");
+      //   $("#save").addClass("active");
+      //   $("#layout-load").addClass("hide");
+      //   $("#load").removeClass("active");
+      // });
+      // $("#load").click(function () {
+      //   $("#layout-content").addClass("hide");
+      //   $("#save").removeClass("active");
+      //   $("#layout-load").removeClass("hide");
+      //   $("#load").addClass("active");
 
-      });
+      // });
 
-      $("#save-btn").click(function () {
-        $("#layout-content").addClass("hide");
-        $("#save").removeClass("active");
-        $("#layout-menu-tool").removeClass("active");
-      });
+      // $("#save-btn").click(function () {
+      //   $("#layout-content").addClass("hide");
+      //   $("#save").removeClass("active");
+      //   $("#layout-menu-tool").removeClass("active");
+      // });
 
-      $("#apps").click(function () {
-        $("#apps").toggleClass("active");
-        $("#apps .nav-link").toggleClass("active");
-        $("#app-content").toggleClass("hide");
-        $("#apps-chavron").toggleClass("chavron-rotate");
+      // $("#apps").click(function () {
+      //   $("#apps").toggleClass("active");
+      //   $("#apps .nav-link").toggleClass("active");
+      //   $("#app-content").toggleClass("hide");
+      //   $("#apps-chavron").toggleClass("chavron-rotate");
 
-        $("#layout-menu-tool").removeClass("active");
-        $("#layout-content").addClass("hide");
-        $("#save").removeClass("active");
-        $("#layout-load").addClass("hide");
-        $("#load").removeClass("active");
-      });
-      $('#toggle').click(function () {
-        $('.view-port').toggleClass('horizontal vertical');  //Adds 'a', removes 'b' and vice versa
-        $("#menu-top").toggleClass("show");
-        $(".app").toggleClass("flex-column");
+      //   $("#layout-menu-tool").removeClass("active");
+      //   $("#layout-content").addClass("hide");
+      //   $("#save").removeClass("active");
+      //   $("#layout-load").addClass("hide");
+      //   $("#load").removeClass("active");
+      // });
+      // $('#toggle').click(function () {
+      //   $('.view-port').toggleClass('horizontal vertical');  //Adds 'a', removes 'b' and vice versa
+      //   $("#menu-top").toggleClass("show");
+      //   $(".app").toggleClass("flex-column");
 
-        if (orientation == 'vertical') {
-          orientation = 'horizontal';
-          // $(".view-port").removeClass("expand");
-        }
-        else {
-          orientation = 'vertical';
-        }
-      });
+      //   if (orientation == 'vertical') {
+      //     orientation = 'horizontal';
+      //     // $(".view-port").removeClass("expand");
+      //   }
+      //   else {
+      //     orientation = 'vertical';
+      //   }
+      // });
 
-      $(".view-port").click(() => {
-        if (!state && orientation == 'vertical') {
-          $(".view-port").addClass("expand"); // toggle hover effect
-        }
-      })
+      // $(".view-port").click(() => {
+      //   if (!state && orientation == 'vertical') {
+      //     $(".view-port").addClass("expand"); // toggle hover effect
+      //   }
+      // })
 
-      document.querySelector('.app').addEventListener('mouseenter', (e) => {
-        document.querySelector('.view-port').classList.add('expand');
-      })
 
-      document.querySelector('.app').addEventListener('mouseleave', (e) => {
-        console.log(e.x);
-        if (!document.querySelectorAll('.toggle-content:not(.hide)').length > 0) {
-          document.querySelector('.view-port').classList.remove('expand');
-          document.querySelectorAll('.toggle-content').forEach(e => e.classList.add('hide'));
-        }
-      })
 
     });
   </script>
@@ -90,8 +80,6 @@
 </head>
 
 <body>
-  <!-- <button type="button" id="layoutSwitch" class="btn btn-primary layout-switch">Switch Layout</button> -->
-  <!-- for toggle effect needs to remove pinned class -->
   <div class="app d-inline-flex">
     <div id="applicationLauncher" class="view-port vertical">
       <ul class="nav nav-tabs menu-flex-direction ">
@@ -100,12 +88,12 @@
             <img src="./assets/logo.svg" width="120">
           </div>
           <div class="menu">
-            <button class="btn btn-icon secondary" type="button" id="dropdownMenuButton">
+            <button class="btn btn-icon secondary" type="button" id="dropdownMenuButton" dropdown-button-id="top-menu">
               <i class="icon-ellipsis-vert"></i>
             </button>
-            <div class="dropdown-menu" id="menu-top">
+            <div class="dropdown-menu" id="menu-top" dropdown-id="top-menu">
               <a class="dropdown-item" href="#" id="toggle">Toggle</a>
-              <a class="dropdown-item" href="#" id="change-theme">Change Theme</a>
+              <a class="dropdown-item" href="#" id="change-theme">Switch Theme</a>
               <a class="dropdown-item" href="#">Settings</a>
               <a class="dropdown-item" href="#">About</a>
               <div class="dropdown-divider"></div>
@@ -113,7 +101,7 @@
             </div>
           </div>
         </li>
-        <li class="nav-item applications-nav" id="apps">
+        <li class="nav-item applications-nav" id="apps" menu-button-id="apps">
           <a class="nav-link" href="#">
             <span class="icon-size-16">
               <i class="icon-th-large ml-2 mr-2"></i>
@@ -128,8 +116,8 @@
             <span class="text-animation text-white mx-2">Layouts</span>
           </a>
           <div class="layout-menu-tool">
-            <div id="load">Load</div>
-            <div id="save">Save</div>
+            <div id="load" menu-button-id="layout-load">Load</div>
+            <div id="save" menu-button-id="layout-save">Save</div>
           </div>
         </li>
         <li class="favorite position-relative">
@@ -153,7 +141,7 @@
 
     </div>
 
-    <div class="toggle-content hide" id="app-content">
+    <div class="toggle-content hide" id="app-content" menu-id="apps">
       <div class="p-2">
         <input class="form-control" id="app-search" aria-describedby="emailHelp" placeholder="Search app...">
       </div>
@@ -163,7 +151,7 @@
       </ul>
     </div>
 
-    <div class="toggle-content hide" id="layout-load">
+    <div class="toggle-content hide" id="layout-load" menu-id="layout-load">
       <ul class="nav nav-tabs menu-flex-direction">
         <li class="nav-item">
           <div class="nav-link action-menu">
@@ -198,7 +186,7 @@
       </ul>
     </div>
 
-    <div class="toggle-content hide" id="layout-content">
+    <div class="toggle-content hide" id="layout-content" menu-id="layout-save">
       <div class="p-2">
         <div class="input-group">
           <input type="text" id="layout-save-name" class="form-control" placeholder="Layout name ...">
