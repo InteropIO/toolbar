@@ -1,26 +1,30 @@
-import {shutdown, gluePromise, startApp, focusApp} from './glue-related.js'
+import {shutdown, gluePromise, startApp, focusApp, themeObs, changeTheme} from './glue-related.js'
 
 function handleThemeChange() {
   q('#change-theme').addEventListener('click', () => {
-    q('html').classList.toggle('dark');
-    q('html').classList.toggle('light');
-    closeOptionsDropdown();
+    let currentTheme = Array.prototype.slice.apply(q('html').classList)
+      .find(className =>  ['dark', 'light'].indexOf(className) >= 0);
+    let allThemes = themeObs.value.all.map(t => t.name);
+    let currentThemeIndex = allThemes.indexOf(currentTheme);
+    let newThemeIndex = currentThemeIndex >= allThemes.length - 1 ? 0 : currentThemeIndex + 1;
+    changeTheme(allThemes[newThemeIndex])
+  })
+
+  themeObs.subscribe(themeObj => {
+    if (themeObj) {
+      themeObj.all.forEach(theme => {
+        q('html').classList.remove(theme.name)
+      });
+
+      q('html').classList.add(themeObj.selected);
+    }
   })
 }
 
 function handleShutdownClick() {
   q('#shutdown').addEventListener('click', () => {
-    closeOptionsDropdown();
     shutdown();
   })
-}
-
-function openOptionsDropdown() {
-  q('#menu-top').classList.add('show');
-}
-
-function closeOptionsDropdown() {
-  q('#menu-top').classList.remove('show');
 }
 
 function handleTopMenuClicks() {

@@ -12,11 +12,13 @@ const gluePromise = new Promise(async (res, rej) => {
 const glueAppsObs = new rxjs.BehaviorSubject([]);
 const layoutsObs = new rxjs.BehaviorSubject([]);
 const notificationsCountObs = new rxjs.BehaviorSubject(null);
+const themeObs = new rxjs.BehaviorSubject(null);
 
 gluePromise.then((glue) => {
   trackApplications();
   trackLayouts();
   trackNotificationCount();
+  trackThemeChanges();
 })
 
 function trackApplications() {
@@ -51,6 +53,14 @@ function trackNotificationCount() {
         notificationsCountObs.next(data.count);
       })
     })
+}
+
+function trackThemeChanges() {
+  // glue.agm.
+  glue.contexts.subscribe('Connect.Themes', (themeObj) => {
+    console.log(themeObj);
+    themeObs.next(themeObj);
+  })
 }
 
 async function startApp(appName) {
@@ -121,6 +131,10 @@ async function resizeWindowVisibleArea(width) {
   })
 }
 
+async function changeTheme(themeName) {
+  glue.contexts.update('Connect.Themes', {selected: themeName})
+}
+
 export {
   gluePromise,
   glueAppsObs,
@@ -128,6 +142,8 @@ export {
   startApp,
   focusApp,
   notificationsCountObs,
+  themeObs,
+  changeTheme,
   openNotificationPanel,
   removeLayout,
   restoreLayout,
