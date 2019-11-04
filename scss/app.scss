@@ -256,6 +256,7 @@ html {
     &.menu-flex-direction {
       flex-direction: column;
       flex-wrap: nowrap;
+      height: 100%;
     }
 
     .applications-nav {
@@ -270,16 +271,17 @@ html {
     .favorite {
       white-space: nowrap;
       padding-left: .5rem;
-      height: 1.25rem;
+      height: 1px;
       @include transition(0);
       user-select: none;
+      overflow: hidden;
       i {
         position: absolute;
         right: 1.375rem;
         bottom: .25rem;
       }
       span {
-        @include text-animation("off", "left", 0);
+       opacity: .75;
       }
       &::after {
         content: "";
@@ -405,19 +407,7 @@ html {
       }
     }
   }
-
-  .nav-item {
-    &:hover {
-      background-color: rgba(255, 255, 255, 0.05);
-    }
-  }
-
-  .nav-link {
-    &:hover {
-      background-color: transparent !important;
-    }
-  }
-
+  
   .view-port {
     @include transition(0);
     border: 1px solid rgba(255, 255, 255, 0.075);
@@ -456,7 +446,8 @@ html {
     }
 
     .accordion {
-      height: calc(100vh - 13.375rem);
+
+      max-height: calc(100vh - 13.25rem);
       overflow-x: hidden;
       overflow-y: auto;
       @include transition(0);
@@ -504,12 +495,15 @@ html {
       @include text-animation("on", "", 0);
     }
     .favorite {
-      span {
-        @include text-animation("on", "", 0);
-      }
-      i {
-        right: .875rem;
-      }
+      height: 1.125rem;
+      @include transition(300);
+      // i,
+      // span {
+      //   @include text-animation("on", "", 0);
+      // }
+      // i {
+      //   right: .875rem;
+      // }
     }
     .fav-app-nav {
         .text-center {

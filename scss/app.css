@@ -191,6 +191,7 @@ html .nav.nav-tabs .nav-link.active::before, html .nav.nav-tabs .nav-link:hover:
 html .nav.menu-flex-direction {
   flex-direction: column;
   flex-wrap: nowrap;
+  height: 100%;
 }
 html .nav .applications-nav {
   position: relative;
@@ -203,10 +204,11 @@ html .nav.fav-app-nav {
 html .nav .favorite {
   white-space: nowrap;
   padding-left: 0.5rem;
-  height: 1.25rem;
+  height: 1px;
   transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 0ms;
   user-select: none;
+  overflow: hidden;
 }
 html .nav .favorite i {
   position: absolute;
@@ -214,10 +216,7 @@ html .nav .favorite i {
   bottom: 0.25rem;
 }
 html .nav .favorite span {
-  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
-  transition-delay: 0ms;
-  opacity: 0;
-  transform: translateX(-1rem);
+  opacity: 0.75;
 }
 html .nav .favorite::after {
   content: "";
@@ -322,12 +321,6 @@ html .nav .show-actions:hover .layout-menu-tool div:first-of-type, html .nav .sh
 html .nav .show-actions:hover .layout-menu-tool div:last-of-type, html .nav .show-actions.active .layout-menu-tool div:last-of-type {
   animation: runright 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
 }
-html .nav-item:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-}
-html .nav-link:hover {
-  background-color: transparent !important;
-}
 html .view-port {
   transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 0ms;
@@ -365,7 +358,7 @@ html .view-port .view-port-header .logo {
   min-width: 120px;
 }
 html .view-port .accordion {
-  height: calc(100vh - 13.375rem);
+  max-height: calc(100vh - 13.25rem);
   overflow-x: hidden;
   overflow-y: auto;
   transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
@@ -410,14 +403,10 @@ html .vertical.expand .text-animation {
   opacity: 1;
   transform: translateX(0);
 }
-html .vertical.expand .favorite span {
+html .vertical.expand .favorite {
+  height: 1.125rem;
   transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
-  transition-delay: 0ms;
-  opacity: 1;
-  transform: translateX(0);
-}
-html .vertical.expand .favorite i {
-  right: 0.875rem;
+  transition-delay: 300ms;
 }
 html .vertical.expand .fav-app-nav .text-center {
   transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
