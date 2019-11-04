@@ -8,38 +8,6 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script>
     $(document).ready(function () {
-      var state = false;
-      var orientation = 'vertical';
-      // $("#dropdownMenuButton").click(function () {
-      //   $("#menu-top").toggleClass("show");
-      // });
-      // $("#layout-menu-tool").click(function () {
-      //   $("#layout-menu-tool").addClass("active");
-
-      //   $("#app-content").addClass("hide");
-      //   $("#apps-chavron").removeClass("chavron-rotate");
-      //   $("#apps").removeClass("active");
-      // });
-      // $("#save").click(function () {
-      //   $("#layout-content").removeClass("hide");
-      //   $("#save").addClass("active");
-      //   $("#layout-load").addClass("hide");
-      //   $("#load").removeClass("active");
-      // });
-      // $("#load").click(function () {
-      //   $("#layout-content").addClass("hide");
-      //   $("#save").removeClass("active");
-      //   $("#layout-load").removeClass("hide");
-      //   $("#load").addClass("active");
-
-      // });
-
-      // $("#save-btn").click(function () {
-      //   $("#layout-content").addClass("hide");
-      //   $("#save").removeClass("active");
-      //   $("#layout-menu-tool").removeClass("active");
-      // });
-
       // $("#apps").click(function () {
       //   $("#apps").toggleClass("active");
       //   $("#apps .nav-link").toggleClass("active");
@@ -52,28 +20,6 @@
       //   $("#layout-load").addClass("hide");
       //   $("#load").removeClass("active");
       // });
-      // $('#toggle').click(function () {
-      //   $('.view-port').toggleClass('horizontal vertical');  //Adds 'a', removes 'b' and vice versa
-      //   $("#menu-top").toggleClass("show");
-      //   $(".app").toggleClass("flex-column");
-
-      //   if (orientation == 'vertical') {
-      //     orientation = 'horizontal';
-      //     // $(".view-port").removeClass("expand");
-      //   }
-      //   else {
-      //     orientation = 'vertical';
-      //   }
-      // });
-
-      // $(".view-port").click(() => {
-      //   if (!state && orientation == 'vertical') {
-      //     $(".view-port").addClass("expand"); // toggle hover effect
-      //   }
-      // })
-
-
-
     });
   </script>
 
@@ -107,7 +53,7 @@
               <i class="icon-th-large ml-2 mr-2"></i>
             </span>
             <span class="text-animation ml-2">Applications</span>
-            <i class="icon-angle-down ml-auto" id="apps-chavron"></i>
+            <i class="icon-angle-down ml-auto chavron" id="apps-chavron"></i>
           </a>
         </li>
         <li class="nav-item show-actions layouts-nav" id="layout-menu-tool">
@@ -143,7 +89,7 @@
 
     <div class="toggle-content hide" id="app-content" menu-id="apps">
       <div class="p-2">
-        <input class="form-control" id="app-search" aria-describedby="emailHelp" placeholder="Search app...">
+        <input class="form-control" id="app-search" autofocus placeholder="Search app...">
       </div>
 
       <ul id="applications" class="nav nav-tabs menu-flex-direction">

@@ -36,8 +36,12 @@ function handleTopMenuClicks() {
       qa(`:not([menu-id="${menuId}"])`).forEach(menu => {
         menu.classList.add('hide');
       });
+      qa(`:not([menu-button-id="${menuId}"]) .chavron`).forEach(menuBtnChavron => {
+        menuBtnChavron.classList.remove('chavron-rotate');
+      });
 
       q(`[menu-id="${menuId}"]`).classList.toggle('hide');
+      q(`[menu-button-id="${menuId}"] .chavron`) && q(`[menu-button-id="${menuId}"] .chavron`).classList.toggle('chavron-rotate');
     } else if (e.target.matches('#fav-apps .nav-item, #fav-apps .nav-item *')) {
       //start or focus an app from the favorites list
       let topElement = e.path.find(e => e.classList && e.classList.contains('nav-item'));
