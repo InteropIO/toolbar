@@ -93,6 +93,9 @@ html.dark {
   }
   .toggle-content {
     background-color: #272b35;
+    border-top: 1px solid rgba(255, 255, 255, 0.075);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.075);
+    border-right: 1px solid rgba(255, 255, 255, 0.075);
   }
   .applications-nav {
     @include divider('dark');
@@ -138,6 +141,9 @@ html.light {
   }
   .toggle-content {
     background-color: #fafafa;
+    border-top: 1px solid rgba(219,222,230,0.8);
+    border-bottom: 1px solid rgba(219,222,230,0.8);
+    border-right: 1px solid rgba(219,222,230,0.8);
   }
   .logo img {
     content: url('../assets/logoLight.svg');
@@ -189,15 +195,18 @@ html {
     @include transition(0);
     
     height: 100vh;
-    width: calc(100vw - 200px);
+    width: calc(100vw - 201px);
     overflow: hidden;
+    visibility: visible;
+
 
     &.hide {
       width: 0;
+      border-right: 0 solid transparent;
     }
     > .nav,
     > div {
-      width: calc(100vw - 200px);
+      width: calc(100vw - 201px);
     }
     > .nav {
       overflow: auto;
