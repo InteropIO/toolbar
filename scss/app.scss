@@ -232,38 +232,16 @@ html {
         border: 0;
         padding-left: 14px;
 
-        &::before {
-          @include transition(0);
-          background-color: #2080d3;
-          bottom: 0;
-          content: "";
-          height: 48px;
-          margin-left: 0;
-          position: absolute;
-          width: 0;
-          left: 0;
-        }
-
         i {
           @include transition(0);
         }
         .icon-angle-down {
           opacity: 0;
         }
-
-        &.active,
-        &:hover {
-          &::before {
-            height: 48px;
-            width: 3px;
-            @include transition(0);
-          }
-        }
       }
     }
 
-    &.menu-flex-direction {
-      flex-direction: column;
+    &.flex-column {
       flex-wrap: nowrap;
       height: 100%;
     }
