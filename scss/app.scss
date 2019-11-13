@@ -266,9 +266,10 @@ html {
         position: absolute;
         right: 1.375rem;
         bottom: .25rem;
+        opacity: 0;
       }
       span {
-       opacity: .75;
+       opacity: 0;
       }
       &::after {
         content: "";
@@ -327,11 +328,19 @@ html {
       a {
         @include non-underline();
       }
+      span:last-of-type {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        @include transition(0);
+      }
 
       &:hover {
         .action-menu-tool {
           opacity: 1;
           transform: translateX(0);
+        }
+        span:last-of-type {
+          padding-right: 1.25rem;
         }
       }
     }
@@ -367,16 +376,6 @@ html {
           opacity: 0;
         }
 
-        .nav-link {
-          pointer-events: none;
-          width: 3px;
-          padding: 0;
-
-          &::before {
-            width: 3px;
-          }
-        }
-
         .layout-menu-tool {
           opacity: 1;
           visibility: visible;
@@ -400,7 +399,6 @@ html {
     border: 1px solid rgba(255, 255, 255, 0.075);
     overflow: hidden;
     width: 60px;
-    @include transition(0);
 
     .menu {
       display: none;
@@ -433,11 +431,9 @@ html {
     }
 
     .accordion {
-
       max-height: calc(100vh - 13.25rem);
       overflow-x: hidden;
       overflow-y: auto;
-      @include transition(0);
 
       .active-app {
         position: absolute;
@@ -482,15 +478,13 @@ html {
       @include text-animation("on", "", 0);
     }
     .favorite {
-      height: 1.125rem;
+      height: 1.25rem;
       @include transition(300);
-      // i,
-      // span {
-      //   @include text-animation("on", "", 0);
-      // }
-      // i {
-      //   right: .875rem;
-      // }
+      margin-top: .25rem;
+      i,
+      span {
+        @include text-animation("on", "", 450);
+      }
     }
     .fav-app-nav {
         .text-center {
