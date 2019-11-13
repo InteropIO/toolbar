@@ -349,7 +349,7 @@ html .view-port .view-port-header .logo {
 html .view-port .accordion {
   max-height: calc(100vh - 13.75rem);
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: hidden;
 }
 html .view-port .accordion .active-app {
   position: absolute;
@@ -408,6 +408,9 @@ html .vertical.expand .fav-app-nav .text-center {
   transition-delay: 0ms;
   opacity: 1;
   transform: translateX(0);
+}
+html .vertical.expand .accordion {
+  overflow-y: auto;
 }
 html .vertical.expand .accordion .nav .toggle-content {
   left: 200px;

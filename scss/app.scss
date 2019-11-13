@@ -433,7 +433,7 @@ html {
     .accordion {
       max-height: calc(100vh - 13.75rem);
       overflow-x: hidden;
-      overflow-y: auto;
+      overflow-y: hidden;
 
       .active-app {
         position: absolute;
@@ -492,6 +492,7 @@ html {
        } 
     }
     .accordion {
+      overflow-y: auto;
       .nav {
         .toggle-content {
           left: 200px;
