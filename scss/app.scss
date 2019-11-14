@@ -8,12 +8,12 @@
 
 @mixin divider($theme) {
   &::before {
-    @if $theme == 'dark' {
+    @if $theme == "dark" {
       background-color: rgba(255, 255, 255, 0.075);
+    } @else {
+      background-color: rgba(219, 222, 230, 0.8);
     }
-    @else {
-      background-color: rgba(219,222,230,0.8);
-    }
+
     content: "";
     height: 1px;
     left: 8px;
@@ -86,29 +86,36 @@ body {
   overflow: hidden;
 }
 
-// color scheme 
+// color scheme
 html.dark {
   .view-port {
+    height: 100vh;
     border: 1px solid rgba(255, 255, 255, 0.075);
   }
+
   .toggle-content {
     background-color: #272b35;
     border-top: 1px solid rgba(255, 255, 255, 0.075);
     border-bottom: 1px solid rgba(255, 255, 255, 0.075);
     border-right: 1px solid rgba(255, 255, 255, 0.075);
   }
+
   .applications-nav {
-    @include divider('dark');
+    @include divider("dark");
   }
+
   .view-port-footer {
-    @include divider('dark');
+    @include divider("dark");
   }
+
   .favorite::after {
     background-color: rgba(255, 255, 255, 0.075);
   }
+
   .nav {
     .layout-menu-tool {
       background: rgba(255, 255, 255, 0.05);
+
       div {
         &:first-of-type {
           border-right: 1px solid rgba(255, 255, 255, 0.05);
@@ -121,14 +128,16 @@ html.dark {
         }
       }
     }
+
     .nav-link {
       img {
         filter: grayscale(100%) brightness(1);
       }
+
       &.active,
       &:hover {
         img {
-          filter:grayscale(100%) brightness(2);
+          filter: grayscale(100%) brightness(2);
         }
       }
     }
@@ -137,77 +146,83 @@ html.dark {
 
 html.light {
   .view-port {
-    border: 1px solid rgba(219,222,230,0.8);
+    border: 1px solid rgba(219, 222, 230, 0.8);
   }
+
   .toggle-content {
     background-color: #fafafa;
-    border-top: 1px solid rgba(219,222,230,0.8);
-    border-bottom: 1px solid rgba(219,222,230,0.8);
-    border-right: 1px solid rgba(219,222,230,0.8);
+    border-top: 1px solid rgba(219, 222, 230, 0.8);
+    border-bottom: 1px solid rgba(219, 222, 230, 0.8);
+    border-right: 1px solid rgba(219, 222, 230, 0.8);
   }
+
   .logo img {
-    content: url('../assets/logoLight.svg');
+    content: url("../assets/logoLight.svg");
   }
+
   .applications-nav {
-    @include divider('');
+    @include divider("");
   }
+
   .view-port-footer {
-    @include divider('');
+    @include divider("");
   }
+
   .favorite::after {
-    background-color: rgba(219,222,230,0.8);
+    background-color: rgba(219, 222, 230, 0.8);
   }
+
   .nav {
     .layout-menu-tool {
-      background: rgba(219,222,230,0.8);
+      background: rgba(219, 222, 230, 0.8);
+
       div {
         &:first-of-type {
-          border-right: 1px solid rgba(219,222,230,0.8);
+          border-right: 1px solid rgba(219, 222, 230, 0.8);
         }
 
         &:hover,
         &.active {
-          background-color: rgba(219,222,230,0.8);
+          background-color: rgba(219, 222, 230, 0.8);
           color: black;
         }
       }
     }
+
     .nav-link {
       img {
-        filter: grayscale(100%) brightness(.5);
+        filter: grayscale(100%) brightness(0.5);
       }
+
       &.active,
       &:hover {
         img {
-          filter:grayscale(100%) brightness(0);
+          filter: grayscale(100%) brightness(0);
         }
       }
     }
   }
-  
 }
-
-
-
 
 html {
   .toggle-content {
     @include transition(0);
-    
+
     height: 100vh;
     width: calc(100vw - 201px);
     overflow: hidden;
     visibility: visible;
 
-
     &.hide {
       width: 0;
       border-right: 0 solid transparent;
     }
+
     > .nav,
     > div {
       width: calc(100vw - 201px);
     }
+
     > .nav {
       overflow: auto;
       height: calc(100vh - 3rem);
@@ -235,6 +250,7 @@ html {
         i {
           @include transition(0);
         }
+
         .icon-angle-down {
           opacity: 0;
         }
@@ -255,22 +271,26 @@ html {
       position: relative;
       overflow: hidden;
     }
+
     .favorite {
       white-space: nowrap;
-      padding-left: .5rem;
+      padding-left: 0.5rem;
       height: 1px;
       @include transition(0);
       user-select: none;
       overflow: hidden;
+
       i {
         position: absolute;
         right: 1.375rem;
-        bottom: .25rem;
+        bottom: 0.25rem;
         opacity: 0;
       }
+
       span {
-       opacity: 0;
+        opacity: 0;
       }
+
       &::after {
         content: "";
         height: 1px;
@@ -282,7 +302,7 @@ html {
     }
 
     #fav-apps {
-      &>li:not(.nav-item) {
+      & > li:not(.nav-item) {
         @include transition(0);
         opacity: 0;
         white-space: nowrap;
@@ -328,6 +348,7 @@ html {
       a {
         @include non-underline();
       }
+
       span:last-of-type {
         text-overflow: ellipsis;
         overflow: hidden;
@@ -339,6 +360,7 @@ html {
           opacity: 1;
           transform: translateX(0);
         }
+
         span:last-of-type {
           padding-right: 1.25rem;
         }
@@ -393,7 +415,7 @@ html {
       }
     }
   }
-  
+
   .view-port {
     @include transition(0);
     border: 1px solid rgba(255, 255, 255, 0.075);
@@ -431,9 +453,10 @@ html {
     }
 
     .accordion {
-      max-height: calc(100vh - 13.75rem);
+      height: calc(100vh - 195px);
       overflow-x: hidden;
-      overflow-y: hidden;
+      overflow-y: auto;
+      @include transition(0);
 
       .active-app {
         position: absolute;
@@ -477,22 +500,27 @@ html {
     .text-animation {
       @include text-animation("on", "", 0);
     }
+
     .favorite {
       height: 1.25rem;
       @include transition(300);
-      margin-top: .25rem;
+      margin-top: 0.25rem;
+
       i,
       span {
         @include text-animation("on", "", 450);
       }
     }
+
     .fav-app-nav {
-        .text-center {
-          @include text-animation("on", "", 0);
-       } 
+      .text-center {
+        @include text-animation("on", "", 0);
+      }
     }
+
     .accordion {
-      overflow-y: auto;
+      height: calc(100vh - 218px);
+
       .nav {
         .toggle-content {
           left: 200px;
@@ -508,7 +536,7 @@ html {
     }
 
     #fav-apps {
-      &>li:not(.nav-item) {
+      & > li:not(.nav-item) {
         opacity: 1;
       }
     }
@@ -516,12 +544,12 @@ html {
 
   .expand {
     .applications-nav {
-        &:hover,
-        &.active {
-          .icon-angle-down {
-            opacity: 1;
-          }
+      &:hover,
+      &.active {
+        .icon-angle-down {
+          opacity: 1;
         }
+      }
     }
   }
 
@@ -532,7 +560,7 @@ html {
   #applications {
     .nav-item.fav-app {
       i.icon-star-empty-1 {
-        display:none;
+        display: none;
       }
     }
 
@@ -541,7 +569,6 @@ html {
         display: none;
       }
     }
-
   }
 }
 
