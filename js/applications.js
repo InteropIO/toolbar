@@ -1,6 +1,7 @@
 
 import { glueAppsObs, startApp} from './glue-related.js';
 import { favoriteApps, addFavoriteApp, removeFavoriteApp } from './favorites.js';
+import {getSetting} from './settings.js';
 
 const searchInputObs = new rxjs.BehaviorSubject('');
 
@@ -36,7 +37,7 @@ const runningApps = allApps
 
 function shouldAppBeVisible(app) {
   let shouldBeVisible = true;
-  if (app.hidden || app.autoStart) {
+  if (!getSetting('showHiddenApps') && (app.hidden || app.autoStart)) {
     shouldBeVisible = false;
   }
 
