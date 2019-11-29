@@ -205,6 +205,14 @@ html.light {
 }
 
 html {
+  .dragable {
+    position: fixed;
+    width: 9.5rem;
+    height: 3rem;
+    top: 0;
+    left: 0;
+    -webkit-app-region: drag;
+  }
   .toggle-content {
     @include transition(0);
 
@@ -542,6 +550,27 @@ html {
     }
   }
 
+  .modal.fade {
+    display: block;
+    width: 200px;
+    visibility: hidden;
+    .about-logo {
+      width: 2.5rem;
+      overflow: hidden;
+      margin: 0 auto;
+    }
+    .modal-fill-in {
+      justify-content: flex-start;
+      .modal-header .close {
+        position: absolute;
+        right: 1rem;
+        top: 1rem;
+      }
+    }
+    &.show {
+      visibility: visible;
+    }
+  }
   .expand {
     .applications-nav {
       &:hover,
