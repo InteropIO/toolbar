@@ -30,7 +30,6 @@ body {
 }
 
 html.dark .view-port {
-  height: 100vh;
   border: 1px solid rgba(255, 255, 255, 0.075);
 }
 html.dark .toggle-content {
@@ -135,6 +134,10 @@ html.light .nav .nav-link.active img, html.light .nav .nav-link:hover img {
   filter: grayscale(100%) brightness(0);
 }
 
+html .app {
+  margin: 50px;
+  height: calc(100vh - 100px);
+}
 html .dragable {
   position: fixed;
   width: 9.5rem;
@@ -146,8 +149,7 @@ html .dragable {
 html .toggle-content {
   transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 0ms;
-  height: 100vh;
-  width: calc(100vw - 201px);
+  width: calc(100vw - 301px);
   overflow: hidden;
   visibility: visible;
 }
@@ -157,7 +159,7 @@ html .toggle-content.hide {
 }
 html .toggle-content > .nav,
 html .toggle-content > div {
-  width: calc(100vw - 201px);
+  width: calc(100vw - 301px);
 }
 html .toggle-content > .nav {
   overflow: auto;
@@ -356,7 +358,7 @@ html .view-port .view-port-header .logo {
   min-width: 120px;
 }
 html .view-port .accordion {
-  height: calc(100vh - 195px);
+  height: calc(100vh - 295px);
   overflow-x: hidden;
   overflow-y: auto;
   transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
@@ -421,7 +423,7 @@ html .vertical.expand .fav-app-nav .text-center {
   transform: translateX(0);
 }
 html .vertical.expand .accordion {
-  height: calc(100vh - 218px);
+  height: calc(100vh - 318px);
 }
 html .vertical.expand .accordion .nav .toggle-content {
   left: 200px;
@@ -470,6 +472,92 @@ html #applications .nav-item.fav-app i.icon-star-empty-1 {
 html #applications .nav-item:not(.fav-app) i.icon-star-full {
   display: none;
 }
+html .horizontal {
+  display: flex;
+  width: 100%;
+}
+html .horizontal .dragable {
+  width: 3.375rem;
+}
+html .horizontal.view-port .view-port-header {
+  width: 3.375rem;
+  overflow: hidden;
+}
+html .horizontal .app-active::before {
+  width: unset;
+  height: 3px;
+  top: 0;
+  right: 30%;
+  bottom: unset;
+  left: 30%;
+}
+html .horizontal .app-active:hover::before {
+  top: -3px;
+}
+html .horizontal .nav .applications-nav::before,
+html .horizontal .nav .favorite::after {
+  left: 0;
+  width: 1px;
+  height: calc(100% - 16px);
+  top: 8px;
+}
+html .horizontal .nav .favorite {
+  height: 3rem;
+}
+html .horizontal .view-port-header .menu {
+  position: fixed;
+  top: 10px;
+  right: 4px;
+  z-index: 11;
+}
+html .horizontal .nav-tabs .nav-item {
+  width: 60px;
+  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition-delay: 0ms;
+  overflow: hidden;
+  height: 3rem;
+}
+html .horizontal .nav-tabs .nav-item:hover {
+  width: 170px;
+}
+html .horizontal .nav-tabs .nav-item:hover .nav-link .text-animation {
+  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition-delay: 100ms;
+  opacity: 1;
+  transform: translateX(0);
+}
+html .horizontal .nav-tabs .nav-item .nav-link.active .text-animation {
+  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition-delay: 100ms;
+  opacity: 1;
+  transform: translateX(0);
+}
+html .horizontal.expand .menu {
+  display: block;
+}
+html .horizontal.expand .fav-app-nav .text-center {
+  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition-delay: 0ms;
+  opacity: 1;
+  transform: translateX(0);
+}
+html .horizontal.expand .accordion {
+  height: calc(100vh - 318px);
+}
+html .horizontal.expand .accordion .nav .toggle-content {
+  left: 200px;
+  display: list-item;
+  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition-delay: 50ms;
+}
+html .horizontal.expand .accordion .nav .hide {
+  width: 0;
+  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition-delay: 50ms;
+}
+html .horizontal.expand #fav-apps > li:not(.nav-item) {
+  opacity: 1;
+}
 
 .app-active {
   position: relative;
@@ -488,42 +576,6 @@ html #applications .nav-item:not(.fav-app) i.icon-star-full {
 .app-active:hover::before {
   top: 0;
   bottom: 0;
-}
-
-.horizontal .app-active::before {
-  width: unset;
-  height: 3px;
-  top: 0;
-  right: 30%;
-  bottom: unset;
-  left: 30%;
-}
-.horizontal .app-active:hover::before {
-  top: -3px;
-}
-
-html .app.flex-column .toggle-content {
-  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
-  transition-delay: 0ms;
-  background-color: #272b35;
-  height: calc(100vh - 50px);
-  width: 100%;
-  overflow: hidden;
-}
-html .app.flex-column .toggle-content.hide {
-  width: auto;
-  height: 0;
-}
-html .app.flex-column .toggle-content > .nav,
-html .app.flex-column .toggle-content > div {
-  width: 100%;
-}
-html .app.flex-column .toggle-content > .nav {
-  overflow: auto;
-  height: auto;
-}
-html .app.flex-column .toggle-content .nav-link:hover::before, html .app.flex-column .toggle-content .nav-link.active::before {
-  display: none;
 }
 
 @media screen and (max-width: 1370px) {
