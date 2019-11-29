@@ -21,6 +21,12 @@ function handleThemeChange() {
   })
 }
 
+function handleAboutClick() {
+  q('#open-about').addEventListener('click', () => {
+    q('.modal.about').classList.add('show')
+  })
+}
+
 function handleShutdownClick() {
   q('#shutdown').addEventListener('click', () => {
     shutdown();
@@ -72,6 +78,15 @@ function handleDropDownClicks() {
   })
 }
 
+function handleModalClose() {
+  document.addEventListener('click', (e) => {
+    if (e.target.matches('.modal [data-dismiss="modal"], .modal [data-dismiss="modal"] *')) {
+      let modal = e.path.find(el => el.classList.contains('modal'));
+      modal.classList.remove('show');
+    }
+  })
+}
+
 async function handleMouseHover() {
   // await gluePromise;
   q('.app').addEventListener('mouseenter', (e) => {
@@ -95,8 +110,10 @@ async function handleMouseHover() {
 
 export {
   handleThemeChange,
+  handleAboutClick,
   handleShutdownClick,
   handleTopMenuClicks,
   handleDropDownClicks,
+  handleModalClose,
   handleMouseHover
 }

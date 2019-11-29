@@ -32,10 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
   handleLayoutSave();
   handleNotificationClick();
   utils.handleThemeChange();
+  utils.handleAboutClick();
   utils.handleShutdownClick();
   utils.handleTopMenuClicks();
   utils.handleDropDownClicks();
   utils.handleMouseHover();
+  utils.handleModalClose();
   glueModule.registerHotkey();
 })
 
@@ -129,6 +131,7 @@ function handleWidthChange() {
 function resizeVisibleArea(width) {
   width = Math.round(width);
   resizeWindowVisibleArea(width);
+  q('.modal').style.width = width+ 'px';
 }
 
 function expandWindow() {
