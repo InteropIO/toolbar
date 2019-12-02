@@ -138,13 +138,22 @@ html .app {
   margin: 50px;
   height: calc(100vh - 100px);
 }
+html img, html a {
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+}
 html .dragable {
   position: fixed;
   width: 9.5rem;
   height: 3rem;
-  top: 0;
-  left: 0;
+  top: 50;
+  left: 50;
   -webkit-app-region: drag;
+}
+html .about {
+  margin: 50px;
+  height: calc(100vh - 100px);
 }
 html .toggle-content {
   transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
@@ -196,6 +205,7 @@ html .nav.flex-column {
 html .nav .applications-nav {
   position: relative;
   overflow: hidden;
+  height: 3rem;
 }
 html .nav.fav-app-nav {
   position: relative;
@@ -203,21 +213,18 @@ html .nav.fav-app-nav {
 }
 html .nav .favorite {
   white-space: nowrap;
-  padding-left: 0.5rem;
-  height: 1px;
+  height: 1.25rem;
   transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 0ms;
   user-select: none;
   overflow: hidden;
+  text-align: center;
 }
 html .nav .favorite i {
-  position: absolute;
-  right: 1.375rem;
-  bottom: 0.25rem;
-  opacity: 0;
-}
-html .nav .favorite span {
-  opacity: 0;
+  position: relative;
+  background: #21252d;
+  z-index: 20;
+  padding: 0 0.25rem;
 }
 html .nav .favorite::after {
   content: "";
@@ -225,7 +232,10 @@ html .nav .favorite::after {
   left: 8px;
   position: absolute;
   width: calc(100% - 16px);
-  bottom: 0;
+  bottom: 11px;
+}
+html .nav .lauout-nav {
+  height: 3rem;
 }
 html .nav #fav-apps > li:not(.nav-item) {
   transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
@@ -370,6 +380,7 @@ html .view-port .accordion .active-app {
 }
 html .view-port .view-port-footer {
   position: relative;
+  margin-top: auto;
 }
 html .view-port .view-port-footer .nav.nav-tabs .nav-link {
   text-decoration: none;
@@ -404,17 +415,11 @@ html .vertical.expand .text-animation {
   transform: translateX(0);
 }
 html .vertical.expand .favorite {
-  height: 1.25rem;
   transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 300ms;
-  margin-top: 0.25rem;
 }
-html .vertical.expand .favorite i,
-html .vertical.expand .favorite span {
-  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
-  transition-delay: 450ms;
-  opacity: 1;
-  transform: translateX(0);
+html .vertical.expand .favorite i {
+  padding: 0 0.75rem;
 }
 html .vertical.expand .fav-app-nav .text-center {
   transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
@@ -474,7 +479,8 @@ html #applications .nav-item:not(.fav-app) i.icon-star-full {
 }
 html .horizontal {
   display: flex;
-  width: 100%;
+  width: 100vw;
+  height: 3rem;
 }
 html .horizontal .dragable {
   width: 3.375rem;
@@ -495,14 +501,21 @@ html .horizontal .app-active:hover::before {
   top: -3px;
 }
 html .horizontal .nav .applications-nav::before,
-html .horizontal .nav .favorite::after {
+html .horizontal .nav .favorite::after,
+html .horizontal .nav .view-port-footer:before {
   left: 0;
   width: 1px;
   height: calc(100% - 16px);
   top: 8px;
 }
+html .horizontal .nav .favorite::after {
+  left: 0.318rem;
+}
 html .horizontal .nav .favorite {
   height: 3rem;
+}
+html .horizontal .nav .favorite i {
+  padding: 0.25rem 0;
 }
 html .horizontal .view-port-header .menu {
   position: fixed;
@@ -557,6 +570,10 @@ html .horizontal.expand .accordion .nav .hide {
 }
 html .horizontal.expand #fav-apps > li:not(.nav-item) {
   opacity: 1;
+}
+html .horizontal .view-port-footer {
+  margin-top: initial;
+  margin-left: auto;
 }
 
 .app-active {

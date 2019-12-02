@@ -213,16 +213,29 @@ html.light {
 html {
   .app {
     margin: 50px;
-    height: calc(100vh - 100px);
+    height: calc(100vh - 100px); // Atanas 50px margin 
   }
+
+  img, a {
+    user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+  } 
+
   .dragable {
     position: fixed;
     width: 9.5rem;
     height: 3rem;
-    top: 0;
-    left: 0;
+    top: 50;
+    left: 50;
     -webkit-app-region: drag;
   }
+
+  .about {
+    margin: 50px;
+    height: calc(100vh - 100px);
+  }
+
   .toggle-content {
     @include transition(0);
     
@@ -282,6 +295,7 @@ html {
     .applications-nav {
       position: relative;
       overflow: hidden;
+      height: 3rem;
     }
 
     &.fav-app-nav {
@@ -291,21 +305,17 @@ html {
 
     .favorite {
       white-space: nowrap;
-      padding-left: 0.5rem;
-      height: 1px;
+      height: 1.25rem;
       @include transition(0);
       user-select: none;
       overflow: hidden;
+      text-align: center;
 
       i {
-        position: absolute;
-        right: 1.375rem;
-        bottom: 0.25rem;
-        opacity: 0;
-      }
-
-      span {
-        opacity: 0;
+        position: relative;
+        background: #21252d;
+        z-index: 20;
+        padding: 0 .25rem;
       }
 
       &::after {
@@ -314,10 +324,12 @@ html {
         left: 8px;
         position: absolute;
         width: calc(100% - 16px);
-        bottom: 0;
+        bottom: 11px;
       }
     }
-
+    .lauout-nav {
+      height: 3rem;
+    }
     #fav-apps {
       & > li:not(.nav-item) {
         @include transition(0);
@@ -438,6 +450,7 @@ html {
     border: 1px solid rgba(255, 255, 255, 0.075);
     overflow: hidden;
     width: 60px;
+    // height: 100vh;  Atanas 50px margin 
 
     .menu {
       display: none;
@@ -470,7 +483,7 @@ html {
     }
 
     .accordion {
-      height: calc(100vh - 295px);
+      height: calc(100vh - 295px); // 295px Atanas 50px margin 
       overflow-x: hidden;
       overflow-y: auto;
       @include transition(0);
@@ -483,6 +496,7 @@ html {
 
     .view-port-footer {
       position: relative;
+      margin-top: auto;
 
       .nav.nav-tabs {
         .nav-link {
@@ -519,13 +533,10 @@ html {
     }
 
     .favorite {
-      height: 1.25rem;
-      @include transition(300);
-      margin-top: 0.25rem;
 
-      i,
-      span {
-        @include text-animation("on", "", 450);
+      @include transition(300);
+      i {
+        padding: 0 .75rem;
       }
     }
 
@@ -579,7 +590,9 @@ html {
     &.show {
       visibility: visible;
     }
+
   }
+
   .expand {
     .applications-nav {
       &:hover,
@@ -611,7 +624,8 @@ html {
 
   .horizontal {
     display: flex;
-    width: 100%;
+    width: 100vw;
+    height: 3rem;
     
     .dragable {
       width: 3.375rem;
@@ -642,12 +656,18 @@ html {
     .nav {
 
       .applications-nav::before,
-      .favorite::after {
+      .favorite::after,
+      .view-port-footer:before {
         @include horizontal-divider;
       }
-
+      .favorite::after {
+        left: .318rem;
+      }
       .favorite {
         height: 3rem;
+        i {
+          padding: .25rem 0;
+        }
       }
     }
     .view-port-header {
@@ -733,6 +753,11 @@ html {
           opacity: 1;
         }
       }
+    }
+    .view-port-footer {
+        margin-top: initial;
+        margin-left: auto;
+  
     }
   }
 }
