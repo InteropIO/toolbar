@@ -1,7 +1,7 @@
 
 import { glueAppsObs, startApp} from './glue-related.js';
 import { favoriteApps, addFavoriteApp, removeFavoriteApp } from './favorites.js';
-import {getSetting} from './settings.js';
+import {getSetting, getSettings} from './settings.js';
 
 const searchInputObs = new rxjs.BehaviorSubject('');
 
@@ -14,12 +14,14 @@ let {
 
 const allApps = glueAppsObs
   .pipe(rxFilter(apps => apps.length > 0))
-  .pipe(rxMap(allApps => allApps.filter(app => shouldAppBeVisible(app))))
   .pipe(rxDistinctUntilChanged(undefined, (apps) => {
     // distinct apps have changed by creating a "hash" containing app titles + instance ids
-    return apps.map(app => app.title + app.instances.map(i => i.id).join()).join();
+    return apps.map(app => app.title + app.instances.map(i => i.id).join()).join() + JSON.stringify(getSettings());
   }))
-  // .pipe(rxMap(apps => []));
+  .pipe(rxMap(allApps => allApps.filter(app => shouldAppBeVisible(app))))
+  .pipe(rxMap(allApps => {
+    return allApps;
+  }))
   .pipe(rxMap(apps => apps.sort(orderApps)));
 
 const applicationsObs = allApps
@@ -107,8 +109,8 @@ function applicationHTMLTemplate(app, options = {}) {
         (favoriteBtn ? `
         <div class="action-menu-tool">
           <button class="btn btn-icon secondary add-favorite">
-          <i class="icon-star-empty-1"></i>
-          <i class="icon-star-full"></i>
+          <i class="icon-star-empty-1" draggable="false"></i>
+          <i class="icon-star-full" draggable="false"></i>
           </button>
         </div>` : '') +
       `</div>
@@ -116,9 +118,13 @@ function applicationHTMLTemplate(app, options = {}) {
 }
 
 function favoriteApplicationHTMLTemplate(app) {
+
+  if (!app) {
+    return '';
+  }
   return `
   <li class="nav-item ${app.instances.length > 0 ? 'app-active' : ''}" app-name="${app.name}">
-    <a class="nav-link" href="#">
+    <a class="nav-link" href="#" draggable="false">
       ${getAppIcon(app, {marginRight: 2, marginLeft: 2})}
       <span class="text-animation mx-2">${app.title}</span>
     </a>
@@ -132,16 +138,16 @@ function getAppIcon(app, options = {}) {
     marginLeft = 2} = options;
 
   if (app.icon) {
-    return `<img src="${app.icon}" class="ml-${marginLeft} mr-${marginRight}" style="width:16px;"/>`;
+    return `<img src="${app.icon}" class="ml-${marginLeft} mr-${marginRight}" draggable="false" style="width:16px;"/>`;
   } else {
     return `<span class="icon-size-16 ml-${marginLeft} mr-${marginRight}">
-    <i class="icon-app"></i>
+    <i class="icon-app" draggable="false"></i>
   </span>`;
   }
 }
 
 const noApplicationsHTML = `<li class="text-center w-100 pt-3">No applications</li>`;
-const noRunningAppsHTML =  `<li class="text-center w-100 pt-3">No running applications</li><li class="text-center w-100 pt-3"><button class="btn btn-secondary">Add applications</button></li>`;
+const noRunningAppsHTML =  `<li class="text-center w-100 pt-3">No running applications</li><li class="text-center w-100 pt-3"><button class="btn btn-secondary" menu-button-id="apps">Add applications</button></li>`;
 const noFavoriteAppsHTML = `<li class="text-center w-100 pt-3">No favorite apps</li>`;
 
 export {

@@ -1,4 +1,7 @@
-import {shutdown, gluePromise, startApp, focusApp, themeObs, changeTheme} from './glue-related.js'
+import {shutdown, gluePromise, startApp, focusApp, themeObs, changeTheme, refreshApps} from './glue-related.js'
+import { setSetting, getSetting } from './settings.js';
+
+const windowMargin = 50;
 
 function handleThemeChange() {
   q('#change-theme').addEventListener('click', () => {
@@ -35,19 +38,36 @@ function handleShutdownClick() {
 
 function handleTopMenuClicks() {
   document.addEventListener('click', (e) => {
+
+    if (e.target.matches('[menu-button-id="apps"], [menu-button-id="apps"] *') && e.altKey) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      setSetting('showHiddenApps', !getSetting('showHiddenApps'));
+      refreshApps();
+      return;
+    }
+
     if (e.target.matches('[menu-button-id], [menu-button-id] *')) {
       //open selected drawer (apps, layouts)
       let topElement = e.path.find(e => e.getAttribute('menu-button-id'))
       let menuId = topElement.getAttribute('menu-button-id')
-      qa(`:not([menu-id="${menuId}"])`).forEach(menu => {
+      qa(`[menu-id]:not([menu-id="${menuId}"])`).forEach(menu => {
         menu.classList.add('hide');
       });
-      qa(`:not([menu-button-id="${menuId}"]) .chavron`).forEach(menuBtnChavron => {
+      qa(`[menu-id]:not([menu-button-id="${menuId}"]) .chavron`).forEach(menuBtnChavron => {
         menuBtnChavron.classList.remove('chavron-rotate');
       });
 
-      q(`[menu-id="${menuId}"]`).classList.toggle('hide');
-      q(`[menu-button-id="${menuId}"] .chavron`) && q(`[menu-button-id="${menuId}"] .chavron`).classList.toggle('chavron-rotate');
+
+      let menuToToggle = q(`[menu-id="${menuId}"]`);
+      menuToToggle.addEventListener('transitionend', focusMenuInputAfterTransition);
+      menuToToggle.classList.toggle('hide');
+
+      toggleTopButtonState(menuId);
+
+
+
     } else if (e.target.matches('#fav-apps .nav-item, #fav-apps .nav-item *')) {
       //start or focus an app from the favorites list
       let topElement = e.path.find(e => e.classList && e.classList.contains('nav-item'));
@@ -62,6 +82,31 @@ function handleTopMenuClicks() {
     }
   })
 }
+
+function toggleTopButtonState(id) {
+  qa(`[menu-button-id="${id}"] .chavron`).forEach(chavron => chavron.classList.toggle('chavron-rotate'));
+  qa(`[menu-button-id="${id}"] > a`).forEach(chavron => chavron.classList.toggle('active'));
+
+  qa(`[menu-button-id]:not([menu-button-id="${id}"]) .chavron`).forEach(chavron => chavron.classList.remove('chavron-rotate'));
+  qa(`[menu-button-id]:not([menu-button-id="${id}"]) > a`).forEach(chavron => chavron.classList.remove('active'));
+
+}
+
+function focusMenuInputAfterTransition(e) {
+  if (!e.propertyName || e.propertyName !=='width') {
+    return;
+  }
+
+  let menu = e.srcElement;
+  menu.removeEventListener('transitionend', focusMenuInputAfterTransition)
+  if (!menu.classList.contains('hide')) {
+    let autofocusInput = menu.querySelector('input[autofocus]');
+    if (autofocusInput) {
+      autofocusInput.focus();
+    }
+  }
+}
+
 
 function handleDropDownClicks() {
   document.addEventListener('click', (e) => {
@@ -115,5 +160,6 @@ export {
   handleTopMenuClicks,
   handleDropDownClicks,
   handleModalClose,
-  handleMouseHover
+  handleMouseHover,
+  windowMargin
 }

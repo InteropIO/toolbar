@@ -10,7 +10,10 @@ const allLayouts = layoutsObs
 
 function handleLayoutClick() {
   q('#layout-load>ul').addEventListener('click', e => {
-    const layoutElement = e.path.find(e => e.getAttribute('layout-name'));
+    const layoutElement = e.path.find(e => e.getAttribute && e.getAttribute('layout-name'));
+    if (!layoutElement) {
+      return;
+    }
     const name = layoutElement.getAttribute('layout-name');
     const type = layoutElement.getAttribute('layout-type');
 
@@ -63,7 +66,7 @@ function layoutHTMLTemplate(layout) {
   `;
 }
 
-const noLayoutsHTML = `<li class="text-center w-100 pt-3">No Layouts Saved</li><li class="text-center w-100 pt-3"><button class="btn btn-secondary">Add Layouts</button></li>`;
+const noLayoutsHTML = `<li class="text-center w-100 pt-3">No Layouts Saved</li><li class="text-center w-100 pt-3"><button class="btn btn-secondary" menu-button-id="layout-save">Add Layouts</button></li>`;
 
 export {
   allLayouts,
