@@ -211,10 +211,10 @@ html.light {
 }
 
 html {
-  .app {
-    margin: 50px;
-    height: calc(100vh - 100px); // Atanas 50px margin 
-  }
+  // .app {
+  //   margin: 50px;
+  //   height: calc(100vh - 100px); // Atanas 50px margin 
+  // }
 
   img, a {
     user-select: none;
@@ -626,13 +626,20 @@ html {
     display: flex;
     width: 100vw;
     height: 3rem;
+
+    > .nav {
+      flex-wrap: nowrap;
+      width: calc(100% - 36px);
+    }
+    
     
     .dragable {
       width: 3.375rem;
+      left: 0;
     }
 
     &.view-port .view-port-header {
-      width: 3.375rem;
+      width: 3.688rem;
       overflow: hidden;
     }
 
@@ -670,6 +677,11 @@ html {
         }
       }
     }
+
+    .fav-app-nav {
+      flex-wrap: nowrap;
+    }
+    
     .view-port-header {
       .menu {
         position: fixed;
@@ -687,7 +699,7 @@ html {
         height: 3rem;
 
         &:hover {
-          width: 170px;
+          width: 10.625rem;
           .nav-link {
             .text-animation {
               @include text-animation("on", "", 100);

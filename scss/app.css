@@ -134,10 +134,6 @@ html.light .nav .nav-link.active img, html.light .nav .nav-link:hover img {
   filter: grayscale(100%) brightness(0);
 }
 
-html .app {
-  margin: 50px;
-  height: calc(100vh - 100px);
-}
 html img, html a {
   user-select: none;
   -webkit-user-drag: none;
@@ -482,11 +478,16 @@ html .horizontal {
   width: 100vw;
   height: 3rem;
 }
+html .horizontal > .nav {
+  flex-wrap: nowrap;
+  width: calc(100% - 36px);
+}
 html .horizontal .dragable {
   width: 3.375rem;
+  left: 0;
 }
 html .horizontal.view-port .view-port-header {
-  width: 3.375rem;
+  width: 3.688rem;
   overflow: hidden;
 }
 html .horizontal .app-active::before {
@@ -517,6 +518,9 @@ html .horizontal .nav .favorite {
 html .horizontal .nav .favorite i {
   padding: 0.25rem 0;
 }
+html .horizontal .fav-app-nav {
+  flex-wrap: nowrap;
+}
 html .horizontal .view-port-header .menu {
   position: fixed;
   top: 10px;
@@ -531,7 +535,7 @@ html .horizontal .nav-tabs .nav-item {
   height: 3rem;
 }
 html .horizontal .nav-tabs .nav-item:hover {
-  width: 170px;
+  width: 10.625rem;
 }
 html .horizontal .nav-tabs .nav-item:hover .nav-link .text-animation {
   transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
