@@ -255,7 +255,6 @@ html {
 
     > .nav {
       overflow: auto;
-      height: 100%;
     }
   }
 
@@ -271,6 +270,10 @@ html {
         white-space: nowrap;
         user-select: none;
         position: relative;
+        display: flex;
+        flex-shrink: 0;
+        height: 3rem;
+        width: 100%;
       }
 
       .nav-link {
@@ -454,10 +457,11 @@ html {
     }
   }
 
-  #layout-load {
-    .nav-item  {
-      display: flex;
-      flex-shrink: 0;
+  #layout-load,
+  #app-content,
+  #layout-content {
+    .nav {
+      height: 100%;
     }
   }
   .view-port {
