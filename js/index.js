@@ -29,7 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
   handleSearchChange()
   handleLayoutClick();
   handleLayoutSave();
-  handleNotificationClick();
+
+  utils.handleNotificationClick();
   utils.handleOrientationChange();
   utils.handleThemeChange();
   utils.handleAboutClick();
@@ -38,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
   utils.handleDropDownClicks();
   utils.handleMouseHover();
   utils.handleModalClose();
+
   glueModule.registerHotkey();
 })
 
@@ -85,15 +87,7 @@ function printFavoriteApps() {
   .pipe(rxjs.operators.combineLatest(applicationsObs))
   .subscribe(([favApps, allApps]) => {
     let favAppsHtml = ``;
-    let existingFavApps = favApps.filter(favApp => {
-      let favAppExists = allApps.find(a => a.name === favApp);
-      if (!favAppExists) {
-        console.log('remove fav app', favApp);
-        // removeFavoriteApp(favApp)
-      }
-
-      return favAppExists;
-    })
+    let existingFavApps = favApps.filter(favApp => allApps.find(a => a.name === favApp));
 
     if (existingFavApps.length > 0) {
       existingFavApps.forEach(favApp => {
@@ -102,7 +96,6 @@ function printFavoriteApps() {
           favAppsHtml += favoriteApplicationHTMLTemplate(fullApp, {favoriteBtn: false})
         }
       });
-
     } else {
       favAppsHtml = noFavoriteAppsHTML;
     }
@@ -119,15 +112,6 @@ function printNotificationCount() {
   })
 }
 
-function handleNotificationClick() {
-  q('#notification-panel').addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    e.stopImmediatePropagation();
-    openNotificationPanel();
-  })
-}
-
 function handleWidthChange() {
   resizeVisibleArea(q('body .app').offsetWidth);
   const widthObserver = new ResizeObserver((elements) => {
@@ -137,28 +121,8 @@ function handleWidthChange() {
   widthObserver.observe(q('body .app'));
 }
 
-
-
 function resizeVisibleArea(width) {
   width = Math.round(width);
   resizeWindowVisibleArea(width);
   q('.modal').style.width = width+ 'px';
 }
-
-function expandWindow() {
-  window.glue.agm.invoke("T42.Wnd.Execute", {
-    command: "updateVisibleAreas",
-    windowId: glue.windows.my().id,
-    options: {
-      areas: [{
-        top: 0,
-        left: 0,
-        width: 500,
-        height: 800
-      }]
-    }
-  })
-}
-
-window.expandWindow = expandWindow;
-

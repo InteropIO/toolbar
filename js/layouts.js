@@ -1,4 +1,5 @@
 import {layoutsObs, removeLayout, restoreLayout, saveLayout} from './glue-related.js';
+import { escapeHtml } from './utils.js';
 
 let filteredLayouts;
 
@@ -58,7 +59,7 @@ function handleLayoutSave(){
 }
 
 function saveCurrentLayout() {
-  saveLayout(q('#layout-save-name').value);
+  saveLayout(escapeHtml(q('#layout-save-name').value));
   q('#layout-save-name').value = '';
   q('#layout-content').classList.add('hide');
   q('#layout-load').classList.remove('hide');

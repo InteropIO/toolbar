@@ -174,6 +174,24 @@ async function handleMouseHover() {
   })
 }
 
+function handleNotificationClick() {
+  q('#notification-panel').addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    openNotificationPanel();
+  })
+}
+
+function escapeHtml(unsafe) {
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 
 export {
   handleOrientationChange,
@@ -182,7 +200,9 @@ export {
   handleShutdownClick,
   handleTopMenuClicks,
   handleDropDownClicks,
+  handleNotificationClick,
   handleModalClose,
   handleMouseHover,
-  windowMargin
+  windowMargin,
+  escapeHtml
 }
