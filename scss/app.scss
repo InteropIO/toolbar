@@ -462,6 +462,7 @@ html {
   #layout-content {
     .nav {
       height: 100%;
+      align-content: flex-start;
     }
   }
   .view-port {
@@ -821,26 +822,37 @@ html {
 }
 
 
-@media screen and (max-width: 1370px) {
+@media screen and (min-width: 1370px) {
   html {
-    .app.flex-column .nav .nav-item {
-      max-width: 33%;
+    #layout-load,
+    #app-content,
+    #layout-content {
+      .nav-tabs .nav-item {
+        max-width: 33%;
+      }
     }
   }
 }
-
 @media screen and (max-width: 1190px) {
   html {
-    .app.flex-column .nav .nav-item {
-      max-width: 50%;
+    #layout-load,
+    #app-content,
+    #layout-content {
+      .nav-tabs .nav-item {
+        max-width: 50%;
+      }
     }
   }
 }
 
 @media screen and (max-width: 640px) {
   html {
-    .app.flex-column .nav .nav-item {
-      max-width: 100%;
+    #layout-load,
+    #app-content,
+    #layout-content {
+      .nav-tabs .nav-item {
+        max-width: 100%;
+      }
     }
   }
 }
