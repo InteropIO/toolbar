@@ -2,6 +2,7 @@ import {shutdown, gluePromise, startApp, focusApp, themeObs, changeTheme, refres
 import { setSetting, getSetting } from './settings.js';
 
 const windowMargin = 50;
+let isVertical;
 
 function handleThemeChange() {
   q('#change-theme').addEventListener('click', () => {
@@ -22,6 +23,27 @@ function handleThemeChange() {
       q('html').classList.add(themeObj.selected);
     }
   })
+}
+
+function handleOrientationChange() {
+  isVertical = !!q('.view-port.vertical');
+  q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
+
+  q('#toggle').addEventListener('click', () => {
+    isVertical = !isVertical;
+    q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
+
+    q('.view-port').classList.add(isVertical ? 'vertical' : 'horizontal');
+    q('.view-port').classList.remove(isVertical ? 'horizontal' : 'vertical');
+    qa('[column]').forEach(col => {
+      if (isVertical) {
+        col.classList.add('flex-column')
+      } else {
+        console.log('removing flex-column', col);
+        col.classList.remove('flex-column')
+      }
+    })
+  });
 }
 
 function handleAboutClick() {
@@ -154,6 +176,7 @@ async function handleMouseHover() {
 
 
 export {
+  handleOrientationChange,
   handleThemeChange,
   handleAboutClick,
   handleShutdownClick,

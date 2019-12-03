@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
   handleLayoutClick();
   handleLayoutSave();
   handleNotificationClick();
+  utils.handleOrientationChange();
   utils.handleThemeChange();
   utils.handleAboutClick();
   utils.handleShutdownClick();

@@ -11,7 +11,7 @@
 <body>
   <div class="app d-inline-flex">
     <div id="applicationLauncher" class="view-port vertical expand">
-      <ul class="nav nav-tabs  flex-column">
+      <ul class="nav nav-tabs flex-column" column>
         <li class="view-port-header">
           <div class="dragable"></div>
           <div class="logo">
@@ -22,7 +22,7 @@
               <i class="icon-ellipsis-vert"></i>
             </button>
             <div class="dropdown-menu" id="menu-top" dropdown-id="top-menu">
-              <!-- <a class="dropdown-item" href="#" id="toggle">Toggle</a> -->
+              <a class="dropdown-item" href="#" id="toggle">Switch to <span class="mode"></span></a>
               <a class="dropdown-item" href="#" id="change-theme">Switch Theme</a>
               <!-- <a class="dropdown-item" href="#">Settings</a> -->
               <a class="dropdown-item" href="#" id="open-about">About</a>
@@ -76,13 +76,13 @@
         <input class="form-control" id="app-search" autofocus placeholder="Search app...">
       </div>
 
-      <ul id="applications" class="nav nav-tabs  flex-column">
+      <ul id="applications" class="nav nav-tabs flex-column" >
 
       </ul>
     </div>
 
     <div class="toggle-content hide" id="layout-load" menu-id="layout-load">
-      <ul class="nav nav-tabs  flex-column">
+      <ul class="nav nav-tabs flex-column" column>
         <li class="nav-item">
           <div class="nav-link action-menu">
             <i class="icon-03-context-viewer ml-2 mr-4"></i>
