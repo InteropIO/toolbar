@@ -1,3 +1,4 @@
+import { windowMargin } from "./utils.js";
 
 const gluePromise = new Promise(async (res, rej) => {
   let glue = await Glue({
@@ -79,6 +80,11 @@ async function focusApp(appName) {
   app.instances.forEach(i => i.activate());
 }
 
+async function refreshApps() {
+  await gluePromise;
+  pushAllApps();
+}
+
 async function removeLayout(type, name) {
   await gluePromise;
   glue.layouts.remove(type, name);
@@ -117,15 +123,16 @@ async function shutdown() {
 
 async function resizeWindowVisibleArea(width) {
   await gluePromise;
+
   window.glue.agm.invoke("T42.Wnd.Execute", {
     command: "updateVisibleAreas",
     windowId: glue.windows.my().id,
     options: {
       areas: [{
-        top: 0,
-        left: 0,
-        width,
-        height: window.outerHeight
+        top: windowMargin,
+        left: windowMargin,
+        width: width,
+        height: window.outerHeight - (2 * windowMargin)
       }]
     }
   })
@@ -141,6 +148,7 @@ export {
   layoutsObs,
   startApp,
   focusApp,
+  refreshApps,
   notificationsCountObs,
   themeObs,
   changeTheme,

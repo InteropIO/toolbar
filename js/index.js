@@ -8,7 +8,7 @@ import {
   noRunningAppsHTML,
   noApplicationsHTML,
   noFavoriteAppsHTML} from './applications.js';
-import {favoriteApps, updateFavoriteApps} from './favorites.js';
+import {favoriteApps, updateFavoriteApps, removeFavoriteApp} from './favorites.js';
 import {allLayouts, layoutHTMLTemplate, handleLayoutClick, handleLayoutSave, noLayoutsHTML} from './layouts.js';
 import {notificationsCountObs, openNotificationPanel, resizeWindowVisibleArea} from './glue-related.js';
 import * as glueModule from './glue-related.js';
@@ -85,11 +85,22 @@ function printFavoriteApps() {
   .pipe(rxjs.operators.combineLatest(applicationsObs))
   .subscribe(([favApps, allApps]) => {
     let favAppsHtml = ``;
+    let existingFavApps = favApps.filter(favApp => {
+      let favAppExists = allApps.find(a => a.name === favApp);
+      if (!favAppExists) {
+        console.log('remove fav app', favApp);
+        // removeFavoriteApp(favApp)
+      }
 
-    if (favApps.length > 0) {
-      favApps.forEach(favApp => {
+      return favAppExists;
+    })
+
+    if (existingFavApps.length > 0) {
+      existingFavApps.forEach(favApp => {
         let fullApp = allApps.find(a => a.name === favApp);
-        favAppsHtml += favoriteApplicationHTMLTemplate(fullApp, {favoriteBtn: false})
+        if (fullApp) {
+          favAppsHtml += favoriteApplicationHTMLTemplate(fullApp, {favoriteBtn: false})
+        }
       });
 
     } else {

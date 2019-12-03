@@ -17,11 +17,9 @@ function updateFavoriteApps() {
   document.querySelectorAll('#applications>li').forEach(appElement => {
     let appName = appElement.getAttribute('app-name');
     if (currentFavoriteApps.includes(appName)) {
-      // console.log(appElement,appName);
       appElement.classList.add('fav-app');
     } else {
       appElement.classList.remove('fav-app');
-      // console.warn(appElement, appName);
     }
   })
   // favoriteApps
