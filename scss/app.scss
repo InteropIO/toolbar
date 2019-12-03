@@ -503,7 +503,7 @@ html {
     }
 
     .accordion {
-      height: calc(100vh - 295px); // 295px Atanas 50px margin 
+      height: calc(100vh - 314px); // 314px Atanas 50px margin 
       overflow-x: hidden;
       overflow-y: auto;
       @include transition(0);
@@ -567,7 +567,7 @@ html {
     }
 
     .accordion {
-      height: calc(100vh - 318px);
+      height: calc(100vh - 314px);
 
       .nav {
         .toggle-content {
@@ -822,37 +822,11 @@ html {
 }
 
 
-@media screen and (min-width: 1370px) {
-  html {
-    #layout-load,
-    #app-content,
-    #layout-content {
-      .nav-tabs .nav-item {
-        max-width: 33%;
-      }
-    }
-  }
-}
-@media screen and (max-width: 1190px) {
-  html {
-    #layout-load,
-    #app-content,
-    #layout-content {
-      .nav-tabs .nav-item {
-        max-width: 50%;
-      }
-    }
-  }
-}
+// @media screen and (min-width: 1370px) {
+// }
 
-@media screen and (max-width: 640px) {
-  html {
-    #layout-load,
-    #app-content,
-    #layout-content {
-      .nav-tabs .nav-item {
-        max-width: 100%;
-      }
-    }
-  }
-}
+// @media screen and (max-width: 1190px) {
+// }
+
+// @media screen and (max-width: 640px) {
+// }

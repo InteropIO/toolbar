@@ -385,7 +385,7 @@ html .view-port .view-port-header .logo {
   min-width: 120px;
 }
 html .view-port .accordion {
-  height: calc(100vh - 295px);
+  height: calc(100vh - 314px);
   overflow-x: hidden;
   overflow-y: auto;
   transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
@@ -445,7 +445,7 @@ html .vertical.expand .fav-app-nav .text-center {
   transform: translateX(0);
 }
 html .vertical.expand .accordion {
-  height: calc(100vh - 318px);
+  height: calc(100vh - 314px);
 }
 html .vertical.expand .accordion .nav .toggle-content {
   left: 200px;
@@ -618,28 +618,6 @@ html .horizontal .view-port-footer {
 .app-active:hover::before {
   top: 0;
   bottom: 0;
-}
-
-@media screen and (min-width: 1370px) {
-  html #layout-load .nav-tabs .nav-item,
-html #app-content .nav-tabs .nav-item,
-html #layout-content .nav-tabs .nav-item {
-    max-width: 33%;
-  }
-}
-@media screen and (max-width: 1190px) {
-  html #layout-load .nav-tabs .nav-item,
-html #app-content .nav-tabs .nav-item,
-html #layout-content .nav-tabs .nav-item {
-    max-width: 50%;
-  }
-}
-@media screen and (max-width: 640px) {
-  html #layout-load .nav-tabs .nav-item,
-html #app-content .nav-tabs .nav-item,
-html #layout-content .nav-tabs .nav-item {
-    max-width: 100%;
-  }
 }
 
 /*# sourceMappingURL=app.css.map */
