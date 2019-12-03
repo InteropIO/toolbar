@@ -10,8 +10,8 @@
 
 <body>
   <div class="app d-inline-flex">
-    <div id="applicationLauncher" class="view-port horizontal expand">
-      <ul class="nav nav-tabs ">
+    <div id="applicationLauncher" class="view-port vertical expand">
+      <ul class="nav nav-tabs  flex-column">
         <li class="view-port-header">
           <div class="dragable"></div>
           <div class="logo">
@@ -55,11 +55,11 @@
           <i class="icon-star-full"></i>
         </li>
         <li>
-          <ul id="fav-apps" class="nav nav-tabs fav-app-nav accordion">
+          <ul id="fav-apps" class="nav nav-tabs  flex-column fav-app-nav accordion">
 
           </ul>
         </li>
-        <li class="nav-item view-port-footer" id="notification-panel">
+        <li class="nav-item view-port-footer mt-auto" id="notification-panel">
           <a class="nav-link" href="#">
             <i class="icon-bell-alt ml-2 mr-4"></i>
             <span class="text-animation">Notification</span>
@@ -83,13 +83,43 @@
 
     <div class="toggle-content hide" id="layout-load" menu-id="layout-load">
       <ul class="nav nav-tabs  flex-column">
+        <li class="nav-item">
+          <div class="nav-link action-menu">
+            <i class="icon-03-context-viewer ml-2 mr-4"></i>
+            <span>Start of the day</span>
+            <div class="action-menu-tool">
+              <button class="btn btn-icon secondary" id="menu-tool-4">
+                <i class="icon-ellipsis-vert"></i>
+              </button>
+            </div>
+          </div>
+          <div class="layout-menu-tool">
+            <div id="delete" class="">Delete</div>
+            <div id="cancel" class="active">cancel</div>
+          </div>
+        </li>
+        <li class="nav-item">
+          <div class="nav-link action-menu">
+            <i class="icon-03-context-viewer ml-2 mr-4"></i>
+            <span>Vurnan Portfolio</span>
+            <div class="action-menu-tool">
+              <button class="btn btn-icon secondary" id="menu-tool-5">
+                <i class="icon-ellipsis-vert"></i>
+              </button>
+              <div class="dropdown-menu" id="menu-div-5">
+                <a class="dropdown-item" href="#">Edit</a>
+                <a class="dropdown-item" href="#">Delete</a>
+              </div>
+            </div>
+          </div>
+        </li>
       </ul>
     </div>
 
     <div class="toggle-content hide" id="layout-content" menu-id="layout-save">
       <div class="p-2">
         <div class="input-group">
-          <input type="text" id="layout-save-name" class="form-control" autofocus placeholder="Layout name ...">
+          <input type="text" id="layout-save-name" class="form-control" placeholder="Layout name ...">
           <div class="input-group-append">
             <button class="btn btn-secondary" id="layout-save-btn">
               <i class="icon-floppy"></i>
@@ -98,7 +128,23 @@
         </div>
       </div>
       <ul id="running-apps" class="nav nav-tabs menu-flex-direction">
-
+        <li class="nav-item">
+          <a class="nav-link" href="#">
+            <i class="icon-dev-tools ml-2 mr-4"></i>
+            <span class="icon-size-24 active-app text-primary">
+              <i class="icon-dot mr-2"></i>
+            </span>
+            <span>Devtools</spanclass>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">
+            <i class="icon-dev-tools ml-2 mr-4"></i>
+            <span class="icon-size-24 active-app text-primary"><i class="icon-dot mr-2 "></i>
+            </span>
+            <span>Interop</span>
+          </a>
+        </li>
       </ul>
     </div>
     <div class="modal about fade" tabindex="-1" role="dialog"aria-hidden="true">

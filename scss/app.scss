@@ -211,10 +211,10 @@ html.light {
 }
 
 html {
-  // .app {
-  //   margin: 50px;
-  //   height: calc(100vh - 100px); // Atanas 50px margin 
-  // }
+  .app {
+    margin: 50px;
+    height: calc(100vh - 100px); // Atanas 50px margin 
+  }
 
   img, a {
     user-select: none;
@@ -255,7 +255,7 @@ html {
 
     > .nav {
       overflow: auto;
-      height: calc(100vh - 3rem);
+      height: 100%;
     }
   }
 
@@ -270,12 +270,14 @@ html {
       .nav-item {
         white-space: nowrap;
         user-select: none;
+        position: relative;
       }
 
       .nav-link {
         height: 3rem;
         border: 0;
         padding-left: 14px;
+        width: 100%;
 
         i {
           @include transition(0);
@@ -284,12 +286,16 @@ html {
         .icon-angle-down {
           opacity: 0;
         }
+        &.active {
+          .icon-angle-down {
+            opacity: 1;
+          } 
+        }
       }
     }
 
     &.flex-column {
       flex-wrap: nowrap;
-      height: 100%;
     }
 
     .applications-nav {
@@ -404,6 +410,7 @@ html {
       position: absolute;
       visibility: hidden;
       width: 100%;
+      top:0;
 
       div {
         align-items: center;
@@ -416,15 +423,17 @@ html {
     }
 
     .show-actions {
-      display: flex;
       position: relative;
+      flex-shrink: 0;
 
       &:hover,
       &.active {
         i,
         .text-animation,
+        .action-menu-tool,
         span {
           opacity: 0;
+          visibility: hidden;
         }
 
         .layout-menu-tool {
@@ -445,6 +454,12 @@ html {
     }
   }
 
+  #layout-load {
+    .nav-item  {
+      display: flex;
+      flex-shrink: 0;
+    }
+  }
   .view-port {
     @include transition(0);
     border: 1px solid rgba(255, 255, 255, 0.075);
@@ -681,7 +696,7 @@ html {
     .fav-app-nav {
       flex-wrap: nowrap;
     }
-    
+
     .view-port-header {
       .menu {
         position: fixed;
@@ -721,21 +736,6 @@ html {
       .menu {
         display: block;
       }
-
-      // .text-animation {
-      //   @include text-animation("on", "", 0);
-      // }
-
-      // .favorite {
-      //   height: 1.25rem;
-      //   @include transition(300);
-      //   margin-top: 0.25rem;
-
-      //   i,
-      //   span {
-      //     @include text-animation("on", "", 450);
-      //   }
-      // }
 
       .fav-app-nav {
         .text-center {
@@ -816,9 +816,6 @@ html {
   }
 }
 
-html {
-  
-}
 
 @media screen and (max-width: 1370px) {
   html {
