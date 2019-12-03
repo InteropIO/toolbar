@@ -1,12 +1,31 @@
 import {layoutsObs, removeLayout, restoreLayout, saveLayout} from './glue-related.js';
 
+let filteredLayouts;
 
-const allLayouts = layoutsObs
+init();
+function init() {
+  let allLayouts = layoutsObs
   .pipe(rxjs.operators.map((layouts) => {
     return layouts
       .map(l => ({name: l.name, type: l.type}))
       .filter(l => ['Global', 'Swimlane'].includes(l.type))
-  }))
+  }));
+
+  const layoutSearch = rxjs.fromEvent(q('#layout-search'), 'keyup')
+    .pipe(rxjs.operators.map(event => {
+      return event.srcElement.value.toString().toLowerCase().trim();
+    }))
+    .pipe(rxjs.operators.distinctUntilChanged())
+    .pipe(rxjs.operators.startWith(''))
+
+  filteredLayouts = allLayouts
+    .pipe(rxjs.operators.combineLatest(layoutSearch))
+    .pipe(rxjs.operators.map(([layouts, search]) => {
+      return layouts.filter(layout => {
+        return layout.name.toLowerCase().includes(search);
+      })
+    }))
+}
 
 function handleLayoutClick() {
   q('#layout-load>ul').addEventListener('click', e => {
@@ -69,7 +88,7 @@ function layoutHTMLTemplate(layout) {
 const noLayoutsHTML = `<li class="text-center w-100 pt-3">No Layouts Saved</li><li class="text-center w-100 pt-3"><button class="btn btn-secondary" menu-button-id="layout-save">Add Layouts</button></li>`;
 
 export {
-  allLayouts,
+  filteredLayouts,
   layoutHTMLTemplate,
   handleLayoutClick,
   handleLayoutSave,

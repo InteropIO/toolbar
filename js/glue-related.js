@@ -124,6 +124,9 @@ async function shutdown() {
 async function resizeWindowVisibleArea(width) {
   await gluePromise;
 
+  // console.log();
+  // console.log(window.outerHeight - (2 * windowMargin));
+
   window.glue.agm.invoke("T42.Wnd.Execute", {
     command: "updateVisibleAreas",
     windowId: glue.windows.my().id,
@@ -132,7 +135,7 @@ async function resizeWindowVisibleArea(width) {
         top: windowMargin,
         left: windowMargin,
         width: width,
-        height: window.outerHeight - (2 * windowMargin)
+        height: q('.app').offsetHeight
       }]
     }
   })

@@ -9,13 +9,12 @@ import {
   noApplicationsHTML,
   noFavoriteAppsHTML} from './applications.js';
 import {favoriteApps, updateFavoriteApps, removeFavoriteApp} from './favorites.js';
-import {allLayouts, layoutHTMLTemplate, handleLayoutClick, handleLayoutSave, noLayoutsHTML} from './layouts.js';
+import {filteredLayouts, layoutHTMLTemplate, handleLayoutClick, handleLayoutSave, noLayoutsHTML} from './layouts.js';
 import {notificationsCountObs, openNotificationPanel, resizeWindowVisibleArea} from './glue-related.js';
 import * as glueModule from './glue-related.js';
 import * as utils from './utils.js';
 
-window.q = document.querySelector.bind(document);
-window.qa = document.querySelectorAll.bind(document);
+
 
 document.addEventListener('DOMContentLoaded', () => {
   console.log('window loaded');
@@ -70,7 +69,7 @@ function printRunningApps() {
 }
 
 function printLayouts() {
-  allLayouts.subscribe(layouts => {
+  filteredLayouts.subscribe(layouts => {
     let newLayoutsHTML = '';
     if (layouts.length > 0) {
       layouts.forEach(layout =>  newLayoutsHTML += layoutHTMLTemplate(layout))
