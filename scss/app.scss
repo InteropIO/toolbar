@@ -214,6 +214,7 @@ html {
   .app {
     margin: 50px;
     height: calc(100vh - 100px); // Atanas 50px margin 
+    width: calc(100vw - 100px); // Atanas 50px margin 
   }
 
   img, a {
@@ -226,8 +227,6 @@ html {
     position: fixed;
     width: 9.5rem;
     height: 3rem;
-    top: 50;
-    left: 50;
     -webkit-app-region: drag;
   }
 
@@ -705,8 +704,8 @@ html {
     .view-port-header {
       .menu {
         position: fixed;
-        top: 10px;
-        right: 4px;
+        top: 58px;
+        right: 54px;
         z-index: 11;
       }
     }

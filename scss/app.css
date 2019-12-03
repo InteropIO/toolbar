@@ -137,6 +137,7 @@ html.light .nav .nav-link.active img, html.light .nav .nav-link:hover img {
 html .app {
   margin: 50px;
   height: calc(100vh - 100px);
+  width: calc(100vw - 100px);
 }
 html img, html a {
   user-select: none;
@@ -147,8 +148,6 @@ html .dragable {
   position: fixed;
   width: 9.5rem;
   height: 3rem;
-  top: 50;
-  left: 50;
   -webkit-app-region: drag;
 }
 html .about {
@@ -544,8 +543,8 @@ html .horizontal .fav-app-nav {
 }
 html .horizontal .view-port-header .menu {
   position: fixed;
-  top: 10px;
-  right: 4px;
+  top: 58px;
+  right: 54px;
   z-index: 11;
 }
 html .horizontal .nav-tabs .nav-item {
