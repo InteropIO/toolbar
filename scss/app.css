@@ -130,8 +130,15 @@ html.light .nav .nav-link.active img, html.light .nav .nav-link:hover img {
   filter: grayscale(100%) brightness(0);
 }
 
+html {
+  height: 100%;
+}
+html body {
+  padding: 50px;
+  height: 100%;
+}
 html .app {
-  margin: 50px;
+  height: 100%;
 }
 html img, html a {
   user-select: none;
@@ -140,8 +147,10 @@ html img, html a {
 }
 html .dragable {
   position: fixed;
-  width: 9.5rem;
+  width: 9rem;
   height: 3rem;
+  left: 50px;
+  top: 50px;
   -webkit-app-region: drag;
 }
 html .about {
@@ -151,6 +160,7 @@ html .about {
 html .toggle-content {
   transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 0ms;
+  height: 100%;
   width: calc(100vw - 301px);
   overflow: hidden;
   visibility: visible;
@@ -174,17 +184,19 @@ html .text-animation {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+html .nav.nav-tabs li {
+  flex-basis: 3rem;
+  flex-shrink: 0;
+}
 html .nav.nav-tabs .nav-item {
   white-space: nowrap;
   user-select: none;
   position: relative;
   display: flex;
-  flex-shrink: 0;
-  height: 3rem;
   width: 100%;
 }
 html .nav.nav-tabs .nav-link {
-  height: 3rem;
+  height: auto;
   border: 0;
   padding-left: 14px;
   width: 100%;
@@ -205,7 +217,6 @@ html .nav.flex-column {
 html .nav .applications-nav {
   position: relative;
   overflow: hidden;
-  height: 3rem;
 }
 html .nav.fav-app-nav {
   position: relative;
@@ -213,7 +224,7 @@ html .nav.fav-app-nav {
 }
 html .nav .favorite {
   white-space: nowrap;
-  height: 1.25rem;
+  flex-basis: 1.25rem !important;
   transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 0ms;
   user-select: none;
@@ -233,9 +244,6 @@ html .nav .favorite::after {
   position: absolute;
   width: calc(100% - 16px);
   bottom: 11px;
-}
-html .nav .lauout-nav {
-  height: 3rem;
 }
 html .nav #fav-apps > li:not(.nav-item) {
   transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
@@ -268,7 +276,6 @@ html .nav .action-menu-tool .dropdown-menu {
 }
 html .nav .action-menu {
   cursor: pointer;
-  height: 3rem;
   padding-right: 1.5rem;
   overflow: hidden;
 }
@@ -356,7 +363,6 @@ html .view-port .menu {
 html .view-port .view-port-header {
   align-items: center;
   display: flex;
-  height: 3rem;
   justify-content: space-between;
   padding-left: 1.125rem;
   padding-right: 0.25rem;
@@ -378,7 +384,6 @@ html .view-port .view-port-header .logo {
   min-width: 120px;
 }
 html .view-port .accordion {
-  height: calc(100vh - 264px);
   overflow-x: hidden;
   overflow-y: auto;
   transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
@@ -394,7 +399,6 @@ html .view-port .view-port-footer {
 }
 html .view-port .view-port-footer .nav.nav-tabs .nav-link {
   text-decoration: none;
-  height: 3rem;
 }
 html .view-port .view-port-footer .nav.nav-tabs .nav-link:hover {
   text-decoration: none;
@@ -413,6 +417,9 @@ html .view-port .view-port-footer .circle-index {
   width: 0.875rem;
 }
 html .vertical {
+  height: 100%;
+}
+html .vertical > .flex-column {
   height: 100%;
 }
 html .vertical.expand {
@@ -434,11 +441,9 @@ html .vertical.expand .favorite {
 html .vertical.expand .favorite i {
   padding: 0 0.75rem;
 }
-html .vertical.expand .fav-app-nav .text-center {
-  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
-  transition-delay: 0ms;
-  opacity: 1;
-  transform: translateX(0);
+html .vertical.expand .fav-app-nav {
+  flex-grow: 1;
+  overflow-y: auto;
 }
 html .vertical.expand .accordion .nav .toggle-content {
   left: 200px;
@@ -546,7 +551,6 @@ html .horizontal .nav-tabs .nav-item {
   transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 0ms;
   overflow: hidden;
-  height: 3rem;
 }
 html .horizontal .nav-tabs .nav-item:hover {
   width: 10.625rem;
@@ -570,6 +574,9 @@ html .horizontal .view-port-footer {
   margin-top: initial;
   margin-left: auto;
 }
+html .h {
+  height: auto;
+}
 html .h .toggle-content {
   width: 100%;
   height: calc(100vh - 3rem);
@@ -580,7 +587,7 @@ html .h .toggle-content > div {
   width: 100%;
 }
 html .h .toggle-content.hide {
-  width: 100%;
+  width: 0;
   height: 0;
   border-bottom: 0 solid transparent;
 }

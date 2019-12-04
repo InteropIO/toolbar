@@ -207,8 +207,16 @@ html.light {
 }
 
 html {
+  height: 100%;
+
+  body {
+    padding: 50px;
+    height: 100%;
+  }
+
   .app {
-    margin: 50px;
+    
+    height: 100%;
   }
 
   img, a {
@@ -219,8 +227,10 @@ html {
 
   .dragable {
     position: fixed;
-    width: 9.5rem;
+    width: 9rem;
     height: 3rem;
+    left: 50px;
+    top: 50px;
     -webkit-app-region: drag;
   }
 
@@ -231,7 +241,7 @@ html {
 
   .toggle-content {
     @include transition(0);
-    
+    height: 100%;
     width: calc(100vw - 301px);
     overflow: hidden;
     visibility: visible;
@@ -259,18 +269,21 @@ html {
 
   .nav {
     &.nav-tabs {
+      li {
+        flex-basis: 3rem;
+        flex-shrink: 0;
+      }
+
       .nav-item {
         white-space: nowrap;
         user-select: none;
         position: relative;
         display: flex;
-        flex-shrink: 0;
-        height: 3rem;
         width: 100%;
       }
 
       .nav-link {
-        height: 3rem;
+        height: auto;
         border: 0;
         padding-left: 14px;
         width: 100%;
@@ -297,7 +310,6 @@ html {
     .applications-nav {
       position: relative;
       overflow: hidden;
-      height: 3rem;
     }
 
     &.fav-app-nav {
@@ -307,7 +319,7 @@ html {
 
     .favorite {
       white-space: nowrap;
-      height: 1.25rem;
+      flex-basis: 1.25rem !important;
       @include transition(0);
       user-select: none;
       overflow: hidden;
@@ -330,7 +342,7 @@ html {
       }
     }
     .lauout-nav {
-      height: 3rem;
+      // height: 3rem;
     }
     #fav-apps {
       & > li:not(.nav-item) {
@@ -368,7 +380,7 @@ html {
 
     .action-menu {
       cursor: pointer;
-      height: 3rem;
+     // height: 3rem;
       padding-right: 1.5rem;
       overflow: hidden;
 
@@ -472,7 +484,7 @@ html {
     .view-port-header {
       align-items: center;
       display: flex;
-      height: 3rem;
+      // height: 3rem;
       justify-content: space-between;
       padding-left: 1.125rem;
       padding-right: 0.25rem;
@@ -496,7 +508,7 @@ html {
     }
 
     .accordion {
-      height: calc(100vh - 264px); // 314px Atanas 50px margin 
+      // height: calc(100vh - 264px); // 314px Atanas 50px margin 
       overflow-x: hidden;
       overflow-y: auto;
       @include transition(0);
@@ -514,7 +526,7 @@ html {
       .nav.nav-tabs {
         .nav-link {
           @include non-underline();
-          height: 3rem;
+         // height: 3rem;
         }
       }
 
@@ -536,7 +548,9 @@ html {
 
   .vertical {
     height: 100%;
-
+    > .flex-column {
+      height: 100%;
+    }
     &.expand {
       width: 200px;
 
@@ -557,9 +571,8 @@ html {
       }
 
       .fav-app-nav {
-        .text-center {
-          @include text-animation("on", "", 0);
-        }
+        flex-grow: 1;
+        overflow-y: auto;
       }
 
       .accordion {
@@ -711,7 +724,7 @@ html {
         width: 60px;
         @include transition(0);
         overflow: hidden;
-        height: 3rem;
+       // height: 3rem;
 
         &:hover {
           width: 10.625rem;
@@ -744,16 +757,17 @@ html {
     }
   }
   .h {
+    height: auto;
     .toggle-content {
       width: 100%;
-      height: calc(100vh - 3rem);
+      height: calc(100vh - 3rem); // ? 
       border-top: 0 solid transparent;
       > .nav,
       > div {
         width: 100%;
       }
       &.hide {
-        width: 100%;
+        width: 0;
         height: 0;
         border-bottom: 0 solid transparent;
 

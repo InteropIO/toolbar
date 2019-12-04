@@ -164,11 +164,11 @@ async function handleMouseHover() {
 
   q('.app').addEventListener('mouseleave', (e) => {
     let {offsetWidth: viewPortWidth, offsetHeight: viewPortHeight} = q('.view-port');
-    let margin = windowMargin + 10;
-    console.log('x', e.x, '|', margin, (viewPortWidth + margin));
-    console.log('y', e.y, '|', margin, (viewPortHeight + margin));
+    let margin = windowMargin;
+    console.log('x', e.x, '|', margin, (viewPortWidth));
+    console.log('y', e.y, '|', margin, (viewPortHeight));
 
-    if (e.x < (viewPortWidth - margin) && e.x > margin && e.y < (viewPortHeight - margin) && e.y > margin) {
+    if (e.x < (viewPortWidth + margin) && e.x > margin && e.y < (viewPortHeight + margin -6) && e.y > margin) {
       console.log('fake leave');
       return;
     }
