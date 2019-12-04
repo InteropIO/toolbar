@@ -473,7 +473,7 @@ html {
   .view-port {
     @include transition(0);
     border: 1px solid rgba(255, 255, 255, 0.075);
-    overflow: hidden;
+   // overflow: hidden;
     width: 60px;
     // height: 100vh;  Atanas 50px margin 
 
@@ -663,7 +663,6 @@ html {
     
     .dragable {
       width: 3.375rem;
-      left: 0;
     }
 
     &.view-port .view-port-header {
@@ -720,30 +719,43 @@ html {
     }
 
     .nav-tabs {
-      .nav-item {
-        width: 60px;
-        @include transition(0);
-        overflow: hidden;
-       // height: 3rem;
+      li {
+        flex-basis: 59px;
 
-        &:hover {
-          width: 10.625rem;
-          .nav-link {
-            .text-animation {
-              @include text-animation("on", "", 100);
-            }
-          }
-        }
-
-        .nav-link {
-          &.active {
-            .text-animation {
-              @include text-animation("on", "", 100);
-            }
-          }
+        &.fav-app-nav {
+          flex-grow: 1;
         }
       }
+      .nav-item {
+        @include transition(0);
+        height: 3rem;
+
+        &:hover {
+          flex-basis: 10.625rem;
+          // .nav-link {
+          //   .text-animation {
+          //     @include text-animation("on", "", 100);
+          //   }
+          // }
+        }
+
+        // .nav-link {
+        //   &.active {
+        //     .text-animation {
+        //       @include text-animation("on", "", 100);
+        //     }
+        //   }
+        // }
+      }
     }
+
+    .layout-menu-tool {
+      top: 3rem;
+      z-index: 21;
+      flex-direction: column;
+      height: 6rem;
+    }
+
 
    &.expand {
       .menu {
@@ -756,6 +768,7 @@ html {
   
     }
   }
+  
   .h {
     height: auto;
     .toggle-content {
@@ -774,6 +787,7 @@ html {
       }
     }
   }
+  
 }
 
 .app-active {

@@ -354,7 +354,6 @@ html .view-port {
   transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 0ms;
   border: 1px solid rgba(255, 255, 255, 0.075);
-  overflow: hidden;
   width: 60px;
 }
 html .view-port .menu {
@@ -503,7 +502,6 @@ html .horizontal > .nav {
 }
 html .horizontal .dragable {
   width: 3.375rem;
-  left: 0;
 }
 html .horizontal.view-port .view-port-header {
   width: 3.688rem;
@@ -546,26 +544,25 @@ html .horizontal .view-port-header .menu {
   right: 54px;
   z-index: 11;
 }
+html .horizontal .nav-tabs li {
+  flex-basis: 59px;
+}
+html .horizontal .nav-tabs li.fav-app-nav {
+  flex-grow: 1;
+}
 html .horizontal .nav-tabs .nav-item {
-  width: 60px;
   transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 0ms;
-  overflow: hidden;
+  height: 3rem;
 }
 html .horizontal .nav-tabs .nav-item:hover {
-  width: 10.625rem;
+  flex-basis: 10.625rem;
 }
-html .horizontal .nav-tabs .nav-item:hover .nav-link .text-animation {
-  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
-  transition-delay: 100ms;
-  opacity: 1;
-  transform: translateX(0);
-}
-html .horizontal .nav-tabs .nav-item .nav-link.active .text-animation {
-  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
-  transition-delay: 100ms;
-  opacity: 1;
-  transform: translateX(0);
+html .horizontal .layout-menu-tool {
+  top: 3rem;
+  z-index: 21;
+  flex-direction: column;
+  height: 6rem;
 }
 html .horizontal.expand .menu {
   display: block;
