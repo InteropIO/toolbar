@@ -1,4 +1,4 @@
-import {shutdown, gluePromise, startApp, focusApp, themeObs, changeTheme, refreshApps} from './glue-related.js'
+import {shutdown, gluePromise, startApp, focusApp, themeObs, changeTheme, refreshApps, glueInfo} from './glue-related.js'
 import { setSetting, getSetting } from './settings.js';
 
 const windowMargin = 50;
@@ -163,16 +163,23 @@ async function handleMouseHover() {
   })
 
   q('.app').addEventListener('mouseleave', (e) => {
-    // let {offsetWidth: viewPortWidth, offsetHeight: viewPortHeight} = q('.view-port')
-    // if (e.x < viewPortWidth && e.x > 0 && e.y < viewPortHeight && e.y > 0) {
-    //   return;
-    // }
+    let {offsetWidth: viewPortWidth, offsetHeight: viewPortHeight} = q('.view-port');
+    let margin = windowMargin + 10;
+    console.log('x', e.x, '|', margin, (viewPortWidth + margin));
+    console.log('y', e.y, '|', margin, (viewPortHeight + margin));
 
-    if (!qa('.toggle-content:not(.hide)').length > 0) {
-      q('.view-port').classList.remove('expand');
-      qa('.toggle-content').forEach(e => e.classList.add('hide'));
-      qa('[dropdown-id].show').forEach(e => e.classList.remove('show'));
+    if (e.x < (viewPortWidth - margin) && e.x > margin && e.y < (viewPortHeight - margin) && e.y > margin) {
+      console.log('fake leave');
+      return;
     }
+
+    if (qa('.toggle-content:not(.hide)').length > 0 || qa('.modal.show').length > 0) {
+      return;
+    }
+
+    q('.view-port').classList.remove('expand');
+    qa('.toggle-content').forEach(e => e.classList.add('hide'));
+    qa('[dropdown-id].show').forEach(e => e.classList.remove('show'));
   })
 }
 
@@ -183,6 +190,21 @@ function handleNotificationClick() {
     e.stopImmediatePropagation();
     openNotificationPanel();
   })
+}
+
+function populateAbouPage() {
+  q('.about .gd-version').innerText = glueInfo.version;
+  q('.about .gw-url').innerText = glueInfo.gw;
+  q('.about .username').innerText = glueInfo.user;
+
+  if (getSetting('showTutorial')) {
+    q('.about .show-tutorial').setAttribute('checked', true)
+  } else {
+    q('.about .show-tutorial').removeAttribute('checked')
+  }
+
+  q('.about .show-tutorial').addEventListener('change', (e) => setSetting('showTutorial', e.srcElement.checked))
+
 }
 
 function escapeHtml(unsafe) {
@@ -205,6 +227,7 @@ export {
   handleNotificationClick,
   handleModalClose,
   handleMouseHover,
+  populateAbouPage,
   windowMargin,
   escapeHtml
 }

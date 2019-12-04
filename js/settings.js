@@ -15,6 +15,7 @@ let settings = Object.assign(defaultSettings, localStorageSettings);
 
 function setInitialSettings() {
   settings['showHiddenApps'] = false;
+  settings['showTutorial'] = (settings['showTutorial'] === false) ? false : true
 }
 setInitialSettings();
 

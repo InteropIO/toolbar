@@ -104,7 +104,7 @@
 
       </ul>
     </div>
-    <div class="modal about fade" tabindex="-1" role="dialog"aria-hidden="true">
+    <div class="modal show about fade" tabindex="-1" role="dialog"aria-hidden="true">
       <div class="modal-dialog modal-fill-in" role="document">
           <div class="modal-content">
               <div class="modal-header">
@@ -115,13 +115,13 @@
               </div>
               <div class="modal-body">
                   <div class="about-logo mb-2"><img src="./assets/logo.svg" width="180"></div>
-                  <p class="text-center mb-4">GD version: 3.8.0.51</p>
-                  <p class="mb-0">GW URL: ws://localhost:8385 </p>
-                  <p class="mb-4">Username: ppetkov</p>
+                  <p class="text-center mb-4">GD version: <span class="gd-version"></span></p>
+                  <p class="mb-0">GW URL: <span class="gw-url"></span> </p>
+                  <p class="mb-4">Username: <span class="username"></span></p>
                   <p>
                     <div class="form-check mb-1">
-                        <input class="form-check-input" type="checkbox" value="" id="defaultCheck1" checked>
-                        <label class="form-check-label" for="defaultCheck1">
+                        <input class="form-check-input show-tutorial" type="checkbox" value="" id="tutorialCheck" >
+                        <label class="form-check-label" for="tutorialCheck">
                             Show tutorial on startup
                         </label>
                     </div>

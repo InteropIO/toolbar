@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   utils.handleNotificationClick();
   utils.handleOrientationChange();
+  utils.populateAbouPage();
   utils.handleThemeChange();
   utils.handleAboutClick();
   utils.handleShutdownClick();
@@ -113,16 +114,19 @@ function printNotificationCount() {
 }
 
 function handleWidthChange() {
-  resizeVisibleArea(q('body .app').offsetWidth);
+  let appBounds = {width: q('body .app').offsetWidth, height: q('body .app').offsetHeight};
+  resizeVisibleArea(appBounds.width, appBounds.height);
+  // const dropdownMenuBounds =
   const widthObserver = new ResizeObserver((elements) => {
-    resizeVisibleArea(elements[0].contentRect.right);
+    appBounds = {width: elements[0].contentRect.right, height: elements[0].contentRect.bottom}
+    resizeVisibleArea(appBounds.width, appBounds.height);
   })
 
   widthObserver.observe(q('body .app'));
 }
 
-function resizeVisibleArea(width) {
+function resizeVisibleArea(width, height) {
   width = Math.round(width);
-  resizeWindowVisibleArea(width);
+  resizeWindowVisibleArea(width, height);
   q('.modal').style.width = width+ 'px';
 }

@@ -15,6 +15,12 @@ const layoutsObs = new rxjs.BehaviorSubject([]);
 const notificationsCountObs = new rxjs.BehaviorSubject(null);
 const themeObs = new rxjs.BehaviorSubject(null);
 
+const glueInfo = {
+  user: window.glue42gd.user,
+  version: window.glue42gd.version,
+  gw: window.glue42gd.gwURL,
+};
+
 gluePromise.then((glue) => {
   trackApplications();
   trackLayouts();
@@ -124,9 +130,6 @@ async function shutdown() {
 async function resizeWindowVisibleArea(width) {
   await gluePromise;
 
-  // console.log();
-  // console.log(window.outerHeight - (2 * windowMargin));
-
   window.glue.agm.invoke("T42.Wnd.Execute", {
     command: "updateVisibleAreas",
     windowId: glue.windows.my().id,
@@ -147,6 +150,7 @@ async function changeTheme(themeName) {
 
 export {
   gluePromise,
+  glueInfo,
   glueAppsObs,
   layoutsObs,
   startApp,
