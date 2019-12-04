@@ -131,22 +131,6 @@ function focusMenuInputAfterTransition(e) {
   }
 }
 
-
-function handleDropDownClicks() {
-  document.addEventListener('click', (e) => {
-    if (e.target.matches('[dropdown-button-id], [dropdown-button-id] *')) {
-      //dropdown button click  - toggle dropdown
-      let btnElement = e.path.find(e => e.getAttribute('dropdown-button-id'));
-      let menuId = btnElement.getAttribute('dropdown-button-id');
-      let menu = q(`[dropdown-id="${menuId}"]`);
-      menu.classList.toggle('show');
-    } else {
-      //click is not on dropdown button - close opened dropdowns
-      qa(`[dropdown-id].show`).forEach(e => e.classList.remove('show'));
-    }
-  })
-}
-
 function handleModalClose() {
   document.addEventListener('click', (e) => {
     if (e.target.matches('.modal [data-dismiss="modal"], .modal [data-dismiss="modal"] *')) {
@@ -179,7 +163,7 @@ async function handleMouseHover() {
 
     q('.view-port').classList.remove('expand');
     qa('.toggle-content').forEach(e => e.classList.add('hide'));
-    qa('[dropdown-id].show').forEach(e => e.classList.remove('show'));
+    // qa('[dropdown-id].show').forEach(e => e.classList.remove('show'));
   })
 }
 
@@ -223,7 +207,6 @@ export {
   handleAboutClick,
   handleShutdownClick,
   handleTopMenuClicks,
-  handleDropDownClicks,
   handleNotificationClick,
   handleModalClose,
   handleMouseHover,

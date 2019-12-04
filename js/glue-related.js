@@ -15,6 +15,10 @@ const layoutsObs = new rxjs.BehaviorSubject([]);
 const notificationsCountObs = new rxjs.BehaviorSubject(null);
 const themeObs = new rxjs.BehaviorSubject(null);
 
+if (!window.glue42gd) {
+  window.glue42gd = {};
+}
+
 const glueInfo = {
   user: window.glue42gd.user,
   version: window.glue42gd.version,
@@ -127,19 +131,14 @@ async function shutdown() {
   glue.appManager.exit();
 }
 
-async function resizeWindowVisibleArea(width) {
+async function resizeWindowVisibleArea(visibleAreas) {
   await gluePromise;
 
   window.glue.agm.invoke("T42.Wnd.Execute", {
     command: "updateVisibleAreas",
     windowId: glue.windows.my().id,
     options: {
-      areas: [{
-        top: windowMargin,
-        left: windowMargin,
-        width: width,
-        height: q('.app').offsetHeight
-      }]
+      areas: visibleAreas
     }
   })
 }

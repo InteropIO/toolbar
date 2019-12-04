@@ -30,6 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
   handleLayoutClick();
   handleLayoutSave();
 
+  handleDropDownClicks();
+
   utils.handleNotificationClick();
   utils.handleOrientationChange();
   utils.populateAbouPage();
@@ -37,7 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
   utils.handleAboutClick();
   utils.handleShutdownClick();
   utils.handleTopMenuClicks();
-  utils.handleDropDownClicks();
   utils.handleMouseHover();
   utils.handleModalClose();
 
@@ -113,20 +114,66 @@ function printNotificationCount() {
   })
 }
 
-function handleWidthChange() {
-  let appBounds = {width: q('body .app').offsetWidth, height: q('body .app').offsetHeight};
-  resizeVisibleArea(appBounds.width, appBounds.height);
-  // const dropdownMenuBounds =
-  const widthObserver = new ResizeObserver((elements) => {
-    appBounds = {width: elements[0].contentRect.right, height: elements[0].contentRect.bottom}
-    resizeVisibleArea(appBounds.width, appBounds.height);
-  })
 
-  widthObserver.observe(q('body .app'));
+let topMenuVisibleObs = new rxjs.BehaviorSubject(false)
+
+function handleDropDownClicks() {
+  document.addEventListener('click', (e) => {
+    if (e.target.matches('[dropdown-button-id], [dropdown-button-id] *')) {
+      //dropdown button click  - toggle dropdown
+      let btnElement = e.path.find(e => e.getAttribute('dropdown-button-id'));
+      let menuId = btnElement.getAttribute('dropdown-button-id');
+      let menu = q(`[dropdown-id="${menuId}"]`);
+      menu.classList.toggle('show');
+      topMenuVisibleObs.next(menu.classList.contains('show'));
+    } else {
+      //click is not on dropdown button - close opened dropdowns
+      qa(`[dropdown-id].show`).forEach(e => e.classList.remove('show'));
+      topMenuVisibleObs.next(false)
+    }
+  })
 }
 
-function resizeVisibleArea(width, height) {
-  width = Math.round(width);
-  resizeWindowVisibleArea(width, height);
-  q('.modal').style.width = width+ 'px';
+let appBoundsObs = new rxjs.BehaviorSubject({
+  width: Math.round(q('.app').offsetWidth),
+  height: Math.round(q('.app').offsetHeight)
+});
+
+
+function handleWidthChange() {
+  const appBoundsObserver = new ResizeObserver((elements) => {
+    appBoundsObs.next({
+      width: Math.round(elements[0].contentRect.right),
+      height: Math.round(elements[0].contentRect.bottom)
+    })
+  })
+
+  appBoundsObserver.observe(q('.app'));
+}
+
+appBoundsObs
+.pipe(rxjs.operators.combineLatest(topMenuVisibleObs))
+.subscribe(([appBounds, topMenuVisible]) => {
+  console.log(appBounds, topMenuVisible);
+  resizeVisibleArea(appBounds, topMenuVisible)
+})
+
+function resizeVisibleArea(appBounds, topMenuVisible) {
+  let visibleAreas = [];
+  visibleAreas.push({
+    top: utils.windowMargin,
+    left: utils.windowMargin,
+    width: appBounds.width,
+    height: appBounds.height
+  });
+
+  if (q('.view-port.horizontal') && topMenuVisible) {
+    let {top, left, width, height} = q('#menu-top').getBoundingClientRect();
+    visibleAreas.push({top, left, width, height});
+  }
+
+  console.log(visibleAreas);
+
+  resizeWindowVisibleArea(visibleAreas);
+  q('.modal').style.width = appBounds.width+ 'px';
 }
