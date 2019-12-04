@@ -89,10 +89,6 @@
   transform: translate(-50%, -50%);
 }
 
-body {
-  overflow: hidden;
-}
-
 // color scheme
 html.dark {
   .view-port {
@@ -213,8 +209,6 @@ html.light {
 html {
   .app {
     margin: 50px;
-    height: calc(100vh - 100px); // Atanas 50px margin 
-    width: calc(100vw - 100px); // Atanas 50px margin 
   }
 
   img, a {
@@ -502,7 +496,7 @@ html {
     }
 
     .accordion {
-      height: calc(100vh - 314px); // 314px Atanas 50px margin 
+      height: calc(100vh - 264px); // 314px Atanas 50px margin 
       overflow-x: hidden;
       overflow-y: auto;
       @include transition(0);
@@ -540,51 +534,53 @@ html {
     }
   }
 
-  .vertical.expand {
-    width: 200px;
+  .vertical {
+    height: 100%;
 
-    .menu {
-      display: block;
-    }
+    &.expand {
+      width: 200px;
 
-    .text-animation {
-      @include text-animation("on", "", 0);
-    }
-
-    .favorite {
-
-      @include transition(300);
-      i {
-        padding: 0 .75rem;
+      .menu {
+        display: block;
       }
-    }
 
-    .fav-app-nav {
-      .text-center {
+      .text-animation {
         @include text-animation("on", "", 0);
       }
-    }
 
-    .accordion {
-      height: calc(100vh - 314px);
+      .favorite {
 
-      .nav {
-        .toggle-content {
-          left: 200px;
-          display: list-item;
-          @include transition(50);
-        }
-
-        .hide {
-          width: 0;
-          @include transition(50);
+        @include transition(300);
+        i {
+          padding: 0 .75rem;
         }
       }
-    }
 
-    #fav-apps {
-      & > li:not(.nav-item) {
-        opacity: 1;
+      .fav-app-nav {
+        .text-center {
+          @include text-animation("on", "", 0);
+        }
+      }
+
+      .accordion {
+        .nav {
+          .toggle-content {
+            left: 200px;
+            display: list-item;
+            @include transition(50);
+          }
+
+          .hide {
+            width: 0;
+            @include transition(50);
+          }
+        }
+      }
+
+      #fav-apps {
+        & > li:not(.nav-item) {
+          opacity: 1;
+        }
       }
     }
   }
@@ -643,7 +639,7 @@ html {
 
   .horizontal {
     display: flex;
-    width: 100vw;
+    width: 100%;
     height: 3rem;
 
     > .nav {
@@ -735,45 +731,33 @@ html {
         }
       }
     }
-   &.expand {
 
+   &.expand {
       .menu {
         display: block;
-      }
-
-      .fav-app-nav {
-        .text-center {
-          @include text-animation("on", "", 0);
-        }
-      }
-
-      .accordion {
-        height: calc(100vh - 318px);
-
-        .nav {
-          .toggle-content {
-            left: 200px;
-            display: list-item;
-            @include transition(50);
-          }
-
-          .hide {
-            width: 0;
-            @include transition(50);
-          }
-        }
-      }
-
-      #fav-apps {
-        & > li:not(.nav-item) {
-          opacity: 1;
-        }
       }
     }
     .view-port-footer {
         margin-top: initial;
         margin-left: auto;
   
+    }
+  }
+  .h {
+    .toggle-content {
+      width: 100%;
+      height: calc(100vh - 3rem);
+      border-top: 0 solid transparent;
+      > .nav,
+      > div {
+        width: 100%;
+      }
+      &.hide {
+        width: 100%;
+        height: 0;
+        border-bottom: 0 solid transparent;
+
+      }
     }
   }
 }

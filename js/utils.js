@@ -35,6 +35,8 @@ function handleOrientationChange() {
 
     q('.view-port').classList.add(isVertical ? 'vertical' : 'horizontal');
     q('.view-port').classList.remove(isVertical ? 'horizontal' : 'vertical');
+    q('.app').classList.add(isVertical ? 'd-inline-flex' : 'h');
+    q('.app').classList.remove(isVertical ? 'h' : 'd-inline-flex');
     qa('[column]').forEach(col => {
       if (isVertical) {
         col.classList.add('flex-column')
