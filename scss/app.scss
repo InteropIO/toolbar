@@ -279,14 +279,13 @@ html {
         user-select: none;
         position: relative;
         display: flex;
-        width: 100%;
       }
 
       .nav-link {
         height: auto;
         border: 0;
         padding-left: 14px;
-        width: 100%;
+        flex-grow: 1;
 
         i {
           @include transition(0);
@@ -694,13 +693,35 @@ html {
       .view-port-footer:before {
         @include horizontal-divider;
       }
+
       .favorite::after {
-        left: .318rem;
+        left: .563rem;
       }
+
       .favorite {
         height: 3rem;
         i {
           padding: .25rem 0;
+          top:1rem;
+        }
+      }
+
+      .chavron-rotate {
+        transform: rotate(180deg);
+      }
+
+      .show-actions {
+ 
+        &:hover,
+        &.active {
+          i,
+          .text-animation,
+          .action-menu-tool,
+          span {
+            opacity: 1;
+            visibility: visible;
+          }
+  
         }
       }
     }
@@ -715,37 +736,42 @@ html {
         top: 58px;
         right: 54px;
         z-index: 11;
+        display: block;
       }
     }
 
     .nav-tabs {
       li {
         flex-basis: 59px;
+        width: 60px;
 
         &.fav-app-nav {
           flex-grow: 1;
         }
       }
       .nav-item {
-        @include transition(0);
+       @include transition(0);
+       overflow: hidden;
         height: 3rem;
 
         &:hover {
-          flex-basis: 10.625rem;
-          // .nav-link {
-          //   .text-animation {
-          //     @include text-animation("on", "", 100);
-          //   }
-          // }
+          flex-basis: 11rem;
+
+          .nav-link {
+            .text-animation {
+              @include text-animation("on", "", 100);
+            }
+          }
         }
 
-        // .nav-link {
-        //   &.active {
-        //     .text-animation {
-        //       @include text-animation("on", "", 100);
-        //     }
-        //   }
-        // }
+        .nav-link {
+          max-width: 11rem;
+          &.active {
+            .text-animation {
+              @include text-animation("on", "", 100);
+            }
+          }
+        }
       }
     }
 
