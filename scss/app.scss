@@ -556,11 +556,17 @@ html {
 
         &.fav-app-nav {
           flex-grow: 1;
+          .nav {
+            flex-wrap: nowrap;
+            .nav-item {
+              overflow: hidden;
+            }
+          }
         }
       }
       .nav-item {
         @include transition('flex-basis',0);
-        overflow-x: hidden;
+        
         height: 2.875rem;
 
         &:hover {
@@ -616,7 +622,7 @@ html {
 
     .toggle-content {
       @include transition('height',0);
-      
+
       width: 100%;
       height: calc(100vh - 3rem - 100px);
       border-top: 0 solid transparent;

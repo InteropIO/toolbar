@@ -587,10 +587,15 @@ html .horizontal .nav-tabs li {
 html .horizontal .nav-tabs li.fav-app-nav {
   flex-grow: 1;
 }
+html .horizontal .nav-tabs li.fav-app-nav .nav {
+  flex-wrap: nowrap;
+}
+html .horizontal .nav-tabs li.fav-app-nav .nav .nav-item {
+  overflow: hidden;
+}
 html .horizontal .nav-tabs .nav-item {
   transition: flex-basis 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 0ms;
-  overflow-x: hidden;
   height: 2.875rem;
 }
 html .horizontal .nav-tabs .nav-item:hover {
