@@ -30,6 +30,7 @@ function handleOrientationChange() {
   q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
 
   q('#toggle').addEventListener('click', () => {
+    q('.app').classList.add('switching-orientation');
     isVertical = !isVertical;
     q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
 
@@ -45,6 +46,10 @@ function handleOrientationChange() {
         col.classList.remove('flex-column')
       }
     })
+    
+    setTimeout(() => {
+      q('.app').classList.remove('switching-orientation');
+    }) 
   });
 }
 

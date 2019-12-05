@@ -1,219 +1,11 @@
-@mixin non-underline {
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: none;
-  }
-}
-
-@mixin divider($theme) {
-  &::before {
-    @if $theme == "dark" {
-      background-color: rgba(255, 255, 255, 0.075);
-    } @else {
-      background-color: rgba(219, 222, 230, 0.8);
-    }
-
-    content: "";
-    height: 1px;
-    left: 8px;
-    position: absolute;
-    width: calc(100% - 16px);
-  }
-
-  &:hover {
-    &::before {
-      background-color: transparent;
-    }
-  }
-}
-
-@mixin horizontal-divider {
-  left: 0;
-  width: 1px;
-  height: calc(100% - 16px);
-  top: 8px;
-}
-
-@mixin transition($d) {
-  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
-  transition-delay: #{$d}ms;
-}
-
-@mixin text-animation($status, $derection, $t-delay) {
-  @include transition($t-delay);
-
-  @if $status == "off" {
-    opacity: 0;
-  } @else if $status == "on" {
-    opacity: 1;
-  }
-
-  @if $derection == "left" {
-    transform: translateX(-1rem);
-  } @else if $derection == "right" {
-    transform: translateX(1rem);
-  } @else {
-    transform: translateX(0);
-  }
-}
-
-@keyframes runleft {
-  0% {
-    opacity: 0;
-    transform: translateX(1rem);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes runright {
-  0% {
-    opacity: 0;
-    transform: translateX(-1rem);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
+@import 'mixin';
+@import 'color';
 
 .layout-switch {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-}
-
-// color scheme
-html.dark {
-  .view-port {
-    border: 1px solid rgba(255, 255, 255, 0.075);
-  }
-
-  .toggle-content {
-    background-color: #272b35;
-    border-top: 1px solid rgba(255, 255, 255, 0.075);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.075);
-    border-right: 1px solid rgba(255, 255, 255, 0.075);
-  }
-
-  .applications-nav {
-    @include divider("dark");
-  }
-
-  .view-port-footer {
-    @include divider("dark");
-  }
-
-  .favorite {
-    &::after {
-      background-color: rgba(255, 255, 255, 0.075);
-    }
-    i {
-      background: #21252d;
-    }
-  }
-
-  .nav {
-    .layout-menu-tool {
-      background: #2b303b; // rgba(255, 255, 255, 0.05);
-
-      div {
-        &:first-of-type {
-          border-right: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        &:hover,
-        &.active {
-          background-color: rgba(255, 255, 255, 0.05);
-          color: white;
-        }
-      }
-    }
-
-    .nav-link {
-      img {
-        filter: grayscale(100%) brightness(1);
-      }
-
-      &.active,
-      &:hover {
-        img {
-          filter: grayscale(100%) brightness(2);
-        }
-      }
-    }
-  }
-}
-
-html.light {
-  .view-port {
-    border: 1px solid rgba(219, 222, 230, 0.8);
-  }
-
-  .toggle-content {
-    background-color: #fafafa;
-    border-top: 1px solid rgba(219, 222, 230, 0.8);
-    border-bottom: 1px solid rgba(219, 222, 230, 0.8);
-    border-right: 1px solid rgba(219, 222, 230, 0.8);
-  }
-
-  .logo img {
-    content: url("../assets/logoLight.svg");
-  }
-
-  .applications-nav {
-    @include divider("");
-  }
-
-  .view-port-footer {
-    @include divider("");
-  }
-
-  .favorite {
-    &::after {
-      background-color: rgba(219, 222, 230, 0.8);
-    }
-    i {
-      background: #fafafa;
-    }
-  }
-
-  .nav {
-    .layout-menu-tool {
-      background: #ffffff; // rgba(219, 222, 230, 0.8);
-    }
-
-    div {
-      &:first-of-type {
-        border-right: 1px solid rgba(219, 222, 230, 0.8);
-      }
-
-      &:hover,
-      &.active {
-        background-color: rgba(219, 222, 230, 0.8);
-        color: black;
-      }
-    }
-
-    .nav-link {
-      img {
-        filter: grayscale(100%) brightness(0.5);
-      }
-
-      &.active,
-      &:hover {
-        img {
-          filter: grayscale(100%) brightness(0);
-        }
-      }
-    }
-  }
 }
 
 html {
@@ -226,6 +18,14 @@ html {
 
   .app {
     height: 100%;
+
+    &.switching-orientation * {
+      transition: none !important;
+      &::before,
+      &::after {
+        transition: none !important;
+      }
+    }
   }
 
   img,
@@ -250,7 +50,7 @@ html {
   }
 
   .toggle-content {
-    @include transition(0);
+    @include transition('width',0);
     height: 100%;
     width: calc(100vw - 301px);
     overflow: hidden;
@@ -298,7 +98,8 @@ html {
         flex-grow: 1;
 
         i {
-          @include transition(0);
+          @include transition('opacity',0);
+          @include transition('transform',0);
         }
 
         .icon-angle-down {
@@ -329,7 +130,6 @@ html {
     .favorite {
       white-space: nowrap;
       flex-basis: 1.25rem !important;
-      @include transition(0);
       user-select: none;
       overflow: hidden;
       text-align: center;
@@ -349,12 +149,10 @@ html {
         bottom: 11px;
       }
     }
-    .lauout-nav {
-      // height: 3rem;
-    }
+
     #fav-apps {
       & > li:not(.nav-item) {
-        @include transition(0);
+        @include transition('opacity',0);
         opacity: 0;
         white-space: nowrap;
       }
@@ -371,7 +169,7 @@ html {
     }
 
     .action-menu-tool {
-      @include transition(0);
+      @include transition('opacity',0);
       opacity: 0;
       position: absolute;
       right: 0.5rem;
@@ -403,7 +201,7 @@ html {
       span:last-of-type {
         text-overflow: ellipsis;
         overflow: hidden;
-        @include transition(0);
+        @include transition('opacity',0);
       }
 
       &:hover {
@@ -419,7 +217,7 @@ html {
     }
 
     .layout-menu-tool {
-      @include transition(0);
+      @include transition('width',0);
       display: flex;
       height: 3rem;
       opacity: 0;
@@ -479,11 +277,9 @@ html {
     }
   }
   .view-port {
-    @include transition(0);
+    @include transition('width',0);
     border: 1px solid rgba(255, 255, 255, 0.075);
-    // overflow: hidden;
     width: 60px;
-    // height: 100vh;  Atanas 50px margin
 
     .menu {
       display: none;
@@ -492,7 +288,6 @@ html {
     .view-port-header {
       align-items: center;
       display: flex;
-      // height: 3rem;
       justify-content: space-between;
       padding-left: 1.125rem;
       padding-right: 0.25rem;
@@ -516,10 +311,9 @@ html {
     }
 
     .accordion {
-      // height: calc(100vh - 264px); // 314px Atanas 50px margin
       overflow-x: hidden;
       overflow-y: auto;
-      @include transition(0);
+      // @include transition(0); ??
 
       .active-app {
         position: absolute;
@@ -571,7 +365,7 @@ html {
       }
 
       .favorite {
-        @include transition(300);
+        @include transition('opacity',300);
         i {
           padding: 0 0.75rem;
         }
@@ -587,12 +381,12 @@ html {
           .toggle-content {
             left: 200px;
             display: list-item;
-            @include transition(50);
+            @include transition('width',50);
           }
 
           .hide {
             width: 0;
-            @include transition(50);
+            @include transition('width',50);
           }
         }
       }
@@ -663,7 +457,7 @@ html {
 
     > .nav {
       flex-wrap: nowrap;
-      width: calc(100% - 36px);
+      width: calc(100% - 40px);
     }
 
     .dragable {
@@ -749,7 +543,7 @@ html {
       .menu {
         position: fixed;
         top: 58px;
-        right: 54px;
+        right: 3.25rem;
         z-index: 11;
         display: block;
       }
@@ -765,7 +559,8 @@ html {
         }
       }
       .nav-item {
-        @include transition(0);
+        @include transition('flex-basis',0);
+        overflow-x: hidden;
         height: 2.875rem;
 
         &:hover {
@@ -820,15 +615,19 @@ html {
     height: auto;
 
     .toggle-content {
+      @include transition('height',0);
+      
       width: 100%;
-      height: calc(100vh - 3rem - 100px); // ?
+      height: calc(100vh - 3rem - 100px);
       border-top: 0 solid transparent;
+      
+
       > .nav,
       > div {
         width: 100%;
       }
       &.hide {
-        width: 0;
+        width: 100%;
         height: 0;
         border-bottom: 0 solid transparent;
       }
@@ -848,7 +647,7 @@ html {
     bottom: 30%;
     left: 0;
     background-color: #2080d3;
-    transition: all 0.3s ease;
+    transition: top 0.3s cubic-bezier(0.34, 0.03, 0.13, 0.93), bottom 0.3s cubic-bezier(0.34, 0.03, 0.13, 0.93);
   }
 
   &:hover {
@@ -859,23 +658,7 @@ html {
   }
 }
 
-@mixin divider-horizontal {
-  &::before {
-    background-color: rgba(255, 255, 255, 0.075);
-    content: "";
-    position: absolute;
-    height: 36px;
-    width: 1px;
-    top: 6px;
-    left: 0;
-  }
 
-  &:hover {
-    &::before {
-      background-color: transparent;
-    }
-  }
-}
 
 // @media screen and (min-width: 1370px) {
 // }

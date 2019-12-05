@@ -18,13 +18,6 @@
     transform: translateX(0);
   }
 }
-.layout-switch {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
 html.dark .view-port {
   border: 1px solid rgba(255, 255, 255, 0.075);
 }
@@ -136,6 +129,13 @@ html.light .nav .nav-link.active img, html.light .nav .nav-link:hover img {
   filter: grayscale(100%) brightness(0);
 }
 
+.layout-switch {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 html {
   height: 100%;
 }
@@ -145,6 +145,12 @@ html body {
 }
 html .app {
   height: 100%;
+}
+html .app.switching-orientation * {
+  transition: none !important;
+}
+html .app.switching-orientation *::before, html .app.switching-orientation *::after {
+  transition: none !important;
 }
 html img,
 html a {
@@ -165,7 +171,7 @@ html .about {
   height: calc(100vh - 100px);
 }
 html .toggle-content {
-  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition: width 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 0ms;
   height: 100%;
   width: calc(100vw - 301px);
@@ -184,7 +190,9 @@ html .toggle-content > .nav {
   overflow: auto;
 }
 html .text-animation {
-  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition: opacity 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition-delay: 0ms;
+  transition: transform 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 0ms;
   opacity: 0;
   transform: translateX(-1rem);
@@ -208,7 +216,9 @@ html .nav.nav-tabs .nav-link {
   flex-grow: 1;
 }
 html .nav.nav-tabs .nav-link i {
-  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition: opacity 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition-delay: 0ms;
+  transition: transform 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 0ms;
 }
 html .nav.nav-tabs .nav-link .icon-angle-down {
@@ -231,8 +241,6 @@ html .nav.fav-app-nav {
 html .nav .favorite {
   white-space: nowrap;
   flex-basis: 1.25rem !important;
-  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
-  transition-delay: 0ms;
   user-select: none;
   overflow: hidden;
   text-align: center;
@@ -251,7 +259,7 @@ html .nav .favorite::after {
   bottom: 11px;
 }
 html .nav #fav-apps > li:not(.nav-item) {
-  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition: opacity 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 0ms;
   opacity: 0;
   white-space: nowrap;
@@ -265,7 +273,7 @@ html .nav .chavron-rotate {
   transform: rotate(-90deg);
 }
 html .nav .action-menu-tool {
-  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition: opacity 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 0ms;
   opacity: 0;
   position: absolute;
@@ -296,7 +304,7 @@ html .nav .action-menu a:hover {
 html .nav .action-menu span:last-of-type {
   text-overflow: ellipsis;
   overflow: hidden;
-  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition: opacity 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 0ms;
 }
 html .nav .action-menu:hover .action-menu-tool {
@@ -307,7 +315,7 @@ html .nav .action-menu:hover span:last-of-type {
   padding-right: 1.25rem;
 }
 html .nav .layout-menu-tool {
-  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition: width 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 0ms;
   display: flex;
   height: 3rem;
@@ -356,7 +364,7 @@ html #layout-content .nav {
   align-content: flex-start;
 }
 html .view-port {
-  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition: width 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 0ms;
   border: 1px solid rgba(255, 255, 255, 0.075);
   width: 60px;
@@ -390,8 +398,6 @@ html .view-port .view-port-header .logo {
 html .view-port .accordion {
   overflow-x: hidden;
   overflow-y: auto;
-  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
-  transition-delay: 0ms;
 }
 html .view-port .accordion .active-app {
   position: absolute;
@@ -433,13 +439,15 @@ html .vertical.expand .menu {
   display: block;
 }
 html .vertical.expand .text-animation {
-  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition: opacity 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition-delay: 0ms;
+  transition: transform 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 0ms;
   opacity: 1;
   transform: translateX(0);
 }
 html .vertical.expand .favorite {
-  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition: opacity 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 300ms;
 }
 html .vertical.expand .favorite i {
@@ -452,12 +460,12 @@ html .vertical.expand .fav-app-nav {
 html .vertical.expand .accordion .nav .toggle-content {
   left: 200px;
   display: list-item;
-  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition: width 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 50ms;
 }
 html .vertical.expand .accordion .nav .hide {
   width: 0;
-  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition: width 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 50ms;
 }
 html .vertical.expand #fav-apps > li:not(.nav-item) {
@@ -503,7 +511,7 @@ html .horizontal {
 }
 html .horizontal > .nav {
   flex-wrap: nowrap;
-  width: calc(100% - 36px);
+  width: calc(100% - 40px);
 }
 html .horizontal .dragable {
   width: 3.375rem;
@@ -568,7 +576,7 @@ html .horizontal .fav-app-nav {
 html .horizontal .view-port-header .menu {
   position: fixed;
   top: 58px;
-  right: 54px;
+  right: 3.25rem;
   z-index: 11;
   display: block;
 }
@@ -580,15 +588,18 @@ html .horizontal .nav-tabs li.fav-app-nav {
   flex-grow: 1;
 }
 html .horizontal .nav-tabs .nav-item {
-  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition: flex-basis 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 0ms;
+  overflow-x: hidden;
   height: 2.875rem;
 }
 html .horizontal .nav-tabs .nav-item:hover {
   flex-basis: 11rem;
 }
 html .horizontal .nav-tabs .nav-item:hover .nav-link .text-animation {
-  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition: opacity 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition-delay: 100ms;
+  transition: transform 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 100ms;
   opacity: 1;
   transform: translateX(0);
@@ -600,13 +611,17 @@ html .horizontal .nav-tabs .nav-item .nav-link.active::before {
   bottom: 0;
 }
 html .horizontal .nav-tabs .nav-item .nav-link.active .text-animation {
-  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition: opacity 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition-delay: 100ms;
+  transition: transform 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 100ms;
   opacity: 0;
   transform: translateX(0);
 }
 html .horizontal .nav-tabs .nav-item .nav-link.active:hover .text-animation {
-  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition: opacity 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition-delay: 100ms;
+  transition: transform 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 100ms;
   opacity: 1;
   transform: translateX(0);
@@ -628,6 +643,8 @@ html .h {
   height: auto;
 }
 html .h .toggle-content {
+  transition: height 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition-delay: 0ms;
   width: 100%;
   height: calc(100vh - 3rem - 100px);
   border-top: 0 solid transparent;
@@ -637,7 +654,7 @@ html .h .toggle-content > div {
   width: 100%;
 }
 html .h .toggle-content.hide {
-  width: 0;
+  width: 100%;
   height: 0;
   border-bottom: 0 solid transparent;
 }
@@ -654,7 +671,7 @@ html .h .toggle-content.hide {
   bottom: 30%;
   left: 0;
   background-color: #2080d3;
-  transition: all 0.3s ease;
+  transition: top 0.3s cubic-bezier(0.34, 0.03, 0.13, 0.93), bottom 0.3s cubic-bezier(0.34, 0.03, 0.13, 0.93);
 }
 .app-active:hover::before {
   top: 0;
