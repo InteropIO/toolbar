@@ -215,15 +215,15 @@ html {
   }
 
   .app {
-    
     height: 100%;
   }
 
-  img, a {
+  img,
+  a {
     user-select: none;
     -webkit-user-drag: none;
     -webkit-user-select: none;
-  } 
+  }
 
   .dragable {
     position: fixed;
@@ -297,7 +297,7 @@ html {
         &.active {
           .icon-angle-down {
             opacity: 1;
-          } 
+          }
         }
       }
     }
@@ -328,7 +328,7 @@ html {
         position: relative;
         background: #21252d;
         z-index: 20;
-        padding: 0 .25rem;
+        padding: 0 0.25rem;
       }
 
       &::after {
@@ -379,7 +379,7 @@ html {
 
     .action-menu {
       cursor: pointer;
-     // height: 3rem;
+      // height: 3rem;
       padding-right: 1.5rem;
       overflow: hidden;
 
@@ -417,7 +417,7 @@ html {
       position: absolute;
       visibility: hidden;
       width: 100%;
-      top:0;
+      top: 0;
 
       div {
         align-items: center;
@@ -472,9 +472,9 @@ html {
   .view-port {
     @include transition(0);
     border: 1px solid rgba(255, 255, 255, 0.075);
-   // overflow: hidden;
+    // overflow: hidden;
     width: 60px;
-    // height: 100vh;  Atanas 50px margin 
+    // height: 100vh;  Atanas 50px margin
 
     .menu {
       display: none;
@@ -507,7 +507,7 @@ html {
     }
 
     .accordion {
-      // height: calc(100vh - 264px); // 314px Atanas 50px margin 
+      // height: calc(100vh - 264px); // 314px Atanas 50px margin
       overflow-x: hidden;
       overflow-y: auto;
       @include transition(0);
@@ -525,7 +525,7 @@ html {
       .nav.nav-tabs {
         .nav-link {
           @include non-underline();
-         // height: 3rem;
+          // height: 3rem;
         }
       }
 
@@ -562,10 +562,9 @@ html {
       }
 
       .favorite {
-
         @include transition(300);
         i {
-          padding: 0 .75rem;
+          padding: 0 0.75rem;
         }
       }
 
@@ -617,7 +616,6 @@ html {
     &.show {
       visibility: visible;
     }
-
   }
 
   .expand {
@@ -658,8 +656,7 @@ html {
       flex-wrap: nowrap;
       width: calc(100% - 36px);
     }
-    
-    
+
     .dragable {
       width: 3.375rem;
     }
@@ -670,24 +667,25 @@ html {
     }
 
     .app-active {
-        &::before {
-          width: unset;
-          height: 3px;
-          top: 0;
-          right: 30%;
-          bottom: unset;
-          left: 30%;
-        }
+      &::before {
+        width: unset;
+        height: 3px;
+        top: unset;
+        right: 30%;
+        bottom: 0;
+        left: 30%;
+      }
 
-        &:hover {
-          &::before {
-            top: -3px;
-          }
+      &:hover {
+        &::before {
+          top: unset;
+          width: 100%;
+          left: 0;
         }
+      }
     }
 
     .nav {
-
       .applications-nav::before,
       .favorite::after,
       .view-port-footer:before {
@@ -695,14 +693,15 @@ html {
       }
 
       .favorite::after {
-        left: .563rem;
+        left: 0.563rem;
       }
 
       .favorite {
         height: 3rem;
+
         i {
-          padding: .25rem 0;
-          top:1rem;
+          padding: 0.25rem 0;
+          top: 1rem;
         }
       }
 
@@ -711,7 +710,6 @@ html {
       }
 
       .show-actions {
- 
         &:hover,
         &.active {
           i,
@@ -721,7 +719,6 @@ html {
             opacity: 1;
             visibility: visible;
           }
-  
         }
       }
     }
@@ -750,9 +747,9 @@ html {
         }
       }
       .nav-item {
-       @include transition(0);
-       overflow: hidden;
-        height: 3rem;
+        @include transition(0);
+        overflow: hidden;
+        height: 2.875rem;
 
         &:hover {
           flex-basis: 11rem;
@@ -766,9 +763,18 @@ html {
 
         .nav-link {
           max-width: 11rem;
+
           &.active {
+            &::before {
+              bottom: 0;
+            }
             .text-animation {
-              @include text-animation("on", "", 100);
+              @include text-animation("off", "", 100);
+            }
+            &:hover {
+              .text-animation {
+                @include text-animation("on", "", 100);
+              }
             }
           }
         }
@@ -782,24 +788,23 @@ html {
       height: 6rem;
     }
 
-
-   &.expand {
+    &.expand {
       .menu {
         display: block;
       }
     }
     .view-port-footer {
-        margin-top: initial;
-        margin-left: auto;
-  
+      margin-top: initial;
+      margin-left: auto;
     }
   }
-  
+
   .h {
     height: auto;
+    
     .toggle-content {
       width: 100%;
-      height: calc(100vh - 3rem); // ? 
+      height: calc(100vh - 3rem - 100px); // ?
       border-top: 0 solid transparent;
       > .nav,
       > div {
@@ -809,11 +814,9 @@ html {
         width: 0;
         height: 0;
         border-bottom: 0 solid transparent;
-
       }
     }
   }
-  
 }
 
 .app-active {
@@ -839,7 +842,6 @@ html {
   }
 }
 
-
 @mixin divider-horizontal {
   &::before {
     background-color: rgba(255, 255, 255, 0.075);
@@ -857,7 +859,6 @@ html {
     }
   }
 }
-
 
 // @media screen and (min-width: 1370px) {
 // }

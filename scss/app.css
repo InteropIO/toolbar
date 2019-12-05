@@ -140,7 +140,8 @@ html body {
 html .app {
   height: 100%;
 }
-html img, html a {
+html img,
+html a {
   user-select: none;
   -webkit-user-drag: none;
   -webkit-user-select: none;
@@ -509,13 +510,15 @@ html .horizontal.view-port .view-port-header {
 html .horizontal .app-active::before {
   width: unset;
   height: 3px;
-  top: 0;
+  top: unset;
   right: 30%;
-  bottom: unset;
+  bottom: 0;
   left: 30%;
 }
 html .horizontal .app-active:hover::before {
-  top: -3px;
+  top: unset;
+  width: 100%;
+  left: 0;
 }
 html .horizontal .nav .applications-nav::before,
 html .horizontal .nav .favorite::after,
@@ -569,7 +572,7 @@ html .horizontal .nav-tabs .nav-item {
   transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 0ms;
   overflow: hidden;
-  height: 3rem;
+  height: 2.875rem;
 }
 html .horizontal .nav-tabs .nav-item:hover {
   flex-basis: 11rem;
@@ -583,7 +586,16 @@ html .horizontal .nav-tabs .nav-item:hover .nav-link .text-animation {
 html .horizontal .nav-tabs .nav-item .nav-link {
   max-width: 11rem;
 }
+html .horizontal .nav-tabs .nav-item .nav-link.active::before {
+  bottom: 0;
+}
 html .horizontal .nav-tabs .nav-item .nav-link.active .text-animation {
+  transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition-delay: 100ms;
+  opacity: 0;
+  transform: translateX(0);
+}
+html .horizontal .nav-tabs .nav-item .nav-link.active:hover .text-animation {
   transition: all 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 100ms;
   opacity: 1;
@@ -607,7 +619,7 @@ html .h {
 }
 html .h .toggle-content {
   width: 100%;
-  height: calc(100vh - 3rem);
+  height: calc(100vh - 3rem - 100px);
   border-top: 0 solid transparent;
 }
 html .h .toggle-content > .nav,
