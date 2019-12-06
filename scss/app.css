@@ -643,6 +643,7 @@ html .horizontal.expand .menu {
 html .horizontal .view-port-footer {
   margin-top: initial;
   margin-left: auto;
+  overflow-x: hidden;
 }
 html .h {
   height: auto;
