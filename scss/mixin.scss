@@ -1,0 +1,102 @@
+@mixin non-underline {
+    text-decoration: none;
+  
+    &:hover {
+      text-decoration: none;
+    }
+  }
+  
+  @mixin divider($theme) {
+    &::before {
+      @if $theme == "dark" {
+        background-color: rgba(255, 255, 255, 0.075);
+      } @else {
+        background-color: rgba(219, 222, 230, 0.8);
+      }
+  
+      content: "";
+      height: 1px;
+      left: 8px;
+      position: absolute;
+      width: calc(100% - 16px);
+    }
+  
+    &:hover {
+      &::before {
+        background-color: transparent;
+      }
+    }
+  }
+  
+  @mixin horizontal-divider {
+    left: 0;
+    width: 1px;
+    height: calc(100% - 16px);
+    top: 8px;
+  }
+  
+  @mixin transition($type,$d) {
+    transition-property: #{$type};
+    transition-duration: 300ms;
+    transition-timing-function: cubic-bezier(0.34, 0.03, 0.13, 0.93);
+    transition-delay: #{$d}ms;
+  }
+  
+  @mixin text-animation($status, $derection, $t-delay) {
+    @include transition('opacity, transform', $t-delay);
+    @if $status == "off" {
+      opacity: 0;
+    } @else if $status == "on" {
+      opacity: 1;
+    }
+  
+    @if $derection == "left" {
+      transform: translateX(-1rem);
+    } @else if $derection == "right" {
+      transform: translateX(1rem);
+    } @else {
+      transform: translateX(0);
+    }
+  }
+  
+  @mixin divider-horizontal {
+    &::before {
+      background-color: rgba(255, 255, 255, 0.075);
+      content: "";
+      position: absolute;
+      height: 36px;
+      width: 1px;
+      top: 6px;
+      left: 0;
+    }
+  
+    &:hover {
+      &::before {
+        background-color: transparent;
+      }
+    }
+  }
+  
+  @keyframes runleft {
+    0% {
+      opacity: 0;
+      transform: translateX(1rem);
+    }
+  
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes runright {
+    0% {
+      opacity: 0;
+      transform: translateX(-1rem);
+    }
+  
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }

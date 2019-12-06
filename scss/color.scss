@@ -1,0 +1,126 @@
+// color scheme
+html.dark {
+    .view-port {
+      border: 1px solid rgba(255, 255, 255, 0.075);
+    }
+  
+    .toggle-content {
+      background-color: #272b35;
+      border-top: 1px solid rgba(255, 255, 255, 0.075);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.075);
+      border-right: 1px solid rgba(255, 255, 255, 0.075);
+    }
+  
+    .applications-nav {
+      @include divider("dark");
+    }
+  
+    .view-port-footer {
+      @include divider("dark");
+    }
+  
+    .favorite {
+      &::after {
+        background-color: rgba(255, 255, 255, 0.075);
+      }
+      i {
+        background: #21252d;
+      }
+    }
+  
+    .nav {
+      .layout-menu-tool {
+        background: #2b303b; // rgba(255, 255, 255, 0.05);
+  
+        div {
+          &:first-of-type {
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+          }
+  
+          &:hover,
+          &.active {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: white;
+          }
+        }
+      }
+  
+      .nav-link {
+        img {
+          filter: grayscale(100%) brightness(1);
+        }
+  
+        &.active,
+        &:hover {
+          img {
+            filter: grayscale(100%) brightness(2);
+          }
+        }
+      }
+    }
+  }
+  
+  html.light {
+    .view-port {
+      border: 1px solid rgba(219, 222, 230, 0.8);
+    }
+  
+    .toggle-content {
+      background-color: #fafafa;
+      border-top: 1px solid rgba(219, 222, 230, 0.8);
+      border-bottom: 1px solid rgba(219, 222, 230, 0.8);
+      border-right: 1px solid rgba(219, 222, 230, 0.8);
+    }
+  
+    .logo img {
+      content: url("../assets/logoLight.svg");
+    }
+  
+    .applications-nav {
+      @include divider("");
+    }
+  
+    .view-port-footer {
+      @include divider("");
+    }
+  
+    .favorite {
+      &::after {
+        background-color: rgba(219, 222, 230, 0.8);
+      }
+      i {
+        background: #fafafa;
+      }
+    }
+  
+    .nav {
+      .layout-menu-tool {
+        background: #ffffff; // rgba(219, 222, 230, 0.8);
+      }
+  
+      div {
+        &:first-of-type {
+          border-right: 1px solid rgba(219, 222, 230, 0.8);
+        }
+  
+        &:hover,
+        &.active {
+          background-color: rgba(219, 222, 230, 0.8);
+          color: black;
+        }
+      }
+  
+      .nav-link {
+        img {
+          filter: grayscale(100%) brightness(0.5);
+        }
+  
+        &.active,
+        &:hover {
+          img {
+            filter: grayscale(100%) brightness(0);
+          }
+        }
+      }
+    }
+  }
