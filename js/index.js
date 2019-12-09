@@ -115,7 +115,8 @@ function printNotificationCount() {
 }
 
 
-let topMenuVisibleObs = new rxjs.BehaviorSubject(false)
+let topMenuVisibleObs = new rxjs.BehaviorSubject(false);
+let layoutDropDownVisibleObs = new rxjs.BehaviorSubject(false);
 
 function handleDropDownClicks() {
   document.addEventListener('click', (e) => {
@@ -133,6 +134,22 @@ function handleDropDownClicks() {
     }
   })
 }
+
+q('.layouts-nav').addEventListener('mouseenter', (e) => {
+  if (e.target.matches && e.target.matches('.horizontal .layouts-nav, .horizontal .layouts-nav *')) {
+    console.log('layout ', true);
+    setTimeout(() => {
+      layoutDropDownVisibleObs.next(true);
+    }, 300)
+  }
+});
+
+q('.layouts-nav').addEventListener('mouseleave', (e) => {
+  if (e.target.matches && e.target.matches('.horizontal .layouts-nav, .horizontal .layouts-nav *')) {
+    console.log('layout ', false);
+    layoutDropDownVisibleObs.next(false);
+  }
+})
 
 let appBoundsObs = new rxjs.BehaviorSubject({
   width: Math.round(q('.app').offsetWidth),
@@ -152,13 +169,14 @@ function handleWidthChange() {
 }
 
 appBoundsObs
-.pipe(rxjs.operators.combineLatest(topMenuVisibleObs))
-.subscribe(([appBounds, topMenuVisible]) => {
-  console.log(appBounds, topMenuVisible);
-  resizeVisibleArea(appBounds, topMenuVisible)
+.pipe(rxjs.operators.combineLatest(topMenuVisibleObs, layoutDropDownVisibleObs))
+// .pipe(rxjs.operators.combineLatest())
+.subscribe(([appBounds, topMenuVisible, layoutDropDownVisible]) => {
+  console.log(appBounds, topMenuVisible, layoutDropDownVisible);
+  resizeVisibleArea(appBounds, topMenuVisible, layoutDropDownVisible)
 })
 
-function resizeVisibleArea(appBounds, topMenuVisible) {
+function resizeVisibleArea(appBounds, topMenuVisible, layoutDropDownVisible) {
   let visibleAreas = [];
   visibleAreas.push({
     top: utils.windowMargin,
@@ -169,6 +187,11 @@ function resizeVisibleArea(appBounds, topMenuVisible) {
 
   if (q('.view-port.horizontal') && topMenuVisible) {
     let {top, left, width, height} = q('#menu-top').getBoundingClientRect();
+    visibleAreas.push({top, left, width, height});
+  }
+
+  if (layoutDropDownVisible) {
+    let {top, left, width, height} = q('.layout-menu-tool').getBoundingClientRect();
     visibleAreas.push({top, left, width, height});
   }
 

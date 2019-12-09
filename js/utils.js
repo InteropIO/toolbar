@@ -46,10 +46,10 @@ function handleOrientationChange() {
         col.classList.remove('flex-column')
       }
     })
-    
+
     setTimeout(() => {
       q('.app').classList.remove('switching-orientation');
-    }) 
+    })
   });
 }
 
@@ -146,9 +146,13 @@ function handleModalClose() {
 }
 
 async function handleMouseHover() {
-  // await gluePromise;
+  let closeTimeout;
+
   q('.app').addEventListener('mouseenter', (e) => {
     q('.view-port').classList.add('expand');
+    if (closeTimeout) {
+      clearTimeout(closeTimeout)
+    }
   })
 
   q('.app').addEventListener('mouseleave', (e) => {
@@ -166,9 +170,11 @@ async function handleMouseHover() {
       return;
     }
 
-    q('.view-port').classList.remove('expand');
-    qa('.toggle-content').forEach(e => e.classList.add('hide'));
-    // qa('[dropdown-id].show').forEach(e => e.classList.remove('show'));
+    closeTimeout = setTimeout(() => {
+      q('.view-port').classList.remove('expand');
+      qa('.toggle-content').forEach(e => e.classList.add('hide'));
+      // qa('[dropdown-id].show').forEach(e => e.classList.remove('show'));
+    }, 500)
   })
 }
 
