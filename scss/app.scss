@@ -44,10 +44,6 @@ html {
     -webkit-app-region: drag;
   }
 
-  .about {
-    margin: 50px;
-    height: calc(100vh - 100px);
-  }
 
   .toggle-content {
     @include transition('width',0);

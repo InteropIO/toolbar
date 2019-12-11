@@ -1,29 +1,36 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Glue42 About</title>
-    <link rel="stylesheet" href="./assets/t42bootstrap.bundle.css">
+    <link rel="stylesheet" href="./assets/t42bootstrap.bundle.css" />
+    <link rel="stylesheet" type="text/css" href="scss/about.css" />
   </head>
 
-  <body class="container">
-    <div class="show about fade col-12" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog modal-fill-in" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h3 class="modal-title">Option</h3>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">×</span>
-            </button>
+  <body class="container about">
+      <button type="button" class="close" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>    
+          <div class="about-logo mt-2  text-center">
+            <img src="./assets/logo.svg" width="210" />
           </div>
-          <div class="modal-body">
-            <div class="about-logo mb-2"><img src="./assets/logo.svg" width="180"></div>
-            <p class="text-center mb-4">GD version: <span class="gd-version"></span></p>
-            <p class="text-center mb-0">GW URL: <span class="gw-url"></span> </p>
-            <p class="text-center mb-4">Username: <span class="username"></span></p>
-            <!-- <p>
+          <table class="ml-4 mt-5">
+            <tr>
+              <td class="text-right">GD version</td>
+              <td class="pl-3"><span class="gd-version"></span></td>
+            </tr>
+            <tr>
+              <td class="text-right">GW URL</td>
+              <td class="pl-3"><span class="gw-url"></span></td>
+            </tr>
+            <tr>
+              <td class="text-right">Username</td>
+              <td class="pl-3"><span class="username"></span></td>
+            </tr>
+          </table>
+          <!-- <p>
               <div class="form-check mb-1">
                 <input class="form-check-input show-tutorial" type="checkbox" value="" id="tutorialCheck">
                 <label class="form-check-label" for="tutorialCheck">
@@ -40,11 +47,6 @@
                 </select>
               </div>
             </form> -->
-          </div>
-        </div>
-      </div>
-    </div>
     <script src="./js/about.js"></script>
   </body>
-
 </html>

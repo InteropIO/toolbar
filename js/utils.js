@@ -61,8 +61,8 @@ function handleAboutClick() {
       allowCollapse: false,
       allowMaximize: false,
       allowMinimize: false,
-      width: 400,
-      height: 400
+      width: 300,
+      height: 300
     })
   //   q('.modal.about').classList.add('show')
   })
