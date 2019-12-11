@@ -125,6 +125,8 @@ function handleDropDownClicks() {
       let btnElement = e.path.find(e => e.getAttribute('dropdown-button-id'));
       let menuId = btnElement.getAttribute('dropdown-button-id');
       let menu = q(`[dropdown-id="${menuId}"]`);
+      console.log(btnElement, menuId, menu);
+      e.preventDefault(); e.stopImmediatePropagation(); e.stopPropagation();
       menu.classList.toggle('show');
       topMenuVisibleObs.next(menu.classList.contains('show'));
     } else {
@@ -138,8 +140,9 @@ function handleDropDownClicks() {
 q('.layouts-nav').addEventListener('mouseenter', (e) => {
   if (e.target.matches && e.target.matches('.horizontal .layouts-nav, .horizontal .layouts-nav *')) {
     console.log('layout ', true);
+    layoutDropDownVisibleObs.next(true);
     setTimeout(() => {
-      layoutDropDownVisibleObs.next(true);
+      // console.log();
     }, 300)
   }
 });
@@ -187,16 +190,26 @@ function resizeVisibleArea(appBounds, topMenuVisible, layoutDropDownVisible) {
 
   if (q('.view-port.horizontal') && topMenuVisible) {
     let {top, left, width, height} = q('#menu-top').getBoundingClientRect();
+    // TODO
+    top = Math.round(top);
+    left = Math.round(left);
+    width = Math.round(width);
+    height = Math.round(height);
     visibleAreas.push({top, left, width, height});
   }
 
   if (layoutDropDownVisible) {
-    let {top, left, width, height} = q('.layout-menu-tool').getBoundingClientRect();
-    visibleAreas.push({top, left, width, height});
+    // let {top, left, width, height} = q('.layout-menu-tool').getBoundingClientRect();
+    // // TODO
+    // top = Math.round(top);
+    // left = Math.round(left);
+    // width = Math.round(width);
+    // height = Math.round(height);
+    visibleAreas.push({top: 97, left: 169, width: 175, height: 96});
   }
 
   console.log(visibleAreas);
 
   resizeWindowVisibleArea(visibleAreas);
-  q('.modal').style.width = appBounds.width+ 'px';
+  // q('.modal').style.width = appBounds.width+ 'px';
 }

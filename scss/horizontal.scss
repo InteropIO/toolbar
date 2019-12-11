@@ -114,7 +114,7 @@
       }
       .nav-item {
         @include transition('flex-basis',0);
-        
+
         height: 2.875rem;
 
         &:hover {
@@ -148,7 +148,7 @@
     }
 
     .layout-menu-tool {
-      top: 3rem;
+      top: calc(3rem - 2px);
       z-index: 21;
       flex-direction: column;
       height: 6rem;
@@ -175,7 +175,7 @@
       width: 100%;
       height: calc(100vh - 3rem - 100px);
       border-top: 0 solid transparent;
-      
+
 
       > .nav,
       > div {

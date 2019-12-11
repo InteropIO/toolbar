@@ -1,4 +1,4 @@
-import {shutdown, gluePromise, startApp, focusApp, themeObs, changeTheme, refreshApps, glueInfo} from './glue-related.js'
+import {shutdown, gluePromise, startApp, focusApp, themeObs, changeTheme, refreshApps, glueInfo, openWindow} from './glue-related.js'
 import { setSetting, getSetting } from './settings.js';
 
 const windowMargin = 50;
@@ -55,7 +55,16 @@ function handleOrientationChange() {
 
 function handleAboutClick() {
   q('#open-about').addEventListener('click', () => {
-    q('.modal.about').classList.add('show')
+    openWindow('Glue42 About', location.origin + '/about.html', {
+      isSticky: false,
+      mode: 'html',
+      allowCollapse: false,
+      allowMaximize: false,
+      allowMinimize: false,
+      width: 400,
+      height: 400
+    })
+  //   q('.modal.about').classList.add('show')
   })
 }
 
@@ -188,17 +197,15 @@ function handleNotificationClick() {
 }
 
 function populateAbouPage() {
-  q('.about .gd-version').innerText = glueInfo.version;
-  q('.about .gw-url').innerText = glueInfo.gw;
-  q('.about .username').innerText = glueInfo.user;
 
-  if (getSetting('showTutorial')) {
-    q('.about .show-tutorial').setAttribute('checked', true)
-  } else {
-    q('.about .show-tutorial').removeAttribute('checked')
-  }
 
-  q('.about .show-tutorial').addEventListener('change', (e) => setSetting('showTutorial', e.srcElement.checked))
+  // if (getSetting('showTutorial')) {
+  //   q('.about .show-tutorial').setAttribute('checked', true)
+  // } else {
+  //   q('.about .show-tutorial').removeAttribute('checked')
+  // }
+
+  // q('.about .show-tutorial').addEventListener('change', (e) => setSetting('showTutorial', e.srcElement.checked))
 
 }
 

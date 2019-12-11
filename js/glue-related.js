@@ -147,6 +147,17 @@ async function changeTheme(themeName) {
   glue.contexts.update('Connect.Themes', {selected: themeName})
 }
 
+async function openWindow(name, url, options) {
+  await gluePromise;
+  const myBounds = glue.windows.my().bounds;
+  options = {
+    ...options,
+    top: myBounds.top + 100,
+    left: myBounds.left + 100
+  }
+  window.glue.windows.open(name, url, options);
+}
+
 export {
   gluePromise,
   glueInfo,
@@ -164,5 +175,6 @@ export {
   saveLayout,
   registerHotkey,
   shutdown,
-  resizeWindowVisibleArea
+  resizeWindowVisibleArea,
+  openWindow
 };
