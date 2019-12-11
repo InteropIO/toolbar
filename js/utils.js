@@ -1,4 +1,4 @@
-import {shutdown, gluePromise, startApp, focusApp, themeObs, changeTheme, refreshApps, glueInfo, openWindow} from './glue-related.js'
+import {shutdown, gluePromise, startApp, focusApp, themeObs, changeTheme, refreshApps, glueInfo, openWindow, openNotificationPanel} from './glue-related.js'
 import { setSetting, getSetting } from './settings.js';
 
 const windowMargin = 50;

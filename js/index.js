@@ -10,7 +10,7 @@ import {
   noFavoriteAppsHTML} from './applications.js';
 import {favoriteApps, updateFavoriteApps, removeFavoriteApp} from './favorites.js';
 import {filteredLayouts, layoutHTMLTemplate, handleLayoutClick, handleLayoutSave, noLayoutsHTML} from './layouts.js';
-import {notificationsCountObs, openNotificationPanel, resizeWindowVisibleArea} from './glue-related.js';
+import {notificationsCountObs, resizeWindowVisibleArea} from './glue-related.js';
 import * as glueModule from './glue-related.js';
 import * as utils from './utils.js';
 
