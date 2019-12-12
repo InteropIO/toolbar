@@ -75,6 +75,13 @@ function handleShutdownClick() {
 }
 
 function handleTopMenuClicks() {
+
+  document.addEventListener('click', (e) => {
+    if (e.target.matches('#toggle-opening, #toggle-opening *')) {
+      document.body.classList.toggle('open-left');
+    }
+  })
+
   document.addEventListener('click', (e) => {
 
     if (e.target.matches('[menu-button-id="apps"], [menu-button-id="apps"] *') && e.altKey) {
@@ -104,7 +111,12 @@ function handleTopMenuClicks() {
 
       toggleTopButtonState(menuId);
 
-
+      let hasVisibleDrawers = q('.toggle-content:not(.hide)');
+      if (hasVisibleDrawers) {
+        q('.app').classList.add('has-drawer')
+      } else {
+        q('.app').classList.remove('has-drawer')
+      }
 
     } else if (e.target.matches('#fav-apps .nav-item, #fav-apps .nav-item *')) {
       //start or focus an app from the favorites list

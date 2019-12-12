@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="dark">
+<html class="dark open-left">
 
 <head>
   <link rel="stylesheet" type="text/css" href="./assets/t42bootstrap.bundle.css" />
@@ -8,7 +8,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 </head>
 
-<body>
+<body class="open-left">
   <div class="app d-inline-flex">
     <div id="applicationLauncher" class="view-port vertical">
       <ul class="nav nav-tabs flex-column" column>
@@ -59,6 +59,13 @@
 
           </ul>
         </li>
+        <li class="nav-item view-port-footer" id="toggle-opening">
+          <a class="nav-link" href="#">
+            <!-- <i class="icon-bell-alt ml-2 mr-4"></i> -->
+            <span class="text-animation">Toggle Openinng</span>
+            <!-- <span id="notifications-count" class="circle-index text-white"></span> -->
+          </a>
+        </li>
         <li class="nav-item view-port-footer" id="notification-panel">
           <a class="nav-link" href="#">
             <i class="icon-bell-alt ml-2 mr-4"></i>
@@ -66,6 +73,7 @@
             <span id="notifications-count" class="circle-index text-white"></span>
           </a>
         </li>
+
 
       </ul>
 

@@ -1,31 +1,31 @@
-.app {
-  position: relative;
-  left: 0;
-  @include transition('left', 0);
-}
+.open-left {
+  .app {
+    position: relative;
+    left: 0;
+    @include transition('left, width', 0);
+  }
 
+  .app .toggle-content {
+    width: 300px;
+    @include transition('width, left', 0);
+  }
 
+  .app .toggle-content.hide {
+    width: 0px;
+  }
 
-.app .toggle-content {
-  width: 400px;
-  @include transition('left', 0);
-}
+  .app.expand-wrapper {
+    left: -140px;
+    // margin-left: calc(-50% - 251px);
+  }
 
-.app .toggle-content.hide {
-  width: 0px;
-}
+  .app.expand-wrapper.has-drawer {
+    left: -440px;
+  }
 
-.app.expand-wrapper {
-  left: -140px;
-  // margin-left: calc(-50% - 251px);
-}
-
-.app.expand-wrapper:has(.toggle-content) {
-  background-color: red;
-}
-
-.view-port {
-  // order: 2;
+  .view-port {
+    order: 2;
+  }
 }
 
 .vertical {

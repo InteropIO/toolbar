@@ -38,10 +38,11 @@ html {
 
   .dragable {
     position: fixed;
-    width: 9rem;
+    // width: 9rem;
     height: 3rem;
     left: 50px;
     top: 50px;
+    right: 50px;
     -webkit-app-region: drag;
   }
 
@@ -49,7 +50,7 @@ html {
   .toggle-content {
     @include transition('width',0);
     height: 100%;
-    width: calc(100vw - 301px);
+    width: 300px;
     overflow: hidden;
     visibility: visible;
 
