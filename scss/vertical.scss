@@ -1,10 +1,46 @@
+.app {
+  position: relative;
+  left: 0;
+  @include transition('left', 0);
+}
+
+
+
+.app .toggle-content {
+  width: 400px;
+  @include transition('left', 0);
+}
+
+.app .toggle-content.hide {
+  width: 0px;
+}
+
+.app.expand-wrapper {
+  left: -140px;
+  // margin-left: calc(-50% - 251px);
+}
+
+.app.expand-wrapper:has(.toggle-content) {
+  background-color: red;
+}
+
+.view-port {
+  // order: 2;
+}
+
 .vertical {
     height: 100%;
     > .flex-column {
       height: 100%;
     }
+    // position: relative;
+    // left: 0;
+    // @include transition('left', 0);
+
     &.expand {
       width: 200px;
+      // left: -140px;
+
 
       .menu {
         display: block;
@@ -47,7 +83,7 @@
         }
       }
       .applications-nav {
-        
+
       }
     }
   }

@@ -131,7 +131,8 @@ html {
   height: 100%; }
   html body {
     padding: 50px;
-    height: 100%; }
+    height: 100%;
+    padding-left: 50%; }
   html .app {
     height: 100%; }
     html .app.switching-orientation * {
@@ -392,6 +393,25 @@ html {
     display: none; }
   html #applications .nav-item:not(.fav-app) i.icon-star-full {
     display: none; }
+  html .app {
+    position: relative;
+    left: 0;
+    transition-property: left;
+    transition-duration: 300ms;
+    transition-timing-function: cubic-bezier(0.34, 0.03, 0.13, 0.93);
+    transition-delay: 0ms; }
+  html .app .toggle-content {
+    width: 400px;
+    transition-property: left;
+    transition-duration: 300ms;
+    transition-timing-function: cubic-bezier(0.34, 0.03, 0.13, 0.93);
+    transition-delay: 0ms; }
+  html .app .toggle-content.hide {
+    width: 0px; }
+  html .app.expand-wrapper {
+    left: -140px; }
+  html .app.expand-wrapper:has(.toggle-content) {
+    background-color: red; }
   html .vertical {
     height: 100%; }
     html .vertical > .flex-column {

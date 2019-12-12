@@ -159,6 +159,7 @@ async function handleMouseHover() {
 
   q('.app').addEventListener('mouseenter', (e) => {
     q('.view-port').classList.add('expand');
+    q('.app').classList.add('expand-wrapper');
     if (closeTimeout) {
       clearTimeout(closeTimeout)
     }
@@ -172,7 +173,7 @@ async function handleMouseHover() {
 
     if (e.x < (viewPortWidth + margin) && e.x > margin && e.y < (viewPortHeight + margin -6) && e.y > margin) {
       console.log('fake leave');
-      return;
+      // return;
     }
 
     if (qa('.toggle-content:not(.hide)').length > 0 || qa('.modal.show').length > 0) {
@@ -181,6 +182,7 @@ async function handleMouseHover() {
 
     closeTimeout = setTimeout(() => {
       q('.view-port').classList.remove('expand');
+      q('.app').classList.remove('expand-wrapper');
       qa('.toggle-content').forEach(e => e.classList.add('hide'));
       // qa('[dropdown-id].show').forEach(e => e.classList.remove('show'));
     }, 500)
