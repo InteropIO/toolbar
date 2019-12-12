@@ -125,8 +125,6 @@ function handleDropDownClicks() {
       let btnElement = e.path.find(e => e.getAttribute('dropdown-button-id'));
       let menuId = btnElement.getAttribute('dropdown-button-id');
       let menu = q(`[dropdown-id="${menuId}"]`);
-      console.log(btnElement, menuId, menu);
-      e.preventDefault(); e.stopImmediatePropagation(); e.stopPropagation();
       menu.classList.toggle('show');
       topMenuVisibleObs.next(menu.classList.contains('show'));
     } else {
@@ -156,15 +154,20 @@ q('.layouts-nav').addEventListener('mouseleave', (e) => {
 
 let appBoundsObs = new rxjs.BehaviorSubject({
   width: Math.round(q('.app').offsetWidth),
-  height: Math.round(q('.app').offsetHeight)
+  height: Math.round(q('.app').offsetHeight),
+  left: 200,
+  top: 50
 });
 
 
 function handleWidthChange() {
   const appBoundsObserver = new ResizeObserver((elements) => {
+    let boundingClientRect = elements[0].target.getClientRects()[0]
     appBoundsObs.next({
-      width: Math.round(elements[0].contentRect.right),
-      height: Math.round(elements[0].contentRect.bottom)
+      top: Math.round(boundingClientRect.y),
+      left: Math.round(boundingClientRect.x),
+      width: Math.round(boundingClientRect.width),
+      height: Math.round(boundingClientRect.height)
     })
   })
 
@@ -182,33 +185,33 @@ appBoundsObs
 function resizeVisibleArea(appBounds, topMenuVisible, layoutDropDownVisible) {
   let visibleAreas = [];
   visibleAreas.push({
-    top: utils.windowMargin,
-    left: utils.windowMargin,
+    top: appBounds.top,
+    left: appBounds.left,
     width: appBounds.width,
     height: appBounds.height
   });
 
-  if (q('.view-port.horizontal') && topMenuVisible) {
-    let {top, left, width, height} = q('#menu-top').getBoundingClientRect();
-    // TODO
-    top = Math.round(top);
-    left = Math.round(left);
-    width = Math.round(width);
-    height = Math.round(height);
-    visibleAreas.push({top, left, width, height});
-  }
+  // if (q('.view-port.horizontal') && topMenuVisible) {
+  //   let {top, left, width, height} = q('#menu-top').getBoundingClientRect();
+  //   // TODO
+  //   top = Math.round(top);
+  //   left = Math.round(left);
+  //   width = Math.round(width);
+  //   height = Math.round(height);
+  //   visibleAreas.push({top, left, width, height});
+  // }
 
-  if (layoutDropDownVisible) {
-    // let {top, left, width, height} = q('.layout-menu-tool').getBoundingClientRect();
-    // // TODO
-    // top = Math.round(top);
-    // left = Math.round(left);
-    // width = Math.round(width);
-    // height = Math.round(height);
-    visibleAreas.push({top: 97, left: 169, width: 175, height: 96});
-  }
+  // if (layoutDropDownVisible) {
+  //   // let {top, left, width, height} = q('.layout-menu-tool').getBoundingClientRect();
+  //   // // TODO
+  //   // top = Math.round(top);
+  //   // left = Math.round(left);
+  //   // width = Math.round(width);
+  //   // height = Math.round(height);
+  //   visibleAreas.push({top: 97, left: 169, width: 175, height: 96});
+  // }
 
-  console.log(visibleAreas);
+  // console.log(visibleAreas);
 
   resizeWindowVisibleArea(visibleAreas);
   // q('.modal').style.width = appBounds.width+ 'px';
