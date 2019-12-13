@@ -1,46 +1,23 @@
-.open-left {
-  .app {
-    position: relative;
-    left: 0;
-    @include transition('left, width', 0);
-  }
-
-  .app .toggle-content {
-    width: 300px;
-    @include transition('width, left', 0);
-  }
-
-  .app .toggle-content.hide {
-    width: 0px;
-  }
-
-  .app.expand-wrapper {
-    left: -140px;
-    // margin-left: calc(-50% - 251px);
-  }
-
-  .app.expand-wrapper.has-drawer {
-    left: -440px;
-  }
-
-  .view-port {
-    order: 2;
-  }
-}
+@import 'left';
 
 .vertical {
     height: 100%;
+
     > .flex-column {
       height: 100%;
     }
-    // position: relative;
-    // left: 0;
-    // @include transition('left', 0);
+    
+    .view-port-header {
+      overflow: hidden;
+    }
 
     &.expand {
       width: 200px;
       // left: -140px;
 
+      .view-port-header {
+        overflow: auto;
+      }
 
       .menu {
         display: block;
