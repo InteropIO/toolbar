@@ -29,6 +29,8 @@ html {
     }
   }
 
+ 
+
   img,
   a {
     user-select: none;
@@ -51,15 +53,15 @@ html {
     overflow: hidden;
     visibility: visible;
 
+     // Bootsrap overrides 
+    .input-group {
+      flex-wrap: nowrap;
+    }
+
     &.hide {
       width: 0;
       border-right: 0 solid transparent;
     }
-
-    // > .nav,
-    // > div {
-    //   width: calc(100vw - 301px);
-    // }
 
     > .nav {
       overflow: auto;
@@ -75,12 +77,12 @@ html {
   .nav {
     &.nav-tabs {
       li {
+        white-space: nowrap;
         flex-basis: 3rem;
         flex-shrink: 0;
       }
 
       .nav-item {
-        white-space: nowrap;
         user-select: none;
         position: relative;
         display: flex;
@@ -411,12 +413,3 @@ html {
     }
   }
 }
-
-// @media screen and (min-width: 1370px) {
-// }
-
-// @media screen and (max-width: 1190px) {
-// }
-
-// @media screen and (max-width: 640px) {
-// }

@@ -176,6 +176,9 @@ html .toggle-content {
   overflow: hidden;
   visibility: visible;
 }
+html .toggle-content .input-group {
+  flex-wrap: nowrap;
+}
 html .toggle-content.hide {
   width: 0;
   border-right: 0 solid transparent;
@@ -194,11 +197,11 @@ html .text-animation {
   text-overflow: ellipsis;
 }
 html .nav.nav-tabs li {
+  white-space: nowrap;
   flex-basis: 3rem;
   flex-shrink: 0;
 }
 html .nav.nav-tabs .nav-item {
-  white-space: nowrap;
   user-select: none;
   position: relative;
   display: flex;
