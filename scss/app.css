@@ -160,12 +160,11 @@ html a {
   -webkit-user-select: none;
 }
 html .dragable {
-  position: fixed;
+  position: absolute;
+  width: 9rem;
   height: 3rem;
-  left: 50px;
-  top: 50px;
-  right: 50px;
   -webkit-app-region: drag;
+  left: 0;
 }
 html .toggle-content {
   transition-property: width;
@@ -383,6 +382,7 @@ html .view-port .view-port-header {
   justify-content: space-between;
   padding-left: 1.125rem;
   padding-right: 0.25rem;
+  position: relative;
 }
 html .view-port .view-port-header a {
   text-decoration: none;
@@ -506,7 +506,7 @@ html .vertical.expand {
   width: 200px;
 }
 html .vertical.expand .view-port-header {
-  overflow: auto;
+  overflow: initial;
 }
 html .vertical.expand .menu {
   display: block;

@@ -1,5 +1,5 @@
-@import 'mixin';
-@import 'color';
+@import "mixin";
+@import "color";
 
 .layout-switch {
   position: fixed;
@@ -37,18 +37,15 @@ html {
   }
 
   .dragable {
-    position: fixed;
-    // width: 9rem;
+    position: absolute;
+    width: 9rem;
     height: 3rem;
-    left: 50px;
-    top: 50px;
-    right: 50px;
     -webkit-app-region: drag;
+    left: 0;
   }
 
-
   .toggle-content {
-    @include transition('width',0);
+    @include transition("width", 0);
     height: 100%;
     width: 300px;
     overflow: hidden;
@@ -106,7 +103,7 @@ html {
       overflow: hidden;
 
       i {
-        @include transition('opacity, transform',0);
+        @include transition("opacity, transform", 0);
       }
 
       .icon-angle-down {
@@ -119,7 +116,6 @@ html {
           opacity: 1;
         }
       }
-
     }
 
     &.fav-app-nav {
@@ -152,7 +148,7 @@ html {
 
     #fav-apps {
       & > li:not(.nav-item) {
-        @include transition('opacity',0);
+        @include transition("opacity", 0);
         opacity: 0;
         white-space: nowrap;
       }
@@ -169,7 +165,7 @@ html {
     }
 
     .action-menu-tool {
-      @include transition('opacity',0);
+      @include transition("opacity", 0);
       opacity: 0;
       position: absolute;
       right: 0.5rem;
@@ -201,7 +197,7 @@ html {
       span:last-of-type {
         text-overflow: ellipsis;
         overflow: hidden;
-        @include transition('opacity',0);
+        @include transition("opacity", 0);
       }
 
       &:hover {
@@ -217,7 +213,7 @@ html {
     }
 
     .layout-menu-tool {
-      @include transition('width',0);
+      @include transition("width", 0);
       display: flex;
       height: 3rem;
       opacity: 0;
@@ -277,7 +273,7 @@ html {
     }
   }
   .view-port {
-    @include transition('width',0);
+    @include transition("width", 0);
     border: 1px solid rgba(255, 255, 255, 0.075);
     width: 60px;
 
@@ -291,6 +287,7 @@ html {
       justify-content: space-between;
       padding-left: 1.125rem;
       padding-right: 0.25rem;
+      position: relative;
 
       a {
         @include non-underline();
@@ -388,10 +385,8 @@ html {
     }
   }
 
-  @import 'vertical';
-  @import 'horizontal';
-
-
+  @import "vertical";
+  @import "horizontal";
 }
 
 .app-active {
@@ -416,8 +411,6 @@ html {
     }
   }
 }
-
-
 
 // @media screen and (min-width: 1370px) {
 // }
