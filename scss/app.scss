@@ -167,7 +167,7 @@ html {
     }
 
     .action-menu-tool {
-      @include transition("opacity", 0);
+      @include transition("opacity, transform", 0);
       opacity: 0;
       position: absolute;
       right: 0.5rem;

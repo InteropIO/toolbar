@@ -272,7 +272,7 @@ html .nav .chavron-rotate {
   transform: rotate(-90deg);
 }
 html .nav .action-menu-tool {
-  transition-property: opacity;
+  transition-property: opacity, transform;
   transition-duration: 300ms;
   transition-timing-function: cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 0ms;
