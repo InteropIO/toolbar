@@ -21,6 +21,7 @@ setInitialSettings();
 
 
 function setSetting(settingName, value) {
+  console.info('set setting', settingName, value);
   settings[settingName] = value;
   saveSettings();
 }

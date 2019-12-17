@@ -213,13 +213,13 @@ function handleNotificationClick() {
 function populateAbouPage() {
 
 
-  // if (getSetting('showTutorial')) {
-  //   q('.about .show-tutorial').setAttribute('checked', true)
-  // } else {
-  //   q('.about .show-tutorial').removeAttribute('checked')
-  // }
+  if (getSetting('showTutorial')) {
+    q('#settings-content .show-tutorial').setAttribute('checked', true)
+  } else {
+    q('#settings-content .show-tutorial').removeAttribute('checked')
+  }
 
-  // q('.about .show-tutorial').addEventListener('change', (e) => setSetting('showTutorial', e.srcElement.checked))
+  q('#settings-content .show-tutorial').addEventListener('change', (e) => setSetting('showTutorial', e.srcElement.checked))
 
 }
 

@@ -5,7 +5,7 @@
       @include transition('left, width', 0);
       margin-left: 140px;
     }
-  
+
     .app .toggle-content {
       width: 300px;
       @include transition('width, left', 0);
@@ -14,21 +14,24 @@
           width: auto;
       }
     }
-  
+
     .app .toggle-content.hide {
       width: 0px;
     }
-  
+
     .app.expand-wrapper {
       left: -140px;
     }
-  
+
     .app.expand-wrapper.has-drawer {
       left: -440px;
     }
-  
+
     .view-port {
       order: 2;
     }
+
+    .logo {
+      // border: 1px solid red;
+    }
   }
-  

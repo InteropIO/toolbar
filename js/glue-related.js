@@ -14,6 +14,7 @@ const glueAppsObs = new rxjs.BehaviorSubject([]);
 const layoutsObs = new rxjs.BehaviorSubject([]);
 const notificationsCountObs = new rxjs.BehaviorSubject(null);
 const themeObs = new rxjs.BehaviorSubject(null);
+const boundsObs = new rxjs.BehaviorSubject(null);
 
 if (!window.glue42gd) {
   window.glue42gd = {};
@@ -30,6 +31,7 @@ gluePromise.then((glue) => {
   trackLayouts();
   trackNotificationCount();
   trackThemeChanges();
+  trackWindowMove();
 })
 
 function trackApplications() {
@@ -71,6 +73,12 @@ function trackThemeChanges() {
   glue.contexts.subscribe('Connect.Themes', (themeObj) => {
     console.log(themeObj);
     themeObs.next(themeObj);
+  })
+}
+
+function trackWindowMove() {
+  glue.windows.my().onBoundsChanged(() => {
+    boundsObs.next(glue.windows.my().bounds);
   })
 }
 
@@ -158,11 +166,21 @@ async function openWindow(name, url, options) {
   window.glue.windows.open(name, url, options);
 }
 
+async function getCurrentBounds() {
+  await gluePromise;
+  return glue.windows.my().bounds;
+}
+
+function getMonitorInfo() {
+  return glue42gd.monitors;
+}
+
 export {
   gluePromise,
   glueInfo,
   glueAppsObs,
   layoutsObs,
+  boundsObs,
   startApp,
   focusApp,
   refreshApps,
@@ -176,5 +194,6 @@ export {
   registerHotkey,
   shutdown,
   resizeWindowVisibleArea,
-  openWindow
+  openWindow,
+  getMonitorInfo
 };

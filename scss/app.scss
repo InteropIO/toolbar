@@ -14,7 +14,7 @@ html {
   body {
     padding: 50px;
     height: 100%;
-    padding-left: 50%;
+    padding-left: 350px;
   }
 
   .app {
@@ -29,7 +29,7 @@ html {
     }
   }
 
- 
+
 
   img,
   a {
@@ -40,8 +40,9 @@ html {
 
   .dragable {
     position: absolute;
-    width: 9rem;
+    // width: 9rem;
     height: 3rem;
+    width: 140px;
     -webkit-app-region: drag;
     left: 0;
   }
@@ -53,7 +54,7 @@ html {
     overflow: hidden;
     visibility: visible;
 
-     // Bootsrap overrides 
+     // Bootsrap overrides
     .input-group {
       flex-wrap: nowrap;
     }

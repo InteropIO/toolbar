@@ -114,7 +114,26 @@
     </div>
 
     <div class="toggle-content hide" id="settings-content" menu-id="settings">
-      <h2 class="mt-3 pl-3">Settings</h2>
+      <div class="p-2">
+        <h2 class="mt-3">Settings</h2>
+        <form>
+          <p>
+            <div class="form-check mb-1">
+              <input class="form-check-input show-tutorial" type="checkbox" value="1" id="show-tutorial">
+              <label class="form-check-label" for="show-tutorial">
+                Show tutorial on startup
+              </label>
+            </div>
+          </p>
+          <div class="form-group">
+            <label>Select theme</label>
+            <select class="custom-select">
+              <option value="dark" selected>Dark</option>
+              <option value="light">Light</option>
+            </select>
+          </div>
+        </form>
+      </div>
     </div>
 
   </div>

@@ -152,12 +152,31 @@ q('.layouts-nav').addEventListener('mouseleave', (e) => {
   }
 })
 
+
+// glueModule.boundsObs.subscibe((currentBounds) => {
+
+// })
+
 let appBoundsObs = new rxjs.BehaviorSubject({
   width: Math.round(q('.app').offsetWidth),
   height: Math.round(q('.app').offsetHeight),
   left: 200,
   top: 50
 });
+
+glueModule.boundsObs
+.pipe(rxjs.operators.filter(bounds => bounds))
+.pipe(rxjs.operators.combineLatest(appBoundsObs))
+.subscribe(([windowBounds, appBounds]) => {
+  const monitors = glueModule.getMonitorInfo();
+  let visibleAreaStart = windowBounds.left + 350;
+  console.log(windowBounds, appBounds);
+  if (windowBounds.left > 2500) {
+    document.body.classList.add('open-left');
+  } else {
+    document.body.classList.remove('open-left');
+  }
+})
 
 
 function handleWidthChange() {
@@ -178,7 +197,7 @@ appBoundsObs
 .pipe(rxjs.operators.combineLatest(topMenuVisibleObs, layoutDropDownVisibleObs))
 // .pipe(rxjs.operators.combineLatest())
 .subscribe(([appBounds, topMenuVisible, layoutDropDownVisible]) => {
-  console.log(appBounds, topMenuVisible, layoutDropDownVisible);
+  // console.log(appBounds, topMenuVisible, layoutDropDownVisible);
   resizeVisibleArea(appBounds, topMenuVisible, layoutDropDownVisible)
 })
 
@@ -191,28 +210,28 @@ function resizeVisibleArea(appBounds, topMenuVisible, layoutDropDownVisible) {
     height: appBounds.height
   });
 
-  // if (q('.view-port.horizontal') && topMenuVisible) {
-  //   let {top, left, width, height} = q('#menu-top').getBoundingClientRect();
-  //   // TODO
-  //   top = Math.round(top);
-  //   left = Math.round(left);
-  //   width = Math.round(width);
-  //   height = Math.round(height);
-  //   visibleAreas.push({top, left, width, height});
-  // }
+  if (q('.view-port.horizontal') && topMenuVisible) {
+    let {top, left, width, height} = q('#menu-top').getBoundingClientRect();
+    // TODO
+    top = Math.round(top);
+    left = Math.round(left);
+    width = Math.round(width);
+    height = Math.round(height);
+    visibleAreas.push({top, left, width, height});
+  }
 
-  // if (layoutDropDownVisible) {
-  //   // let {top, left, width, height} = q('.layout-menu-tool').getBoundingClientRect();
-  //   // // TODO
-  //   // top = Math.round(top);
-  //   // left = Math.round(left);
-  //   // width = Math.round(width);
-  //   // height = Math.round(height);
-  //   visibleAreas.push({top: 97, left: 169, width: 175, height: 96});
-  // }
+  if (layoutDropDownVisible) {
+    // let {top, left, width, height} = q('.layout-menu-tool').getBoundingClientRect();
+    // // TODO
+    // top = Math.round(top);
+    // left = Math.round(left);
+    // width = Math.round(width);
+    // height = Math.round(height);
+    // TODO
+    visibleAreas.push({top: 97, left: 169, width: 175, height: 96});
+  }
 
   // console.log(visibleAreas);
 
   resizeWindowVisibleArea(visibleAreas);
-  // q('.modal').style.width = appBounds.width+ 'px';
 }
