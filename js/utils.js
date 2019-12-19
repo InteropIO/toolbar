@@ -11,8 +11,19 @@ function handleThemeChange() {
     let allThemes = themeObs.value.all.map(t => t.name);
     let currentThemeIndex = allThemes.indexOf(currentTheme);
     let newThemeIndex = currentThemeIndex >= allThemes.length - 1 ? 0 : currentThemeIndex + 1;
-    changeTheme(allThemes[newThemeIndex])
   })
+  q('.theme-select').addEventListener('click', (e) => {
+    if (e.target.matches('input.select_input[type="radio"]')) {
+      let themeToSelect = e.target.getAttribute('theme-name');
+      changeTheme(themeToSelect);
+    }
+  })
+
+  // themeObs.subscribe(themeObj => {
+  //   if (themeObj) {
+
+  //   }
+  // })
 
   themeObs.subscribe(themeObj => {
     if (themeObj) {
@@ -21,6 +32,15 @@ function handleThemeChange() {
       });
 
       q('html').classList.add(themeObj.selected);
+
+      let allThemesHtml = ``;
+      themeObj.all.forEach(theme => {
+        allThemesHtml += `<li class="select_option">
+          <input class="select_input" type="radio" name="theme" id="theme-${theme.name}" theme-name="${theme.name}" ${theme.name === themeObj.selected ? 'checked' : ''}/>
+          <label class="select_label" for="theme-${theme.name}">${theme.displayName}</label></li>`
+      });
+
+      q('.theme-select .select_options').innerHTML = allThemesHtml;
     }
   })
 }

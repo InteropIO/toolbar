@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="dark open-left">
+<html class="dark">
 
 <head>
   <link rel="stylesheet" type="text/css" href="./assets/t42bootstrap.bundle.css" />
@@ -8,7 +8,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 </head>
 
-<body class="open-left">
+<body class="">
   <div class="app d-inline-flex">
     <div id="applicationLauncher" class="view-port vertical">
       <ul class="nav nav-tabs flex-column" column>
@@ -126,23 +126,15 @@
             </div>
           </p>
           <label>Select theme</label>
-          <ul class="select">            
+          <ul class="select theme-select">
             <li class="select_items">
               <input class="select_expand" type="radio" name="theme" id="opener"/>
               <label class="select_closeLabel" for="close"></label>
-              
+
               <ul class="select_options">
-                <li class="select_option">
-                  <input class="select_input" type="radio" name="theme" id="themer-dark"/>
-                  <label class="select_label" for="themer-dark">Dark</label>
-                </li>
-        
-                <li class="select_option">
-                  <input class="select_input" type="radio" name="theme" id="themer-light"/>
-                  <label class="select_label" for="themer-light">Light</label>
-                </li>
+
               </ul>
-              
+
               <label class="select_expandLabel" for="opener"></label>
             </li>
           </ul>

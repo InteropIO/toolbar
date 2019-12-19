@@ -170,8 +170,16 @@ glueModule.boundsObs
 .subscribe(([windowBounds, appBounds]) => {
   const monitors = glueModule.getMonitorInfo();
   let visibleAreaStart = windowBounds.left + 350;
-  console.log(windowBounds, appBounds);
-  if (windowBounds.left > 2500) {
+  let toolbarCenter = windowBounds.left + 350;
+  console.log(toolbarCenter);
+  let currentMonitor = monitors.find(monitor => {
+    let {workingAreaLeft, workingAreaWidth, workingAreaTop} = monitor;
+    return workingAreaLeft <= toolbarCenter && (workingAreaLeft + workingAreaWidth) >= toolbarCenter;
+  });
+  if (!currentMonitor) {
+    debugger;
+  }
+  if ((windowBounds.left + windowBounds.width) > (currentMonitor.workingAreaLeft + currentMonitor.workingAreaWidth)){
     document.body.classList.add('open-left');
   } else {
     document.body.classList.remove('open-left');
