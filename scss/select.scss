@@ -64,7 +64,7 @@
 		position: absolute;
 		top: 0;
 		left: 0;
-        padding-top: 2rem;
+        // padding-top: 2rem;
         border-width:1px;
         border-style: solid;
 	}
@@ -112,7 +112,7 @@
 	
 	&_input:checked + .select_label {
 		height: 2rem;
-		margin-top: -2rem;
+		//margin-top: -2rem;
     }
 
     &_options {

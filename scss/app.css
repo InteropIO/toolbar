@@ -546,7 +546,6 @@ html .select_items {
   position: absolute;
   top: 0;
   left: 0;
-  padding-top: 2rem;
   border-width: 1px;
   border-style: solid;
 }
@@ -585,7 +584,6 @@ html .select_expand:checked + .select_closeLabel + .select_options + .select_exp
 }
 html .select_input:checked + .select_label {
   height: 2rem;
-  margin-top: -2rem;
 }
 html .select_options {
   list-style: none;
