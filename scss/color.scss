@@ -58,6 +58,33 @@ html.dark {
         }
       }
     }
+    .select {
+      &:hover {
+        background-color: #21252d;
+      }
+
+      &_items  {
+        border-color: rgba(255, 255, 255, 0.075);
+        &:hover {
+          border-color: #2080d3;
+        }
+      }
+
+      &_option {
+        background-color: #272b35;
+      }
+
+      &_expand {
+        &::after {
+          color: #eeeeee;
+        }
+        &:checked {
+          + .select_closeLabel + .select_options .select_label:hover {
+            background-color: #21252d;
+          }
+        }
+      }
+    }
   }
   
   html.light {

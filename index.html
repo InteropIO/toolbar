@@ -132,6 +132,31 @@
               <option value="light">Light</option>
             </select>
           </div>
+          <ul class="select">
+            <li>
+              <input class="select_close" type="radio" name="theme" id="close" value=""/>
+              <span class="select_label select_label-placeholder">Select theme</span>
+            </li>
+            
+            <li class="select_items">
+              <input class="select_expand" type="radio" name="theme" id="opener"/>
+              <label class="select_closeLabel" for="close"></label>
+              
+              <ul class="select_options">
+                <li class="select_option">
+                  <input class="select_input" type="radio" name="theme" id="themer-dark"/>
+                  <label class="select_label" for="themer-dark">Dark</label>
+                </li>
+        
+                <li class="select_option">
+                  <input class="select_input" type="radio" name="theme" id="themer-light"/>
+                  <label class="select_label" for="themer-light">Light</label>
+                </li>
+              </ul>
+              
+              <label class="select_expandLabel" for="opener"></label>
+            </li>
+          </ul>
         </form>
       </div>
     </div>
