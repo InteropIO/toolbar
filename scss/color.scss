@@ -87,7 +87,7 @@ html.dark {
     }
   }
   
-  html.light {
+html.light {
     .view-port {
       border: 1px solid rgba(219, 222, 230, 0.8);
     }
@@ -125,7 +125,7 @@ html.dark {
         background: #ffffff; // rgba(219, 222, 230, 0.8);
       }
   
-      div {
+      .layouts-nav div {
         &:first-of-type {
           border-right: 1px solid rgba(219, 222, 230, 0.8);
         }
@@ -150,4 +150,36 @@ html.dark {
         }
       }
     }
+  .select {
+    &:hover {
+      background-color: #fff;
+    }
+
+    &_items  {
+        
+      &:hover {
+        border-color: #2080d3;
+      }
+    }
+    
+    &_option {
+      background-color: transparent;
+
+      label {
+        color: #757575;
+      }
+    }
+
+    &_expand {
+      &::after {
+        color: #2c2c2c;
+      }
+      &:checked {
+        + .select_closeLabel + .select_options .select_label:hover {
+          background-color: #f2f2f2;
+          color: #2c2c2c;
+        }
+      }
+    }
   }
+}
