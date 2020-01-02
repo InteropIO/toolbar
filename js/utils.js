@@ -5,13 +5,13 @@ const windowMargin = 50;
 let isVertical;
 
 function handleThemeChange() {
-  q('#change-theme').addEventListener('click', () => {
-    let currentTheme = Array.prototype.slice.apply(q('html').classList)
-      .find(className =>  ['dark', 'light'].indexOf(className) >= 0);
-    let allThemes = themeObs.value.all.map(t => t.name);
-    let currentThemeIndex = allThemes.indexOf(currentTheme);
-    let newThemeIndex = currentThemeIndex >= allThemes.length - 1 ? 0 : currentThemeIndex + 1;
-  })
+  // q('#change-theme').addEventListener('click', () => {
+  //   let currentTheme = Array.prototype.slice.apply(q('html').classList)
+  //     .find(className =>  ['dark', 'light'].indexOf(className) >= 0);
+  //   let allThemes = themeObs.value.all.map(t => t.name);
+  //   let currentThemeIndex = allThemes.indexOf(currentTheme);
+  //   let newThemeIndex = currentThemeIndex >= allThemes.length - 1 ? 0 : currentThemeIndex + 1;
+  // })
   q('.theme-select').addEventListener('click', (e) => {
     if (e.target.matches('input.select_input[type="radio"]')) {
       let themeToSelect = e.target.getAttribute('theme-name');
@@ -81,6 +81,7 @@ function handleAboutClick() {
       allowCollapse: false,
       allowMaximize: false,
       allowMinimize: false,
+      allowClose: false,
       width: 300,
       height: 300
     })

@@ -132,16 +132,18 @@ function handleDropDownClicks() {
       qa(`[dropdown-id].show`).forEach(e => e.classList.remove('show'));
       topMenuVisibleObs.next(false)
     }
-  })
+  });
 }
+
+let layoutOpenedTimeout;
 
 q('.layouts-nav').addEventListener('mouseenter', (e) => {
   if (e.target.matches && e.target.matches('.horizontal .layouts-nav, .horizontal .layouts-nav *')) {
     console.log('layout ', true);
-    layoutDropDownVisibleObs.next(true);
-    setTimeout(() => {
+    layoutOpenedTimeout = setTimeout(() => {
+      layoutDropDownVisibleObs.next(true);
       // console.log();
-    }, 300)
+    }, 300);
   }
 });
 
@@ -149,8 +151,11 @@ q('.layouts-nav').addEventListener('mouseleave', (e) => {
   if (e.target.matches && e.target.matches('.horizontal .layouts-nav, .horizontal .layouts-nav *')) {
     console.log('layout ', false);
     layoutDropDownVisibleObs.next(false);
+    if (layoutOpenedTimeout) {
+      clearInterval(layoutOpenedTimeout);
+    }
   }
-})
+});
 
 
 // glueModule.boundsObs.subscibe((currentBounds) => {
@@ -184,7 +189,7 @@ glueModule.boundsObs
   } else {
     document.body.classList.remove('open-left');
   }
-})
+});
 
 
 function handleWidthChange() {
@@ -195,8 +200,8 @@ function handleWidthChange() {
       left: Math.round(boundingClientRect.x),
       width: Math.round(boundingClientRect.width),
       height: Math.round(boundingClientRect.height)
-    })
-  })
+    });
+  });
 
   appBoundsObserver.observe(q('.app'));
 }
@@ -206,8 +211,8 @@ appBoundsObs
 // .pipe(rxjs.operators.combineLatest())
 .subscribe(([appBounds, topMenuVisible, layoutDropDownVisible]) => {
   // console.log(appBounds, topMenuVisible, layoutDropDownVisible);
-  resizeVisibleArea(appBounds, topMenuVisible, layoutDropDownVisible)
-})
+  resizeVisibleArea(appBounds, topMenuVisible, layoutDropDownVisible);
+});
 
 function resizeVisibleArea(appBounds, topMenuVisible, layoutDropDownVisible) {
   let visibleAreas = [];
@@ -229,14 +234,14 @@ function resizeVisibleArea(appBounds, topMenuVisible, layoutDropDownVisible) {
   }
 
   if (layoutDropDownVisible) {
-    // let {top, left, width, height} = q('.layout-menu-tool').getBoundingClientRect();
-    // // TODO
-    // top = Math.round(top);
-    // left = Math.round(left);
-    // width = Math.round(width);
-    // height = Math.round(height);
+    let {top, left, width, height} = q('.layout-menu-tool').getBoundingClientRect();
     // TODO
-    visibleAreas.push({top: 97, left: 169, width: 175, height: 96});
+    top = Math.round(top);
+    left = Math.round(left);
+    width = Math.round(width);
+    height = Math.round(height);
+    // TODO
+    visibleAreas.push({top, left, width, height});
   }
 
   // console.log(visibleAreas);
