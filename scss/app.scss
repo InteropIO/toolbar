@@ -28,9 +28,12 @@ html {
       }
     }
   }
-  
+
   h3 {
     white-space: nowrap;
+    .close {
+      margin-top: -.125rem;
+    }
   }
 
   img,
