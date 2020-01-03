@@ -191,6 +191,9 @@ html .app.switching-orientation * {
 html .app.switching-orientation *::before, html .app.switching-orientation *::after {
   transition: none !important;
 }
+html h3 {
+  white-space: nowrap;
+}
 html img,
 html a {
   user-select: none;
