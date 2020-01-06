@@ -1,4 +1,4 @@
-import {shutdown, gluePromise, startApp, focusApp, themeObs, changeTheme, refreshApps, glueInfo, openWindow, openNotificationPanel} from './glue-related.js'
+import {shutdown, gluePromise, startApp, focusApp, themeObs, changeTheme, refreshApps, glueInfo, openWindow, openNotificationPanel} from './glue-related.js';
 import { setSetting, getSetting } from './settings.js';
 
 const windowMargin = 50;
@@ -17,7 +17,7 @@ function handleThemeChange() {
       let themeToSelect = e.target.getAttribute('theme-name');
       changeTheme(themeToSelect);
     }
-  })
+  });
 
   // themeObs.subscribe(themeObj => {
   //   if (themeObj) {
@@ -28,7 +28,7 @@ function handleThemeChange() {
   themeObs.subscribe(themeObj => {
     if (themeObj) {
       themeObj.all.forEach(theme => {
-        q('html').classList.remove(theme.name)
+        q('html').classList.remove(theme.name);
       });
 
       q('html').classList.add(themeObj.selected);
@@ -37,12 +37,12 @@ function handleThemeChange() {
       themeObj.all.forEach(theme => {
         allThemesHtml += `<li class="select_option">
           <input class="select_input" type="radio" name="theme" id="theme-${theme.name}" theme-name="${theme.name}" ${theme.name === themeObj.selected ? 'checked' : ''}/>
-          <label class="select_label" for="theme-${theme.name}">${theme.displayName}</label></li>`
+          <label class="select_label" for="theme-${theme.name}">${theme.displayName}</label></li>`;
       });
 
       q('.theme-select .select_options').innerHTML = allThemesHtml;
     }
-  })
+  });
 }
 
 function handleOrientationChange() {
@@ -60,16 +60,16 @@ function handleOrientationChange() {
     q('.app').classList.remove(isVertical ? 'h' : 'd-inline-flex');
     qa('[column]').forEach(col => {
       if (isVertical) {
-        col.classList.add('flex-column')
+        col.classList.add('flex-column');
       } else {
         console.log('removing flex-column', col);
-        col.classList.remove('flex-column')
+        col.classList.remove('flex-column');
       }
-    })
+    });
 
     setTimeout(() => {
       q('.app').classList.remove('switching-orientation');
-    })
+    });
   });
 }
 
@@ -84,25 +84,18 @@ function handleAboutClick() {
       allowClose: false,
       width: 300,
       height: 300
-    })
+    });
   //   q('.modal.about').classList.add('show')
-  })
+  });
 }
 
 function handleShutdownClick() {
   q('#shutdown').addEventListener('click', () => {
     shutdown();
-  })
+  });
 }
 
 function handleTopMenuClicks() {
-
-  document.addEventListener('click', (e) => {
-    if (e.target.matches('#toggle-opening, #toggle-opening *')) {
-      document.body.classList.toggle('open-left');
-    }
-  })
-
   document.addEventListener('click', (e) => {
 
     if (e.target.matches('[menu-button-id="apps"], [menu-button-id="apps"] *') && e.altKey) {
@@ -116,8 +109,8 @@ function handleTopMenuClicks() {
 
     if (e.target.matches('[menu-button-id], [menu-button-id] *')) {
       //open selected drawer (apps, layouts)
-      let topElement = e.path.find(e => e.getAttribute('menu-button-id'))
-      let menuId = topElement.getAttribute('menu-button-id')
+      let topElement = e.path.find(e => e.getAttribute('menu-button-id'));
+      let menuId = topElement.getAttribute('menu-button-id');
       qa(`[menu-id]:not([menu-id="${menuId}"])`).forEach(menu => {
         menu.classList.add('hide');
       });
@@ -134,9 +127,9 @@ function handleTopMenuClicks() {
 
       let hasVisibleDrawers = q('.toggle-content:not(.hide)');
       if (hasVisibleDrawers) {
-        q('.app').classList.add('has-drawer')
+        q('.app').classList.add('has-drawer');
       } else {
-        q('.app').classList.remove('has-drawer')
+        q('.app').classList.remove('has-drawer');
       }
 
     } else if (e.target.matches('#fav-apps .nav-item, #fav-apps .nav-item *')) {
@@ -146,12 +139,25 @@ function handleTopMenuClicks() {
       let isActive =  topElement.classList.contains('app-active');
 
       if (isActive) {
-        focusApp(appName)
+        focusApp(appName);
       } else {
         startApp(appName);
       }
     }
-  })
+  });
+}
+
+function handleCloseDrawerClicks() {
+  document.addEventListener('click', (e) => {
+    if (e.target.matches('.close-drawer, .close-drawer *')) {
+      let menu = e.path.find(e => e && e.getAttribute('menu-id'));
+      let menuId = menu && menu.getAttribute('menu-id');
+      if (menuId) {
+        q(`[menu-button-id="${menuId}"]`).click();
+        // q('.expand').classList.remove('expand');
+      }
+    }
+  });
 }
 
 function toggleTopButtonState(id) {
@@ -169,7 +175,7 @@ function focusMenuInputAfterTransition(e) {
   }
 
   let menu = e.srcElement;
-  menu.removeEventListener('transitionend', focusMenuInputAfterTransition)
+  menu.removeEventListener('transitionend', focusMenuInputAfterTransition);
   if (!menu.classList.contains('hide')) {
     let autofocusInput = menu.querySelector('input[autofocus]');
     if (autofocusInput) {
@@ -184,7 +190,7 @@ function handleModalClose() {
       let modal = e.path.find(el => el.classList.contains('modal'));
       modal.classList.remove('show');
     }
-  })
+  });
 }
 
 async function handleMouseHover() {
@@ -194,9 +200,9 @@ async function handleMouseHover() {
     q('.view-port').classList.add('expand');
     q('.app').classList.add('expand-wrapper');
     if (closeTimeout) {
-      clearTimeout(closeTimeout)
+      clearTimeout(closeTimeout);
     }
-  })
+  });
 
   q('.app').addEventListener('mouseleave', (e) => {
     let {offsetWidth: viewPortWidth, offsetHeight: viewPortHeight} = q('.view-port');
@@ -218,8 +224,8 @@ async function handleMouseHover() {
       q('.app').classList.remove('expand-wrapper');
       qa('.toggle-content').forEach(e => e.classList.add('hide'));
       // qa('[dropdown-id].show').forEach(e => e.classList.remove('show'));
-    }, 500)
-  })
+    }, 500);
+  });
 }
 
 function handleNotificationClick() {
@@ -228,19 +234,19 @@ function handleNotificationClick() {
     e.stopPropagation();
     e.stopImmediatePropagation();
     openNotificationPanel();
-  })
+  });
 }
 
 function populateAbouPage() {
 
 
   if (getSetting('showTutorial')) {
-    q('#settings-content .show-tutorial').setAttribute('checked', true)
+    q('#settings-content .show-tutorial').setAttribute('checked', true);
   } else {
-    q('#settings-content .show-tutorial').removeAttribute('checked')
+    q('#settings-content .show-tutorial').removeAttribute('checked');
   }
 
-  q('#settings-content .show-tutorial').addEventListener('change', (e) => setSetting('showTutorial', e.srcElement.checked))
+  q('#settings-content .show-tutorial').addEventListener('change', (e) => setSetting('showTutorial', e.srcElement.checked));
 
 }
 
@@ -260,10 +266,11 @@ export {
   handleAboutClick,
   handleShutdownClick,
   handleTopMenuClicks,
+  handleCloseDrawerClicks,
   handleNotificationClick,
   handleModalClose,
   handleMouseHover,
   populateAbouPage,
   windowMargin,
   escapeHtml
-}
+};

@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   handleWidthChange();
   handleAppClick();
-  handleSearchChange()
+  handleSearchChange();
   handleLayoutClick();
   handleLayoutSave();
 
@@ -39,11 +39,12 @@ document.addEventListener('DOMContentLoaded', () => {
   utils.handleAboutClick();
   utils.handleShutdownClick();
   utils.handleTopMenuClicks();
+  utils.handleCloseDrawerClicks();
   utils.handleMouseHover();
   utils.handleModalClose();
 
   glueModule.registerHotkey();
-})
+});
 
 
 function printApps() {
@@ -57,7 +58,7 @@ function printApps() {
     }
 
     updateFavoriteApps();
-  })
+  });
 }
 
 function printRunningApps() {
@@ -69,14 +70,14 @@ function printRunningApps() {
     } else {
       q('#running-apps').innerHTML = noRunningAppsHTML;
     }
-  })
+  });
 }
 
 function printLayouts() {
   filteredLayouts.subscribe(layouts => {
     let newLayoutsHTML = '';
     if (layouts.length > 0) {
-      layouts.forEach(layout =>  newLayoutsHTML += layoutHTMLTemplate(layout))
+      layouts.forEach(layout =>  newLayoutsHTML += layoutHTMLTemplate(layout));
       q('#layout-load>ul').innerHTML = newLayoutsHTML;
     } else {
       q('#layout-load>ul').innerHTML = noLayoutsHTML;
@@ -95,7 +96,7 @@ function printFavoriteApps() {
       existingFavApps.forEach(favApp => {
         let fullApp = allApps.find(a => a.name === favApp);
         if (fullApp) {
-          favAppsHtml += favoriteApplicationHTMLTemplate(fullApp, {favoriteBtn: false})
+          favAppsHtml += favoriteApplicationHTMLTemplate(fullApp, {favoriteBtn: false});
         }
       });
     } else {
@@ -103,7 +104,7 @@ function printFavoriteApps() {
     }
 
     q('#fav-apps').innerHTML = favAppsHtml;
-  })
+  });
 }
 
 function printNotificationCount() {
@@ -111,7 +112,7 @@ function printNotificationCount() {
     if (count !== null) {
       q('#notifications-count').innerHTML = count;
     }
-  })
+  });
 }
 
 
@@ -130,10 +131,12 @@ function handleDropDownClicks() {
     } else {
       //click is not on dropdown button - close opened dropdowns
       qa(`[dropdown-id].show`).forEach(e => e.classList.remove('show'));
-      topMenuVisibleObs.next(false)
+      topMenuVisibleObs.next(false);
     }
   });
 }
+
+
 
 let layoutOpenedTimeout;
 
@@ -194,7 +197,7 @@ glueModule.boundsObs
 
 function handleWidthChange() {
   const appBoundsObserver = new ResizeObserver((elements) => {
-    let boundingClientRect = elements[0].target.getClientRects()[0]
+    let boundingClientRect = elements[0].target.getClientRects()[0];
     appBoundsObs.next({
       top: Math.round(boundingClientRect.y),
       left: Math.round(boundingClientRect.x),
