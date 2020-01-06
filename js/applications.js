@@ -147,7 +147,7 @@ function getAppIcon(app, options = {}) {
 }
 
 const noApplicationsHTML = `<li class="text-center pt-3">No applications</li>`;
-const noRunningAppsHTML =  `<li class="text-center pt-3">No running applications</li><li class="text-center pt-3"><button class="btn btn-secondary" menu-button-id="apps">Add applications</button></li>`;
+const noRunningAppsHTML =  `<li class="text-center pt-3">No running applications</li><li class="text-center pt-3"><button class="btn btn-secondary" menu-button-id="apps">Start application</button></li>`;
 const noFavoriteAppsHTML = `<li class="text-center pt-3">No favorite apps</li>`;
 
 export {
