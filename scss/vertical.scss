@@ -37,6 +37,9 @@
         flex-grow: 1;
         overflow-y: auto;
       }
+      .nav-link {
+        max-width: 200px;
+      }
 
       .accordion {
         .nav {
