@@ -67,6 +67,10 @@ html.dark .nav .layout-menu-tool div:hover, html.dark .nav .layout-menu-tool div
   color: white;
 }
 html.dark .nav .nav-link img {
+  transition-property: filter;
+  transition-duration: 300ms;
+  transition-timing-function: cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition-delay: 0ms;
   filter: grayscale(100%) brightness(1);
 }
 html.dark .nav .nav-link.active img, html.dark .nav .nav-link:hover img {
@@ -89,6 +93,12 @@ html.dark .select_expand::after {
 }
 html.dark .select_expand:checked + .select_closeLabel + .select_options .select_label:hover {
   background-color: #21252d;
+}
+html.dark .horizontal .layout-menu-tool {
+  border: 1px solid rgba(255, 255, 255, 0.075);
+}
+html.dark .horizontal .layout-menu-tool div:first-child {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 html.light .view-port {
@@ -165,6 +175,12 @@ html.light .select_expand::after {
 html.light .select_expand:checked + .select_closeLabel + .select_options .select_label:hover {
   background-color: #f2f2f2;
   color: #2c2c2c;
+}
+html.light .horizontal .layout-menu-tool {
+  border: 1px solid rgba(219, 222, 230, 0.8);
+}
+html.light .horizontal .layout-menu-tool div:first-child {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.075);
 }
 
 .layout-switch {
@@ -780,6 +796,7 @@ html .horizontal .nav .show-actions.active span {
 }
 html .horizontal .nav .show-actions:hover .layout-menu-tool div:first-of-type, html .horizontal .nav .show-actions.active .layout-menu-tool div:first-of-type {
   animation: none;
+  border-right: 0;
 }
 html .horizontal .nav .show-actions:hover .layout-menu-tool div:last-of-type, html .horizontal .nav .show-actions.active .layout-menu-tool div:last-of-type {
   animation: none;
