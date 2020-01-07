@@ -15,6 +15,10 @@
     &.view-port .view-port-header {
       width: 3.688rem;
       overflow: hidden;
+      .dropdown-menu  {
+        right: -.125rem;
+        margin-top: .438rem;
+      }
     }
 
     .app-active {

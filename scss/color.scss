@@ -53,7 +53,7 @@ html.dark {
         &.active,
         &:hover {
           img {
-            filter: grayscale(100%) brightness(2);
+            filter: grayscale(100%) brightness(1.3);
           }
         }
       }

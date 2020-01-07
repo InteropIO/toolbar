@@ -70,7 +70,7 @@ html.dark .nav .nav-link img {
   filter: grayscale(100%) brightness(1);
 }
 html.dark .nav .nav-link.active img, html.dark .nav .nav-link:hover img {
-  filter: grayscale(100%) brightness(2);
+  filter: grayscale(100%) brightness(1.3);
 }
 html.dark .select:hover {
   background-color: #21252d;
@@ -219,6 +219,8 @@ html .toggle-content {
   width: 300px;
   overflow: hidden;
   visibility: visible;
+  display: flex;
+  flex-direction: column;
 }
 html .toggle-content .input-group {
   flex-wrap: nowrap;
@@ -405,12 +407,6 @@ html .nav .show-actions:hover .layout-menu-tool div:first-of-type, html .nav .sh
 }
 html .nav .show-actions:hover .layout-menu-tool div:last-of-type, html .nav .show-actions.active .layout-menu-tool div:last-of-type {
   animation: runright 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
-}
-html #layout-load .nav,
-html #app-content .nav,
-html #layout-content .nav {
-  height: 100%;
-  align-content: flex-start;
 }
 html .view-port {
   transition-property: width;
@@ -733,6 +729,10 @@ html .horizontal .dragable {
 html .horizontal.view-port .view-port-header {
   width: 3.688rem;
   overflow: hidden;
+}
+html .horizontal.view-port .view-port-header .dropdown-menu {
+  right: -0.125rem;
+  margin-top: 0.438rem;
 }
 html .horizontal .app-active::before {
   width: unset;

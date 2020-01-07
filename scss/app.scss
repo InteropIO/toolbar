@@ -58,6 +58,8 @@ html {
     width: 300px;
     overflow: hidden;
     visibility: visible;
+    display: flex;
+    flex-direction: column;
 
      // Bootsrap overrides
     .input-group {
@@ -272,14 +274,6 @@ html {
     }
   }
 
-  #layout-load,
-  #app-content,
-  #layout-content {
-    .nav {
-      height: 100%;
-      align-content: flex-start;
-    }
-  }
   .view-port {
     @include transition("width", 0);
     border: 1px solid rgba(255, 255, 255, 0.075);
@@ -356,7 +350,7 @@ html {
         position: absolute;
         transform: scale(1);
         width: 0.875rem;
-        
+
         &.empty {
           transform: scale(0); 
         }
