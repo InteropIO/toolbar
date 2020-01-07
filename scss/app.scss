@@ -14,7 +14,8 @@ html {
   body {
     padding: 50px;
     height: 100%;
-    padding-left: 350px;
+    left: calc(50% - 80px);
+    position: relative;
   }
 
   .app {
@@ -31,6 +32,7 @@ html {
 
   h3 {
     white-space: nowrap;
+    user-select: none;
     .close {
       margin-top: -.125rem;
     }

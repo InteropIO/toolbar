@@ -196,7 +196,8 @@ html {
 html body {
   padding: 50px;
   height: 100%;
-  padding-left: 350px;
+  left: calc(50% - 80px);
+  position: relative;
 }
 html .app {
   height: 100%;
@@ -209,6 +210,7 @@ html .app.switching-orientation *::before, html .app.switching-orientation *::af
 }
 html h3 {
   white-space: nowrap;
+  user-select: none;
 }
 html h3 .close {
   margin-top: -0.125rem;
