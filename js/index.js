@@ -179,25 +179,46 @@ glueModule.boundsObs
 .subscribe(([windowBounds, appBounds]) => {
   const monitors = glueModule.getMonitorInfo();
   let visibleAreaStart = windowBounds.left + 350;
-  let toolbarCenter = windowBounds.left + 350;
+  let toolbarCenterLeft = windowBounds.left + 350;
+  let toolbarBottom = windowBounds.top + 350;
   let currentMonitor = monitors.find(monitor => {
-    let {workingAreaLeft, workingAreaWidth, workingAreaTop} = monitor;
-    return workingAreaLeft <= toolbarCenter && (workingAreaLeft + workingAreaWidth) >= toolbarCenter;
+    let {workingAreaLeft, workingAreaWidth, workingAreaTop, workingAreaHeight} = monitor;
+    // console.log(workingAreaTop, workingAreaHeight);
+    return workingAreaLeft <= toolbarCenterLeft
+      && ((workingAreaLeft + workingAreaWidth) >= toolbarCenterLeft)
+      && workingAreaTop <= toolbarBottom
+      && ((workingAreaTop + workingAreaHeight) >= toolbarBottom);
   });
   if (!currentMonitor) {
     debugger;
   }
 
-  let hasOpenLeft = document.body.classList.contains('open-left');
-  let shouldOpenLeft = (windowBounds.left + windowBounds.width) > (currentMonitor.workingAreaLeft + currentMonitor.workingAreaWidth);
-  if (shouldOpenLeft){
+  if(!q('.view-port').classList.contains('horizontal')) {
+    let hasOpenLeft = document.body.classList.contains('open-left');
+    let shouldOpenLeft = (windowBounds.left + windowBounds.width) > (currentMonitor.workingAreaLeft + currentMonitor.workingAreaWidth);
+    if (shouldOpenLeft){
       document.body.classList.add('open-left');
-  } else {
-    document.body.classList.remove('open-left');
-  }
+    } else {
+      document.body.classList.remove('open-left');
+    }
 
-  if (hasOpenLeft !== shouldOpenLeft) {
-    appBoundsObs.next(true);
+    if (hasOpenLeft !== shouldOpenLeft) {
+      appBoundsObs.next(true);
+    }
+  } else {
+    let hasOpenTop = document.body.classList.contains('open-top');
+    let shouldOpenTop = (windowBounds.top + windowBounds.height) > (currentMonitor.workingAreaTop + currentMonitor.workingAreaHeight);
+    console.log();
+
+    if (shouldOpenTop) {
+      document.body.classList.add('open-top');
+    } else {
+      document.body.classList.remove('open-top');
+    }
+
+    if (hasOpenTop !== shouldOpenTop) {
+      appBoundsObs.next(true);
+    }
   }
 });
 
