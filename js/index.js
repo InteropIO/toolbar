@@ -171,6 +171,7 @@ let appBoundsObs = new rxjs.BehaviorSubject({
   left: 200,
   top: 50
 });
+window.appBoundsObs = appBoundsObs;
 
 glueModule.boundsObs
 .pipe(rxjs.operators.filter(bounds => bounds))
@@ -179,7 +180,6 @@ glueModule.boundsObs
   const monitors = glueModule.getMonitorInfo();
   let visibleAreaStart = windowBounds.left + 350;
   let toolbarCenter = windowBounds.left + 350;
-  console.log(toolbarCenter);
   let currentMonitor = monitors.find(monitor => {
     let {workingAreaLeft, workingAreaWidth, workingAreaTop} = monitor;
     return workingAreaLeft <= toolbarCenter && (workingAreaLeft + workingAreaWidth) >= toolbarCenter;
@@ -187,23 +187,24 @@ glueModule.boundsObs
   if (!currentMonitor) {
     debugger;
   }
-  if ((windowBounds.left + windowBounds.width) > (currentMonitor.workingAreaLeft + currentMonitor.workingAreaWidth)){
-    document.body.classList.add('open-left');
+
+  let hasOpenLeft = document.body.classList.contains('open-left');
+  let shouldOpenLeft = (windowBounds.left + windowBounds.width) > (currentMonitor.workingAreaLeft + currentMonitor.workingAreaWidth);
+  if (shouldOpenLeft){
+      document.body.classList.add('open-left');
   } else {
     document.body.classList.remove('open-left');
+  }
+
+  if (hasOpenLeft !== shouldOpenLeft) {
+    appBoundsObs.next(true);
   }
 });
 
 
 function handleWidthChange() {
   const appBoundsObserver = new ResizeObserver((elements) => {
-    let boundingClientRect = elements[0].target.getClientRects()[0];
-    appBoundsObs.next({
-      top: Math.round(boundingClientRect.y),
-      left: Math.round(boundingClientRect.x),
-      width: Math.round(boundingClientRect.width),
-      height: Math.round(boundingClientRect.height)
-    });
+    appBoundsObs.next(true);
   });
 
   appBoundsObserver.observe(q('.app'));
@@ -219,12 +220,14 @@ appBoundsObs
 
 function resizeVisibleArea(appBounds, topMenuVisible, layoutDropDownVisible) {
   let visibleAreas = [];
+  appBounds = q('.app').getBoundingClientRect();
   visibleAreas.push({
-    top: appBounds.top,
-    left: appBounds.left,
-    width: appBounds.width,
-    height: appBounds.height
+    top: Math.round(appBounds.top),
+    left: Math.round(appBounds.left),
+    width: Math.round(appBounds.width),
+    height: Math.round(appBounds.height)
   });
+  // console.log(q('.app').getBoundingClientRect(), appBounds);
 
   if (q('.view-port.horizontal') && topMenuVisible) {
     let {top, left, width, height} = q('#menu-top').getBoundingClientRect();

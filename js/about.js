@@ -9,7 +9,18 @@ q('.username').innerText = glue42gd.user;
 q('.close').addEventListener('click', async () => {
   let glue = await gluePromise;
   glue.windows.my().close();
-})
+});
+
+gluePromise
+  .then((glue) => {
+    glue.contexts.subscribe('Connect.Themes', (themeObj) => {
+      themeObj.all.forEach(theme => {
+        q('html').classList.remove(theme.name);
+
+      });
+      q('html').classList.add(themeObj.selected);
+    });
+  });
 
 if (window.glue42gd && glue42gd.theme) {
   let allThemes = ['dark', 'light', 'colorful'];
