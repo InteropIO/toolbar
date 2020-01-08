@@ -280,15 +280,11 @@ html .nav .applications-nav i {
   transition-timing-function: cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 0ms;
 }
-html .nav .applications-nav .icon-angle-down {
-  opacity: 0;
-}
 html .nav .applications-nav:hover .icon-angle-down, html .nav .applications-nav.active .icon-angle-down {
   opacity: 1;
 }
-html .nav.fav-app-nav {
-  position: relative;
-  overflow: hidden;
+html .nav .fav-navigation {
+  display: none;
 }
 html .nav .favorite {
   white-space: nowrap;
@@ -788,8 +784,30 @@ html .horizontal .nav .favorite i {
   padding: 0.25rem 0;
   top: 1rem;
 }
+html .horizontal .nav .fav-navigation {
+  transition-property: color, background-color;
+  transition-duration: 300ms;
+  transition-timing-function: cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition-delay: 0ms;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  width: 1rem;
+  cursor: pointer;
+}
+html .horizontal .nav .fav-navigation:hover {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.05);
+}
 html .horizontal .nav .chavron-rotate {
   transform: rotate(180deg);
+}
+html .horizontal .nav .show-actions {
+  overflow: hidden;
+}
+html .horizontal .nav .show-actions:hover, html .horizontal .nav .show-actions.active {
+  overflow: visible;
 }
 html .horizontal .nav .show-actions:hover i,
 html .horizontal .nav .show-actions:hover .text-animation,
@@ -827,9 +845,12 @@ html .horizontal .nav-tabs li {
 }
 html .horizontal .nav-tabs li.fav-app-nav {
   flex-grow: 1;
+  display: flex;
+  align-items: center;
 }
 html .horizontal .nav-tabs li.fav-app-nav .nav {
   flex-wrap: nowrap;
+  width: 100%;
 }
 html .horizontal .nav-tabs li.fav-app-nav .nav .nav-item {
   overflow: hidden;

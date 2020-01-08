@@ -109,10 +109,6 @@ html {
         @include transition("opacity, transform", 0);
       }
 
-      .icon-angle-down {
-        opacity: 0;
-      }
-
       &:hover,
       &.active {
         .icon-angle-down {
@@ -121,9 +117,8 @@ html {
       }
     }
 
-    &.fav-app-nav {
-      position: relative;
-      overflow: hidden;
+    .fav-navigation {
+      display: none;
     }
 
     .favorite {

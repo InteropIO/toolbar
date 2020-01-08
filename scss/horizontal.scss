@@ -66,13 +66,30 @@
         }
       }
 
+      .fav-navigation {
+        @include transition('color, background-color', 0);
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        height: 100%;
+        width: 1rem;
+        cursor: pointer;
+        &:hover {
+          
+          color:white;
+          background-color: rgba(255,255,255,0.05);
+        }
+      }
+  
       .chavron-rotate {
         transform: rotate(180deg);
       }
 
       .show-actions {
+        overflow: hidden;
         &:hover,
         &.active {
+          overflow: visible;
           i,
           .text-animation,
           .action-menu-tool,
@@ -116,8 +133,13 @@
 
         &.fav-app-nav {
           flex-grow: 1;
+          display: flex;
+          align-items: center;
+          
           .nav {
             flex-wrap: nowrap;
+            width: 100%;
+
             .nav-item {
               overflow: hidden;
             }
