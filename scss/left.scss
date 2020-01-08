@@ -13,6 +13,12 @@
       > .nav {
           width: auto;
       }
+      h3 {
+        padding-right: 0;
+      }
+      .close-drawer {
+        transform: rotate(-90deg);
+      }
     }
 
     .app .toggle-content.hide {

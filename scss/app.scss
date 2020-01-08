@@ -58,7 +58,6 @@ html {
     .input-group {
       flex-wrap: nowrap;
     }
-
     &.hide {
       width: 0;
       border-right: 0 solid transparent;
@@ -66,6 +65,16 @@ html {
 
     > .nav {
       overflow: auto;
+    }
+    h3 {
+      padding-right: .5rem;
+    }
+    .close-drawer {
+      @include transition('color',0);
+      font-size: .688rem;
+      margin-left: .125rem;
+      cursor: pointer;
+      transform: rotate(90deg);
     }
   }
 

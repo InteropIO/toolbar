@@ -9,6 +9,13 @@ html.dark {
       border-top: 1px solid rgba(255, 255, 255, 0.075);
       border-bottom: 1px solid rgba(255, 255, 255, 0.075);
       border-right: 1px solid rgba(255, 255, 255, 0.075);
+
+      .close-drawer {
+        color: #bbb;
+        &:hover {
+          color: white;
+        }
+      }
     }
   
     .applications-nav {
