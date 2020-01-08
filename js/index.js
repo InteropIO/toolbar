@@ -190,7 +190,7 @@ glueModule.boundsObs
       && ((workingAreaTop + workingAreaHeight) >= toolbarBottom);
   });
   if (!currentMonitor) {
-    debugger;
+    return;
   }
 
   if(!q('.view-port').classList.contains('horizontal')) {
