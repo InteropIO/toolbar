@@ -62,6 +62,10 @@ html.dark .favorite::after {
 html.dark .favorite i {
   background: #21252d;
 }
+html.dark .fav-navigation:hover {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.05);
+}
 html.dark .nav .layout-menu-tool {
   background: #2b303b;
 }
@@ -116,6 +120,12 @@ html.light .toggle-content {
   border-bottom: 1px solid rgba(219, 222, 230, 0.8);
   border-right: 1px solid rgba(219, 222, 230, 0.8);
 }
+html.light .toggle-content .close-drawer {
+  color: #757575;
+}
+html.light .toggle-content .close-drawer:hover {
+  color: #0d0d0d;
+}
 html.light .logo img {
   content: url("../assets/logoLight.svg");
 }
@@ -146,6 +156,10 @@ html.light .favorite::after {
 }
 html.light .favorite i {
   background: #fafafa;
+}
+html.light .fav-navigation:hover {
+  color: #000000;
+  background-color: #f2f2f2;
 }
 html.light .nav .layout-menu-tool {
   background: #ffffff;
@@ -827,10 +841,6 @@ html .horizontal .nav .fav-navigation {
   height: 100%;
   width: 1rem;
   cursor: pointer;
-}
-html .horizontal .nav .fav-navigation:hover {
-  color: white;
-  background-color: rgba(255, 255, 255, 0.05);
 }
 html .horizontal .nav .chavron-rotate {
   transform: rotate(180deg);

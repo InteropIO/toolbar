@@ -34,7 +34,12 @@ html.dark {
         background: #21252d;
       }
     }
-  
+    .fav-navigation {
+      &:hover {          
+        color:white;
+        background-color: rgba(255,255,255,0.05);
+      }
+    }
     .nav {
       .layout-menu-tool {
         background: #2b303b; // rgba(255, 255, 255, 0.05);
@@ -113,6 +118,12 @@ html.light {
       border-top: 1px solid rgba(219, 222, 230, 0.8);
       border-bottom: 1px solid rgba(219, 222, 230, 0.8);
       border-right: 1px solid rgba(219, 222, 230, 0.8);
+      .close-drawer {
+        color: #757575;
+        &:hover {
+          color: #0d0d0d;
+        }
+      }
     }
   
     .logo img {
@@ -135,7 +146,14 @@ html.light {
         background: #fafafa;
       }
     }
-  
+    
+    .fav-navigation {
+      &:hover {          
+        color:#000000;
+        background-color: #f2f2f2
+      }
+    }
+
     .nav {
       .layout-menu-tool {
         background: #ffffff; // rgba(219, 222, 230, 0.8);
