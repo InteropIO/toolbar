@@ -437,6 +437,7 @@ html .view-port .view-port-header {
   justify-content: space-between;
   padding-left: 1.125rem;
   padding-right: 0.25rem;
+  position: relative;
 }
 html .view-port .view-port-header a {
   text-decoration: none;
@@ -809,6 +810,9 @@ html .horizontal .nav .show-actions:hover .layout-menu-tool div:last-of-type, ht
 }
 html .horizontal .fav-app-nav {
   flex-wrap: nowrap;
+}
+html .horizontal .view-port-header {
+  position: static;
 }
 html .horizontal .view-port-header .menu {
   position: absolute;
