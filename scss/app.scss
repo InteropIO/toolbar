@@ -1,20 +1,12 @@
 @import "mixin";
 @import "color";
 
-.layout-switch {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
 html {
   height: 100%;
 
   body {
-    padding: 50px;
+    padding: 350px 50px 50px 350px;
     height: 100%;
-    padding-left: 350px;
   }
 
   .app {
@@ -294,7 +286,6 @@ html {
       justify-content: space-between;
       padding-left: 1.125rem;
       padding-right: 0.25rem;
-      position: relative;
 
       a {
         @include non-underline();

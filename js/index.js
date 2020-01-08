@@ -193,6 +193,10 @@ glueModule.boundsObs
     return;
   }
 
+  if(q('.app').classList.contains('has-drawer')) {
+    return;
+  }
+
   if(!q('.view-port').classList.contains('horizontal')) {
     let hasOpenLeft = document.body.classList.contains('open-left');
     let shouldOpenLeft = (windowBounds.left + windowBounds.width) > (currentMonitor.workingAreaLeft + currentMonitor.workingAreaWidth);

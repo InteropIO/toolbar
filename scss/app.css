@@ -183,20 +183,12 @@ html.light .horizontal .layout-menu-tool div:first-child {
   border-bottom: 1px solid rgba(0, 0, 0, 0.075);
 }
 
-.layout-switch {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
 html {
   height: 100%;
 }
 html body {
-  padding: 50px;
+  padding: 350px 50px 50px 350px;
   height: 100%;
-  padding-left: 350px;
 }
 html .app {
   height: 100%;
@@ -445,7 +437,6 @@ html .view-port .view-port-header {
   justify-content: space-between;
   padding-left: 1.125rem;
   padding-right: 0.25rem;
-  position: relative;
 }
 html .view-port .view-port-header a {
   text-decoration: none;
@@ -731,10 +722,24 @@ html .vertical.expand .accordion .nav .hide {
 html .vertical.expand #fav-apps > li:not(.nav-item) {
   opacity: 1;
 }
+html .open-top .app {
+  transition-property: top;
+  transition-duration: 300ms;
+  transition-timing-function: cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition-delay: 0ms;
+  display: flex;
+  flex-direction: column-reverse;
+  position: relative;
+  top: 0;
+}
+html .open-top .app.expand-wrapper.has-drawer {
+  top: -300px;
+}
 html .horizontal {
   display: flex;
   width: 100%;
   height: 3rem;
+  position: relative;
 }
 html .horizontal > .nav {
   flex-wrap: nowrap;
@@ -743,13 +748,13 @@ html .horizontal > .nav {
 html .horizontal .dragable {
   width: 3.375rem;
 }
-html .horizontal.view-port .view-port-header {
-  width: 3.688rem;
+html .horizontal.view-port .view-port-header .logo {
+  min-width: initial;
   overflow: hidden;
 }
 html .horizontal.view-port .view-port-header .dropdown-menu {
-  right: -0.125rem;
-  margin-top: 0.438rem;
+  right: -0.25rem;
+  margin-top: 0.5rem;
 }
 html .horizontal .app-active::before {
   width: unset;
@@ -806,9 +811,9 @@ html .horizontal .fav-app-nav {
   flex-wrap: nowrap;
 }
 html .horizontal .view-port-header .menu {
-  position: fixed;
-  top: 58px;
-  right: 3.25rem;
+  position: absolute;
+  top: 0.375rem;
+  right: 0.125rem;
   z-index: 11;
   display: block;
 }
@@ -888,7 +893,7 @@ html .h .toggle-content {
   transition-timing-function: cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 0ms;
   width: 100%;
-  height: calc(100vh - 3rem - 100px);
+  height: 300px;
   border-top: 0 solid transparent;
 }
 html .h .toggle-content > .nav,
