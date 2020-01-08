@@ -181,14 +181,15 @@ glueModule.boundsObs
   let visibleAreaStart = windowBounds.left + 350;
   let toolbarCenterLeft = windowBounds.left + 350;
   let toolbarBottom = windowBounds.top + 350;
-  let currentMonitor = monitors.find(monitor => {
-    let {workingAreaLeft, workingAreaWidth, workingAreaTop, workingAreaHeight} = monitor;
-    // console.log(workingAreaTop, workingAreaHeight);
-    return workingAreaLeft <= toolbarCenterLeft
-      && ((workingAreaLeft + workingAreaWidth) >= toolbarCenterLeft)
-      && workingAreaTop <= toolbarBottom
-      && ((workingAreaTop + workingAreaHeight) >= toolbarBottom);
-  });
+  // let currentMonitor = monitors.find(monitor => {
+  //   let {workingAreaLeft, workingAreaWidth, workingAreaTop, workingAreaHeight} = monitor;
+  //   // console.log(workingAreaTop, workingAreaHeight);
+  //   return workingAreaLeft <= toolbarCenterLeft
+  //     && ((workingAreaLeft + workingAreaWidth) >= toolbarCenterLeft)
+  //     && workingAreaTop <= toolbarBottom
+  //     && ((workingAreaTop + workingAreaHeight) >= toolbarBottom);
+  // });
+  let currentMonitor = glue.windows.my().screen;
   if (!currentMonitor) {
     return;
   }
