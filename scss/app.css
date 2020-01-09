@@ -658,6 +658,9 @@ html .select_options {
   list-style: none;
   padding-left: 0;
 }
+html .open-left {
+  overflow: hidden;
+}
 html .open-left .app {
   position: relative;
   left: 0;
