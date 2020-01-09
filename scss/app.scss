@@ -25,7 +25,7 @@ html {
     white-space: nowrap;
     user-select: none;
     .close {
-      margin-top: -.125rem;
+      margin-top: -0.125rem;
     }
   }
 
@@ -35,7 +35,7 @@ html {
     -webkit-user-drag: none;
     -webkit-user-select: none;
   }
-  
+
   .dragable {
     position: absolute;
     // width: 9rem;
@@ -54,7 +54,7 @@ html {
     display: flex;
     flex-direction: column;
 
-     // Bootsrap overrides
+    // Bootsrap overrides
     .input-group {
       flex-wrap: nowrap;
     }
@@ -67,12 +67,12 @@ html {
       overflow: auto;
     }
     h3 {
-      padding-right: .5rem;
+      padding-right: 0.5rem;
     }
     .close-drawer {
-      @include transition('color',0);
-      font-size: .688rem;
-      margin-left: .125rem;
+      @include transition("color", 0);
+      font-size: 0.688rem;
+      margin-left: 0.125rem;
       cursor: pointer;
       transform: rotate(90deg);
     }
@@ -333,7 +333,7 @@ html {
       }
 
       .circle-index {
-        @include transition('transform','0');
+        @include transition("transform", "0");
 
         align-items: center;
         background-color: #2080d3;
@@ -349,9 +349,8 @@ html {
         width: 0.875rem;
 
         &.empty {
-          transform: scale(0); 
+          transform: scale(0);
         }
-
       }
     }
   }

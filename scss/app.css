@@ -768,15 +768,29 @@ html .open-top .app {
   position: relative;
   top: 0;
 }
-html .open-top .app .toggle-content h3 {
-  padding-right: 0.25rem;
-}
-html .open-top .app .toggle-content .close-drawer {
-  transform: rotate(0);
-  margin: 0.25rem 0 0 0;
-}
 html .open-top .app.expand-wrapper.has-drawer {
   top: -300px;
+}
+html .open-top .h .horizontal .dropdown-menu {
+  top: -8.125rem;
+  margin-top: 0 !important;
+}
+html .open-top .h .horizontal .layout-menu-tool {
+  top: -6rem;
+}
+html .open-top .h .toggle-content {
+  border-top: 1px solid rgba(255, 255, 255, 0.075);
+  border-bottom: 0;
+}
+html .open-top .h .toggle-content.hide {
+  border-top: 0;
+}
+html .open-top .h .toggle-content h3 {
+  padding-right: 0.25rem;
+}
+html .open-top .h .toggle-content .close-drawer {
+  transform: rotate(0);
+  margin: 0.25rem 0 0 0;
 }
 html .horizontal {
   display: flex;
@@ -796,7 +810,7 @@ html .horizontal.view-port .view-port-header .logo {
   overflow: hidden;
 }
 html .horizontal.view-port .view-port-header .dropdown-menu {
-  right: -0.25rem;
+  right: -0.188rem;
   margin-top: 0.5rem;
 }
 html .horizontal .app-active::before {
