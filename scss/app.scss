@@ -172,12 +172,11 @@ html {
     }
 
     .action-menu-tool {
-      @include transition("opacity, transform", 0);
-      opacity: 0;
+      @include transition("opacity", 0);
+      opacity: 0.65;
       position: absolute;
       right: 0.5rem;
       top: 0.5rem;
-      transform: translateX(1rem);
       z-index: 2;
 
       .dropdown-menu {
@@ -210,7 +209,6 @@ html {
       &:hover {
         .action-menu-tool {
           opacity: 1;
-          transform: translateX(0);
         }
 
         span:last-of-type {

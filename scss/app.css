@@ -356,15 +356,14 @@ html .nav .chavron-rotate {
   transform: rotate(-90deg);
 }
 html .nav .action-menu-tool {
-  transition-property: opacity, transform;
+  transition-property: opacity;
   transition-duration: 300ms;
   transition-timing-function: cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 0ms;
-  opacity: 0;
+  opacity: 0.65;
   position: absolute;
   right: 0.5rem;
   top: 0.5rem;
-  transform: translateX(1rem);
   z-index: 2;
 }
 html .nav .action-menu-tool .dropdown-menu {
@@ -396,7 +395,6 @@ html .nav .action-menu span:last-of-type {
 }
 html .nav .action-menu:hover .action-menu-tool {
   opacity: 1;
-  transform: translateX(0);
 }
 html .nav .action-menu:hover span:last-of-type {
   padding-right: 1.25rem;
