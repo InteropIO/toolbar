@@ -102,10 +102,9 @@ function applicationHTMLTemplate(app, options = {}) {
   return `
     <li class="nav-item ${app.instances.length > 0 ? 'app-active' : ''}"" app-name="${app.name}">
       <div class="nav-link action-menu">
-        <!-- <i class="icon-interop ml-2 mr-4"></i> -->
         ${getAppIcon(app)}
         ${app.instances.length > 0 ? '<!--<span class="icon-size-24 active-app text-success"><i class="icon-dot mr-2 "></i></span>-->' : ''}
-        <span>${app.title || app.name}</span>` +
+        <span class="title-app">${app.title || app.name}</span>` +
         (favoriteBtn ? `
         <div class="action-menu-tool">
           <button class="btn btn-icon secondary add-favorite">
@@ -125,22 +124,18 @@ function favoriteApplicationHTMLTemplate(app) {
   return `
   <li class="nav-item ${app.instances.length > 0 ? 'app-active' : ''}" app-name="${app.name}">
     <a class="nav-link" href="#" draggable="false">
-      ${getAppIcon(app, {marginRight: 2, marginLeft: 2})}
-      <span class="text-animation mx-2">${app.title}</span>
+      ${getAppIcon(app)}
+      <span class="text-animation">${app.title}</span>
     </a>
   </li>
   `;
 }
 
-function getAppIcon(app, options = {}) {
-  let {
-    marginRight = 4,
-    marginLeft = 2} = options;
-
+function getAppIcon(app = {}) {
   if (app.icon) {
-    return `<img src="${app.icon}" class="ml-${marginLeft} mr-${marginRight}" draggable="false" style="width:16px;"/>`;
+    return `<img src="${app.icon}" draggable="false" style="width:16px;"/>`;
   } else {
-    return `<span class="icon-size-16 ml-${marginLeft} mr-${marginRight}">
+    return `<span class="icon-size-16">
     <i class="icon-app" draggable="false"></i>
   </span>`;
   }

@@ -71,7 +71,7 @@
       display: flex;
       justify-content: center;
       height: 100%;
-      width: 1rem;
+      width: 3rem;
       cursor: pointer;
     }
 
@@ -136,10 +136,28 @@
 
           .nav-item {
             overflow: hidden;
+            flex-basis: 8rem;
+
+            .nav-link {
+              max-width: 8rem;
+              padding:0  .25rem;
+              .icon-size-16,
+              > img,
+              .title-app {
+                margin: 0 0 0 0.5rem;
+              }
+              
+              .text-animation,
+              .text-animation:hover {
+                opacity: 1;
+                transform: translateX(0);
+              }
+            }
           }
         }
       }
     }
+
     .nav-item {
       @include transition("flex-basis", 0);
 
@@ -173,27 +191,26 @@
         }
       }
     }
-  }
 
-  .layout-menu-tool {
-    top: calc(3rem - 2px);
-    z-index: 21;
-    flex-direction: column;
-    height: 6rem;
-  }
+    .layout-menu-tool {
+      top: calc(3rem - 2px);
+      z-index: 21;
+      flex-direction: column;
+      height: 6rem;
+    }
 
-  &.expand {
-    .menu {
-      display: block;
+    &.expand {
+      .menu {
+        display: block;
+      }
+    }
+    .view-port-footer {
+      margin-top: initial;
+      margin-left: auto;
+      overflow-x: hidden;
     }
   }
-  .view-port-footer {
-    margin-top: initial;
-    margin-left: auto;
-    overflow-x: hidden;
-  }
 }
-
 .h {
   height: auto;
 
@@ -213,6 +230,9 @@
       width: 100%;
       height: 0;
       border-bottom: 0 solid transparent;
+    }
+    h5 {
+      padding-right: 1.25rem;
     }
   }
   .close-drawer {

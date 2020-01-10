@@ -219,13 +219,6 @@ html .app.switching-orientation * {
 html .app.switching-orientation *::before, html .app.switching-orientation *::after {
   transition: none !important;
 }
-html h3 {
-  white-space: nowrap;
-  user-select: none;
-}
-html h3 .close {
-  margin-top: -0.125rem;
-}
 html img,
 html a {
   user-select: none;
@@ -240,7 +233,7 @@ html .dragable {
   left: 0;
 }
 html .toggle-content {
-  transition-property: width;
+  transition-property: width, opacity;
   transition-duration: 300ms;
   transition-timing-function: cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 0ms;
@@ -258,11 +251,17 @@ html .toggle-content.hide {
   width: 0;
   border-right: 0 solid transparent;
 }
+html .toggle-content.hide .action-menu-tool {
+  opacity: 0;
+}
 html .toggle-content > .nav {
   overflow: auto;
 }
-html .toggle-content h3 {
-  padding-right: 0.5rem;
+html .toggle-content h5 {
+  white-space: nowrap;
+  user-select: none;
+  padding-left: 0.063rem;
+  padding-right: 1.375rem;
 }
 html .toggle-content .close-drawer {
   transition-property: color;
@@ -283,6 +282,7 @@ html .text-animation {
   transform: translateX(-1rem);
   overflow: hidden;
   text-overflow: ellipsis;
+  margin: 0 0.5rem;
 }
 html .nav.nav-tabs li {
   white-space: nowrap;
@@ -299,6 +299,11 @@ html .nav.nav-tabs .nav-link {
   border: 0;
   padding-left: 14px;
   flex-grow: 1;
+}
+html .nav.nav-tabs .nav-link .icon-size-16,
+html .nav.nav-tabs .nav-link > img,
+html .nav.nav-tabs .nav-link .title-app {
+  margin: 0 0.5rem;
 }
 html .nav.flex-column {
   flex-wrap: nowrap;
@@ -857,7 +862,7 @@ html .horizontal .nav .fav-navigation {
   display: flex;
   justify-content: center;
   height: 100%;
-  width: 1rem;
+  width: 3rem;
   cursor: pointer;
 }
 html .horizontal .nav .chavron-rotate {
@@ -914,6 +919,21 @@ html .horizontal .nav-tabs li.fav-app-nav .nav {
 }
 html .horizontal .nav-tabs li.fav-app-nav .nav .nav-item {
   overflow: hidden;
+  flex-basis: 8rem;
+}
+html .horizontal .nav-tabs li.fav-app-nav .nav .nav-item .nav-link {
+  max-width: 8rem;
+  padding: 0 0.25rem;
+}
+html .horizontal .nav-tabs li.fav-app-nav .nav .nav-item .nav-link .icon-size-16,
+html .horizontal .nav-tabs li.fav-app-nav .nav .nav-item .nav-link > img,
+html .horizontal .nav-tabs li.fav-app-nav .nav .nav-item .nav-link .title-app {
+  margin: 0 0 0 0.5rem;
+}
+html .horizontal .nav-tabs li.fav-app-nav .nav .nav-item .nav-link .text-animation,
+html .horizontal .nav-tabs li.fav-app-nav .nav .nav-item .nav-link .text-animation:hover {
+  opacity: 1;
+  transform: translateX(0);
 }
 html .horizontal .nav-tabs .nav-item {
   transition-property: flex-basis;
@@ -955,16 +975,16 @@ html .horizontal .nav-tabs .nav-item .nav-link.active:hover .text-animation {
   opacity: 1;
   transform: translateX(0);
 }
-html .horizontal .layout-menu-tool {
+html .horizontal .nav-tabs .layout-menu-tool {
   top: calc(3rem - 2px);
   z-index: 21;
   flex-direction: column;
   height: 6rem;
 }
-html .horizontal.expand .menu {
+html .horizontal .nav-tabs.expand .menu {
   display: block;
 }
-html .horizontal .view-port-footer {
+html .horizontal .nav-tabs .view-port-footer {
   margin-top: initial;
   margin-left: auto;
   overflow-x: hidden;
@@ -989,6 +1009,9 @@ html .h .toggle-content.hide {
   width: 100%;
   height: 0;
   border-bottom: 0 solid transparent;
+}
+html .h .toggle-content h5 {
+  padding-right: 1.25rem;
 }
 html .h .close-drawer {
   transform: rotate(180deg);
