@@ -194,6 +194,14 @@ function handleModalClose() {
 }
 
 async function handleMouseHover() {
+  q('#toggle').click();
+  q('#fav-apps').addEventListener('mousewheel', (e) => {
+    // console.log(e.deltaY);
+    // q('#fav-apps').scrollLeft += e.deltaY;
+    e.preventDefault();
+    q('#fav-apps').scrollBy({left:e.deltaY, behavior: 'smooth'});
+  });
+
   let closeTimeout;
 
   q('.app').addEventListener('mouseenter', (e) => {
@@ -207,15 +215,13 @@ async function handleMouseHover() {
   q('.app').addEventListener('mouseleave', (e) => {
     let {offsetWidth: viewPortWidth, offsetHeight: viewPortHeight} = q('.view-port');
     let margin = windowMargin;
-    console.log('x', e.x, '|', margin, (viewPortWidth));
-    console.log('y', e.y, '|', margin, (viewPortHeight));
 
     if (e.x < (viewPortWidth + margin) && e.x > margin && e.y < (viewPortHeight + margin -6) && e.y > margin) {
       console.log('fake leave');
       // return;
     }
 
-    if (qa('.toggle-content:not(.hide)').length > 0 || qa('.modal.show').length > 0) {
+    if (qa('.toggle-content:not(.hide)').length > 0 || qa('.dropdown-menu.show').length > 0) {
       return;
     }
 
