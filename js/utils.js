@@ -198,8 +198,10 @@ async function handleMouseHover() {
   q('#fav-apps').addEventListener('mousewheel', (e) => {
     // console.log(e.deltaY);
     // q('#fav-apps').scrollLeft += e.deltaY;
-    e.preventDefault();
-    q('#fav-apps').scrollBy({left:e.deltaY, behavior: 'smooth'});
+    if (q('.horizontal')) {
+      e.preventDefault();
+      q('#fav-apps').scrollBy({left:e.deltaY, behavior: 'smooth'});
+    }
   });
 
   let closeTimeout;
