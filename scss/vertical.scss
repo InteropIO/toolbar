@@ -11,6 +11,11 @@
     overflow: hidden;
   }
 
+  .fav-app-nav {
+    flex-grow: 1;
+    overflow-y: hidden;
+  }
+
   &.expand {
     width: 200px;
 
@@ -34,7 +39,6 @@
     }
 
     .fav-app-nav {
-      flex-grow: 1;
       overflow-y: auto;
     }
     .nav-link {
@@ -60,8 +64,6 @@
       & > li:not(.nav-item) {
         opacity: 1;
       }
-    }
-    .applications-nav {
     }
   }
 }

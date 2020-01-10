@@ -708,6 +708,10 @@ html .vertical > .flex-column {
 html .vertical .view-port-header {
   overflow: hidden;
 }
+html .vertical .fav-app-nav {
+  flex-grow: 1;
+  overflow-y: hidden;
+}
 html .vertical.expand {
   width: 200px;
 }
@@ -735,7 +739,6 @@ html .vertical.expand .favorite i {
   padding: 0 0.75rem;
 }
 html .vertical.expand .fav-app-nav {
-  flex-grow: 1;
   overflow-y: auto;
 }
 html .vertical.expand .nav-link {
