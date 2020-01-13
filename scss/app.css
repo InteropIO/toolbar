@@ -919,21 +919,6 @@ html .horizontal .nav-tabs li.fav-app-nav .nav {
 }
 html .horizontal .nav-tabs li.fav-app-nav .nav .nav-item {
   overflow: hidden;
-  flex-basis: 8rem;
-}
-html .horizontal .nav-tabs li.fav-app-nav .nav .nav-item .nav-link {
-  max-width: 8rem;
-  padding: 0 0.25rem;
-}
-html .horizontal .nav-tabs li.fav-app-nav .nav .nav-item .nav-link .icon-size-16,
-html .horizontal .nav-tabs li.fav-app-nav .nav .nav-item .nav-link > img,
-html .horizontal .nav-tabs li.fav-app-nav .nav .nav-item .nav-link .title-app {
-  margin: 0 0 0 0.5rem;
-}
-html .horizontal .nav-tabs li.fav-app-nav .nav .nav-item .nav-link .text-animation,
-html .horizontal .nav-tabs li.fav-app-nav .nav .nav-item .nav-link .text-animation:hover {
-  opacity: 1;
-  transform: translateX(0);
 }
 html .horizontal .nav-tabs .nav-item {
   transition-property: flex-basis;
@@ -944,12 +929,13 @@ html .horizontal .nav-tabs .nav-item {
 }
 html .horizontal .nav-tabs .nav-item:hover {
   flex-basis: 11rem;
+  transition-delay: 800ms;
 }
 html .horizontal .nav-tabs .nav-item:hover .nav-link .text-animation {
   transition-property: opacity, transform;
   transition-duration: 300ms;
   transition-timing-function: cubic-bezier(0.34, 0.03, 0.13, 0.93);
-  transition-delay: 100ms;
+  transition-delay: 900ms;
   opacity: 1;
   transform: translateX(0);
 }

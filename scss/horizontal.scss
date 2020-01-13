@@ -136,23 +136,23 @@
 
           .nav-item {
             overflow: hidden;
-            flex-basis: 8rem;
+         //   flex-basis: 8rem;
 
-            .nav-link {
-              max-width: 8rem;
-              padding:0  .25rem;
-              .icon-size-16,
-              > img,
-              .title-app {
-                margin: 0 0 0 0.5rem;
-              }
+            // .nav-link {
+            //  max-width: 8rem;
+            //  padding:0  .25rem;
+            //   .icon-size-16,
+            //   > img,
+            //   .title-app {
+            //    margin: 0 0 0 0.5rem;
+            //   }
               
-              .text-animation,
-              .text-animation:hover {
-                opacity: 1;
-                transform: translateX(0);
-              }
-            }
+            //   .text-animation,
+            //   .text-animation:hover {
+            //    opacity: 1;
+            //    transform: translateX(0);
+            //   }
+            // }
           }
         }
       }
@@ -165,10 +165,11 @@
 
       &:hover {
         flex-basis: 11rem;
+        transition-delay: 800ms;
 
         .nav-link {
           .text-animation {
-            @include text-animation("on", "", 100);
+            @include text-animation("on", "", 900);
           }
         }
       }
