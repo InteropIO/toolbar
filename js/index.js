@@ -111,6 +111,11 @@ function printNotificationCount() {
   notificationsCountObs.subscribe((count) => {
     if (count !== null) {
       q('#notifications-count').innerHTML = count;
+      if (count === 0) {
+        q('#notifications-count').classList.add('empty');
+      } else {
+        q('#notifications-count').classList.remove('empty');
+      }
     }
   });
 }
@@ -174,6 +179,12 @@ let appBoundsObs = new rxjs.BehaviorSubject({
 window.appBoundsObs = appBoundsObs;
 
 glueModule.boundsObs
+  .subscribe(bounds => {
+    q('.view-port').classList.add('expand');
+    q('.app').classList.add('expand-wrapper');
+  })
+
+glueModule.boundsObs
 .pipe(rxjs.operators.filter(bounds => bounds))
 .pipe(rxjs.operators.combineLatest(appBoundsObs))
 .subscribe(([windowBounds, appBounds]) => {
@@ -181,6 +192,7 @@ glueModule.boundsObs
   let visibleAreaStart = windowBounds.left + 350;
   let toolbarCenterLeft = windowBounds.left + 350;
   let toolbarBottom = windowBounds.top + 350;
+
   // let currentMonitor = monitors.find(monitor => {
   //   let {workingAreaLeft, workingAreaWidth, workingAreaTop, workingAreaHeight} = monitor;
   //   // console.log(workingAreaTop, workingAreaHeight);

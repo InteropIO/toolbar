@@ -69,17 +69,13 @@ function handleAppClick() {
 
     if (e.target.matches('.add-favorite, .add-favorite *')) {
       let isAppFavorite = favoriteApps.value.includes(appName);
-      console.log(isAppFavorite, favoriteApps.value, appName);
       if (isAppFavorite) {
-        console.log('remove from favorite');
         removeFavoriteApp(appName);
       } else {
-        console.log('add to favorite ', appName);
         addFavoriteApp(appName);
       }
     } else {
       startApp(appName);
-      console.log(e);
       if (e.ctrlKey) {
         return;
       } else {
@@ -123,9 +119,8 @@ function favoriteApplicationHTMLTemplate(app) {
   }
   return `
   <li class="nav-item ${app.instances.length > 0 ? 'app-active' : ''}" app-name="${app.name}">
-    <a class="nav-link" href="#" draggable="false">
+    <a class="nav-link" href="#" draggable="false" title="${app.title}">
       ${getAppIcon(app)}
-      <span class="text-animation">${app.title}</span>
     </a>
   </li>
   `;

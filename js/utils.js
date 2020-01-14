@@ -194,13 +194,12 @@ function handleModalClose() {
 }
 
 async function handleMouseHover() {
-  q('#toggle').click();
-  q('#fav-apps').addEventListener('mousewheel', (e) => {
-    // console.log(e.deltaY);
-    // q('#fav-apps').scrollLeft += e.deltaY;
+  q('#toggle').click(); // TODO: remove
+
+  q('#fav-apps').addEventListener('mousewheel', (e) => { // TODO: move
     if (q('.horizontal')) {
+      q('#fav-apps').scrollLeft += Math.round(e.deltaY * 0.8);
       e.preventDefault();
-      q('#fav-apps').scrollBy({left:e.deltaY, behavior: 'smooth'});
     }
   });
 
@@ -219,7 +218,8 @@ async function handleMouseHover() {
     let margin = windowMargin;
 
     if (e.x < (viewPortWidth + margin) && e.x > margin && e.y < (viewPortHeight + margin -6) && e.y > margin) {
-      console.log('fake leave');
+      console.error('fake leave');
+      debugger;
       // return;
     }
 
