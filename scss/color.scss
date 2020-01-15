@@ -34,12 +34,7 @@ html.dark {
       background: #21252d;
     }
   }
-  .fav-navigation {
-    &:hover {
-      color: white;
-      background-color: rgba(255, 255, 255, 0.05);
-    }
-  }
+
   .nav {
     .layout-menu-tool {
       background: #2b303b; // rgba(255, 255, 255, 0.05);
@@ -147,12 +142,6 @@ html.light {
     }
   }
 
-  .fav-navigation {
-    &:hover {
-      color: #000000;
-      background-color: #f2f2f2;
-    }
-  }
 
   .nav {
     .layout-menu-tool {

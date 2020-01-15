@@ -28,7 +28,8 @@
 
   .app-active {
     &::before {
-      width: unset;
+      @include transition("width, left, right",0);
+      width: 23px;
       height: 3px;
       top: unset;
       right: 30%;
@@ -63,16 +64,6 @@
         padding: 0.25rem 0;
         top: 1rem;
       }
-    }
-
-    .fav-navigation {
-      @include transition("color, background-color", 0);
-      align-items: center;
-      display: flex;
-      justify-content: center;
-      height: 100%;
-      width: 3rem;
-      cursor: pointer;
     }
 
     .chavron-rotate {
@@ -121,6 +112,7 @@
   }
 
   .nav-tabs {
+    height: 100%;
     li {
       flex-basis: 59px;
       width: 60px;
@@ -130,29 +122,42 @@
         display: flex;
         align-items: center;
 
+        &::-webkit-scrollbar {
+          height: 1px;
+        }
+
         .nav {
           flex-wrap: nowrap;
           width: 100%;
+          
+          &::-webkit-scrollbar {
+            width: 0;
+            height: 1px;
+          }
+          &::-webkit-scrollbar-button {
+            display: none;
+          }
+          &::-webkit-scrollbar-thumb {
+            background-color:rgba(255, 255, 255, 0.3);
+          }
+
+
+          &:hover {
+            overflow-x: auto;
+            overflow-y: scroll;
+
+            .app-active::before {
+              height: 2px;
+            }
+          }
 
           .nav-item {
-            overflow: hidden;
-         //   flex-basis: 8rem;
-
-            // .nav-link {
-            //  max-width: 8rem;
-            //  padding:0  .25rem;
-            //   .icon-size-16,
-            //   > img,
-            //   .title-app {
-            //    margin: 0 0 0 0.5rem;
-            //   }
+            flex-basis: 59px;
               
-            //   .text-animation,
-            //   .text-animation:hover {
-            //    opacity: 1;
-            //    transform: translateX(0);
-            //   }
-            // }
+              .text-animation,
+              .text-animation:hover {
+               display: none;
+              }
           }
         }
       }
@@ -161,21 +166,17 @@
     .nav-item {
       @include transition("flex-basis", 0);
 
-      height: 2.875rem;
-
       &:hover {
         flex-basis: 11rem;
-        transition-delay: 800ms;
-
         .nav-link {
           .text-animation {
-            @include text-animation("on", "", 900);
+            @include text-animation("on", "", 100);
           }
         }
       }
 
       .nav-link {
-        max-width: 11rem;
+    
 
         &.active {
           &::before {

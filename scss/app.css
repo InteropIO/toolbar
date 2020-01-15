@@ -62,10 +62,6 @@ html.dark .favorite::after {
 html.dark .favorite i {
   background: #21252d;
 }
-html.dark .fav-navigation:hover {
-  color: white;
-  background-color: rgba(255, 255, 255, 0.05);
-}
 html.dark .nav .layout-menu-tool {
   background: #2b303b;
 }
@@ -156,10 +152,6 @@ html.light .favorite::after {
 }
 html.light .favorite i {
   background: #fafafa;
-}
-html.light .fav-navigation:hover {
-  color: #000000;
-  background-color: #f2f2f2;
 }
 html.light .nav .layout-menu-tool {
   background: #ffffff;
@@ -823,7 +815,11 @@ html .horizontal.view-port .view-port-header .dropdown-menu {
   margin-top: 0.5rem;
 }
 html .horizontal .app-active::before {
-  width: unset;
+  transition-property: width, left, right;
+  transition-duration: 300ms;
+  transition-timing-function: cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition-delay: 0ms;
+  width: 23px;
   height: 3px;
   top: unset;
   right: 30%;
@@ -852,18 +848,6 @@ html .horizontal .nav .favorite {
 html .horizontal .nav .favorite i {
   padding: 0.25rem 0;
   top: 1rem;
-}
-html .horizontal .nav .fav-navigation {
-  transition-property: color, background-color;
-  transition-duration: 300ms;
-  transition-timing-function: cubic-bezier(0.34, 0.03, 0.13, 0.93);
-  transition-delay: 0ms;
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  height: 100%;
-  width: 3rem;
-  cursor: pointer;
 }
 html .horizontal .nav .chavron-rotate {
   transform: rotate(180deg);
@@ -904,6 +888,9 @@ html .horizontal .view-port-header .menu {
   z-index: 11;
   display: block;
 }
+html .horizontal .nav-tabs {
+  height: 100%;
+}
 html .horizontal .nav-tabs li {
   flex-basis: 59px;
   width: 60px;
@@ -913,34 +900,53 @@ html .horizontal .nav-tabs li.fav-app-nav {
   display: flex;
   align-items: center;
 }
+html .horizontal .nav-tabs li.fav-app-nav::-webkit-scrollbar {
+  height: 1px;
+}
 html .horizontal .nav-tabs li.fav-app-nav .nav {
   flex-wrap: nowrap;
   width: 100%;
 }
+html .horizontal .nav-tabs li.fav-app-nav .nav::-webkit-scrollbar {
+  width: 0;
+  height: 1px;
+}
+html .horizontal .nav-tabs li.fav-app-nav .nav::-webkit-scrollbar-button {
+  display: none;
+}
+html .horizontal .nav-tabs li.fav-app-nav .nav::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+html .horizontal .nav-tabs li.fav-app-nav .nav:hover {
+  overflow-x: auto;
+  overflow-y: scroll;
+}
+html .horizontal .nav-tabs li.fav-app-nav .nav:hover .app-active::before {
+  height: 2px;
+}
 html .horizontal .nav-tabs li.fav-app-nav .nav .nav-item {
-  overflow: hidden;
+  flex-basis: 59px;
+}
+html .horizontal .nav-tabs li.fav-app-nav .nav .nav-item .text-animation,
+html .horizontal .nav-tabs li.fav-app-nav .nav .nav-item .text-animation:hover {
+  display: none;
 }
 html .horizontal .nav-tabs .nav-item {
   transition-property: flex-basis;
   transition-duration: 300ms;
   transition-timing-function: cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 0ms;
-  height: 2.875rem;
 }
 html .horizontal .nav-tabs .nav-item:hover {
   flex-basis: 11rem;
-  transition-delay: 800ms;
 }
 html .horizontal .nav-tabs .nav-item:hover .nav-link .text-animation {
   transition-property: opacity, transform;
   transition-duration: 300ms;
   transition-timing-function: cubic-bezier(0.34, 0.03, 0.13, 0.93);
-  transition-delay: 900ms;
+  transition-delay: 100ms;
   opacity: 1;
   transform: translateX(0);
-}
-html .horizontal .nav-tabs .nav-item .nav-link {
-  max-width: 11rem;
 }
 html .horizontal .nav-tabs .nav-item .nav-link.active::before {
   bottom: 0;
