@@ -12,7 +12,7 @@ let {
   combineLatest: rxCombineLatest
 } = rxjs.operators;
 
-const allApps = glueAppsObs
+const allApplicationsObs = glueAppsObs
   .pipe(rxFilter(apps => apps.length > 0))
   .pipe(rxDistinctUntilChanged(undefined, (apps) => {
     // distinct apps have changed by creating a "hash" containing app titles + instance ids
@@ -24,17 +24,19 @@ const allApps = glueAppsObs
   }))
   .pipe(rxMap(apps => apps.sort(orderApps)));
 
-const applicationsObs = allApps
+const applicationsObs = allApplicationsObs
   .pipe(rxCombineLatest(searchInputObs))
   .pipe(rxMap(([apps, searchInput]) => {
     let search = searchInput.toLowerCase().trim();
     return apps.filter(app => app.title.toLowerCase().indexOf(search) >= 0);
   }));
 
-const runningApps = allApps
+
+
+const runningApps = allApplicationsObs
   .pipe(rxMap((apps) => {
     return apps.filter(app => app.instances.length > 0)
-  }))
+  }));
 
 
 function shouldAppBeVisible(app) {
@@ -83,7 +85,7 @@ function handleAppClick() {
         q('#app-search').value = '';
       }
     }
-  })
+  });
 }
 
 function handleSearchChange() {
@@ -143,6 +145,7 @@ const noFavoriteAppsHTML = `<li class="text-center pt-3">No favorite apps</li>`;
 
 export {
   applicationsObs,
+  allApplicationsObs,
   applicationHTMLTemplate,
   favoriteApplicationHTMLTemplate,
   handleAppClick,
@@ -151,4 +154,4 @@ export {
   noApplicationsHTML,
   noRunningAppsHTML,
   noFavoriteAppsHTML
-}
+};

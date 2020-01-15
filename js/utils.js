@@ -62,7 +62,6 @@ function handleOrientationChange() {
       if (isVertical) {
         col.classList.add('flex-column');
       } else {
-        console.log('removing flex-column', col);
         col.classList.remove('flex-column');
       }
     });
