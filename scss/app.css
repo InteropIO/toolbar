@@ -313,9 +313,6 @@ html .nav .applications-nav i {
 html .nav .applications-nav:hover .icon-angle-down, html .nav .applications-nav.active .icon-angle-down {
   opacity: 1;
 }
-html .nav .fav-navigation {
-  display: none;
-}
 html .nav .favorite {
   white-space: nowrap;
   flex-basis: 1.25rem !important;
