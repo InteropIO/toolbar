@@ -33,17 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   handleDropDownClicks();
 
-  utils.handleNotificationClick();
-  utils.handleOrientationChange();
-  utils.populateAbouPage();
-  utils.handleThemeChange();
-  utils.handleAboutClick();
-  utils.handleShutdownClick();
-  utils.handleTopMenuClicks();
-  utils.handleCloseDrawerClicks();
-  utils.handleMouseHover();
-  utils.handleModalClose();
-
+  utils.handleClicks();
   glueModule.registerHotkey();
 });
 

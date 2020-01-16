@@ -129,7 +129,7 @@ async function openNotificationPanel() {
 
 async function registerHotkey() {
   await gluePromise;
-  glue.hotkeys.register('Ctrl+Shift+B', () => {
+  glue.hotkeys.register('Ctrl+Alt+T', () => {
     glue.windows.my().focus();
   })
 }

@@ -51,6 +51,7 @@ let appBoundsObs = new rxjs.BehaviorSubject({
 window.appBoundsObs = appBoundsObs;
 
 glueModule.boundsObs
+  .pipe(rxjs.operators.skip(2))
   .subscribe(bounds => {
     q('.view-port').classList.add('expand');
     q('.app').classList.add('expand-wrapper');
@@ -61,19 +62,14 @@ glueModule.boundsObs
 .pipe(rxjs.operators.combineLatest(appBoundsObs))
 .subscribe(([windowBounds, appBounds]) => {
   const monitors = glueModule.getMonitorInfo();
-  let visibleAreaStart = windowBounds.left + 350;
-  let toolbarCenterLeft = windowBounds.left + 350;
-  let toolbarBottom = windowBounds.top + 350;
-
-  // let currentMonitor = monitors.find(monitor => {
-  //   let {workingAreaLeft, workingAreaWidth, workingAreaTop, workingAreaHeight} = monitor;
-  //   // console.log(workingAreaTop, workingAreaHeight);
-  //   return workingAreaLeft <= toolbarCenterLeft
-  //     && ((workingAreaLeft + workingAreaWidth) >= toolbarCenterLeft)
-  //     && workingAreaTop <= toolbarBottom
-  //     && ((workingAreaTop + workingAreaHeight) >= toolbarBottom);
-  // });
-  let currentMonitor = glue.windows.my().screen;
+  const launcherBounds = q('.view-port').getBoundingClientRect();
+  let viewPortBounds = {
+    left: windowBounds.left + launcherBounds.left,
+    top: windowBounds.top + launcherBounds.top,
+    height: launcherBounds.height,
+    width: launcherBounds.width,
+  };
+  let currentMonitor = getMonitor(viewPortBounds, monitors);
   if (!currentMonitor) {
     return;
   }
@@ -84,7 +80,8 @@ glueModule.boundsObs
 
   if(!q('.view-port').classList.contains('horizontal')) {
     let hasOpenLeft = document.body.classList.contains('open-left');
-    let shouldOpenLeft = (windowBounds.left + windowBounds.width) > (currentMonitor.workingAreaLeft + currentMonitor.workingAreaWidth);
+    // let shouldOpenLeft = (windowBounds.left + windowBounds.width) > (currentMonitor.workingAreaLeft + currentMonitor.workingAreaWidth);
+    let shouldOpenLeft = (viewPortBounds.left + 500) > (currentMonitor.left + currentMonitor.width);
     if (shouldOpenLeft){
       document.body.classList.add('open-left');
     } else {
@@ -159,6 +156,36 @@ function resizeVisibleArea(appBounds, topMenuVisible, layoutDropDownVisible) {
   }
 
   glueModule.resizeWindowVisibleArea(visibleAreas);
+}
+
+function getMonitor(bounds, displays) {
+  const monitorsSortedByOverlap = displays.map((m) => {
+      const { left, top, workingAreaWidth: width, workingAreaHeight: height } = m;
+      const overlap = calculateTotalOverlap({ left, top, width, height }, bounds);
+      return {
+          monitor: m,
+          totalOverlap: overlap
+      };
+  }).sort((a, b) => b.totalOverlap - a.totalOverlap);
+
+  return monitorsSortedByOverlap[0].monitor;
+}
+
+function calculateTotalOverlap(r1, r2) {
+  const r1x = r1.left;
+  const r1y = r1.top;
+  const r1xMax = r1x + r1.width;
+  const r1yMax = r1y + r1.height;
+
+  const r2x = r2.left;
+  const r2y = r2.top;
+  const r2xMax = r2x + r2.width;
+  const r2yMax = r2y + r2.height;
+
+  const xOverlap = Math.max(0, Math.min(r1xMax, r2xMax) - Math.max(r1x, r2x));
+  const yOverlap = Math.max(0, Math.min(r1yMax, r2yMax) - Math.max(r1y, r2y));
+
+  return xOverlap * yOverlap;
 }
 
 

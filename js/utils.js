@@ -4,6 +4,19 @@ import { setSetting, getSetting } from './settings.js';
 const windowMargin = 50;
 let isVertical;
 
+function handleClicks() {
+  handleNotificationClick();
+  handleOrientationChange();
+  populateAbouPage();
+  handleThemeChange();
+  handleAboutClick();
+  handleShutdownClick();
+  handleTopMenuClicks();
+  handleCloseDrawerClicks();
+  handleMouseHover();
+  handleModalClose();
+}
+
 function handleThemeChange() {
   // q('#change-theme').addEventListener('click', () => {
   //   let currentTheme = Array.prototype.slice.apply(q('html').classList)
@@ -193,7 +206,7 @@ function handleModalClose() {
 }
 
 async function handleMouseHover() {
-  q('#toggle').click(); // TODO: remove
+  //q('#toggle').click(); // TODO: remove
 
   q('#fav-apps').addEventListener('mousewheel', (e) => { // TODO: move
     if (q('.horizontal')) {
@@ -268,6 +281,7 @@ function escapeHtml(unsafe) {
 
 
 export {
+  handleClicks,
   handleOrientationChange,
   handleThemeChange,
   handleAboutClick,
