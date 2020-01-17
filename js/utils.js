@@ -274,6 +274,16 @@ function populateAbouPage() {
 
 }
 
+function startTutorial() {
+  if (getSetting('showTutorial')) {
+    try {
+      startApp('getting-started');
+    } catch(e) {
+      console.log('could not start Getting started app', e);
+    }
+  }
+}
+
 function escapeHtml(unsafe) {
   return unsafe
     .replace(/&/g, "&amp;")
@@ -282,6 +292,8 @@ function escapeHtml(unsafe) {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 }
+
+
 
 
 export {
@@ -297,5 +309,6 @@ export {
   handleMouseHover,
   populateAbouPage,
   windowMargin,
+  startTutorial,
   escapeHtml
 };
