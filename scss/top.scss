@@ -21,6 +21,12 @@
       .layout-menu-tool {
         top: -6rem;
       }
+      .icon-angle-right {
+        transform: rotate(-90deg);
+      }
+      .chavron-rotate {
+        transform: rotate(90deg);
+      }
     }
 
     .toggle-content {

@@ -347,7 +347,7 @@ html .nav ul.nav .nav-item .nav-link:hover::before {
   height: 0;
 }
 html .nav .chavron-rotate {
-  transform: rotate(-90deg);
+  transform: rotate(180deg);
 }
 html .nav .action-menu-tool {
   transition-property: opacity;
@@ -776,6 +776,12 @@ html .open-top .h .horizontal .dropdown-menu {
 html .open-top .h .horizontal .layout-menu-tool {
   top: -6rem;
 }
+html .open-top .h .horizontal .icon-angle-right {
+  transform: rotate(-90deg);
+}
+html .open-top .h .horizontal .chavron-rotate {
+  transform: rotate(90deg);
+}
 html .open-top .h .toggle-content {
   border-top: 1px solid rgba(255, 255, 255, 0.075);
   border-bottom: 0;
@@ -846,8 +852,11 @@ html .horizontal .nav .favorite i {
   padding: 0.25rem 0;
   top: 1rem;
 }
+html .horizontal .nav .icon-angle-right {
+  transform: rotate(90deg);
+}
 html .horizontal .nav .chavron-rotate {
-  transform: rotate(180deg);
+  transform: rotate(-90deg);
 }
 html .horizontal .nav .show-actions {
   overflow: hidden;
@@ -923,6 +932,7 @@ html .horizontal .nav-tabs li.fav-app-nav .nav:hover .app-active::before {
 }
 html .horizontal .nav-tabs li.fav-app-nav .nav .nav-item {
   flex-basis: 59px;
+  overflow: hidden;
 }
 html .horizontal .nav-tabs li.fav-app-nav .nav .nav-item .text-animation,
 html .horizontal .nav-tabs li.fav-app-nav .nav .nav-item .text-animation:hover {
