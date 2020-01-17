@@ -87,7 +87,11 @@ function handleOrientationChange() {
 
 function handleAboutClick() {
   q('#open-about').addEventListener('click', () => {
-    openWindow('Glue42 About', location.origin + '/about.html', {
+    let origin = location.href.replace('#', '').split('/').slice(0, -1);
+    origin.push('about.html');
+    origin = origin.join('/');
+
+    openWindow('Glue42 About', origin , {
       isSticky: false,
       mode: 'html',
       allowCollapse: false,
