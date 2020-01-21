@@ -79,6 +79,12 @@ function handleOrientationChange() {
       }
     });
 
+    if (isVertical) {
+      document.body.classList.remove('open-top');
+    } else {
+      document.body.classList.remove('open-left');
+    }
+
     setTimeout(() => {
       q('.app').classList.remove('switching-orientation');
     });
