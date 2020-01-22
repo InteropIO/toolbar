@@ -23,7 +23,7 @@ html.dark .view-port {
   border: 1px solid rgba(255, 255, 255, 0.075);
 }
 html.dark .toggle-content {
-  background-color: #272b35;
+  background-color: #1e1e1e;
   border-top: 1px solid rgba(255, 255, 255, 0.075);
   border-bottom: 1px solid rgba(255, 255, 255, 0.075);
   border-right: 1px solid rgba(255, 255, 255, 0.075);
@@ -60,10 +60,10 @@ html.dark .favorite::after {
   background-color: rgba(255, 255, 255, 0.075);
 }
 html.dark .favorite i {
-  background: #21252d;
+  background: #1e1e1e;
 }
 html.dark .nav .layout-menu-tool {
-  background: #2b303b;
+  background: #2d2d2d;
 }
 html.dark .nav .layout-menu-tool div:first-of-type {
   border-right: 1px solid rgba(255, 255, 255, 0.05);
@@ -83,7 +83,7 @@ html.dark .nav .nav-link.active img, html.dark .nav .nav-link:hover img {
   filter: grayscale(100%) brightness(1.3);
 }
 html.dark .select:hover {
-  background-color: #21252d;
+  background-color: #252525;
 }
 html.dark .select_items {
   border-color: rgba(255, 255, 255, 0.075);
@@ -92,13 +92,13 @@ html.dark .select_items:hover {
   border-color: #2080d3;
 }
 html.dark .select_option {
-  background-color: #272b35;
+  background-color: #1e1e1e;
 }
 html.dark .select_expand::after {
   color: #eeeeee;
 }
 html.dark .select_expand:checked + .select_closeLabel + .select_options .select_label:hover {
-  background-color: #21252d;
+  background-color: #252525;
 }
 html.dark .horizontal .layout-menu-tool {
   border: 1px solid rgba(255, 255, 255, 0.075);
