@@ -93,7 +93,7 @@ glueModule.boundsObs
     }
   } else {
     let hasOpenTop = document.body.classList.contains('open-top');
-    let shouldOpenTop = (windowBounds.top + windowBounds.height) > (currentMonitor.workingAreaTop + currentMonitor.workingAreaHeight);
+    let shouldOpenTop = (viewPortBounds.top + viewPortBounds.height + 300) > (currentMonitor.workingAreaTop + currentMonitor.workingAreaHeight);
 
     if (shouldOpenTop) {
       document.body.classList.add('open-top');

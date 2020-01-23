@@ -56,7 +56,7 @@ function orderApps(a, b) {
     return -1;
   } else if (!aOrder && bOrder) {
     return 1;
-  } else if (aOrder && bOrder) {
+  } else if (aOrder && bOrder && (aOrder !== bOrder)) {
     return aOrder - bOrder;
   } else {
     return a.title.localeCompare(b.title);
