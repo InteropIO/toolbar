@@ -23,7 +23,7 @@
             <div class="dropdown-menu" id="menu-top" dropdown-id="top-menu">
               <a class="dropdown-item" href="#" id="toggle">Switch to <span class="mode"></span></a>
               <a class="dropdown-item" href="#" menu-button-id="settings">Settings</a>
-              <a class="dropdown-item" href="#" id="open-about">About</a>
+              <a class="dropdown-item" href="#" menu-button-id="about">About</a>
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" href="#" id="shutdown">Shut down</a>
             </div>
@@ -146,6 +146,42 @@
             </li>
           </ul>
         </form>
+      </div>
+    </div>
+
+    <div class="toggle-content hide" id="about-content" menu-id="about">
+      <div class="p-2">
+        <h5 class="d-flex justify-content-between mb-2">
+          About
+          <span class="icon-arrow-up-down close-drawer"></span>
+        </h5>
+        <table class="ml-auto mr-auto mt-5">
+          <tr>
+            <td class="text-right">GD version</td>
+            <td class="pl-3"><span class="gd-version"></span></td>
+          </tr>
+          <tr>
+            <td class="text-right">Glue.js version</td>
+            <td class="pl-3"><span class="glue-js-version"></span></td>
+          </tr>
+          <tr>
+            <td class="text-right">GW URL</td>
+            <td class="pl-3"><span class="gw-url"></span></td>
+          </tr>
+          <tr>
+            <td class="text-right">Username</td>
+            <td class="pl-3"><span class="username"></span></td>
+          </tr>
+          <tr>
+            <td class="text-right">Status</td>
+            <td class="pl-3">
+              <span class="icon-size-12 ">
+                <i class="icon-record position-relative text-success"></i>
+              </span>
+              <span>Connected</span>
+            </td>
+          </tr>
+        </table>
       </div>
     </div>
 

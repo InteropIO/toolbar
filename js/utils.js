@@ -7,9 +7,9 @@ let isVertical;
 function handleClicks() {
   handleNotificationClick();
   handleOrientationChange();
-  populateAbouPage();
   handleThemeChange();
-  handleAboutClick();
+  populateAboutPage();
+  populateSettingsPage();
   handleShutdownClick();
   handleTopMenuClicks();
   handleCloseDrawerClicks();
@@ -18,25 +18,12 @@ function handleClicks() {
 }
 
 function handleThemeChange() {
-  // q('#change-theme').addEventListener('click', () => {
-  //   let currentTheme = Array.prototype.slice.apply(q('html').classList)
-  //     .find(className =>  ['dark', 'light'].indexOf(className) >= 0);
-  //   let allThemes = themeObs.value.all.map(t => t.name);
-  //   let currentThemeIndex = allThemes.indexOf(currentTheme);
-  //   let newThemeIndex = currentThemeIndex >= allThemes.length - 1 ? 0 : currentThemeIndex + 1;
-  // })
   q('.theme-select').addEventListener('click', (e) => {
     if (e.target.matches('input.select_input[type="radio"]')) {
       let themeToSelect = e.target.getAttribute('theme-name');
       changeTheme(themeToSelect);
     }
   });
-
-  // themeObs.subscribe(themeObj => {
-  //   if (themeObj) {
-
-  //   }
-  // })
 
   themeObs.subscribe(themeObj => {
     if (themeObj) {
@@ -62,9 +49,16 @@ function handleOrientationChange() {
   isVertical = !!q('.view-port.vertical');
   q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
 
+  if (getSetting('vertical') === false) {
+    gluePromise.then(() => {
+      q('#toggle').click();
+    })
+  }
+
   q('#toggle').addEventListener('click', () => {
     q('.app').classList.add('switching-orientation');
     isVertical = !isVertical;
+    setSetting('vertical', isVertical);
     q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
 
     q('.view-port').classList.add(isVertical ? 'vertical' : 'horizontal');
@@ -91,23 +85,13 @@ function handleOrientationChange() {
   });
 }
 
-function handleAboutClick() {
-  q('#open-about').addEventListener('click', () => {
-    let origin = location.href.replace('#', '').split('/').slice(0, -1);
-    origin.push('about.html');
-    origin = origin.join('/');
+function populateAboutPage() {
+  q('.gd-version').innerText = glue42gd.version;
+  q('.gw-url').innerText = glue42gd.gwURL;
+  q('.username').innerText = glue42gd.user;
 
-    openWindow('Glue42 About', origin , {
-      isSticky: false,
-      mode: 'html',
-      allowCollapse: false,
-      allowMaximize: false,
-      allowMinimize: false,
-      allowClose: false,
-      width: 300,
-      height: 300
-    });
-  //   q('.modal.about').classList.add('show')
+  gluePromise.then(glue => {
+    q('.glue-js-version').innerText = glue.version;
   });
 }
 
@@ -267,9 +251,7 @@ function handleNotificationClick() {
   });
 }
 
-function populateAbouPage() {
-
-
+function populateSettingsPage() {
   if (getSetting('showTutorial')) {
     q('#settings-content .show-tutorial').setAttribute('checked', true);
   } else {
@@ -306,14 +288,13 @@ export {
   handleClicks,
   handleOrientationChange,
   handleThemeChange,
-  handleAboutClick,
+  populateSettingsPage,
   handleShutdownClick,
   handleTopMenuClicks,
   handleCloseDrawerClicks,
   handleNotificationClick,
   handleModalClose,
   handleMouseHover,
-  populateAbouPage,
   windowMargin,
   startTutorial,
   escapeHtml
