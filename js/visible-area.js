@@ -1,12 +1,18 @@
 import * as glueModule from './glue-related.js';
+// import {boundsObs} from './glue-related.js';
+// import { setSetting } from './settings.js';
 
 let topMenuVisibleObs = new rxjs.BehaviorSubject(false);
 let layoutDropDownVisibleObs = new rxjs.BehaviorSubject(false);
+let openTopObs = new rxjs.BehaviorSubject(false);
+let openLeftObs = new rxjs.BehaviorSubject(false);
 
 function handleDropDownClicks() {
   document.addEventListener('click', (e) => {
+
     if (e.target.matches('[dropdown-button-id], [dropdown-button-id] *')) {
       //dropdown button click  - toggle dropdown
+      applyOpenClasses();
       let btnElement = e.path.find(e => e.getAttribute('dropdown-button-id'));
       let menuId = btnElement.getAttribute('dropdown-button-id');
       let menu = q(`[dropdown-id="${menuId}"]`);
@@ -20,14 +26,12 @@ function handleDropDownClicks() {
   });
 }
 
-
-
 let layoutOpenedTimeout;
 
 q('.layouts-nav').addEventListener('mouseenter', (e) => {
   if (e.target.matches && e.target.matches('.horizontal .layouts-nav, .horizontal .layouts-nav *')) {
-    console.log('layout ', true);
     layoutOpenedTimeout = setTimeout(() => {
+      applyOpenClasses();
       layoutDropDownVisibleObs.next(true);
     }, 300);
   }
@@ -50,9 +54,12 @@ let appBoundsObs = new rxjs.BehaviorSubject({
 });
 window.appBoundsObs = appBoundsObs;
 
+
+// console.log(glueModule);
 glueModule.boundsObs
-  .pipe(rxjs.operators.skip(2))
+  .pipe(rxjs.operators.skip(1))
   .subscribe(bounds => {
+    console.log('bounds changed');
     q('.view-port').classList.add('expand');
     q('.app').classList.add('expand-wrapper');
   });
@@ -74,39 +81,48 @@ glueModule.boundsObs
     return;
   }
 
-  if(q('.app').classList.contains('has-drawer')) {
-    return;
-  }
-
   if(!q('.view-port').classList.contains('horizontal')) {
-    let hasOpenLeft = document.body.classList.contains('open-left');
-    // let shouldOpenLeft = (windowBounds.left + windowBounds.width) > (currentMonitor.workingAreaLeft + currentMonitor.workingAreaWidth);
     let shouldOpenLeft = (viewPortBounds.left + 500) > (currentMonitor.left + currentMonitor.width);
+    openLeftObs.next(shouldOpenLeft);
     if (shouldOpenLeft){
-      document.body.classList.add('open-left');
-    } else {
-      document.body.classList.remove('open-left');
-    }
-
-    if (hasOpenLeft !== shouldOpenLeft) {
-      appBoundsObs.next(true);
+      openTopObs.next(false);
     }
   } else {
-    let hasOpenTop = document.body.classList.contains('open-top');
     let shouldOpenTop = (viewPortBounds.top + viewPortBounds.height + 300) > (currentMonitor.workingAreaTop + currentMonitor.workingAreaHeight);
-
+    openTopObs.next(shouldOpenTop);
     if (shouldOpenTop) {
-      document.body.classList.add('open-top');
-    } else {
-      document.body.classList.remove('open-top');
-    }
-
-    if (hasOpenTop !== shouldOpenTop) {
-      appBoundsObs.next(true);
+      openLeftObs.next(false);
     }
   }
 });
 
+function applyOpenClasses() {
+  if (q('.has-drawer')) {
+    return;
+  }
+
+  let openLeft = openLeftObs.value;
+  let openTop =  openTopObs.value;
+  if (openLeft && !q('.view-port.horizontal')) {
+    document.body.classList.add('open-left');
+  }
+
+  if (openTop && q('.view-port.horizontal')) {
+    document.body.classList.add('open-top');
+  }
+
+  if (!openLeft) {
+    document.body.classList.remove('open-left');
+  }
+
+  if (!openTop) {
+    document.body.classList.remove('open-top');
+  }
+
+  return new Promise((res, rej) => {
+    setTimeout(() => {res()});
+  });
+}
 
 function handleWidthChange() {
   const appBoundsObserver = new ResizeObserver((elements) => {
@@ -120,7 +136,6 @@ appBoundsObs
 .pipe(rxjs.operators.combineLatest(topMenuVisibleObs, layoutDropDownVisibleObs))
 // .pipe(rxjs.operators.combineLatest())
 .subscribe(([appBounds, topMenuVisible, layoutDropDownVisible]) => {
-  // console.log(appBounds, topMenuVisible, layoutDropDownVisible);
   resizeVisibleArea(appBounds, topMenuVisible, layoutDropDownVisible);
 });
 
@@ -191,5 +206,6 @@ function calculateTotalOverlap(r1, r2) {
 
 export {
   handleWidthChange,
-  handleDropDownClicks
+  handleDropDownClicks,
+  applyOpenClasses
 }

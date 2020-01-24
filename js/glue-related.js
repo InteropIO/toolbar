@@ -1,5 +1,3 @@
-import { windowMargin } from "./utils.js";
-
 const gluePromise = new Promise(async (res, rej) => {
   let glue = await Glue({
     appManager: 'full',

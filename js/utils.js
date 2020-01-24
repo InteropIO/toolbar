@@ -1,5 +1,6 @@
 import {shutdown, gluePromise, startApp, focusApp, themeObs, changeTheme, refreshApps, glueInfo, openWindow, openNotificationPanel} from './glue-related.js';
 import { setSetting, getSetting } from './settings.js';
+import { applyOpenClasses } from './visible-area.js';
 
 const windowMargin = 50;
 let isVertical;
@@ -102,7 +103,7 @@ function handleShutdownClick() {
 }
 
 function handleTopMenuClicks() {
-  document.addEventListener('click', (e) => {
+  document.addEventListener('click', async (e) => {
 
     if (e.target.matches('[menu-button-id="apps"], [menu-button-id="apps"] *') && e.altKey) {
       e.preventDefault();
@@ -125,7 +126,11 @@ function handleTopMenuClicks() {
       });
 
 
+
       let menuToToggle = q(`[menu-id="${menuId}"]`);
+      if (menuToToggle.classList.contains('hide')) {
+        await applyOpenClasses();
+      }
       menuToToggle.addEventListener('transitionend', focusMenuInputAfterTransition);
       menuToToggle.classList.toggle('hide');
 
@@ -233,7 +238,8 @@ async function handleMouseHover() {
       return;
     }
 
-    closeTimeout = setTimeout(() => {
+    closeTimeout = setTimeout(async () => {
+      await applyOpenClasses();
       q('.view-port').classList.remove('expand');
       q('.app').classList.remove('expand-wrapper');
       qa('.toggle-content').forEach(e => e.classList.add('hide'));
