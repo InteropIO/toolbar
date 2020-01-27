@@ -52,11 +52,11 @@ function orderApps(a, b) {
   let aOrder = a.userProperties.appManagerOrder;
   let bOrder = b.userProperties.appManagerOrder;
 
-  if (aOrder && !bOrder) {
+  if (aOrder && !bOrder && bOrder !== 0) {
     return -1;
-  } else if (!aOrder && bOrder) {
+  } else if (!aOrder && bOrder && aOrder !== 0) {
     return 1;
-  } else if (aOrder && bOrder && (aOrder !== bOrder)) {
+  } else if ((typeof aOrder === 'number') && (typeof bOrder === 'number') && (aOrder !== bOrder)) {
     return aOrder - bOrder;
   } else {
     return a.title.localeCompare(b.title);
