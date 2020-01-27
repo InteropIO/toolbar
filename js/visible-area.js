@@ -1,6 +1,4 @@
 import * as glueModule from './glue-related.js';
-// import {boundsObs} from './glue-related.js';
-// import { setSetting } from './settings.js';
 
 let topMenuVisibleObs = new rxjs.BehaviorSubject(false);
 let layoutDropDownVisibleObs = new rxjs.BehaviorSubject(false);

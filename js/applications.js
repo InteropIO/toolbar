@@ -16,7 +16,7 @@ const allApplicationsObs = glueAppsObs
   .pipe(rxFilter(apps => apps.length > 0))
   .pipe(rxDistinctUntilChanged(undefined, (apps) => {
     // distinct apps have changed by creating a "hash" containing app titles + instance ids
-    return apps.map(app => app.title + app.instances.map(i => i.id).join()).join() + JSON.stringify(getSettings());
+    return apps.map(app => app.title + JSON.stringify(app.userProperties.appManagerOrder) + app.instances.map(i => i.id).join()).join() + JSON.stringify(getSettings());
   }))
   .pipe(rxMap(allApps => allApps.filter(app => shouldAppBeVisible(app))))
   .pipe(rxMap(allApps => {

@@ -1,9 +1,14 @@
+console.time('Glue');
 const gluePromise = new Promise(async (res, rej) => {
   let glue = await Glue({
     appManager: 'full',
-    layouts: 'full'
+    layouts: 'full',
+    activities: false,
+    channels: false,
+    metrics: false
   });
 
+  console.timeEnd('Glue')
   window.glue = glue;
   res(glue);
 });
@@ -30,6 +35,7 @@ gluePromise.then((glue) => {
   trackNotificationCount();
   trackThemeChanges();
   trackWindowMove();
+  trackConnection();
 })
 
 function trackApplications() {
@@ -169,12 +175,31 @@ async function getCurrentBounds() {
   return glue.windows.my().bounds;
 }
 
+function trackConnection() {
+  glue.connection.connected(() => {
+    console.log('connected');
+    q('.status-connected').classList.remove('d-none');
+    q('.status-disconnected').classList.add('d-none');
+  });
+  glue.connection.disconnected(() => {
+    console.log('disconnected');
+    q('.status-connected').classList.add('d-none');
+    q('.status-disconnected').classList.remove('d-none');
+  });
+}
+
 function getMonitorInfo() {
   return glue42gd.monitors;
 }
 
+async function glueVersion() {
+  await gluePromise;
+  return glue.version;
+}
+
 export {
   gluePromise,
+  glueVersion,
   glueInfo,
   glueAppsObs,
   layoutsObs,

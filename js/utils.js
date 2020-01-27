@@ -1,4 +1,4 @@
-import {shutdown, gluePromise, startApp, focusApp, themeObs, changeTheme, refreshApps, glueInfo, openWindow, openNotificationPanel} from './glue-related.js';
+import {shutdown, gluePromise, startApp, focusApp, themeObs, changeTheme, refreshApps, glueInfo, openWindow, openNotificationPanel, glueVersion} from './glue-related.js';
 import { setSetting, getSetting } from './settings.js';
 import { applyOpenClasses } from './visible-area.js';
 
@@ -91,8 +91,8 @@ function populateAboutPage() {
   q('.gw-url').innerText = glue42gd.gwURL;
   q('.username').innerText = glue42gd.user;
 
-  gluePromise.then(glue => {
-    q('.glue-js-version').innerText = glue.version;
+  gluePromise.then(async (glue) => {
+    q('.glue-js-version').innerText = await glueVersion();
   });
 }
 
