@@ -196,6 +196,14 @@
     window.q = document.querySelector.bind(document);
     window.qa = document.querySelectorAll.bind(document);
   </script>
+  <script>
+    if (window.glue42gd && glue42gd.theme) {
+      let allThemes = ['dark', 'light'];
+      let html = q('html');
+      html.classList.remove(...allThemes);
+      html.classList.add(glue42gd.theme);
+    }
+  </script>
   <script src="assets/@glue42-desktop.min.js"></script>
   <script src="assets/rxjs.umd.min.js"></script>
   <script src="js/index.js" type="module"></script>
