@@ -96,6 +96,11 @@ async function startApp(appName) {
   }
 }
 
+async function getApp(appName) {
+  await gluePromise;
+  return glue.appManager.application(appName);
+}
+
 async function focusApp(appName) {
   await gluePromise;
   let app = glue.appManager.application(appName);
@@ -206,6 +211,7 @@ export {
   boundsObs,
   startApp,
   focusApp,
+  getApp,
   refreshApps,
   notificationsCountObs,
   themeObs,

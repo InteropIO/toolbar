@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
   handleDropDownClicks();
 
   utils.handleClicks();
-  // utils.startTutorial();
+  utils.startTutorial();
   glueModule.registerHotkey();
 });
 

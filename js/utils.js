@@ -1,4 +1,4 @@
-import {shutdown, gluePromise, startApp, focusApp, themeObs, changeTheme, refreshApps, glueInfo, openWindow, openNotificationPanel, glueVersion} from './glue-related.js';
+import {shutdown, gluePromise, startApp, focusApp, getApp, themeObs, changeTheme, refreshApps, openNotificationPanel, glueVersion} from './glue-related.js';
 import { setSetting, getSetting } from './settings.js';
 import { applyOpenClasses } from './visible-area.js';
 
@@ -268,7 +268,13 @@ function populateSettingsPage() {
 
 }
 
-function startTutorial() {
+async function startTutorial() {
+  let tutorialApp = await getApp('getting-started');
+  if (!tutorialApp) {
+    setSetting('showTutorial', false);
+    q('.show-tutorial-check').classList.add('d-none');
+  }
+
   if (getSetting('showTutorial')) {
     try {
       startApp('getting-started');
