@@ -57,7 +57,7 @@ window.appBoundsObs = appBoundsObs;
 glueModule.boundsObs
   .pipe(rxjs.operators.skip(1))
   .subscribe(bounds => {
-    console.log('bounds changed');
+    console.debug('bounds changed', bounds);
     q('.view-port').classList.add('expand');
     q('.app').classList.add('expand-wrapper');
   });

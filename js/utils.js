@@ -1,4 +1,4 @@
-import {shutdown, gluePromise, startApp, focusApp, getApp, themeObs, changeTheme, refreshApps, openNotificationPanel, glueVersion} from './glue-related.js';
+import {shutdown, gluePromise, startApp, focusApp, getApp, themeObs, changeTheme, refreshApps, openNotificationPanel, glueVersion, getMonitorInfo, getWindowBounds} from './glue-related.js';
 import { setSetting, getSetting } from './settings.js';
 import { applyOpenClasses } from './visible-area.js';
 
@@ -53,7 +53,7 @@ function handleOrientationChange() {
   if (getSetting('vertical') === false) {
     gluePromise.then(() => {
       q('#toggle').click();
-    })
+    });
   }
 
   q('#toggle').addEventListener('click', () => {
@@ -224,7 +224,7 @@ async function handleMouseHover() {
     }
   });
 
-  q('.app').addEventListener('mouseleave', (e) => {
+  q('.app').addEventListener('mouseleave', async (e) => {
     let {offsetWidth: viewPortWidth, offsetHeight: viewPortHeight} = q('.view-port');
     let margin = windowMargin;
 
@@ -235,6 +235,13 @@ async function handleMouseHover() {
     }
 
     if (qa('.toggle-content:not(.hide)').length > 0 || qa('.dropdown-menu.show').length > 0) {
+      return;
+    }
+
+    let viewPortBounds = q('.view-port').getBoundingClientRect();
+    let outOfMonitor = isOutOfMonitor(viewPortBounds);
+    if (await outOfMonitor) {
+      console.warn('window is positioned outside of monitor. will not shrink')
       return;
     }
 
@@ -291,6 +298,17 @@ function escapeHtml(unsafe) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+async function isOutOfMonitor(viewportBounds) {
+  let monitors = getMonitorInfo();
+  let windowBounds = await getWindowBounds();
+  let leftMostPoint = monitors.reduce((acc, curr) => curr.workingAreaLeft < acc ? curr.workingAreaLeft : acc, 0);
+  let rightMostPoint = monitors.reduce((acc, curr) => curr.workingAreaLeft + curr.workingAreaWidth > acc ? curr.workingAreaLeft + curr.workingAreaWidth : acc, 0);
+  let visibleAreaLeft = windowBounds.left + viewportBounds.left;
+  let visibleAreaRight = windowBounds.left + viewportBounds.left + viewportBounds.width;
+
+  return (visibleAreaLeft < leftMostPoint) || (visibleAreaRight > rightMostPoint);
 }
 
 

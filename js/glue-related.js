@@ -175,7 +175,7 @@ async function openWindow(name, url, options) {
   window.glue.windows.open(name, url, options);
 }
 
-async function getCurrentBounds() {
+async function getWindowBounds() {
   await gluePromise;
   return glue.windows.my().bounds;
 }
@@ -224,5 +224,6 @@ export {
   shutdown,
   resizeWindowVisibleArea,
   openWindow,
-  getMonitorInfo
+  getMonitorInfo,
+  getWindowBounds
 };
