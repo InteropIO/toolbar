@@ -105,6 +105,10 @@ function handleShutdownClick() {
 function handleTopMenuClicks() {
   document.addEventListener('click', async (e) => {
 
+    if (e.target.matches('a, a *') && e.ctrlKey) {
+      e.preventDefault();
+    }
+
     if (e.target.matches('[menu-button-id="apps"], [menu-button-id="apps"] *') && e.altKey) {
       e.preventDefault();
       e.stopPropagation();
