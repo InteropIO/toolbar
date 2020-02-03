@@ -3,7 +3,7 @@ const gluePromise = new Promise(async (res, rej) => {
   let glue = await Glue({
     appManager: 'full',
     layouts: 'full',
-    activities: false,
+    activities: 'trackAll',
     channels: false,
     metrics: false
   });
@@ -80,10 +80,11 @@ function trackThemeChanges() {
   })
 }
 
-function trackWindowMove() {
+async function trackWindowMove() {
+  boundsObs.next(glue.windows.my().bounds);
   glue.windows.my().onBoundsChanged(() => {
     boundsObs.next(glue.windows.my().bounds);
-  })
+  });
 }
 
 async function startApp(appName) {

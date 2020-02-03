@@ -4,6 +4,82 @@ let topMenuVisibleObs = new rxjs.BehaviorSubject(false);
 let layoutDropDownVisibleObs = new rxjs.BehaviorSubject(false);
 let openTopObs = new rxjs.BehaviorSubject(false);
 let openLeftObs = new rxjs.BehaviorSubject(false);
+let layoutOpenedTimeout;
+
+init();
+function init() {
+  q('.layouts-nav').addEventListener('mouseenter', (e) => {
+    if (e.target.matches && e.target.matches('.horizontal .layouts-nav, .horizontal .layouts-nav *')) {
+      layoutOpenedTimeout = setTimeout(() => {
+        applyOpenClasses();
+        layoutDropDownVisibleObs.next(true);
+      }, 300);
+    }
+  });
+
+  q('.layouts-nav').addEventListener('mouseleave', (e) => {
+    if (e.target.matches && e.target.matches('.horizontal .layouts-nav, .horizontal .layouts-nav *')) {
+      layoutDropDownVisibleObs.next(false);
+      if (layoutOpenedTimeout) {
+        clearInterval(layoutOpenedTimeout);
+      }
+    }
+  });
+
+  let appBoundsObs = new rxjs.BehaviorSubject({
+    width: Math.round(q('.app').offsetWidth),
+    height: Math.round(q('.app').offsetHeight),
+    left: 200,
+    top: 50
+  });
+  window.appBoundsObs = appBoundsObs;
+
+  glueModule.boundsObs
+    .pipe(rxjs.operators.skip(2))
+    .subscribe(bounds => {
+      console.debug('bounds changed', bounds);
+      q('.view-port').classList.add('expand');
+      q('.app').classList.add('expand-wrapper');
+    });
+
+  glueModule.boundsObs
+  .pipe(rxjs.operators.filter(bounds => bounds))
+  .pipe(rxjs.operators.combineLatest(appBoundsObs))
+  .subscribe(([windowBounds, appBounds]) => {
+    const monitors = glueModule.getMonitorInfo();
+    const launcherBounds = q('.view-port').getBoundingClientRect();
+    let viewPortBounds = {
+      left: windowBounds.left + launcherBounds.left,
+      top: windowBounds.top + launcherBounds.top,
+      height: launcherBounds.height,
+      width: launcherBounds.width,
+    };
+    let currentMonitor = getMonitor(viewPortBounds, monitors);
+    if (!currentMonitor) {
+      return;
+    }
+
+    if(!q('.view-port').classList.contains('horizontal')) {
+      let shouldOpenLeft = (viewPortBounds.left + 500) > (currentMonitor.left + currentMonitor.width);
+      openLeftObs.next(shouldOpenLeft);
+      if (shouldOpenLeft){
+        openTopObs.next(false);
+      }
+    } else {
+      let shouldOpenTop = (viewPortBounds.top + viewPortBounds.height + 300) > (currentMonitor.workingAreaTop + currentMonitor.workingAreaHeight);
+      openTopObs.next(shouldOpenTop);
+      if (shouldOpenTop) {
+        openLeftObs.next(false);
+      }
+    }
+  });
+
+  appBoundsObs
+  .pipe(rxjs.operators.combineLatest(topMenuVisibleObs, layoutDropDownVisibleObs))
+  .subscribe(([appBounds, topMenuVisible, layoutDropDownVisible]) => {
+    resizeVisibleArea(appBounds, topMenuVisible, layoutDropDownVisible);
+  });
+}
 
 function handleDropDownClicks() {
   document.addEventListener('click', (e) => {
@@ -23,76 +99,6 @@ function handleDropDownClicks() {
     }
   });
 }
-
-let layoutOpenedTimeout;
-
-q('.layouts-nav').addEventListener('mouseenter', (e) => {
-  if (e.target.matches && e.target.matches('.horizontal .layouts-nav, .horizontal .layouts-nav *')) {
-    layoutOpenedTimeout = setTimeout(() => {
-      applyOpenClasses();
-      layoutDropDownVisibleObs.next(true);
-    }, 300);
-  }
-});
-
-q('.layouts-nav').addEventListener('mouseleave', (e) => {
-  if (e.target.matches && e.target.matches('.horizontal .layouts-nav, .horizontal .layouts-nav *')) {
-    layoutDropDownVisibleObs.next(false);
-    if (layoutOpenedTimeout) {
-      clearInterval(layoutOpenedTimeout);
-    }
-  }
-});
-
-let appBoundsObs = new rxjs.BehaviorSubject({
-  width: Math.round(q('.app').offsetWidth),
-  height: Math.round(q('.app').offsetHeight),
-  left: 200,
-  top: 50
-});
-window.appBoundsObs = appBoundsObs;
-
-
-// console.log(glueModule);
-glueModule.boundsObs
-  .pipe(rxjs.operators.skip(1))
-  .subscribe(bounds => {
-    console.debug('bounds changed', bounds);
-    q('.view-port').classList.add('expand');
-    q('.app').classList.add('expand-wrapper');
-  });
-
-glueModule.boundsObs
-.pipe(rxjs.operators.filter(bounds => bounds))
-.pipe(rxjs.operators.combineLatest(appBoundsObs))
-.subscribe(([windowBounds, appBounds]) => {
-  const monitors = glueModule.getMonitorInfo();
-  const launcherBounds = q('.view-port').getBoundingClientRect();
-  let viewPortBounds = {
-    left: windowBounds.left + launcherBounds.left,
-    top: windowBounds.top + launcherBounds.top,
-    height: launcherBounds.height,
-    width: launcherBounds.width,
-  };
-  let currentMonitor = getMonitor(viewPortBounds, monitors);
-  if (!currentMonitor) {
-    return;
-  }
-
-  if(!q('.view-port').classList.contains('horizontal')) {
-    let shouldOpenLeft = (viewPortBounds.left + 500) > (currentMonitor.left + currentMonitor.width);
-    openLeftObs.next(shouldOpenLeft);
-    if (shouldOpenLeft){
-      openTopObs.next(false);
-    }
-  } else {
-    let shouldOpenTop = (viewPortBounds.top + viewPortBounds.height + 300) > (currentMonitor.workingAreaTop + currentMonitor.workingAreaHeight);
-    openTopObs.next(shouldOpenTop);
-    if (shouldOpenTop) {
-      openLeftObs.next(false);
-    }
-  }
-});
 
 function applyOpenClasses() {
   if (q('.has-drawer')) {
@@ -129,13 +135,6 @@ function handleWidthChange() {
 
   appBoundsObserver.observe(q('.app'));
 }
-
-appBoundsObs
-.pipe(rxjs.operators.combineLatest(topMenuVisibleObs, layoutDropDownVisibleObs))
-// .pipe(rxjs.operators.combineLatest())
-.subscribe(([appBounds, topMenuVisible, layoutDropDownVisible]) => {
-  resizeVisibleArea(appBounds, topMenuVisible, layoutDropDownVisible);
-});
 
 function resizeVisibleArea(appBounds, topMenuVisible, layoutDropDownVisible) {
   let visibleAreas = [];
