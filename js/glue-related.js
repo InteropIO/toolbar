@@ -132,6 +132,12 @@ async function saveLayout(name) {
   glue.layouts.save({name});
 }
 
+async function areNotificationsEnabled() {
+  await gluePromise;
+  // return glue.agm.methd
+  return glue.agm.methods({name:'T42.Notifications.Show'}).length > 0;
+}
+
 async function openNotificationPanel() {
   await gluePromise;
   glue.agm.invoke('T42.Notifications.Show');
@@ -217,6 +223,7 @@ export {
   notificationsCountObs,
   themeObs,
   changeTheme,
+  areNotificationsEnabled,
   openNotificationPanel,
   removeLayout,
   restoreLayout,

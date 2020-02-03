@@ -1,4 +1,4 @@
-import {shutdown, gluePromise, startApp, focusApp, getApp, themeObs, changeTheme, refreshApps, openNotificationPanel, glueVersion, getMonitorInfo, getWindowBounds} from './glue-related.js';
+import {shutdown, gluePromise, startApp, focusApp, getApp, themeObs, changeTheme, refreshApps, openNotificationPanel, glueVersion, getMonitorInfo, getWindowBounds, areNotificationsEnabled} from './glue-related.js';
 import { setSetting, getSetting } from './settings.js';
 import { applyOpenClasses } from './visible-area.js';
 
@@ -259,13 +259,18 @@ async function handleMouseHover() {
   });
 }
 
-function handleNotificationClick() {
-  q('#notification-panel').addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    e.stopImmediatePropagation();
-    openNotificationPanel();
-  });
+async function handleNotificationClick() {
+  let notificationEnabled = await areNotificationsEnabled();
+
+  if (notificationEnabled) {
+    q('#notification-panel').classList.remove('d-none');
+    q('#notification-panel').addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      openNotificationPanel();
+    });
+  }
 }
 
 function populateSettingsPage() {
