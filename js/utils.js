@@ -1,7 +1,27 @@
-import {shutdown, gluePromise, startApp, focusApp, getApp, themeObs, changeTheme, refreshApps, openNotificationPanel, glueVersion, getMonitorInfo, getWindowBounds, areNotificationsEnabled} from './glue-related.js';
-import { setSetting, getSetting } from './settings.js';
-import { applyOpenClasses } from './visible-area.js';
-
+import {
+  shutdown,
+  gluePromise,
+  startApp,
+  focusApp,
+  getApp,
+  themeObs,
+  changeTheme,
+  refreshApps,
+  openNotificationPanel,
+  glueVersion,
+  getMonitorInfo,
+  getWindowBounds,
+  notificationEnabledObs,
+  moveMyWindow
+} from './glue-related.js';
+import {
+  setSetting,
+  getSetting
+} from './settings.js';
+import {
+  applyOpenClasses,
+  getMonitor
+} from './visible-area.js';
 const windowMargin = 50;
 let isVertical;
 
@@ -46,7 +66,7 @@ function handleThemeChange() {
   });
 }
 
-function handleOrientationChange() {
+async function handleOrientationChange() {
   isVertical = !!q('.view-port.vertical');
   q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
 
@@ -56,7 +76,9 @@ function handleOrientationChange() {
     });
   }
 
-  q('#toggle').addEventListener('click', () => {
+
+  q('#toggle').addEventListener('click', async () => {
+    await ensureWindowHasSpace(isVertical);
     q('.app').classList.add('switching-orientation');
     isVertical = !isVertical;
     setSetting('vertical', isVertical);
@@ -84,6 +106,36 @@ function handleOrientationChange() {
       q('.app').classList.remove('switching-orientation');
     });
   });
+}
+
+async function ensureWindowHasSpace(isVertical) {
+  console.log('check near edge');
+  let monitorInfo = getMonitorInfo();
+  let windowBounds = await getWindowBounds();
+  let visibleAreaBounds = q('.view-port').getBoundingClientRect();
+  let realBounds = {
+    top: windowBounds.top + visibleAreaBounds.top,
+    left: windowBounds.left + visibleAreaBounds.left,
+    width: visibleAreaBounds.width,
+    height: visibleAreaBounds.height
+  };
+  let currentMonitor = getMonitor(realBounds, monitorInfo);
+  if (isVertical) {
+    // should have enough space on the right
+    let newRight = windowBounds.left + visibleAreaBounds.right + 340 + 20;
+    let monitorMostRight = currentMonitor.left + currentMonitor.workingAreaWidth;
+    if (newRight > monitorMostRight) {
+      moveMyWindow({left: windowBounds.left - (newRight - monitorMostRight)});
+
+    }
+  } else {
+    // should have enough space below
+    let newBottom = windowBounds.top + visibleAreaBounds.bottom + 350 + 20;
+    let monitorMostBottom = currentMonitor.top + currentMonitor.workingAreaHeight;
+    if (newBottom > monitorMostBottom) {
+      moveMyWindow({top: windowBounds.top - (newBottom - monitorMostBottom)});
+    }
+  }
 }
 
 function populateAboutPage() {
@@ -260,17 +312,17 @@ async function handleMouseHover() {
 }
 
 async function handleNotificationClick() {
-  let notificationEnabled = await areNotificationsEnabled();
-
-  if (notificationEnabled) {
-    q('#notification-panel').classList.remove('d-none');
-    q('#notification-panel').addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      openNotificationPanel();
+  notificationEnabledObs
+    .subscribe(data => {
+      q('#notification-panel').classList[data ? 'remove' : 'add']('d-none');
     });
-  }
+
+  q('#notification-panel').addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    openNotificationPanel();
+  });
 }
 
 function populateSettingsPage() {

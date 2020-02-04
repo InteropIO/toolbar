@@ -1,5 +1,5 @@
-console.time('Glue');
-const gluePromise = new Promise(async (res, rej) => {
+console.time('Glue')
+var gluePromise = new Promise(async (res, rej) => {
   let glue = await Glue({
     appManager: 'full',
     layouts: 'full',
@@ -18,6 +18,7 @@ const layoutsObs = new rxjs.BehaviorSubject([]);
 const notificationsCountObs = new rxjs.BehaviorSubject(null);
 const themeObs = new rxjs.BehaviorSubject(null);
 const boundsObs = new rxjs.BehaviorSubject(null);
+let notificationEnabledObs = new rxjs.BehaviorSubject(false);
 
 if (!window.glue42gd) {
   window.glue42gd = {};
@@ -32,10 +33,10 @@ const glueInfo = {
 gluePromise.then((glue) => {
   trackApplications();
   trackLayouts();
-  trackNotificationCount();
   trackThemeChanges();
   trackWindowMove();
   trackConnection();
+  trackNotificationCount();
 })
 
 function trackApplications() {
@@ -63,19 +64,23 @@ function pushAllLayouts() {
   layoutsObs.next(glue.layouts.list())
 }
 
-function trackNotificationCount() {
-  glue.agm.subscribe('T42.Notifications.Counter')
+async function trackNotificationCount() {
+  await trackNotificationsEnabled();
+  notificationEnabledObs
+  .pipe(rxjs.operators.filter(data => data))
+  .pipe(rxjs.operators.take(1))
+  .subscribe((data) => {
+    glue.agm.subscribe('T42.Notifications.Counter')
     .then(subscription => {
       subscription.onData(({data}) => {
         notificationsCountObs.next(data.count);
       })
     })
+  })
 }
 
 function trackThemeChanges() {
-  // glue.agm.
   glue.contexts.subscribe('Connect.Themes', (themeObj) => {
-    console.log(themeObj);
     themeObs.next(themeObj);
   })
 }
@@ -132,10 +137,20 @@ async function saveLayout(name) {
   glue.layouts.save({name});
 }
 
-async function areNotificationsEnabled() {
+async function trackNotificationsEnabled() {
   await gluePromise;
-  // return glue.agm.methd
-  return glue.agm.methods({name:'T42.Notifications.Show'}).length > 0;
+  let notificationMethoExists = new rxjs.BehaviorSubject(false)
+  notificationMethoExists.next(glue.agm.methods({name:'T42.Notifications.Show'}).length > 0);
+  glue.agm.methodAdded(() => {
+    notificationMethoExists.next(glue.agm.methods({name:'T42.Notifications.Show'}).length > 0);
+  });
+
+  glue.agm.methodRemoved(() => {
+    notificationMethoExists.next(glue.agm.methods({name:'T42.Notifications.Show'}).length > 0);
+  });
+
+  notificationMethoExists.pipe(rxjs.operators.distinctUntilChanged())
+    .subscribe((data) => notificationEnabledObs.next(data))
 }
 
 async function openNotificationPanel() {
@@ -187,9 +202,13 @@ async function getWindowBounds() {
   return glue.windows.my().bounds;
 }
 
+async function moveMyWindow(bounds) {
+  await gluePromise;
+  return glue.windows.my().moveResize(bounds);
+}
+
 function trackConnection() {
   glue.connection.connected(() => {
-    console.log('connected');
     q('.status-connected').classList.remove('d-none');
     q('.status-disconnected').classList.add('d-none');
   });
@@ -223,7 +242,7 @@ export {
   notificationsCountObs,
   themeObs,
   changeTheme,
-  areNotificationsEnabled,
+  notificationEnabledObs,
   openNotificationPanel,
   removeLayout,
   restoreLayout,
@@ -232,6 +251,7 @@ export {
   shutdown,
   resizeWindowVisibleArea,
   openWindow,
+  moveMyWindow,
   getMonitorInfo,
   getWindowBounds
 };

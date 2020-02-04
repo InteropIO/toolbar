@@ -204,5 +204,6 @@ function calculateTotalOverlap(r1, r2) {
 export {
   handleWidthChange,
   handleDropDownClicks,
-  applyOpenClasses
+  applyOpenClasses,
+  getMonitor
 }
