@@ -52,9 +52,9 @@ function orderApps(a, b) {
   let aOrder = a.userProperties.appManagerOrder;
   let bOrder = b.userProperties.appManagerOrder;
 
-  if (aOrder && !bOrder && bOrder !== 0) {
+  if (typeof aOrder === 'number' && typeof bOrder !== 'number') {
     return -1;
-  } else if (!aOrder && bOrder && aOrder !== 0) {
+  } else if (typeof aOrder !== 'number' && typeof bOrder !== 'number') {
     return 1;
   } else if ((typeof aOrder === 'number') && (typeof bOrder === 'number') && (aOrder !== bOrder)) {
     return aOrder - bOrder;

@@ -8,6 +8,14 @@
 </head>
 
 <body class="">
+  <script>
+    if (!window.Glue) {
+      console.warn('Glue is not auto imported, will add it as a script');
+      let scriptEl = document.createElement('script');
+      scriptEl.setAttribute('src', 'assets/@glue42-desktop.min.js');
+      document.body.appendChild(scriptEl);
+    }
+  </script>
   <div class="app d-inline-flex">
     <div id="applicationLauncher" class="view-port vertical">
       <ul class="nav nav-tabs flex-column" column>
@@ -204,7 +212,7 @@
       html.classList.add(glue42gd.theme);
     }
   </script>
-  <script src="assets/@glue42-desktop.min.js"></script>
+  <!-- <script src="assets/@glue42-desktop.min.js"></script> -->
   <script src="assets/rxjs.umd.min.js"></script>
   <script src="js/index.js" type="module"></script>
 </body>
