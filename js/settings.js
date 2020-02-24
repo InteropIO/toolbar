@@ -1,6 +1,9 @@
 
 let defaultSettings = {
-  showHiddenApps: false
+  showHiddenApps: false,
+  showTutorial: true,
+  searchClients: true,
+  searchInstruments: true
 }
 
 let localStorageSettings;
@@ -13,12 +16,36 @@ try {
 
 let settings = Object.assign(defaultSettings, localStorageSettings);
 
+init();
+function init() {
+  setInitialSettings();
+  populateSettings();
+  trackSettingsChange();
+}
+
 function setInitialSettings() {
   settings['showHiddenApps'] = false;
-  settings['showTutorial'] = (settings['showTutorial'] === false) ? false : true
 }
-setInitialSettings();
 
+function populateSettings() {
+  Object.keys(settings).forEach(settingName => {
+    console.log(settingName, settings[settingName], typeof settings[settingName]);
+    if ((typeof settings[settingName] === 'boolean') && q(`#settings-content [setting="${settingName}"]`)) {
+      let checkbox = q(`#settings-content [setting="${settingName}"]`);
+      getSetting(settingName) ? checkbox.setAttribute('checked', true) : checkbox.removeAttribute('checked');
+    }
+  });
+
+}
+
+function trackSettingsChange() {
+  q('#settings-content ').addEventListener('change', (e) => {
+    let settingElement = e.path.find(e => e && e.getAttribute && e.getAttribute('setting'));
+    if (settingElement) {
+      setSetting(settingElement.getAttribute('setting'), e.srcElement.checked);
+    }
+  });
+}
 
 function setSetting(settingName, value) {
   console.info('set setting', settingName, value);

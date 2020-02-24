@@ -14,6 +14,7 @@ var gluePromise = new Promise(async (res, rej) => {
 });
 
 const glueAppsObs = new rxjs.BehaviorSubject([]);
+const allWorkspacesObs = new rxjs.BehaviorSubject([]);
 const layoutsObs = new rxjs.BehaviorSubject([]);
 const notificationsCountObs = new rxjs.BehaviorSubject(null);
 const themeObs = new rxjs.BehaviorSubject(null);
@@ -60,8 +61,9 @@ function trackLayouts() {
   glue.layouts.onRenamed(pushAllLayouts);
 }
 
-function pushAllLayouts() {
+async function pushAllLayouts() {
   layoutsObs.next(glue.layouts.list())
+  allWorkspacesObs.next(await glue42gd.canvas.exportLayouts());
 }
 
 async function trackNotificationCount() {
@@ -92,15 +94,16 @@ async function trackWindowMove() {
   });
 }
 
-async function startApp(appName) {
+async function startApp(appName, context) {
   await gluePromise;
   let glueApp = glue.appManager.application(appName);
   if (glueApp){
-    glueApp.start();
+    glueApp.start(context);
   } else {
     throw new Error(`Cannot find app with name "${appName}"`)
   }
 }
+
 
 async function getApp(appName) {
   await gluePromise;
@@ -130,6 +133,11 @@ async function restoreLayout(type, name) {
   } else {
     glue42gd.canvas.openWorkspace(name);
   }
+}
+
+async function openWorkspace(name, context) {
+  await gluePromise;
+  glue42gd.canvas.openWorkspace(name, {context})
 }
 
 async function saveLayout(name) {
@@ -243,10 +251,12 @@ export {
   themeObs,
   changeTheme,
   notificationEnabledObs,
+  allWorkspacesObs,
   openNotificationPanel,
   removeLayout,
   restoreLayout,
   saveLayout,
+  openWorkspace,
   registerHotkey,
   shutdown,
   resizeWindowVisibleArea,

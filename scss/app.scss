@@ -97,6 +97,7 @@ html {
         user-select: none;
         position: relative;
         display: flex;
+        flex-direction: column;
       }
 
       .nav-link {
@@ -110,6 +111,7 @@ html {
         .title-app {
           margin: 0 0.5rem;
         }
+
       }
     }
 
@@ -271,6 +273,16 @@ html {
           }
         }
       }
+    }
+  }
+
+  .nav-item[client-id], .nav-item[instrument-id] {
+    .action-menu {
+      cursor: initial;
+    }
+
+    .second-level .nav-link{
+      cursor: pointer;
     }
   }
 

@@ -2,6 +2,7 @@
 import { glueAppsObs, startApp} from './glue-related.js';
 import { favoriteApps, addFavoriteApp, removeFavoriteApp } from './favorites.js';
 import {getSetting, getSettings} from './settings.js';
+import { clearSearch, getAppIcon } from './utils.js';
 
 const searchInputObs = new rxjs.BehaviorSubject('');
 
@@ -16,7 +17,11 @@ const allApplicationsObs = glueAppsObs
   .pipe(rxFilter(apps => apps.length > 0))
   .pipe(rxDistinctUntilChanged(undefined, (apps) => {
     // distinct apps have changed by creating a "hash" containing app titles + instance ids
-    return apps.map(app => app.title + JSON.stringify(app.userProperties.appManagerOrder) + app.instances.map(i => i.id).join()).join() + JSON.stringify(getSettings());
+    return apps.map(app => app.title +
+      JSON.stringify(app.userProperties.appManagerOrder) +
+      JSON.stringify(app.userProperties.consumes) +
+      app.instances.map(i => i.id).join()).join() +
+      JSON.stringify(getSettings());
   }))
   .pipe(rxMap(allApps => allApps.filter(app => shouldAppBeVisible(app))))
   .pipe(rxMap(allApps => {
@@ -24,20 +29,10 @@ const allApplicationsObs = glueAppsObs
   }))
   .pipe(rxMap(apps => apps.sort(orderApps)));
 
-const applicationsObs = allApplicationsObs
-  .pipe(rxCombineLatest(searchInputObs))
-  .pipe(rxMap(([apps, searchInput]) => {
-    let search = searchInput.toLowerCase().trim();
-    return apps.filter(app => app.title.toLowerCase().indexOf(search) >= 0);
-  }));
-
-
-
 const runningApps = allApplicationsObs
   .pipe(rxMap((apps) => {
     return apps.filter(app => app.instances.length > 0)
   }));
-
 
 function shouldAppBeVisible(app) {
   let shouldBeVisible = true;
@@ -76,13 +71,10 @@ function handleAppClick() {
       } else {
         addFavoriteApp(appName);
       }
-    } else {
+    } else if (e.target.matches('[app-name], [app-name] *')) {
       startApp(appName);
-      if (e.ctrlKey) {
-        return;
-      } else {
-        searchInputObs.next('');
-        q('#app-search').value = '';
+      if (!e.ctrlKey) {
+        clearSearch();
       }
     }
   });
@@ -91,7 +83,7 @@ function handleAppClick() {
 function handleSearchChange() {
   q('#app-search').addEventListener('keyup', (event) => {
     searchInputObs.next(event.target.value);
-  })
+  });
 }
 
 function applicationHTMLTemplate(app, options = {}) {
@@ -129,22 +121,14 @@ function favoriteApplicationHTMLTemplate(app) {
   `;
 }
 
-function getAppIcon(app = {}) {
-  if (app.icon) {
-    return `<img src="${app.icon}" draggable="false" style="width:16px;"/>`;
-  } else {
-    return `<span class="icon-size-16">
-    <i class="icon-app" draggable="false"></i>
-  </span>`;
-  }
-}
 
 const noApplicationsHTML = `<li class="text-center pt-3">No applications</li>`;
 const noRunningAppsHTML =  `<li class="text-center pt-3">No running applications</li><li class="text-center pt-3"><button class="btn btn-secondary" menu-button-id="apps">Start application</button></li>`;
 const noFavoriteAppsHTML = `<li class="text-center pt-3">No favorite apps</li>`;
 
 export {
-  applicationsObs,
+  // applicationsObs,
+  searchInputObs,
   allApplicationsObs,
   applicationHTMLTemplate,
   favoriteApplicationHTMLTemplate,

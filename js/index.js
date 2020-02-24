@@ -1,6 +1,6 @@
 import {
-  applicationsObs,
   allApplicationsObs,
+  searchInputObs,
   applicationHTMLTemplate,
   favoriteApplicationHTMLTemplate,
   handleAppClick,
@@ -8,14 +8,23 @@ import {
   runningApps,
   noRunningAppsHTML,
   noApplicationsHTML,
-  noFavoriteAppsHTML} from './applications.js';
+  noFavoriteAppsHTML,
+
+} from './applications.js';
 import {favoriteApps, updateFavoriteApps} from './favorites.js';
 import {filteredLayouts, layoutHTMLTemplate, handleLayoutClick, handleLayoutSave, noLayoutsHTML} from './layouts.js';
 import * as glueModule from './glue-related.js';
 import * as utils from './utils.js';
 import {handleWidthChange, handleDropDownClicks} from './visible-area.js';
+import {gssPromise} from './gss.js';
+import { clientHTMLTemplate, searchClients, searchInstruments, instrumentHTMLTemplate, handleClientAndInstrumentClicks } from './clients-and-instrument-search.js';
+import { getSetting } from './settings.js';
 
-
+let {
+  map: rxMap,
+  combineLatest: rxCombineLatest,
+  distinctUntilChanged: rxDistinctUntilChanged
+} = rxjs.operators;
 
 document.addEventListener('DOMContentLoaded', () => {
   console.log('window loaded');
@@ -32,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
   handleLayoutSave();
 
   handleDropDownClicks();
+  handleClientAndInstrumentClicks();
 
   utils.handleClicks();
   utils.startTutorial();
@@ -40,17 +50,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 function printApps() {
-  applicationsObs.subscribe(apps => {
-    let newApplicationsHTML = '';
-    if (apps.length > 0) {
-      apps.forEach(app => newApplicationsHTML += applicationHTMLTemplate(app, {favoriteBtn: true}));
-      q('#applications').innerHTML = newApplicationsHTML;
-    } else {
-      q('#applications').innerHTML = noApplicationsHTML;
-    }
+  searchInputObs
+    .pipe(rxCombineLatest(allApplicationsObs))
+    .pipe(rxMap(([searchInput, apps]) => {
+      let search = searchInput.toLowerCase().trim();
+      return {
+        search,
+        filteredApps: apps.filter(app => app.title.toLowerCase().indexOf(search) >= 0)
+      };
+    }))
+    // .subscribe(([apps, clients, instruments]) => {
+    .subscribe(async ({search, filteredApps: apps}) => {
+      let newResultsHTML = '';
 
-    updateFavoriteApps();
-  });
+      if (search.trim().length > 1) {
+        if (getSetting('searchClients')) {
+          let clientsSearch = await searchClients(search);
+          clientsSearch.entities.forEach(client => {
+            newResultsHTML += clientHTMLTemplate(client);
+          });
+        }
+
+        if (getSetting('searchInstruments')) {
+          let instrumentSearch = await searchInstruments(search);
+          instrumentSearch.entities.forEach(instrument => {
+            newResultsHTML += instrumentHTMLTemplate(instrument);
+          });
+        }
+      }
+
+      apps.forEach(app => newResultsHTML += applicationHTMLTemplate(app, {favoriteBtn: true}));
+      q('#applications').innerHTML = newResultsHTML || noApplicationsHTML;
+      updateFavoriteApps();
+    });
 }
 
 function printRunningApps() {

@@ -22,6 +22,7 @@ import {
   applyOpenClasses,
   getMonitor
 } from './visible-area.js';
+import { searchInputObs } from './applications.js';
 const windowMargin = 50;
 let isVertical;
 
@@ -30,7 +31,6 @@ function handleClicks() {
   handleOrientationChange();
   handleThemeChange();
   populateAboutPage();
-  populateSettingsPage();
   handleShutdownClick();
   handleTopMenuClicks();
   handleCloseDrawerClicks();
@@ -286,8 +286,6 @@ async function handleMouseHover() {
 
     if (e.x < (viewPortWidth + margin) && e.x > margin && e.y < (viewPortHeight + margin -6) && e.y > margin) {
       console.error('fake leave');
-      debugger;
-      // return;
     }
 
     if (qa('.toggle-content:not(.hide)').length > 0 || qa('.dropdown-menu.show').length > 0) {
@@ -325,17 +323,6 @@ async function handleNotificationClick() {
   });
 }
 
-function populateSettingsPage() {
-  if (getSetting('showTutorial')) {
-    q('#settings-content .show-tutorial').setAttribute('checked', true);
-  } else {
-    q('#settings-content .show-tutorial').removeAttribute('checked');
-  }
-
-  q('#settings-content .show-tutorial').addEventListener('change', (e) => setSetting('showTutorial', e.srcElement.checked));
-
-}
-
 async function startTutorial() {
   let tutorialApp = await getApp('getting-started');
   if (!tutorialApp) {
@@ -350,6 +337,22 @@ async function startTutorial() {
       console.log('could not start Getting started app', e);
     }
   }
+}
+
+
+function getAppIcon(app = {}) {
+  if (app.icon) {
+    return `<img src="${app.icon}" draggable="false" style="width:16px;"/>`;
+  } else {
+    return `<span class="icon-size-16">
+    <i class="icon-app" draggable="false"></i>
+  </span>`;
+  }
+}
+
+function clearSearch() {
+  searchInputObs.next('');
+  q('#app-search').value = '';
 }
 
 function escapeHtml(unsafe) {
@@ -379,7 +382,6 @@ export {
   handleClicks,
   handleOrientationChange,
   handleThemeChange,
-  populateSettingsPage,
   handleShutdownClick,
   handleTopMenuClicks,
   handleCloseDrawerClicks,
@@ -388,5 +390,7 @@ export {
   handleMouseHover,
   windowMargin,
   startTutorial,
-  escapeHtml
+  clearSearch,
+  escapeHtml,
+  getAppIcon
 };

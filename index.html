@@ -85,9 +85,8 @@
           Applications
           <span class="icon-arrow-up-down close-drawer"></span>
         </h5>
-        <input class="form-control" id="app-search" autofocus placeholder="Search app...">
+        <input class="form-control" id="app-search" autofocus placeholder="Search...">
       </div>
-
       <ul id="applications" class="nav nav-tabs flex-column" >
 
       </ul>
@@ -134,9 +133,26 @@
         <form>
           <p>
             <div class="form-check mb-1 show-tutorial-check">
-              <input class="form-check-input show-tutorial" type="checkbox" value="1" id="show-tutorial">
+              <input class="form-check-input show-tutorial" type="checkbox" value="1" id="show-tutorial" setting="showTutorial">
               <label class="form-check-label" for="show-tutorial">
                 Show tutorial on startup
+              </label>
+            </div>
+          </p>
+          <p>
+            <h5 class="d-flex justify-content-between mb-2">
+              Search
+            </h5>
+            <div class="form-check ml-2 mb-1">
+              <input class="form-check-input search-clients" type="checkbox" value="1" id="search-clients"  setting="searchClients">
+              <label class="form-check-label" for="search-clients">
+                Search clients
+              </label>
+            </div>
+            <div class="form-check ml-2 mb-1">
+              <input class="form-check-input search-instruments" type="checkbox" value="1" id="search-instruments" setting="searchInstruments">
+              <label class="form-check-label" for="search-instruments">
+                Search instruments
               </label>
             </div>
           </p>
@@ -212,7 +228,7 @@
       html.classList.add(glue42gd.theme);
     }
   </script>
-  <!-- <script src="assets/@glue42-desktop.min.js"></script> -->
+  <script src="assets/tick42-gss.js"></script>
   <script src="assets/rxjs.umd.min.js"></script>
   <script src="js/index.js" type="module"></script>
 </body>

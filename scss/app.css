@@ -214,7 +214,8 @@ html {
   html .nav.nav-tabs .nav-item {
     user-select: none;
     position: relative;
-    display: flex; }
+    display: flex;
+    flex-direction: column; }
   html .nav.nav-tabs .nav-link {
     height: auto;
     border: 0;
@@ -339,6 +340,10 @@ html {
         animation: runleft 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93); }
       html .nav .show-actions:hover .layout-menu-tool div:last-of-type, html .nav .show-actions.active .layout-menu-tool div:last-of-type {
         animation: runright 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93); }
+  html .nav-item[client-id] .action-menu, html .nav-item[instrument-id] .action-menu {
+    cursor: initial; }
+  html .nav-item[client-id] .second-level .nav-link, html .nav-item[instrument-id] .second-level .nav-link {
+    cursor: pointer; }
   html .view-port {
     transition-property: width;
     transition-duration: 300ms;
