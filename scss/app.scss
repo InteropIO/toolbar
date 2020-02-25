@@ -87,6 +87,7 @@ html {
 
   .nav {
     &.nav-tabs {
+      border-bottom: none;
       li {
         white-space: nowrap;
         flex-basis: 3rem;
@@ -105,6 +106,7 @@ html {
         border: 0;
         padding-left: 14px;
         flex-grow: 1;
+        margin-right: 0;
 
         .icon-size-16,
         > img,
@@ -117,6 +119,9 @@ html {
 
     &.flex-column {
       flex-wrap: nowrap;
+      .nav-link {
+        margin-bottom: 0!important;
+      }
     }
 
     .applications-nav {
@@ -330,10 +335,6 @@ html {
     }
 
     .accordion {
-      overflow-x: hidden;
-      overflow-y: auto;
-      // @include transition(0); ??
-
       .active-app {
         position: absolute;
         left: 57px;

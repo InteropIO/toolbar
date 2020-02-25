@@ -276,6 +276,9 @@ html .text-animation {
   text-overflow: ellipsis;
   margin: 0 0.5rem;
 }
+html .nav.nav-tabs {
+  border-bottom: none;
+}
 html .nav.nav-tabs li {
   white-space: nowrap;
   flex-basis: 3rem;
@@ -292,6 +295,7 @@ html .nav.nav-tabs .nav-link {
   border: 0;
   padding-left: 14px;
   flex-grow: 1;
+  margin-right: 0;
 }
 html .nav.nav-tabs .nav-link .icon-size-16,
 html .nav.nav-tabs .nav-link > img,
@@ -300,6 +304,9 @@ html .nav.nav-tabs .nav-link .title-app {
 }
 html .nav.flex-column {
   flex-wrap: nowrap;
+}
+html .nav.flex-column .nav-link {
+  margin-bottom: 0 !important;
 }
 html .nav .applications-nav {
   position: relative;
@@ -486,10 +493,6 @@ html .view-port .view-port-header .dropdown-menu {
 }
 html .view-port .view-port-header .logo {
   min-width: 120px;
-}
-html .view-port .accordion {
-  overflow-x: hidden;
-  overflow-y: auto;
 }
 html .view-port .accordion .active-app {
   position: absolute;
@@ -820,6 +823,10 @@ html .horizontal > .nav {
 html .horizontal .dragable {
   width: 3.375rem;
 }
+html .horizontal .accordion {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
 html .horizontal.view-port .view-port-header .logo {
   min-width: initial;
   overflow: hidden;
@@ -900,10 +907,10 @@ html .horizontal .view-port-header {
 }
 html .horizontal .view-port-header .menu {
   position: absolute;
-  top: 0.375rem;
+  top: 0.875rem;
   right: 0.125rem;
   z-index: 11;
-  display: block;
+  display: flex;
 }
 html .horizontal .nav-tabs {
   height: 100%;
