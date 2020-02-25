@@ -294,6 +294,9 @@ html {
 
     .menu {
       display: none;
+      .icon-window-minimize {
+        font-size: .5rem;
+      }
 
       .dropdown-menu {
         transition: none;
