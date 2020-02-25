@@ -29,7 +29,6 @@ function setInitialSettings() {
 
 function populateSettings() {
   Object.keys(settings).forEach(settingName => {
-    console.log(settingName, settings[settingName], typeof settings[settingName]);
     if ((typeof settings[settingName] === 'boolean') && q(`#settings-content [setting="${settingName}"]`)) {
       let checkbox = q(`#settings-content [setting="${settingName}"]`);
       getSetting(settingName) ? checkbox.setAttribute('checked', true) : checkbox.removeAttribute('checked');

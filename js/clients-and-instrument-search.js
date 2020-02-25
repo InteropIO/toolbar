@@ -12,7 +12,6 @@ let instrumentWorkspacesObs = new rxjs.BehaviorSubject([]);
 init();
 async function init() {
   gss = await gssPromise;
-  console.log('gss ready');
   allApplicationsObs
     .subscribe(apps => {
       let clientApps = [];
