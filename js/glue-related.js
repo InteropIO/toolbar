@@ -215,6 +215,19 @@ async function moveMyWindow(bounds) {
   return glue.windows.my().moveResize(bounds);
 }
 
+async function minimize() {
+  await gluePromise;
+  glue.windows.my().minimize();
+}
+
+async function raiseNotification(options) {
+  await gluePromise;
+  if (glue.agm.methods().find(m => m.name === 'T42.GNS.Publish.RaiseNotification')) {
+    options.source = options.source || '';
+    glue.agm.invoke('T42.GNS.Publish.RaiseNotification', {notification: options});
+  }
+}
+
 function trackConnection() {
   glue.connection.connected(() => {
     q('.status-connected').classList.remove('d-none');
@@ -262,6 +275,8 @@ export {
   resizeWindowVisibleArea,
   openWindow,
   moveMyWindow,
+  minimize,
+  raiseNotification,
   getMonitorInfo,
   getWindowBounds
 };

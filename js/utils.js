@@ -12,7 +12,9 @@ import {
   getMonitorInfo,
   getWindowBounds,
   notificationEnabledObs,
-  moveMyWindow
+  moveMyWindow,
+  minimize,
+  raiseNotification
 } from './glue-related.js';
 import {
   setSetting,
@@ -34,6 +36,7 @@ function handleClicks() {
   handleShutdownClick();
   handleTopMenuClicks();
   handleCloseDrawerClicks();
+  handleMinimizeClick();
   handleMouseHover();
   handleModalClose();
 }
@@ -227,6 +230,19 @@ function handleCloseDrawerClicks() {
   });
 }
 
+function handleMinimizeClick() {
+  document.addEventListener('click', (e) => {
+    if (e.target.matches('.minimize, .minimize *')) {
+      console.log('minimize');
+      minimize();
+      raiseNotification({
+        title: 'Glue42 Desktop minimized.',
+        severity: 'Low'
+      });
+    }
+  });
+}
+
 function toggleTopButtonState(id) {
   qa(`[menu-button-id="${id}"] .chavron`).forEach(chavron => chavron.classList.toggle('chavron-rotate'));
   qa(`[menu-button-id="${id}"] > a`).forEach(chavron => chavron.classList.toggle('active'));
@@ -295,7 +311,7 @@ async function handleMouseHover() {
     let viewPortBounds = q('.view-port').getBoundingClientRect();
     let outOfMonitor = isOutOfMonitor(viewPortBounds);
     if (await outOfMonitor) {
-      console.warn('window is positioned outside of monitor. will not shrink')
+      console.warn('window is positioned outside of monitor. will not shrink');
       return;
     }
 
