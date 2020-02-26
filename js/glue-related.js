@@ -1,16 +1,18 @@
 console.time('Glue')
 var gluePromise = new Promise(async (res, rej) => {
-  let glue = await Glue({
-    appManager: 'full',
-    layouts: 'full',
-    activities: 'trackAll',
-    channels: false,
-    metrics: false
-  });
+  window.addEventListener('load', async () => {
+    let glue = await Glue({
+      appManager: 'full',
+      layouts: 'full',
+      activities: 'trackAll',
+      channels: false,
+      metrics: false
+    });
 
-  console.timeEnd('Glue')
-  window.glue = glue;
-  res(glue);
+    console.timeEnd('Glue')
+    window.glue = glue;
+    res(glue);
+  })
 });
 
 const glueAppsObs = new rxjs.BehaviorSubject([]);
