@@ -235,10 +235,6 @@ function handleMinimizeClick() {
     if (e.target.matches('.minimize, .minimize *')) {
       console.log('minimize');
       minimize();
-      raiseNotification({
-        title: 'Glue42 Desktop minimized.',
-        severity: 'Low'
-      });
     }
   });
 }
