@@ -222,6 +222,11 @@ async function minimize() {
   glue.windows.my().minimize();
 }
 
+async function isMinimizeAllowed() {
+  await gluePromise;
+  return glue.windows.my().windowStyleAttributes.allowMinimize;
+}
+
 async function raiseNotification(options) {
   await gluePromise;
   if (glue.agm.methods().find(m => m.name === 'T42.GNS.Publish.RaiseNotification')) {
@@ -278,6 +283,7 @@ export {
   openWindow,
   moveMyWindow,
   minimize,
+  isMinimizeAllowed,
   raiseNotification,
   getMonitorInfo,
   getWindowBounds

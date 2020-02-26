@@ -14,7 +14,8 @@ import {
   notificationEnabledObs,
   moveMyWindow,
   minimize,
-  raiseNotification
+  raiseNotification,
+  isMinimizeAllowed
 } from './glue-related.js';
 import {
   setSetting,
@@ -237,6 +238,8 @@ function handleMinimizeClick() {
       minimize();
     }
   });
+
+  isMinimizeAllowed().then(allowed => allowed && q('.minimize').classList.remove('d-none'));
 }
 
 function toggleTopButtonState(id) {
