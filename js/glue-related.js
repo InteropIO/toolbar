@@ -36,6 +36,7 @@ const glueInfo = {
 gluePromise.then((glue) => {
   trackApplications();
   trackLayouts();
+  trackWorkspaces();
   trackThemeChanges();
   trackWindowMove();
   trackConnection();
@@ -63,8 +64,16 @@ function trackLayouts() {
   glue.layouts.onRenamed(pushAllLayouts);
 }
 
-async function pushAllLayouts() {
+function pushAllLayouts() {
   layoutsObs.next(glue.layouts.list())
+}
+
+function trackWorkspaces() {
+  pushWorkspaces();
+  glue42gd.canvas.subscribeLayoutEvents(pushWorkspaces);
+}
+
+async function pushWorkspaces() {
   allWorkspacesObs.next(await glue42gd.canvas.exportLayouts());
 }
 
