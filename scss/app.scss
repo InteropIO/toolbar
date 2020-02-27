@@ -30,10 +30,8 @@ html {
 
   .dragable {
     position: absolute;
-    // width: 9rem;
     height: 3rem;
     width: 140px;
-    -webkit-app-region: drag;
     left: 0;
   }
 
