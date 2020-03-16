@@ -35,14 +35,6 @@ function init() {
   window.appBoundsObs = appBoundsObs;
 
   glueModule.boundsObs
-    .pipe(rxjs.operators.skip(2))
-    .subscribe(bounds => {
-      console.debug('bounds changed', bounds);
-      q('.view-port').classList.add('expand');
-      q('.app').classList.add('expand-wrapper');
-    });
-
-  glueModule.boundsObs
   .pipe(rxjs.operators.filter(bounds => bounds))
   .pipe(rxjs.operators.combineLatest(appBoundsObs))
   .subscribe(([windowBounds, appBounds]) => {
@@ -55,7 +47,10 @@ function init() {
       width: launcherBounds.width,
     };
     let currentMonitor = getMonitor(viewPortBounds, monitors);
+
     if (!currentMonitor) {
+      q('.view-port').classList.add('expand');
+      q('.app').classList.add('expand-wrapper');
       return;
     }
 
@@ -179,6 +174,10 @@ function getMonitor(bounds, displays) {
           totalOverlap: overlap
       };
   }).sort((a, b) => b.totalOverlap - a.totalOverlap);
+
+  if (!monitorsSortedByOverlap.find(m => m.totalOverlap > 0)) {
+    return false;
+  }
 
   return monitorsSortedByOverlap[0].monitor;
 }

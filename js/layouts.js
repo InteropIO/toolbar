@@ -1,4 +1,4 @@
-import {layoutsObs, removeLayout, restoreLayout, saveLayout} from './glue-related.js';
+import {layoutsObs, removeLayout, restoreLayout, saveLayout, defaultLayout, activeLayout} from './glue-related.js';
 import { escapeHtml } from './utils.js';
 
 let filteredLayouts;
@@ -17,15 +17,20 @@ function init() {
       return event.srcElement.value.toString().toLowerCase().trim();
     }))
     .pipe(rxjs.operators.distinctUntilChanged())
-    .pipe(rxjs.operators.startWith(''))
+    .pipe(rxjs.operators.startWith(''));
 
   filteredLayouts = allLayouts
-    .pipe(rxjs.operators.combineLatest(layoutSearch))
-    .pipe(rxjs.operators.map(([layouts, search]) => {
+    .pipe(rxjs.operators.combineLatest(layoutSearch, defaultLayout, activeLayout))
+    .pipe(rxjs.operators.map(([layouts, search, defaultLayout, activeLayout]) => {
+
       return layouts.filter(layout => {
         return layout.name.toLowerCase().includes(search);
-      })
-    }))
+      }).map(layout => {
+        layout.isDefault = layout.name === defaultLayout.name && layout.type === defaultLayout.type;
+        layout.isActive = layout.name === activeLayout.name && layout.type === activeLayout.type;
+        return layout;
+      });
+    }));
 }
 
 function handleLayoutClick() {
@@ -67,7 +72,7 @@ function saveCurrentLayout() {
 
 function layoutHTMLTemplate(layout) {
   return `
-  <li class="nav-item" layout-name="${layout.name}" layout-type="${layout.type}">
+  <li class="nav-item ${layout.isActive ? 'app-active' : ''}" layout-name="${layout.name}" layout-type="${layout.type}">
     <div class="nav-link action-menu">
       <i class="icon-03-context-viewer ml-2 mr-4"></i>
       <span>${layout.name}${layout.type === 'Swimlane' ? ' (Swimlane)': ''}</span>

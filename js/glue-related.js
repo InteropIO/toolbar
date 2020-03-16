@@ -18,6 +18,8 @@ var gluePromise = new Promise(async (res, rej) => {
 const glueAppsObs = new rxjs.BehaviorSubject([]);
 const allWorkspacesObs = new rxjs.BehaviorSubject([]);
 const layoutsObs = new rxjs.BehaviorSubject([]);
+const defaultLayout = new rxjs.BehaviorSubject({});
+const activeLayout = new rxjs.BehaviorSubject({});
 const notificationsCountObs = new rxjs.BehaviorSubject(null);
 const themeObs = new rxjs.BehaviorSubject(null);
 const boundsObs = new rxjs.BehaviorSubject(null);
@@ -66,6 +68,8 @@ function trackLayouts() {
 
 function pushAllLayouts() {
   layoutsObs.next(glue.layouts.list())
+  getDefaultLayout();
+  getActiveLayout();
 }
 
 function trackWorkspaces() {
@@ -154,6 +158,24 @@ async function openWorkspace(name, context) {
 async function saveLayout(name) {
   await gluePromise;
   glue.layouts.save({name});
+}
+
+async function getDefaultLayout() {
+  await gluePromise;
+  defaultLayout.next((await glue.agm.invoke('T42.ACS.GetDefaultLayout')).returned);
+}
+
+
+// 	glue.layouts.getCurrentLayout()                                  // returns latest restored layout (use this on startup)
+// 	glue.layouts.onRestored(console.log)                        // event for restored layout (use this to change the current indicator, don’t forget that someone can restore outside app manager)
+// 	glue.layouts.setDefaultGlobal(“test”)                        // updates the default global layout
+// 	glue.layouts.clearDefaultGlobal()                                // clears the default global layout
+// 	glue.layouts.getDefaultGlobal()                                    // returns the default global layout
+
+
+async function getActiveLayout() {
+  await gluePromise;
+  activeLayout.next({name: 'test123', type: 'Global'});
 }
 
 async function trackNotificationsEnabled() {
@@ -285,6 +307,8 @@ export {
   removeLayout,
   restoreLayout,
   saveLayout,
+  defaultLayout,
+  activeLayout,
   openWorkspace,
   registerHotkey,
   shutdown,

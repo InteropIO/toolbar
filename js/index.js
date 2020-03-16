@@ -100,6 +100,7 @@ function printRunningApps() {
 function printLayouts() {
   filteredLayouts.subscribe(layouts => {
     let newLayoutsHTML = '';
+    console.log(layouts);
     if (layouts.length > 0) {
       layouts.forEach(layout =>  newLayoutsHTML += layoutHTMLTemplate(layout));
       q('#layout-load>ul').innerHTML = newLayoutsHTML;
