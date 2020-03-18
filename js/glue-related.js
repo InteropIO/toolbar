@@ -36,6 +36,7 @@ const glueInfo = {
 };
 
 gluePromise.then((glue) => {
+  checkWindowSize();
   trackApplications();
   trackLayouts();
   trackWorkspaces();
@@ -44,6 +45,16 @@ gluePromise.then((glue) => {
   trackConnection();
   trackNotificationCount();
 })
+
+async function checkWindowSize() {
+  await gluePromise;
+  let currentBounds = glue.windows.my().bounds;
+  if (currentBounds.width !== 940 || currentBounds.height !== 800) {
+    console.debug('Start bounds are wrong, correcting to 940x800')
+    glue.windows.my().moveResize({width: 940, height: 800});
+  }
+
+}
 
 function trackApplications() {
   pushAllApps();
