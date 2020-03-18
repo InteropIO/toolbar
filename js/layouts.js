@@ -1,4 +1,4 @@
-import {layoutsObs, removeLayout, restoreLayout, saveLayout, defaultLayout, activeLayout} from './glue-related.js';
+import {layoutsObs, removeLayout, restoreLayout, saveLayout, defaultLayout, activeLayout, clearDefaultLayout, setDefaultGlobal} from './glue-related.js';
 import { escapeHtml } from './utils.js';
 
 let filteredLayouts;
@@ -22,7 +22,7 @@ function init() {
   filteredLayouts = allLayouts
     .pipe(rxjs.operators.combineLatest(layoutSearch, defaultLayout, activeLayout))
     .pipe(rxjs.operators.map(([layouts, search, defaultLayout, activeLayout]) => {
-
+      defaultLayout = defaultLayout || {};
       return layouts.filter(layout => {
         return layout.name.toLowerCase().includes(search);
       }).map(layout => {
@@ -45,6 +45,13 @@ function handleLayoutClick() {
     if (e.target.matches('.delete-layout, .delete-layout *')) {
       layoutElement.classList.add('show-actions');
       layoutElement.classList.add('active');
+    } else if(e.target.matches('.set-default, .set-default *')) {
+      const isDefault = layoutElement.classList.contains('default-layout');
+      if (isDefault) {
+        clearDefaultLayout();
+      } else {
+        setDefaultGlobal(name);
+      }
     } else if(e.target.matches('.layout-menu-tool, .layout-menu-tool *')) {
       if (e.target.matches('.layout-menu-tool .delete')) {
         removeLayout(type, name);
@@ -72,12 +79,15 @@ function saveCurrentLayout() {
 
 function layoutHTMLTemplate(layout) {
   return `
-  <li class="nav-item ${layout.isActive ? 'app-active' : ''}" layout-name="${layout.name}" layout-type="${layout.type}">
+  <li class="nav-item ${layout.isActive ? 'app-active' : ''} ${layout.isDefault ? 'default-layout' : ''}" layout-name="${layout.name}" layout-type="${layout.type}">
     <div class="nav-link action-menu">
       <i class="icon-03-context-viewer ml-2 mr-4"></i>
       <span>${layout.name}${layout.type === 'Swimlane' ? ' (Swimlane)': ''}</span>
-      <div class="action-menu-tool delete-layout">
-        <button class="btn btn-icon secondary" id="menu-tool-4">
+      <div class="action-menu-tool">` +
+        (layout.type ==='Global' ? `<button class="btn btn-icon secondary set-default ${layout.isDefault ? 'text-primary' : ''}" id="menu-tool-4">
+          <i class="icon-asterisk"></i>
+        </button>` : '')
+        + `<button class="btn btn-icon secondary delete-layout" id="menu-tool-4">
           <i class="icon-trash-empty"></i>
         </button>
       </div>

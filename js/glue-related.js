@@ -58,18 +58,21 @@ function pushAllApps() {
   glueAppsObs.next(glue.appManager.applications());
 }
 
-function trackLayouts() {
+async function trackLayouts() {
   pushAllLayouts();
   glue.layouts.onAdded(pushAllLayouts);
   glue.layouts.onRemoved(pushAllLayouts);
   glue.layouts.onChanged(pushAllLayouts);
   glue.layouts.onRenamed(pushAllLayouts);
+  activeLayout.next(await glue.layouts.getCurrentLayout());
+  glue.layouts.onRestored(layout => {
+    activeLayout.next(layout)
+  })
+  getDefaultLayout();
 }
 
 function pushAllLayouts() {
   layoutsObs.next(glue.layouts.list())
-  getDefaultLayout();
-  getActiveLayout();
 }
 
 function trackWorkspaces() {
@@ -162,20 +165,19 @@ async function saveLayout(name) {
 
 async function getDefaultLayout() {
   await gluePromise;
-  defaultLayout.next((await glue.agm.invoke('T42.ACS.GetDefaultLayout')).returned);
+  defaultLayout.next(await glue.layouts.getDefaultGlobal());
 }
 
-
-// 	glue.layouts.getCurrentLayout()                                  // returns latest restored layout (use this on startup)
-// 	glue.layouts.onRestored(console.log)                        // event for restored layout (use this to change the current indicator, don’t forget that someone can restore outside app manager)
-// 	glue.layouts.setDefaultGlobal(“test”)                        // updates the default global layout
-// 	glue.layouts.clearDefaultGlobal()                                // clears the default global layout
-// 	glue.layouts.getDefaultGlobal()                                    // returns the default global layout
-
-
-async function getActiveLayout() {
+async function setDefaultGlobal(name) {
   await gluePromise;
-  activeLayout.next({name: 'test123', type: 'Global'});
+  await glue.layouts.setDefaultGlobal(name);
+  getDefaultLayout();
+}
+
+async function clearDefaultLayout() {
+  await gluePromise;
+  await glue.layouts.clearDefaultGlobal();
+  getDefaultLayout();
 }
 
 async function trackNotificationsEnabled() {
@@ -307,6 +309,8 @@ export {
   removeLayout,
   restoreLayout,
   saveLayout,
+  clearDefaultLayout,
+  setDefaultGlobal,
   defaultLayout,
   activeLayout,
   openWorkspace,
