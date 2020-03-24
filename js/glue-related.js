@@ -10,7 +10,9 @@ var gluePromise = new Promise(async (res, rej) => {
     });
 
     console.timeEnd('Glue')
-    window.glue = glue;
+    if (!window.glue) {
+      window.glue = glue;
+    }
     res(glue);
   })
 });
