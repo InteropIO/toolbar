@@ -75,9 +75,9 @@ async function trackLayouts() {
   glue.layouts.onRemoved(pushAllLayouts);
   glue.layouts.onChanged(pushAllLayouts);
   glue.layouts.onRenamed(pushAllLayouts);
-  activeLayout.next(await glue.layouts.getCurrentLayout());
+  activeLayout.next((await glue.layouts.getCurrentLayout()) || {});
   glue.layouts.onRestored(layout => {
-    activeLayout.next(layout)
+    activeLayout.next(layout || {})
   })
   getDefaultLayout();
 }
