@@ -36,37 +36,37 @@ function init() {
 
   glueModule.boundsObs
   .pipe(rxjs.operators.filter(bounds => bounds))
-  .pipe(rxjs.operators.combineLatest(appBoundsObs))
-  .subscribe(([windowBounds, appBounds]) => {
-    const monitors = glueModule.getMonitorInfo();
-    const launcherBounds = q('.view-port').getBoundingClientRect();
-    let viewPortBounds = {
-      left: windowBounds.left + launcherBounds.left,
-      top: windowBounds.top + launcherBounds.top,
-      height: launcherBounds.height,
-      width: launcherBounds.width,
-    };
-    let currentMonitor = getMonitor(viewPortBounds, monitors);
+  .subscribe((windowBounds) => {
+    glueModule.getMonitorInfo()
+      .then(monitors => {
+        const launcherBounds = q('.view-port').getBoundingClientRect();
+        let viewPortBounds = {
+          left: windowBounds.left + launcherBounds.left,
+          top: windowBounds.top + launcherBounds.top,
+          height: launcherBounds.height,
+          width: launcherBounds.width,
+        };
+        let currentMonitor = getMonitor(viewPortBounds, monitors);
+        if (!currentMonitor) {
+          q('.view-port').classList.add('expand');
+          q('.app').classList.add('expand-wrapper');
+          return;
+        }
 
-    if (!currentMonitor) {
-      q('.view-port').classList.add('expand');
-      q('.app').classList.add('expand-wrapper');
-      return;
-    }
-
-    if(!q('.view-port').classList.contains('horizontal')) {
-      let shouldOpenLeft = (viewPortBounds.left + 500) > (currentMonitor.left + currentMonitor.width);
-      openLeftObs.next(shouldOpenLeft);
-      if (shouldOpenLeft){
-        openTopObs.next(false);
-      }
-    } else {
-      let shouldOpenTop = (viewPortBounds.top + viewPortBounds.height + 300) > (currentMonitor.workingAreaTop + currentMonitor.workingAreaHeight);
-      openTopObs.next(shouldOpenTop);
-      if (shouldOpenTop) {
-        openLeftObs.next(false);
-      }
-    }
+        if (!q('.view-port').classList.contains('horizontal')) {
+          let shouldOpenLeft = (viewPortBounds.left + 500) > (currentMonitor.left + currentMonitor.width);
+          openLeftObs.next(shouldOpenLeft);
+          if (shouldOpenLeft) {
+            openTopObs.next(false);
+          }
+        } else {
+          let shouldOpenTop = (viewPortBounds.top + viewPortBounds.height + 300) > (currentMonitor.workingAreaTop + currentMonitor.workingAreaHeight);
+          openTopObs.next(shouldOpenTop);
+          if (shouldOpenTop) {
+            openLeftObs.next(false);
+          }
+        }
+      })
   });
 
   appBoundsObs

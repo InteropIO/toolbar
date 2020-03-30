@@ -293,8 +293,19 @@ function trackConnection() {
   });
 }
 
-function getMonitorInfo() {
-  return glue42gd.monitors;
+async function getMonitorInfo() {
+  await gluePromise;
+
+  return (await glue.displays.all()).map(display => ({
+    left: display.bounds.x,
+    top: display.bounds.y,
+    width: display.bounds.width,
+    height: display.bounds.height,
+    workingAreaWidth: display.workArea.width,
+    workingAreaHeight: display.workArea.height,
+    workingAreaLeft: display.workArea.x,
+    workingAreaTop: display.workArea.y,
+  }));
 }
 
 async function glueVersion() {

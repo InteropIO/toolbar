@@ -114,7 +114,7 @@ async function handleOrientationChange() {
 
 async function ensureWindowHasSpace(isVertical) {
   console.log('check near edge');
-  let monitorInfo = getMonitorInfo();
+  let monitorInfo = await getMonitorInfo();
   let windowBounds = await getWindowBounds();
   let visibleAreaBounds = q('.view-port').getBoundingClientRect();
   let realBounds = {
@@ -380,7 +380,7 @@ function escapeHtml(unsafe) {
 }
 
 async function isOutOfMonitor(viewportBounds) {
-  let monitors = getMonitorInfo();
+  let monitors = await getMonitorInfo();
   let windowBounds = await getWindowBounds();
   let leftMostPoint = monitors.reduce((acc, curr) => curr.workingAreaLeft < acc ? curr.workingAreaLeft : acc, 0);
   let rightMostPoint = monitors.reduce((acc, curr) => curr.workingAreaLeft + curr.workingAreaWidth > acc ? curr.workingAreaLeft + curr.workingAreaWidth : acc, 0);
