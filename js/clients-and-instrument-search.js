@@ -101,7 +101,6 @@ function handleClientAndInstrumentClicks() {
 
 async function searchClients(search) {
   return new Promise(async (res, rej) => {
-    await gssPromise;
     if (getCurrentEntityTypes().includes('Client')) {
       let searchQuery =  gss.createQuery('Client');
       searchQuery.onData(res);
@@ -123,7 +122,6 @@ async function searchClients(search) {
 async function searchInstruments(search) {
   return new Promise(async (res, rej) => {
     if (getCurrentEntityTypes().includes('Instrument')) {
-      await gssPromise;
       let searchQuery =  gss.createQuery('Instrument');
       searchQuery.onData(res);
       searchQuery.search(
