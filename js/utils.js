@@ -209,11 +209,7 @@ function handleTopMenuClicks() {
       let appName = topElement.getAttribute('app-name');
       let isActive =  topElement.classList.contains('app-active');
 
-      if (isActive) {
-        focusApp(appName);
-      } else {
-        startApp(appName);
-      }
+      startApp(appName);
     }
   });
 }
