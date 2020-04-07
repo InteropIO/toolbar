@@ -211,6 +211,9 @@ html .app.switching-orientation * {
 html .app.switching-orientation *::before, html .app.switching-orientation *::after {
   transition: none !important;
 }
+html .app *:focus {
+  outline: none;
+}
 html img,
 html a {
   user-select: none;

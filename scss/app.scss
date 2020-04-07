@@ -1,6 +1,6 @@
 @import "mixin";
 @import "color";
-
+@import "folders";
 html {
   height: 100%;
 
@@ -18,6 +18,9 @@ html {
       &::after {
         transition: none !important;
       }
+    }
+    *:focus {
+      outline: none;
     }
   }
 

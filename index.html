@@ -28,7 +28,8 @@
             <button class="btn btn-icon btn-icon-action minimize d-none" type="button" id="dropdownMenuButton">
               <i class="icon-window-minimize"></i>
             </button>
-            <button class="btn btn-icon btn-icon-action" type="button" id="dropdownMenuButton" dropdown-button-id="top-menu">
+            <button class="btn btn-icon btn-icon-action" type="button" id="dropdownMenuButton"
+              dropdown-button-id="top-menu">
               <i class="icon-ellipsis-vert"></i>
             </button>
             <div class="dropdown-menu" id="menu-top" dropdown-id="top-menu">
@@ -90,7 +91,26 @@
         </h5>
         <input class="form-control" id="app-search" autofocus placeholder="Search...">
       </div>
-      <ul id="applications" class="nav nav-tabs flex-column" >
+      <ul id="Folders" class="nav nav-tabs flex-column" style="height:20rem">
+
+        <li class="nav-item" app-name="getting-started" tabindex="1">
+          <div class="nav-link action-menu">
+            <span class="icon-size-16">
+              <i class="icon-folder-empty" draggable="false"></i>
+            </span>
+
+            <span class="title-app">Folder level 1</span>
+            <div class="action-menu-tool">
+              <span class="icon-size-16">
+                <i class="icon-angle-down"></i>
+              </span>
+            </div>
+          </div>
+        </li>
+
+      </ul>
+
+      <ul id="applications" class="nav nav-tabs flex-column">
 
       </ul>
     </div>
@@ -136,7 +156,8 @@
         <form>
           <p>
             <div class="form-check mb-1 show-tutorial-check">
-              <input class="form-check-input show-tutorial" type="checkbox" value="1" id="show-tutorial" setting="showTutorial">
+              <input class="form-check-input show-tutorial" type="checkbox" value="1" id="show-tutorial"
+                setting="showTutorial">
               <label class="form-check-label" for="show-tutorial">
                 Show tutorial on startup
               </label>
@@ -147,13 +168,15 @@
               Search
             </h5>
             <div class="form-check ml-2 mb-1">
-              <input class="form-check-input search-clients" type="checkbox" value="1" id="search-clients"  setting="searchClients">
+              <input class="form-check-input search-clients" type="checkbox" value="1" id="search-clients"
+                setting="searchClients">
               <label class="form-check-label" for="search-clients">
                 Search clients
               </label>
             </div>
             <div class="form-check ml-2 mb-1">
-              <input class="form-check-input search-instruments" type="checkbox" value="1" id="search-instruments" setting="searchInstruments">
+              <input class="form-check-input search-instruments" type="checkbox" value="1" id="search-instruments"
+                setting="searchInstruments">
               <label class="form-check-label" for="search-instruments">
                 Search instruments
               </label>
@@ -162,7 +185,7 @@
           <label>Select theme</label>
           <ul class="select theme-select">
             <li class="select_items">
-              <input class="select_expand" type="radio" name="theme" id="opener"/>
+              <input class="select_expand" type="radio" name="theme" id="opener" />
               <label class="select_closeLabel" for="close"></label>
 
               <ul class="select_options">
