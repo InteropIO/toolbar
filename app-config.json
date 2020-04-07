@@ -1,0 +1,43 @@
+{
+    "title": "AppManager-Embedded",
+    "type": "window",
+    "name": "embeddedShell-dev",
+    "shell": true,
+    "details": {
+        "autoInjectAPI": {
+            "enabled": true,
+            "autoInit": {
+                "appManager": "full",
+                "layouts": "full"
+            }
+        },
+        "url": "http://localhost:8080",
+        "mode": "html",
+        "top": 5,
+        "left": 5,
+        "isSticky": true,
+        "width": 940,
+        "height": 800,
+        "allowClose": false,
+        "allowMaximize": false,
+        "allowMinimize": true,
+        "allowCollapse": false,
+        "sizeAreaThickness": "0, 0, 0, 0",
+        "moveAreaThickness": "0, 398, 0, 0",
+        "moveAreaTopMargin": "350, 350, 520, 0",
+        "moveAreaPassThroughMouseHover": true,
+        "backgroundColor": "#21252d",
+        "processAffinity": "util",
+        "visibleAreas": [
+            {
+                "top": 350,
+                "left": 350,
+                "width": 60,
+                "height": 400
+            }
+        ]
+    },
+    "autoStart": true,
+    "allowMultiple": false,
+    "ignoreSavedLayout": false
+}
