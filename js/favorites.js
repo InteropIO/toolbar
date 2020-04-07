@@ -14,7 +14,7 @@ function init() {
 
 function updateFavoriteApps() {
   let currentFavoriteApps = favoriteApps.value;
-  document.querySelectorAll('#applications>li').forEach(appElement => {
+  document.querySelectorAll('#search-results>li').forEach(appElement => {
     let appName = appElement.getAttribute('app-name');
     if (currentFavoriteApps.includes(appName)) {
       appElement.classList.add('fav-app');
@@ -24,7 +24,7 @@ function updateFavoriteApps() {
   })
   // favoriteApps
   // .subscribe(([favApps, allApps]) => {
-  //   document.querySelectorAll('#applications>li').forEach(appElement => {
+  //   document.querySelectorAll('#search-results>li').forEach(appElement => {
   //     // console.log(appElement);
   //     // let appName = appElement.getAttribute('app-name');
   //   })

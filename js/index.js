@@ -80,7 +80,7 @@ function printApps() {
       }
 
       apps.forEach(app => newResultsHTML += applicationHTMLTemplate(app, {favoriteBtn: true}));
-      q('#applications').innerHTML = newResultsHTML || noApplicationsHTML;
+      q('#search-results').innerHTML = newResultsHTML || noApplicationsHTML;
       updateFavoriteApps();
     });
 }

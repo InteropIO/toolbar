@@ -59,7 +59,7 @@ function orderApps(a, b) {
 }
 
 function handleAppClick() {
-  q('#applications').addEventListener('click', (e) => {
+  q('#search-results').addEventListener('click', (e) => {
     let appName = e.path.reduce((name, el) => {
       return (el.getAttribute && el.getAttribute('app-name')) ? el.getAttribute('app-name') : name;
     }, '');
