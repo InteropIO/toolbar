@@ -195,6 +195,22 @@ html.light .horizontal .layout-menu-tool div:first-child {
   border-bottom: 1px solid rgba(0, 0, 0, 0.075);
 }
 
+.nav li.folder {
+  flex-grow: 1;
+  overflow: hidden;
+  transition: all 300ms ease-in-out;
+}
+.nav li.folder.folder-open {
+  flex-grow: 0;
+  flex-basis: auto;
+}
+.nav li.folder .nav-link.action-menu {
+  min-height: 3rem;
+}
+.nav li.folder .folder-content {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
 html {
   height: 100%;
 }
@@ -303,16 +319,6 @@ html .nav.nav-tabs .nav-link .icon-size-16,
 html .nav.nav-tabs .nav-link > img,
 html .nav.nav-tabs .nav-link .title-app {
   margin: 0 0.5rem;
-}
-html .nav.nav-tabs .nav-item.folder.folder-closed {
-  height: 48px !important;
-}
-html .nav.nav-tabs .nav-item.folder.folder-closed .folder-content {
-  display: none;
-}
-html .nav.nav-tabs .nav-item.folder .folder-content {
-  border-top: 1px solid grey;
-  border-bottom: 1px solid grey;
 }
 html .nav.flex-column {
   flex-wrap: nowrap;

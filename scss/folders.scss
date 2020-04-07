@@ -1,0 +1,16 @@
+.nav li.folder  {
+    flex-grow: 1;
+    overflow: hidden;
+    transition: all 300ms ease-in-out;
+
+    &.folder-open {
+        flex-grow: 0;
+        flex-basis: auto;
+    }
+    .nav-link.action-menu {
+        min-height: 3rem;
+    }
+    .folder-content {
+        background-color: rgba(255,255,255,.02);
+    }
+}
