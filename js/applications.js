@@ -76,6 +76,11 @@ function handleAppClick() {
       if (!e.ctrlKey) {
         clearSearch();
       }
+
+    } else if (e.target.matches('[folder-name], [folder-name] *')) {
+      console.log('folder clicked');
+      let folderElement = e.path.find(e => e.getAttribute('folder-name'));
+      folderElement.classList.toggle('folder-closed');
     }
   });
 }
@@ -84,6 +89,43 @@ function handleSearchChange() {
   q('#app-search').addEventListener('keyup', (event) => {
     searchInputObs.next(event.target.value);
   });
+}
+
+function getItemHTMLTemplate(item) {
+  if (item.type === 'folder') {
+    return applicationFolderHTMLTemplate(item);
+  } else if (item.type === 'app') {
+    return applicationHTMLTemplate(item.item);
+  }
+}
+
+function applicationFolderHTMLTemplate(folder) {
+  // console.log(folder);
+  let folderName = folder.item;
+  let folderContents = '';
+  folder.children.forEach(child => {
+    folderContents += getItemHTMLTemplate(child);
+  });
+  let folderHeight = 48 + (folder.children.length * 48);
+
+  return `<li class="nav-item folder folder-closed" folder-name="${folderName}" style="height:${folderHeight}px">
+          <div class="nav-link action-menu">
+            <span class="icon-size-16">
+              <i class="icon-folder-empty" draggable="false"></i>
+              <i class="icon-folder-full" draggable="false"></i>
+            </span>
+
+            <span class="title-folder">${folderName}</span>
+            <div class="action-menu-tool">
+              <span class="icon-size-16">
+                <i class="icon-angle-down"></i>
+              </span>
+            </div>
+          </div>
+          <ul class="flex-column nav folder-content">
+          ${folderContents}
+          </ul>
+        </li>`
 }
 
 function applicationHTMLTemplate(app, options = {}) {
@@ -105,6 +147,7 @@ function applicationHTMLTemplate(app, options = {}) {
       `</div>
     </li>`;
 }
+
 
 function favoriteApplicationHTMLTemplate(app) {
 
@@ -130,7 +173,9 @@ export {
   // applicationsObs,
   searchInputObs,
   allApplicationsObs,
+  getItemHTMLTemplate,
   applicationHTMLTemplate,
+  applicationFolderHTMLTemplate,
   favoriteApplicationHTMLTemplate,
   handleAppClick,
   handleSearchChange,

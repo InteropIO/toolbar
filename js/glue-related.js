@@ -235,7 +235,7 @@ async function resizeWindowVisibleArea(visibleAreas) {
     options: {
       areas: visibleAreas
     }
-  })
+  }).then(() => {}).catch(() => {}) // TODO
 }
 
 async function changeTheme(themeName) {

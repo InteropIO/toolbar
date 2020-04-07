@@ -9,6 +9,8 @@ import {
   noRunningAppsHTML,
   noApplicationsHTML,
   noFavoriteAppsHTML,
+  applicationFolderHTMLTemplate,
+  getItemHTMLTemplate,
 
 } from './applications.js';
 import {favoriteApps, updateFavoriteApps} from './favorites.js';
@@ -79,10 +81,68 @@ function printApps() {
         }
       }
 
-      apps.forEach(app => newResultsHTML += applicationHTMLTemplate(app, {favoriteBtn: true}));
+      newResultsHTML += buildAppHTML(apps)
+      // apps.forEach(app => newResultsHTML += applicationHTMLTemplate(app, {favoriteBtn: true}));
       q('#search-results').innerHTML = newResultsHTML || noApplicationsHTML;
       updateFavoriteApps();
     });
+}
+
+function buildAppHTML(apps) {
+  let structuredItems = buildFolderStructure(apps);
+  let html = '';
+
+  structuredItems.forEach(item => {
+    html += getItemHTMLTemplate(item)
+  });
+
+  return html;
+}
+
+function buildFolderStructure(apps) {
+  let results = [];
+
+  apps.forEach(app => {
+    let appFolder = app.userProperties.folder || '';
+    let appFolderSplit = appFolder.split('/').filter(f => f);
+
+    let currentFolder = [];
+    appFolderSplit
+      .forEach(folder => {
+        currentFolder.push(folder)
+        createFolder(currentFolder, results);
+      })
+
+    insertInFolder(appFolderSplit, app, results)
+  })
+
+  return results;
+}
+
+function createFolder(folderPath, root) {
+  if (folderPath.length < 1) {
+    return;
+  }
+
+  let nextFolderName = folderPath[0]
+  let folderExists = root.find(item => item.type === 'folder' && item.item === nextFolderName)
+  if (!folderExists) {
+    root.push({ type: 'folder', item: nextFolderName, children: [] })
+  }
+  createFolder(folderPath.slice(1), root.find(item => item.type === 'folder' && item.item === nextFolderName).children)
+}
+
+function insertInFolder(appFolder, app, results) {
+  let currentFolder = results;
+  appFolder = appFolder || [];
+  appFolder.forEach(folder => {
+    currentFolder = currentFolder.find(item => item.type === 'folder' && item.item === folder);
+    if (currentFolder) {
+      currentFolder = currentFolder.children;
+    }
+  })
+
+  currentFolder.push({ type: 'app', item: app });
 }
 
 function printRunningApps() {
