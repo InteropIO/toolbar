@@ -92,10 +92,11 @@
         <input class="form-control" id="app-search" autofocus placeholder="Search...">
       </div>
       <ul id="Folders" class="nav nav-tabs flex-column" style="height:40rem">
-        <li class="nav-item" app-name="getting-started" tabindex="1">
+        <li class="nav-item folder-close" app-name="getting-started" tabindex="1">
           <div class="nav-link action-menu">
             <span class="icon-size-16">
               <i class="icon-folder-empty" draggable="false"></i>
+              <i class="icon-folder-full" draggable="false"></i>
             </span>
 
             <span class="title-app">Folder level 1</span>
@@ -105,57 +106,60 @@
               </span>
             </div>
           </div>
+          <ul class="flex-column nav folder-content">
+            <li class="nav-item" app-name="getting-started" tabindex="1">
+            <div class="nav-link action-menu">
+              <span class="icon-size-16">
+          <i class="icon-app" draggable="false"></i>
+        </span>
+              
+              <span class="title-app">Getting Started</span>
+              <div class="action-menu-tool">
+                <button class="btn btn-icon secondary add-favorite">
+                <i class="icon-star-empty-1" draggable="false"></i>
+                <i class="icon-star-full" draggable="false"></i>
+                </button>
+              </div></div>
+          </li>
+          <li class="nav-item" app-name="clientlist" tabindex="1">
+            <div class="nav-link action-menu">
+              <img src="http://localhost:22080/resources/icons/client-list.ico" draggable="false" style="width:16px;">
+              
+              <span class="title-app">Client List</span>
+              <div class="action-menu-tool">
+                <button class="btn btn-icon secondary add-favorite">
+                <i class="icon-star-empty-1" draggable="false"></i>
+                <i class="icon-star-full" draggable="false"></i>
+                </button>
+              </div></div>
+          </li>
+          <li class="nav-item" app-name="clientlist" tabindex="1">
+            <div class="nav-link action-menu">
+              <img src="http://localhost:22080/resources/icons/client-list.ico" draggable="false" style="width:16px;">
+              
+              <span class="title-app">Client List</span>
+              <div class="action-menu-tool">
+                <button class="btn btn-icon secondary add-favorite">
+                <i class="icon-star-empty-1" draggable="false"></i>
+                <i class="icon-star-full" draggable="false"></i>
+                </button>
+              </div></div>
+          </li>
+          <li class="nav-item" app-name="clientlist" tabindex="1">
+            <div class="nav-link action-menu">
+              <img src="http://localhost:22080/resources/icons/client-list.ico" draggable="false" style="width:16px;">
+              
+              <span class="title-app">Client List</span>
+              <div class="action-menu-tool">
+                <button class="btn btn-icon secondary add-favorite">
+                <i class="icon-star-empty-1" draggable="false"></i>
+                <i class="icon-star-full" draggable="false"></i>
+                </button>
+              </div></div>
+          </li>
+        </ul>
         </li>
-        <li class="nav-item" app-name="getting-started" tabindex="1">
-          <div class="nav-link action-menu">
-            <span class="icon-size-16">
-        <i class="icon-app" draggable="false"></i>
-      </span>
-            
-            <span class="title-app">Getting Started</span>
-            <div class="action-menu-tool">
-              <button class="btn btn-icon secondary add-favorite">
-              <i class="icon-star-empty-1" draggable="false"></i>
-              <i class="icon-star-full" draggable="false"></i>
-              </button>
-            </div></div>
-        </li>
-        <li class="nav-item" app-name="clientlist" tabindex="1">
-          <div class="nav-link action-menu">
-            <img src="http://localhost:22080/resources/icons/client-list.ico" draggable="false" style="width:16px;">
-            
-            <span class="title-app">Client List</span>
-            <div class="action-menu-tool">
-              <button class="btn btn-icon secondary add-favorite">
-              <i class="icon-star-empty-1" draggable="false"></i>
-              <i class="icon-star-full" draggable="false"></i>
-              </button>
-            </div></div>
-        </li>
-        <li class="nav-item" app-name="clientlist" tabindex="1">
-          <div class="nav-link action-menu">
-            <img src="http://localhost:22080/resources/icons/client-list.ico" draggable="false" style="width:16px;">
-            
-            <span class="title-app">Client List</span>
-            <div class="action-menu-tool">
-              <button class="btn btn-icon secondary add-favorite">
-              <i class="icon-star-empty-1" draggable="false"></i>
-              <i class="icon-star-full" draggable="false"></i>
-              </button>
-            </div></div>
-        </li>
-        <li class="nav-item" app-name="clientlist" tabindex="1">
-          <div class="nav-link action-menu">
-            <img src="http://localhost:22080/resources/icons/client-list.ico" draggable="false" style="width:16px;">
-            
-            <span class="title-app">Client List</span>
-            <div class="action-menu-tool">
-              <button class="btn btn-icon secondary add-favorite">
-              <i class="icon-star-empty-1" draggable="false"></i>
-              <i class="icon-star-full" draggable="false"></i>
-              </button>
-            </div></div>
-        </li>
+        
 
       </ul>
 
