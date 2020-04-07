@@ -112,17 +112,17 @@ html {
 
         .icon-size-16,
         > img,
-        .title-app {
+        .title-app,
+        .title-folder {
           margin: 0 0.5rem;
         }
-
       }
     }
 
     &.flex-column {
       flex-wrap: nowrap;
       .nav-link {
-        margin-bottom: 0!important;
+        margin-bottom: 0 !important;
       }
     }
 
@@ -141,8 +141,6 @@ html {
         }
       }
     }
-
-
 
     .favorite {
       white-space: nowrap;
@@ -188,10 +186,7 @@ html {
     .action-menu-tool {
       @include transition("opacity", 0);
       opacity: 0.65;
-      position: absolute;
-      right: 0.5rem;
-      top: 0.5rem;
-      z-index: 2;
+      margin-left: auto;
 
       .dropdown-menu {
         left: auto;
@@ -202,8 +197,6 @@ html {
 
     .action-menu {
       cursor: pointer;
-      // height: 3rem;
-      padding-right: 1.5rem;
       overflow: hidden;
 
       .dropdown-menu {
@@ -218,6 +211,11 @@ html {
         text-overflow: ellipsis;
         overflow: hidden;
         @include transition("opacity", 0);
+      }
+      .add-favorite {
+        padding: 0;
+        height: 2rem;
+        width: 2rem;
       }
 
       &:hover {
@@ -283,12 +281,13 @@ html {
     }
   }
 
-  .nav-item[client-id], .nav-item[instrument-id] {
+  .nav-item[client-id],
+  .nav-item[instrument-id] {
     .action-menu {
       cursor: initial;
     }
 
-    .second-level .nav-link{
+    .second-level .nav-link {
       cursor: pointer;
     }
   }
@@ -302,7 +301,7 @@ html {
     .menu {
       display: none;
       .icon-window-minimize {
-        font-size: .5rem;
+        font-size: 0.5rem;
       }
 
       .dropdown-menu {

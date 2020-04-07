@@ -106,6 +106,9 @@ html.dark .horizontal .layout-menu-tool {
 html.dark .horizontal .layout-menu-tool div:first-child {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
+html.dark .folder-content {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.05) 100%);
+}
 
 html.light .view-port {
   border: 1px solid rgba(219, 222, 230, 0.8);
@@ -194,12 +197,22 @@ html.light .horizontal .layout-menu-tool {
 html.light .horizontal .layout-menu-tool div:first-child {
   border-bottom: 1px solid rgba(0, 0, 0, 0.075);
 }
+html.light .folder-content {
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.05) 100%);
+}
 
 .nav li.folder {
   flex-grow: 1;
   overflow: hidden;
 }
-.nav li.folder .action-menu .action-menu-tool {
+.nav li.folder .action-menu .icon-size-16 {
+  width: 1rem;
+}
+.nav li.folder .action-menu .action-menu-tool .icon-angle-down {
+  margin-right: 0.188rem;
+}
+.nav li.folder .action-menu .action-menu-tool .icon-angle-down::before {
+  display: inline-block;
   transform: rotate(-90deg);
 }
 .nav li.folder .action-menu .icon-folder-open-empty {
@@ -208,17 +221,11 @@ html.light .horizontal .layout-menu-tool div:first-child {
 .nav li.folder .action-menu:hover span:last-of-type {
   padding-right: 0;
 }
-.nav li.folder .title-folder + .action-menu-tool {
-  top: 1rem;
-  right: 1rem;
-}
 .nav li.folder .nav-link.action-menu {
   min-height: 3rem;
 }
 .nav li.folder .folder-content {
-  background-color: rgba(255, 255, 255, 0.1);
   margin-left: 5px;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.05) 100%);
 }
 .nav li.folder.folder-open {
   flex-grow: 0;
@@ -230,8 +237,8 @@ html.light .horizontal .layout-menu-tool div:first-child {
 .nav li.folder.folder-open > .action-menu .icon-folder-empty {
   display: none;
 }
-.nav li.folder.folder-open > .action-menu .action-menu-tool {
-  transform: rotate(0deg);
+.nav li.folder.folder-open > .action-menu .action-menu-tool .icon-angle-down::before {
+  transform: rotate(0);
 }
 
 html {
@@ -340,7 +347,8 @@ html .nav.nav-tabs .nav-link {
 }
 html .nav.nav-tabs .nav-link .icon-size-16,
 html .nav.nav-tabs .nav-link > img,
-html .nav.nav-tabs .nav-link .title-app {
+html .nav.nav-tabs .nav-link .title-app,
+html .nav.nav-tabs .nav-link .title-folder {
   margin: 0 0.5rem;
 }
 html .nav.flex-column {
@@ -404,10 +412,7 @@ html .nav .action-menu-tool {
   transition-timing-function: cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 0ms;
   opacity: 0.65;
-  position: absolute;
-  right: 0.5rem;
-  top: 0.5rem;
-  z-index: 2;
+  margin-left: auto;
 }
 html .nav .action-menu-tool .dropdown-menu {
   left: auto;
@@ -416,7 +421,6 @@ html .nav .action-menu-tool .dropdown-menu {
 }
 html .nav .action-menu {
   cursor: pointer;
-  padding-right: 1.5rem;
   overflow: hidden;
 }
 html .nav .action-menu .dropdown-menu {
@@ -435,6 +439,11 @@ html .nav .action-menu span:last-of-type {
   transition-duration: 300ms;
   transition-timing-function: cubic-bezier(0.34, 0.03, 0.13, 0.93);
   transition-delay: 0ms;
+}
+html .nav .action-menu .add-favorite {
+  padding: 0;
+  height: 2rem;
+  width: 2rem;
 }
 html .nav .action-menu:hover .action-menu-tool {
   opacity: 1;
@@ -487,10 +496,12 @@ html .nav .show-actions:hover .layout-menu-tool div:first-of-type, html .nav .sh
 html .nav .show-actions:hover .layout-menu-tool div:last-of-type, html .nav .show-actions.active .layout-menu-tool div:last-of-type {
   animation: runright 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
 }
-html .nav-item[client-id] .action-menu, html .nav-item[instrument-id] .action-menu {
+html .nav-item[client-id] .action-menu,
+html .nav-item[instrument-id] .action-menu {
   cursor: initial;
 }
-html .nav-item[client-id] .second-level .nav-link, html .nav-item[instrument-id] .second-level .nav-link {
+html .nav-item[client-id] .second-level .nav-link,
+html .nav-item[instrument-id] .second-level .nav-link {
   cursor: pointer;
 }
 html .view-port {
