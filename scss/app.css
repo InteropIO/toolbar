@@ -304,6 +304,16 @@ html .nav.nav-tabs .nav-link > img,
 html .nav.nav-tabs .nav-link .title-app {
   margin: 0 0.5rem;
 }
+html .nav.nav-tabs .nav-item.folder.folder-closed {
+  height: 48px !important;
+}
+html .nav.nav-tabs .nav-item.folder.folder-closed .folder-content {
+  display: none;
+}
+html .nav.nav-tabs .nav-item.folder .folder-content {
+  border-top: 1px solid grey;
+  border-bottom: 1px solid grey;
+}
 html .nav.flex-column {
   flex-wrap: nowrap;
 }
