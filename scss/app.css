@@ -200,9 +200,17 @@ html.light .horizontal .layout-menu-tool div:first-child {
   overflow: hidden;
   transition: all 300ms ease-in-out;
 }
-.nav li.folder.folder-open {
-  flex-grow: 0;
-  flex-basis: auto;
+.nav li.folder .action-menu:hover span:last-of-type {
+  padding-right: 0;
+}
+.nav li.folder .action-menu:hover > .action-menu-tool {
+  transform: rotate(180deg);
+  margin-top: -2px;
+}
+.nav li.folder .title-folder + .action-menu-tool {
+  top: 1rem;
+  right: 1rem;
+  transition: all 300ms ease-in-out;
 }
 .nav li.folder .nav-link.action-menu {
   min-height: 3rem;
@@ -211,6 +219,14 @@ html.light .horizontal .layout-menu-tool div:first-child {
   background-color: rgba(255, 255, 255, 0.1);
   margin-left: 5px;
   background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.05) 100%);
+}
+.nav li.folder.folder-open {
+  flex-grow: 0;
+  flex-basis: auto;
+}
+.nav li.folder.folder-open .action-menu-tool {
+  transform: rotate(180deg);
+  margin-top: -2px;
 }
 
 html {
