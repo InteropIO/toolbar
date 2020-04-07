@@ -81,19 +81,19 @@ function printApps() {
         }
       }
 
-      newResultsHTML += buildAppHTML(apps)
+      newResultsHTML += buildAppHTML(apps, { favoriteBtn: true })
       // apps.forEach(app => newResultsHTML += applicationHTMLTemplate(app, {favoriteBtn: true}));
       q('#search-results').innerHTML = newResultsHTML || noApplicationsHTML;
       updateFavoriteApps();
     });
 }
 
-function buildAppHTML(apps) {
+function buildAppHTML(apps, options) {
   let structuredItems = buildFolderStructure(apps);
   let html = '';
 
   structuredItems.forEach(item => {
-    html += getItemHTMLTemplate(item)
+    html += getItemHTMLTemplate(item, options)
   });
 
   return html;

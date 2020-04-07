@@ -91,20 +91,28 @@ function handleSearchChange() {
   });
 }
 
-function getItemHTMLTemplate(item) {
+function getItemHTMLTemplate(item, options) {
   if (item.type === 'folder') {
-    return applicationFolderHTMLTemplate(item);
+    return applicationFolderHTMLTemplate(item, options);
   } else if (item.type === 'app') {
-    return applicationHTMLTemplate(item.item);
+    return applicationHTMLTemplate(item.item, options);
   }
 }
 
-function applicationFolderHTMLTemplate(folder) {
+function applicationFolderHTMLTemplate(folder, options) {
   // console.log(folder);
   let folderName = folder.item;
   let folderContents = '';
-  folder.children.forEach(child => {
-    folderContents += getItemHTMLTemplate(child);
+  folder.children
+  .sort((a, b) => {
+    if (a.type !== b.type) {
+      return a.type === 'folder' ? -1 : 1;
+    } else {
+      return 0;
+    }
+  })
+  .forEach(child => {
+    folderContents += getItemHTMLTemplate(child, options);
   });
   let folderHeight = 48 + (folder.children.length * 48);
 

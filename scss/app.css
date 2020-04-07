@@ -208,7 +208,9 @@ html.light .horizontal .layout-menu-tool div:first-child {
   min-height: 3rem;
 }
 .nav li.folder .folder-content {
-  background-color: rgba(255, 255, 255, 0.02);
+  background-color: rgba(255, 255, 255, 0.1);
+  margin-left: 5px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.05) 100%);
 }
 
 html {
