@@ -20,6 +20,7 @@ const allApplicationsObs = glueAppsObs
     return apps.map(app => app.title +
       JSON.stringify(app.userProperties.appManagerOrder) +
       JSON.stringify(app.userProperties.consumes) +
+      JSON.stringify(app.userProperties.folder) +
       app.instances.map(i => i.id).join()).join() +
       JSON.stringify(getSettings());
   }))
@@ -120,7 +121,7 @@ function applicationFolderHTMLTemplate(folder, options) {
           <div class="nav-link action-menu">
             <span class="icon-size-16">
               <i class="icon-folder-empty" draggable="false"></i>
-              <i class="icon-folder-full" draggable="false"></i>
+              <i class="icon-folder-open-empty" draggable="false"></i>
             </span>
 
             <span class="title-folder">${folderName}</span>

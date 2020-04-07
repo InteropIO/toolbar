@@ -1,26 +1,34 @@
 .nav li.folder {
     flex-grow: 1;
     overflow: hidden;
-    transition: all 300ms ease-in-out;
-    
+    // transition: all 300ms ease-in-out;
+
     .action-menu {
+        .action-menu-tool {
+            transform: rotate(-90deg);
+            // transform: rotate(0deg);
+            // opacity: 0;
+            // transform: rotate(0deg);
+        }
+
+        .icon-folder-open-empty {
+            display: none;
+        }
+
         &:hover {
             span:last-of-type {
-            padding-right: 0;
-            }
-            > .action-menu-tool {
-                
-                transform: rotate(180deg);
-                margin-top: -2px;
+                padding-right: 0;
             }
         }
     }
-    .title-folder + .action-menu-tool {
+
+    .title-folder+.action-menu-tool {
         top: 1rem;
         right: 1rem;
-        transition: all 300ms ease-in-out;
-        
+        // transition: all 300ms ease-in-out;
+
     }
+
     .nav-link.action-menu {
         min-height: 3rem;
     }
@@ -34,10 +42,25 @@
     &.folder-open {
         flex-grow: 0;
         flex-basis: auto;
-        .action-menu-tool {
-                
-            transform: rotate(180deg);
-            margin-top: -2px;
+
+        &>.action-menu {
+            .icon-folder-open-empty {
+                display: block;
+            }
+
+            .icon-folder-empty {
+                display: none;
+            }
+
+            .action-menu-tool {
+                transform: rotate(0deg);
+                // transform: rotate(180deg);
+                // opacity: 1;
+                // transform: rotate(180deg);
+                // margin-top: -2px;
+            }
         }
+
+
     }
 }
