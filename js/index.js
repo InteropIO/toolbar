@@ -81,7 +81,7 @@ function printApps() {
         }
       }
 
-      newResultsHTML += buildAppHTML(apps, { favoriteBtn: true })
+      newResultsHTML += buildAppHTML(apps, { favoriteBtn: true, hasSearch: search.trim().length > 1 })
       // apps.forEach(app => newResultsHTML += applicationHTMLTemplate(app, {favoriteBtn: true}));
       q('#search-results').innerHTML = newResultsHTML || noApplicationsHTML;
       updateFavoriteApps();

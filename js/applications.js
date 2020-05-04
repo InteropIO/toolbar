@@ -76,7 +76,6 @@ function handleAppClick() {
       }
 
     } else if (e.target.matches('[folder-name], [folder-name] *')) {
-      console.log('folder clicked');
       let folderElement = e.path.find(e => e.getAttribute('folder-name'));
       folderElement.classList.toggle('folder-open');
     }
@@ -114,7 +113,7 @@ function applicationFolderHTMLTemplate(folder, options) {
   });
   let folderHeight = 48 + (folder.children.length * 48);
 
-  return `<li class="nav-item folder" folder-name="${folderName}" >
+  return `<li class="nav-item folder ${options.hasSearch ? 'folder-open': ''}" folder-name="${folderName}" >
           <div class="nav-link action-menu">
             <span class="icon-size-16">
               <i class="icon-folder-empty" draggable="false"></i>
