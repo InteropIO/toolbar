@@ -605,10 +605,10 @@ html .modal.fade.show {
 html .active-app {
   margin-left: -14px;
 }
-html #search-results .nav-item.fav-app i.icon-star-empty-1 {
+html [app-name].nav-item.fav-app i.icon-star-empty-1 {
   display: none;
 }
-html #search-results .nav-item:not(.fav-app) i.icon-star-full {
+html [app-name].nav-item:not(.fav-app) i.icon-star-full {
   display: none;
 }
 html .select {

@@ -14,7 +14,7 @@ function init() {
 
 function updateFavoriteApps() {
   let currentFavoriteApps = favoriteApps.value;
-  document.querySelectorAll('#search-results>li').forEach(appElement => {
+  document.querySelectorAll('[app-name]').forEach(appElement => {
     let appName = appElement.getAttribute('app-name');
     if (currentFavoriteApps.includes(appName)) {
       appElement.classList.add('fav-app');

@@ -402,14 +402,14 @@ html {
     margin-left: -14px;
   }
 
-  #search-results {
-    .nav-item.fav-app {
+  [app-name] {
+    &.nav-item.fav-app {
       i.icon-star-empty-1 {
         display: none;
       }
     }
 
-    .nav-item:not(.fav-app) {
+    &.nav-item:not(.fav-app) {
       i.icon-star-full {
         display: none;
       }

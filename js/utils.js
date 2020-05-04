@@ -1,21 +1,21 @@
 import {
-  shutdown,
-  gluePromise,
-  startApp,
-  focusApp,
-  getApp,
-  themeObs,
-  changeTheme,
-  refreshApps,
-  openNotificationPanel,
-  glueVersion,
-  getMonitorInfo,
-  getWindowBounds,
-  notificationEnabledObs,
-  moveMyWindow,
-  minimize,
-  raiseNotification,
-  isMinimizeAllowed
+shutdown,
+gluePromise,
+startApp,
+focusApp,
+getApp,
+themeObs,
+changeTheme,
+refreshApps,
+openNotificationPanel,
+glueVersion,
+getMonitorInfo,
+getWindowBounds,
+notificationEnabledObs,
+moveMyWindow,
+minimize,
+raiseNotification,
+isMinimizeAllowed
 } from './glue-related.js';
 import {
   setSetting,
@@ -28,6 +28,13 @@ import {
 import { searchInputObs } from './applications.js';
 const windowMargin = 50;
 let isVertical;
+
+let arrowKeysObs = rxjs.fromEvent(document, 'keydown')
+  .pipe(rxjs.operators.filter(e => {
+    return e.key === 'ArrowUp' || e.key === 'ArrowDown';
+  }))
+  .pipe(rxjs.operators.map(e => e.key.slice(5)))
+  .subscribe(console.warn)
 
 function handleClicks() {
   handleNotificationClick();
@@ -385,7 +392,6 @@ async function isOutOfMonitor(viewportBounds) {
 
   return (visibleAreaLeft < leftMostPoint) || (visibleAreaRight > rightMostPoint);
 }
-
 
 
 

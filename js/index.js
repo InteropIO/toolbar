@@ -92,7 +92,15 @@ function buildAppHTML(apps, options) {
   let structuredItems = buildFolderStructure(apps);
   let html = '';
 
-  structuredItems.forEach(item => {
+  structuredItems
+  .sort((a, b) => {
+    if (a.type !== b.type) {
+      return a.type === 'folder' ? -1 : (b.type === 'folder' ? 1 : 0);
+    }
+
+    return 0;
+  })
+  .forEach(item => {
     html += getItemHTMLTemplate(item, options)
   });
 
