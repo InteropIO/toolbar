@@ -3,7 +3,8 @@ let defaultSettings = {
   showHiddenApps: false,
   showTutorial: true,
   searchClients: true,
-  searchInstruments: true
+  searchInstruments: true,
+  saveDefaultLayout: false
 }
 
 let localStorageSettings;

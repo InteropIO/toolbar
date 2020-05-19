@@ -1,5 +1,6 @@
 import {layoutsObs, removeLayout, restoreLayout, saveLayout, defaultLayout, activeLayout, clearDefaultLayout, setDefaultGlobal} from './glue-related.js';
 import { escapeHtml } from './utils.js';
+import { getSetting } from './settings.js';
 
 let filteredLayouts;
 
@@ -84,7 +85,7 @@ function layoutHTMLTemplate(layout) {
       <i class="icon-03-context-viewer ml-2 mr-4"></i>
       <span>${layout.name}${layout.type === 'Swimlane' ? ' (Swimlane)': ''}</span>
       <div class="action-menu-tool">` +
-        (layout.type ==='Global' ? `<button class="btn btn-icon secondary set-default ${layout.isDefault ? 'text-primary' : ''}" id="menu-tool-4">
+    ((layout.type === 'Global' && !getSetting('saveDefaultLayout')) ? `<button class="btn btn-icon secondary set-default ${layout.isDefault ? 'text-primary' : ''}" id="menu-tool-4">
           <i class="icon-asterisk"></i>
         </button>` : '')
         + `<button class="btn btn-icon secondary delete-layout" id="menu-tool-4">

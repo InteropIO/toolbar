@@ -129,7 +129,10 @@ async function startApp(appName, context) {
   await gluePromise;
   let glueApp = glue.appManager.application(appName);
   if (glueApp){
-    glueApp.start(context);
+    glueApp.start(context).then(() => {}).catch(e => {
+      console.warn('Failed to start app');
+      console.warn(e);
+    })
   } else {
     throw new Error(`Cannot find app with name "${appName}"`)
   }
@@ -173,7 +176,7 @@ async function openWorkspace(name, context) {
 
 async function saveLayout(name) {
   await gluePromise;
-  glue.layouts.save({name});
+  return glue.layouts.save({name});
 }
 
 async function getDefaultLayout() {
