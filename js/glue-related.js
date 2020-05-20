@@ -1,3 +1,5 @@
+import { getSetting } from "./settings.js";
+
 console.time('Glue')
 var gluePromise = new Promise(async (res, rej) => {
   window.addEventListener('load', async () => {
@@ -226,7 +228,9 @@ async function registerHotkey() {
 
 async function shutdown() {
   await gluePromise;
-  glue.appManager.exit();
+  glue.appManager.exit({
+    autoSave: getSetting('saveDefaultLayout')
+  });
 }
 
 async function resizeWindowVisibleArea(visibleAreas) {

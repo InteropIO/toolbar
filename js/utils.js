@@ -163,14 +163,6 @@ function populateAboutPage() {
 
 function handleShutdownClick() {
   q('#shutdown').addEventListener('click', () => {
-    console.log(getSetting('saveDefaultLayout'));
-    if (getSetting('saveDefaultLayout')) {
-      saveLayout('Default')
-      .then(layout => {
-        setDefaultGlobal('Default');
-      })
-    }
-
     shutdown();
   });
 }
