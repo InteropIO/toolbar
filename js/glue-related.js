@@ -115,7 +115,7 @@ async function trackNotificationCount() {
 }
 
 function trackThemeChanges() {
-  glue.contexts.subscribe('Connect.Themes', (themeObj) => {
+  glue.contexts.subscribe('T42.Themes', (themeObj) => {
     themeObs.next(themeObj);
   })
 }
@@ -246,7 +246,7 @@ async function resizeWindowVisibleArea(visibleAreas) {
 }
 
 async function changeTheme(themeName) {
-  glue.contexts.update('Connect.Themes', {selected: themeName})
+  glue.contexts.update('T42.Themes', {selected: themeName})
 }
 
 async function openWindow(name, url, options) {
