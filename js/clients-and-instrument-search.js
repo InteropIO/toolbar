@@ -42,7 +42,15 @@ async function init() {
         let workspaceApps = [];
         workspace.canvas.lanes.forEach(lane => {
           lane.items.forEach(tabGroup => {
-            workspaceApps = workspaceApps.concat(tabGroup.items.map(item => item.name));
+            let items = [];
+            if (tabGroup.type === 'tab') {
+              items = tabGroup.items;
+            } else if (tabGroup.type === 'canvas') {
+              let tabs = Array.concat.apply(null, tabGroup.canvas.lanes.map(lane => lane.items))
+              items = Array.concat.apply(null, tabs.map(tab => tab.items));
+            }
+
+            workspaceApps = workspaceApps.concat(items.map(item => item.name));
           });
         });
 
