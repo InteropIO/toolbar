@@ -55,6 +55,7 @@ async function init() {
         });
 
         if (clientAppsObs.value.find(app => workspaceApps.includes(app.name))) {
+          // console.log(workspace);
           clientWorkspaces.push(workspace.name);
         }
 

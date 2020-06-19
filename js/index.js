@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
   utils.handleClicks();
   utils.startTutorial();
   glueModule.registerHotkey();
+  // utils.openDrawer('apps');
 });
 
 

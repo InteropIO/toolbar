@@ -65,12 +65,12 @@ function handleThemeChange() {
         q('html').classList.remove(theme.name);
       });
 
-      q('html').classList.add(themeObj.selected);
+      q('html').classList.add(themeObj.selected.name);
 
       let allThemesHtml = ``;
       themeObj.all.forEach(theme => {
         allThemesHtml += `<li class="select_option">
-          <input class="select_input" type="radio" name="theme" id="theme-${theme.name}" theme-name="${theme.name}" ${theme.name === themeObj.selected ? 'checked' : ''}/>
+          <input class="select_input" type="radio" name="theme" id="theme-${theme.name}" theme-name="${theme.name}" ${theme.name === themeObj.selected.name ? 'checked' : ''}/>
           <label class="select_label" for="theme-${theme.name}">${theme.displayName}</label></li>`;
       });
 
@@ -395,6 +395,13 @@ async function isOutOfMonitor(viewportBounds) {
   return (visibleAreaLeft < leftMostPoint) || (visibleAreaRight > rightMostPoint);
 }
 
+function openDrawer(drawerId) {
+  let menuButton = q(`[menu-button-id=${drawerId}]`);
+  let hoverEvent = new MouseEvent('mouseenter', {view: window,bubbles: true});
+  menuButton.dispatchEvent(hoverEvent);
+  menuButton.click();
+}
+
 
 
 export {
@@ -411,5 +418,6 @@ export {
   startTutorial,
   clearSearch,
   escapeHtml,
-  getAppIcon
+  getAppIcon,
+  openDrawer
 };

@@ -8,7 +8,8 @@ var gluePromise = new Promise(async (res, rej) => {
       layouts: 'full',
       activities: 'trackAll',
       channels: false,
-      metrics: false
+      metrics: false,
+      contexts: true
     });
 
     console.timeEnd('Glue')
@@ -87,16 +88,24 @@ async function trackLayouts() {
 }
 
 function pushAllLayouts() {
-  layoutsObs.next(glue.layouts.list())
+  layoutsObs.next(glue.layouts.list());
+  pushWorkspaces();
 }
 
 function trackWorkspaces() {
   pushWorkspaces();
-  glue42gd.canvas.subscribeLayoutEvents(pushWorkspaces);
+  // glue42gd.canvas.subscribeLayoutEvents(pushWorkspaces);
 }
 
 async function pushWorkspaces() {
-  allWorkspacesObs.next(await glue42gd.canvas.exportLayouts());
+  const workspaces = glue.layouts.list()
+    .filter(layout => layout.type === 'Swimlane')
+    .map(workspace => {
+      const canvasWorkspace = workspace.components.find(component => component.type === 'swimlane').state;
+      return {name: workspace.name, ...canvasWorkspace}
+    });
+
+  allWorkspacesObs.next(workspaces);
 }
 
 async function trackNotificationCount() {
@@ -114,10 +123,14 @@ async function trackNotificationCount() {
   })
 }
 
-function trackThemeChanges() {
-  glue.contexts.subscribe('T42.Themes', (themeObj) => {
-    themeObs.next(themeObj);
-  })
+async function trackThemeChanges() {
+  await glue.themes.ready();
+  glue.themes.onChanged(async (selected) => {
+    themeObs.next({
+      all: await glue.themes.list(),
+      selected
+    })
+  });
 }
 
 async function trackWindowMove() {
@@ -246,7 +259,7 @@ async function resizeWindowVisibleArea(visibleAreas) {
 }
 
 async function changeTheme(themeName) {
-  glue.contexts.update('T42.Themes', {selected: themeName})
+  glue.themes.select(themeName)
 }
 
 async function openWindow(name, url, options) {
