@@ -80,7 +80,7 @@ function saveCurrentLayout() {
 
 function layoutHTMLTemplate(layout) {
   return `
-  <li class="nav-item ${layout.isActive ? 'app-active' : ''} ${layout.isDefault ? 'default-layout' : ''}" layout-name="${layout.name}" layout-type="${layout.type}">
+  <li class="nav-item ${layout.isActive ? 'app-active' : ''} ${layout.isDefault ? 'default-layout' : ''}" layout-name="${escapeHtml(layout.name)}" layout-type="${layout.type}">
     <div class="nav-link action-menu">
       <i class="icon-03-context-viewer ml-2 mr-4"></i>
       <span>${layout.name}${layout.type === 'Swimlane' ? ' (Swimlane)': ''}</span>
