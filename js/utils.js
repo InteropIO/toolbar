@@ -362,7 +362,11 @@ async function startTutorial() {
 
 function getAppIcon(app = {}) {
   if (app.icon) {
-    return `<img src="${app.icon}" draggable="false" style="width:16px;"/>`;
+    let icon = app.icon;
+    if (!icon.includes('://')) {
+      icon = 'data:image/png;base64, ' + icon;
+    }
+    return `<img src="${icon}" draggable="false" style="width:16px;"/>`;
   } else {
     return `<span class="icon-size-16">
     <i class="icon-app" draggable="false"></i>
