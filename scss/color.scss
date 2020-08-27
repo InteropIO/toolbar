@@ -171,7 +171,7 @@ html.light {
       &.active,
       &:hover {
         img {
-          filter: grayscale(100%) brightness(0);
+          filter: none;
         }
       }
     }
