@@ -137,14 +137,14 @@
         </h5>
         <form>
           <p>
-            <div class="form-check mb-1 show-tutorial-check">
+            <div class="form-check show-tutorial-check ml-2">
               <input class="form-check-input show-tutorial" type="checkbox" value="1" id="show-tutorial"
                 setting="showTutorial">
               <label class="form-check-label" for="show-tutorial">
                 Show tutorial on startup
               </label>
             </div>
-            <div class="form-check mb-1 save-default-layout-check" title="If this option is turned on, you won't be able to specify default layouts">
+            <div class="form-check save-default-layout-check ml-2" title="If this option is turned on, you won't be able to specify default layouts">
               <input class="form-check-input save-default-layout" type="checkbox" value="1" id="save-default-layout"
                 setting="saveDefaultLayout">
               <label class="form-check-label" for="save-default-layout">
@@ -156,14 +156,14 @@
             <h5 class="d-flex justify-content-between mb-2">
               Search
             </h5>
-            <div class="form-check ml-2 mb-1">
+            <div class="form-check ml-2">
               <input class="form-check-input search-clients" type="checkbox" value="1" id="search-clients"
                 setting="searchClients">
               <label class="form-check-label" for="search-clients">
                 Search clients
               </label>
             </div>
-            <div class="form-check ml-2 mb-1">
+            <div class="form-check ml-2">
               <input class="form-check-input search-instruments" type="checkbox" value="1" id="search-instruments"
                 setting="searchInstruments">
               <label class="form-check-label" for="search-instruments">
@@ -171,7 +171,7 @@
               </label>
             </div>
           </p>
-          <label>Select theme</label>
+          <h5>Select theme</h5>
           <ul class="select theme-select">
             <li class="select_items">
               <input class="select_expand" type="radio" name="theme" id="opener" />
@@ -184,6 +184,11 @@
               <label class="select_expandLabel" for="opener"></label>
             </li>
           </ul>
+          <h5>Select style</h5>
+          <div class="btn-group mb-2">
+            <button type="button" class="btn btn-primary active">Vertical</button>
+            <button type="button" class="btn btn-secondary">Horizontal</button>
+        </div>
         </form>
       </div>
     </div>

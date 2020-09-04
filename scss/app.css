@@ -27,6 +27,7 @@ html.dark .toggle-content {
   border-top: 1px solid rgba(255, 255, 255, 0.075);
   border-bottom: 1px solid rgba(255, 255, 255, 0.075);
   border-right: 1px solid rgba(255, 255, 255, 0.075);
+  border-left-color: rgba(255, 255, 255, 0.075);
 }
 html.dark .toggle-content .close-drawer {
   color: #bbb;
@@ -80,7 +81,7 @@ html.dark .nav .nav-link img {
   filter: grayscale(100%) brightness(1);
 }
 html.dark .nav .nav-link.active img, html.dark .nav .nav-link:hover img {
-  filter: grayscale(100%) brightness(1.3);
+  filter: none;
 }
 html.dark .select:hover {
   background-color: #252525;
@@ -118,6 +119,7 @@ html.light .toggle-content {
   border-top: 1px solid rgba(219, 222, 230, 0.8);
   border-bottom: 1px solid rgba(219, 222, 230, 0.8);
   border-right: 1px solid rgba(219, 222, 230, 0.8);
+  border-left-color: rgba(219, 222, 230, 0.8);
 }
 html.light .toggle-content .close-drawer {
   color: #757575;
@@ -170,7 +172,7 @@ html.light .nav .nav-link img {
   filter: grayscale(100%) brightness(0.5);
 }
 html.light .nav .nav-link.active img, html.light .nav .nav-link:hover img {
-  filter: grayscale(100%) brightness(0);
+  filter: none;
 }
 html.light .select:hover {
   background-color: #fff;
@@ -179,7 +181,7 @@ html.light .select_items:hover {
   border-color: #2080d3;
 }
 html.light .select_option {
-  background-color: transparent;
+  background-color: #fafafa;
 }
 html.light .select_option label {
   color: #757575;
@@ -1069,6 +1071,8 @@ html .h .toggle-content {
   width: 100%;
   height: 300px;
   border-top: 0 solid transparent;
+  border-left-width: 1px;
+  border-left-style: solid;
 }
 html .h .toggle-content > .nav,
 html .h .toggle-content > div {
