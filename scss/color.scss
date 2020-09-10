@@ -167,13 +167,13 @@ html.light {
 
     .nav-link {
       img {
-        filter: grayscale(100%) brightness(0.5);
+        filter: invert(1);
       }
 
       &.active,
       &:hover {
         img {
-          filter: none;
+          filter: invert(1) brightness(1.2);
         }
       }
     }

@@ -169,10 +169,10 @@ html.light .nav .layouts-nav div:hover, html.light .nav .layouts-nav div.active 
   color: black;
 }
 html.light .nav .nav-link img {
-  filter: grayscale(100%) brightness(0.5);
+  filter: invert(1);
 }
 html.light .nav .nav-link.active img, html.light .nav .nav-link:hover img {
-  filter: none;
+  filter: invert(1) brightness(1.2);
 }
 html.light .select:hover {
   background-color: #fff;
@@ -352,6 +352,12 @@ html .nav.nav-tabs .nav-link > img,
 html .nav.nav-tabs .nav-link .title-app,
 html .nav.nav-tabs .nav-link .title-folder {
   margin: 0 0.5rem;
+}
+html .nav.nav-tabs .nav-link img {
+  transition-property: filter;
+  transition-duration: 300ms;
+  transition-timing-function: cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  transition-delay: 0ms;
 }
 html .nav.flex-column {
   flex-wrap: nowrap;
