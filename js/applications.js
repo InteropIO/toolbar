@@ -34,7 +34,7 @@ const runningApps = allApplicationsObs
 
 function shouldAppBeVisible(app) {
   let shouldBeVisible = true;
-  if (!getSetting('showHiddenApps') && (app.hidden || app.autoStart)) {
+  if (!getSetting('showHiddenApps') && (app.hidden)) {
     shouldBeVisible = false;
   }
 

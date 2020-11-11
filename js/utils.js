@@ -305,7 +305,7 @@ async function handleMouseHover() {
     let margin = windowMargin;
 
     if (e.x < (viewPortWidth + margin) && e.x > margin && e.y < (viewPortHeight + margin -6) && e.y > margin) {
-      console.error('fake leave');
+      console.warn('fake leave');
     }
 
     if (qa('.toggle-content:not(.hide)').length > 0 || qa('.dropdown-menu.show').length > 0) {
