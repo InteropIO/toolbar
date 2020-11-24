@@ -185,7 +185,7 @@ async function restoreLayout(type, name) {
   } else if (type === 'Swimlane') {
     glue42gd.canvas.openWorkspace(name);
   } else  if (type === 'Workspace') {
-    glue.workspaces.restoreWorkspace('test123');
+    glue.workspaces.restoreWorkspace(name);
   }
 }
 
