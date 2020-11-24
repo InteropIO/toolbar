@@ -10,7 +10,7 @@ function init() {
   .pipe(rxjs.operators.map((layouts) => {
     return layouts
       .map(l => ({name: l.name, type: l.type}))
-      .filter(l => ['Global', 'Swimlane'].includes(l.type))
+      .filter(l => ['Global', 'Swimlane', 'Workspace'].includes(l.type))
   }));
 
   const layoutSearch = rxjs.fromEvent(q('#layout-search'), 'keyup')
@@ -83,7 +83,7 @@ function layoutHTMLTemplate(layout) {
   <li class="nav-item ${layout.isActive ? 'app-active' : ''} ${layout.isDefault ? 'default-layout' : ''}" layout-name="${escapeHtml(layout.name)}" layout-type="${layout.type}">
     <div class="nav-link action-menu">
       <i class="icon-03-context-viewer ml-2 mr-4"></i>
-      <span>${layout.name}${layout.type === 'Swimlane' ? ' (Swimlane)': ''}</span>
+      <span>${layout.name} ${layout.type === 'Swimlane' ? ' (Swimlane)' : ''} ${layout.type === 'Workspace' ? ' (Workspace)' : ''}</span>
       <div class="action-menu-tool">` +
     ((layout.type === 'Global' && !getSetting('saveDefaultLayout')) ? `<button class="btn btn-icon secondary set-default ${layout.isDefault ? 'text-primary' : ''}" id="menu-tool-4">
           <i class="icon-asterisk"></i>

@@ -9,11 +9,14 @@ var gluePromise = new Promise(async (res, rej) => {
       activities: 'trackAll',
       channels: false,
       metrics: false,
-      contexts: true
+      contexts: true,
     });
+
+    await GlueWorkspaces(glue)
 
     console.timeEnd('Glue')
     if (!window.glue) {
+      console.log('has Glue');
       window.glue = glue;
     }
     res(glue);
@@ -99,10 +102,10 @@ function trackWorkspaces() {
 
 async function pushWorkspaces() {
   const workspaces = glue.layouts.list()
-    .filter(layout => layout.type === 'Swimlane')
+    .filter(layout => layout.type === 'Swimlane' || layout.type === 'Workspace')
     .map(workspace => {
-      const canvasWorkspace = workspace.components.find(component => component.type === 'swimlane').state;
-      return {name: workspace.name, ...canvasWorkspace}
+      const state = workspace.components.find(component => component.type.toLowerCase() === workspace.type.toLowerCase()).state;
+        return {name: workspace.name, ...state}
     });
 
   allWorkspacesObs.next(workspaces);
@@ -179,8 +182,10 @@ async function restoreLayout(type, name) {
   await gluePromise;
   if (type === 'Global') {
     glue.layouts.restore({name});
-  } else {
+  } else if (type === 'Swimlane') {
     glue42gd.canvas.openWorkspace(name);
+  } else  if (type === 'Workspace') {
+    glue.workspaces.restoreWorkspace('test123');
   }
 }
 

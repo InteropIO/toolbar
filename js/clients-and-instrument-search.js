@@ -38,7 +38,9 @@ async function init() {
       let clientWorkspaces = [];
       let instrumentWorkspaces = [];
 
-      workspaces.forEach(workspace => {
+      workspaces
+      .filter(workspace => workspace.type === 'swimlane')
+      .forEach(workspace => {
         let workspaceApps = [];
         workspace.canvas.lanes.forEach(lane => {
           lane.items.forEach(tabGroup => {
