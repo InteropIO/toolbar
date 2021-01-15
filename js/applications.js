@@ -3,6 +3,8 @@ import { glueAppsObs, startApp} from './glue-related.js';
 import { favoriteApps, addFavoriteApp, removeFavoriteApp } from './favorites.js';
 import {getSetting, getSettings} from './settings.js';
 import { clearSearch, getAppIcon } from './utils.js';
+import { changeFolderState, isFolderOpened} from './folders.js';
+
 
 const searchInputObs = new rxjs.BehaviorSubject('');
 
@@ -77,7 +79,9 @@ function handleAppClick() {
 
     } else if (e.target.matches('[folder-name], [folder-name] *')) {
       let folderElement = e.path.find(e => e.getAttribute('folder-name'));
-      folderElement.classList.toggle('folder-open');
+      let folderName = folderElement.getAttribute('folder-name');
+      let isFolderOpen = folderElement.classList.contains('folder-open');
+      changeFolderState(folderName, !isFolderOpen)
     }
   });
 }
@@ -100,6 +104,7 @@ function applicationFolderHTMLTemplate(folder, options) {
   // console.log(folder);
   let folderName = folder.item;
   let folderContents = '';
+  let isFolderOpen = options.hasSearch || isFolderOpened(folderName);
   folder.children
   .sort((a, b) => {
     if (a.type !== b.type) {
@@ -113,7 +118,7 @@ function applicationFolderHTMLTemplate(folder, options) {
   });
   let folderHeight = 48 + (folder.children.length * 48);
 
-  return `<li class="nav-item folder ${options.hasSearch ? 'folder-open': ''}" folder-name="${folderName}" >
+  return `<li class="nav-item folder ${isFolderOpen ? 'folder-open': ''}" folder-name="${folderName}" >
           <div class="nav-link action-menu">
             <span class="icon-size-16">
               <i class="icon-folder-empty" draggable="false"></i>

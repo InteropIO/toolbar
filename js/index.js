@@ -28,6 +28,8 @@ let {
   distinctUntilChanged: rxDistinctUntilChanged
 } = rxjs.operators;
 
+let refreshAppsObs = new rxjs.BehaviorSubject(true);
+
 document.addEventListener('DOMContentLoaded', () => {
   console.log('window loaded');
   printApps();
@@ -48,7 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
   utils.handleClicks();
   utils.startTutorial();
   glueModule.registerHotkey();
-  // utils.openDrawer('apps');
 });
 
 
@@ -62,8 +63,8 @@ function printApps() {
         filteredApps: apps.filter(app => app.title.toLowerCase().indexOf(search) >= 0)
       };
     }))
-    // .subscribe(([apps, clients, instruments]) => {
-    .subscribe(async ({search, filteredApps: apps}) => {
+    .pipe(rxCombineLatest(refreshAppsObs.asObservable()))
+    .subscribe(async ([{search, filteredApps: apps}, refresh]) => {
       let newResultsHTML = '';
 
       if (search.trim().length > 1) {
@@ -87,6 +88,10 @@ function printApps() {
       q('#search-results').innerHTML = newResultsHTML || noApplicationsHTML;
       updateFavoriteApps();
     });
+}
+
+function refreshApps() {
+  refreshAppsObs.next();
 }
 
 function buildAppHTML(apps, options) {
@@ -214,3 +219,6 @@ function printNotificationCount() {
   });
 }
 
+export {
+  refreshApps
+}
