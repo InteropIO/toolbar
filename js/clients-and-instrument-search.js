@@ -39,30 +39,18 @@ async function init() {
       let instrumentWorkspaces = [];
 
       workspaces
-      .filter(workspace => workspace.type === 'swimlane')
+      .filter(workspace => workspace.type === 'swimlane' || workspace.type === 'workspace')
       .forEach(workspace => {
         let workspaceApps = [];
-        workspace.canvas.lanes.forEach(lane => {
-          lane.items.forEach(tabGroup => {
-            let items = [];
-            if (tabGroup.type === 'tab') {
-              items = tabGroup.items;
-            } else if (tabGroup.type === 'canvas') {
-              let tabs = Array.concat.apply(null, tabGroup.canvas.lanes.map(lane => lane.items))
-              items = Array.concat.apply(null, tabs.map(tab => tab.items));
-            }
+        workspaceApps = getWorkspaceApps(workspace);
 
-            workspaceApps = workspaceApps.concat(items.map(item => item.name));
-          });
-        });
 
         if (clientAppsObs.value.find(app => workspaceApps.includes(app.name))) {
-          // console.log(workspace);
-          clientWorkspaces.push(workspace.name);
+          clientWorkspaces.push({name:workspace.name, type: workspace.type});
         }
 
         if (instrumentAppsObs.value.find(app => workspaceApps.includes(app.name))) {
-          instrumentWorkspaces.push(workspace.name);
+          instrumentWorkspaces.push({ name: workspace.name, type: workspace.type });
         }
       });
 
@@ -93,14 +81,15 @@ function handleClientAndInstrumentClicks() {
 
     if (e.target.matches('[workspace-id], [workspace-id] *')) {
       let workspaceId = e.path.find(e => e.getAttribute && e.getAttribute('workspace-id')).getAttribute('workspace-id');
+      let workspaceType = e.path.find(e => e.getAttribute && e.getAttribute('workspace-type')).getAttribute('workspace-type');
       let clientIdElement = e.path.find(e => e.getAttribute && e.getAttribute('client-id'));
       let instrumentIdElement = e.path.find(e => e.getAttribute && e.getAttribute('instrument-id'));
       if (clientIdElement) {
         let clientId = clientIdElement.getAttribute('client-id');
-        openWorkspace(workspaceId, {clientId});
+        openWorkspace(workspaceId, workspaceType, {clientId});
       } else if (instrumentIdElement) {
         let instrumentId = instrumentIdElement.getAttribute('instrument-id');
-        openWorkspace(workspaceId, {ric: instrumentId});
+        openWorkspace(workspaceId, workspaceType, {ric: instrumentId});
       }
 
       if (!e.ctrlKey) {
@@ -234,12 +223,51 @@ function getWorkspaces(workspaceType) {
   return workspacesHTML ? `<ul>${workspacesHTML}</ul>` : '';
 }
 
+function getWorkspaceApps(workspace) {
+  let workspaceApps = [];
+  if (workspace.type === 'swimlane') {
+    console.log('Swimlane', workspace.name);
+    workspace.canvas.lanes.forEach(lane => {
+      lane.items.forEach(tabGroup => {
+        let items = [];
+        if (tabGroup.type === 'tab') {
+          items = tabGroup.items;
+        } else if (tabGroup.type === 'canvas') {
+          let tabs = Array.concat.apply(null, tabGroup.canvas.lanes.map(lane => lane.items))
+          items = Array.concat.apply(null, tabs.map(tab => tab.items));
+        }
+
+        workspaceApps = workspaceApps.concat(items.map(item => item.name));
+      });
+    });
+  } else if (workspace.type === 'workspace') {
+    workspaceApps = extractApps(workspace.children);
+  }
+
+  return workspaceApps;
+}
+
+function extractApps(children) {
+  let apps = [];
+  if (Array.isArray(children)) {
+    children.forEach(child => {
+      if (child.type === 'window') {
+        apps = apps.concat(child.config.appName);
+      } else if (['group', 'column', 'row'].includes(child.type)) {
+        apps = apps.concat(extractApps(child.children))
+      }
+    })
+  }
+
+  return apps;
+}
+
 function workspaceHTMLTemplate(workspaces) {
-  return workspaces.map(workspace => `<li class="nav-link" workspace-id="${workspace}">
+  return workspaces.map(workspace => `<li class="nav-link" workspace-id="${workspace.name}" workspace-type="${workspace.type}">
     <span class="icon-size-16">
       <i class="icon-app" draggable="false"></i>
     </span>
-    ${workspace} (Workspace)
+    ${workspace.name} (${workspace.type === 'workspace' ? 'Workspace' : 'Swimlane'})
   </li>`).join('');
 }
 

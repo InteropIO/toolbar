@@ -105,7 +105,7 @@ async function pushWorkspaces() {
     .filter(layout => layout.type === 'Swimlane' || layout.type === 'Workspace')
     .map(workspace => {
       const state = workspace.components.find(component => component.type.toLowerCase() === workspace.type.toLowerCase()).state;
-        return {name: workspace.name, ...state}
+      return { name: workspace.name, type: workspace.type.toLowerCase(), ...state}
     });
 
   allWorkspacesObs.next(workspaces);
@@ -189,9 +189,14 @@ async function restoreLayout(type, name) {
   }
 }
 
-async function openWorkspace(name, context) {
+async function openWorkspace(name,type, context) {
   await gluePromise;
-  glue42gd.canvas.openWorkspace(name, {context})
+
+  if (type === 'swimlane') {
+    glue42gd.canvas.openWorkspace(name, {context})
+  } else if (type === 'workspace') {
+    glue.workspaces.restoreWorkspace(name, context);
+  }
 }
 
 async function saveLayout(name) {
