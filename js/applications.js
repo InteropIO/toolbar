@@ -31,7 +31,7 @@ const allApplicationsObs = glueAppsObs
 
 const runningApps = allApplicationsObs
   .pipe(rxMap((apps) => {
-    return apps.filter(app => app.instances.length > 0)
+    return apps.filter(app => app.instances.length > 0).filter(app => app.name !== glue.appManager.myInstance.application.name)
   }));
 
 function shouldAppBeVisible(app) {
