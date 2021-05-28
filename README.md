@@ -1,1 +1,1 @@
-## Vanilla.js implementation of a Glue42 Toolbar
+## Vanilla JS implementation of a Glue42 Toolbar
