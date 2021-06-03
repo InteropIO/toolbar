@@ -18,6 +18,7 @@ let {
 const allApplicationsObs = glueAppsObs
   .pipe(rxFilter(apps => apps.length > 0))
   .pipe(rxDistinctUntilChanged(undefined, (apps) => {
+    // console.log(apps);
     // distinct apps have changed by creating an unique "hash" containing all the info that differentiate an app
     return apps.map(app => app.title +
       JSON.stringify(app.userProperties.appManagerOrder) +
@@ -27,7 +28,23 @@ const allApplicationsObs = glueAppsObs
       JSON.stringify(getSettings());
   }))
   .pipe(rxMap(allApps => allApps.filter(app => shouldAppBeVisible(app))))
-  .pipe(rxMap(apps => apps.sort(orderApps)));
+  .pipe(rxMap(apps => apps.sort(orderApps)))
+  .pipe(rxMap(apps => {
+    const duplicatedApps = [];
+    apps.forEach(app => {
+      if (app.userProperties.folder && Array.isArray(app.userProperties.folder)) {
+        app.userProperties.folder.forEach(singleFolder => {
+          let appCopy = JSON.parse(JSON.stringify(app));
+          appCopy.userProperties.folder = singleFolder;
+          duplicatedApps.push(appCopy);
+         });
+      } else {
+        duplicatedApps.push(app)
+      }
+    });
+
+    return duplicatedApps;
+  }))
 
 const runningApps = allApplicationsObs
   .pipe(rxMap((apps) => {

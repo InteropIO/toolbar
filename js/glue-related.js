@@ -74,7 +74,16 @@ function trackApplications() {
 }
 
 function pushAllApps() {
-  glueAppsObs.next(glue.appManager.applications());
+  glueAppsObs.next(glue.appManager.applications().map(a => {
+    return {
+      name: a.name,
+      title: a.title,
+      userProperties: a.userProperties,
+      instances: a.instances.map(i => true),
+      hidden: a.hidden,
+      icon: a.icon
+    }
+  }));
 }
 
 async function trackLayouts() {
