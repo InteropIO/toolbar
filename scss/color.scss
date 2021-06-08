@@ -1,0 +1,226 @@
+// color scheme
+html.dark {
+  .view-port {
+    border: 1px solid rgba(255, 255, 255, 0.075);
+  }
+
+  .toggle-content {
+    background-color: #1e1e1e;
+    border-top: 1px solid rgba(255, 255, 255, 0.075);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.075);
+    border-right: 1px solid rgba(255, 255, 255, 0.075);
+    border-left-color:  rgba(255, 255, 255, 0.075);
+
+    .close-drawer {
+      color: #bbb;
+      &:hover {
+        color: white;
+      }
+    }
+  }
+
+  .applications-nav {
+    @include divider("dark");
+  }
+
+  .view-port-footer {
+    @include divider("dark");
+  }
+
+  .favorite {
+    &::after {
+      background-color: rgba(255, 255, 255, 0.075);
+    }
+    i {
+      background: #1e1e1e;
+    }
+  }
+
+  .nav {
+    .layout-menu-tool {
+      background: #2d2d2d; // rgba(255, 255, 255, 0.05);
+
+      div {
+        &:first-of-type {
+          border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        &:hover,
+        &.active {
+          background-color: rgba(255, 255, 255, 0.05);
+          color: white;
+        }
+      }
+    }
+
+    .nav-link {
+      img {
+        @include transition("filter", "0");
+        filter: grayscale(100%) brightness(1);
+      }
+
+      &.active,
+      &:hover {
+        img {
+          filter: none;
+        }
+      }
+    }
+  }
+  .select {
+    &:hover {
+      background-color: #252525;
+    }
+
+    &_items {
+      border-color: rgba(255, 255, 255, 0.075);
+      &:hover {
+        border-color: #2080d3;
+      }
+    }
+
+    &_option {
+      background-color: #1e1e1e;
+    }
+
+    &_expand {
+      &::after {
+        color: #eeeeee;
+      }
+      &:checked {
+        + .select_closeLabel + .select_options .select_label:hover {
+          background-color: #252525;
+        }
+      }
+    }
+  }
+  .horizontal {
+    .layout-menu-tool {
+      border: 1px solid rgba(255, 255, 255, 0.075);
+      div:first-child {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+  // Folders
+  .folder-content {
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.05) 100%);
+  }
+}
+
+html.light {
+  .view-port {
+    border: 1px solid rgba(219, 222, 230, 0.8);
+  }
+
+  .toggle-content {
+    background-color: #fafafa;
+    border-top: 1px solid rgba(219, 222, 230, 0.8);
+    border-bottom: 1px solid rgba(219, 222, 230, 0.8);
+    border-right: 1px solid rgba(219, 222, 230, 0.8);
+    border-left-color:  rgba(219, 222, 230, 0.8);
+    .close-drawer {
+      color: #757575;
+      &:hover {
+        color: #0d0d0d;
+      }
+    }
+  }
+
+  .logo img {
+    content: url("../assets/logoLight.svg");
+  }
+
+  .applications-nav {
+    @include divider("");
+  }
+
+  .view-port-footer {
+    @include divider("");
+  }
+
+  .favorite {
+    &::after {
+      background-color: rgba(219, 222, 230, 0.8);
+    }
+    i {
+      background: #fafafa;
+    }
+  }
+
+  .nav {
+    .layout-menu-tool {
+      background: #ffffff; // rgba(219, 222, 230, 0.8);
+    }
+
+    .layouts-nav div {
+      &:first-of-type {
+        border-right: 1px solid rgba(219, 222, 230, 0.8);
+      }
+
+      &:hover,
+      &.active {
+        background-color: rgba(219, 222, 230, 0.8);
+        color: black;
+      }
+    }
+
+    .nav-link {
+      img {
+        filter: invert(1);
+      }
+
+      &.active,
+      &:hover {
+        img {
+          filter: invert(1) brightness(1.2);
+        }
+      }
+    }
+  }
+
+  .select {
+    &:hover {
+      background-color: #fff;
+    }
+
+    &_items {
+      &:hover {
+        border-color: #2080d3;
+      }
+    }
+
+    &_option {
+      background-color: #fafafa;
+
+      label {
+        color: #757575;
+      }
+    }
+
+    &_expand {
+      &::after {
+        color: #2c2c2c;
+      }
+      &:checked {
+        + .select_closeLabel + .select_options .select_label:hover {
+          background-color: #f2f2f2;
+          color: #2c2c2c;
+        }
+      }
+    }
+  }
+
+  .horizontal {
+    .layout-menu-tool {
+      border: 1px solid rgba(219, 222, 230, 0.8);
+      div:first-child {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.075);
+      }
+    }
+  }
+  // Folders
+  .folder-content {
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.05) 100%);
+  }
+}

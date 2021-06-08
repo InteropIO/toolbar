@@ -1,0 +1,69 @@
+@import "left";
+
+.vertical {
+  height: 100%;
+
+  > .flex-column {
+    height: 100%;
+  }
+
+  .view-port-header {
+    overflow: hidden;
+  }
+
+  .fav-app-nav {
+    flex-grow: 1;
+    overflow: hidden;
+  }
+
+  &.expand {
+    width: 200px;
+
+    .view-port-header {
+      overflow: initial;
+    }
+
+    .menu {
+      display: flex;
+    }
+
+    .text-animation {
+      @include text-animation("on", "", 0);
+    }
+
+    .favorite {
+      @include transition("opacity", 300);
+      i {
+        padding: 0 0.75rem;
+      }
+    }
+
+    .fav-app-nav {
+      overflow-y: auto;
+    }
+    .nav-link {
+      max-width: 200px;
+    }
+
+    .accordion {
+      .nav {
+        .toggle-content {
+          left: 200px;
+          display: list-item;
+          @include transition("width", 50);
+        }
+
+        .hide {
+          width: 0;
+          @include transition("width", 50);
+        }
+      }
+    }
+
+    #fav-apps {
+      & > li:not(.nav-item) {
+        opacity: 1;
+      }
+    }
+  }
+}

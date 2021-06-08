@@ -1,0 +1,447 @@
+@import "mixin";
+@import "color";
+@import "folders";
+
+html {
+  height: 100%;
+
+  body {
+    padding: 350px 50px 50px 350px;
+    height: 100%;
+  }
+
+  .app {
+    height: 100%;
+
+    &.switching-orientation * {
+      transition: none !important;
+      &::before,
+      &::after {
+        transition: none !important;
+      }
+    }
+    *:focus {
+      outline: none;
+    }
+  }
+
+  img,
+  a {
+    user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+  }
+
+  .dragable {
+    position: absolute;
+    height: 3rem;
+    width: 140px;
+    left: 0;
+  }
+
+  .toggle-content {
+    @include transition("width, opacity", 0);
+    height: 100%;
+    width: 300px;
+    overflow: hidden;
+    visibility: visible;
+    display: flex;
+    flex-direction: column;
+
+    // Bootsrap overrides
+    .input-group {
+      flex-wrap: nowrap;
+    }
+    &.hide {
+      width: 0;
+      border-right: 0 solid transparent;
+      .action-menu-tool {
+        opacity: 0;
+      }
+    }
+
+    > .nav {
+      overflow: auto;
+    }
+
+    h5 {
+      white-space: nowrap;
+      user-select: none;
+      padding-left: 0.063rem;
+      padding-right: 1.375rem;
+    }
+
+    .close-drawer {
+      @include transition("color", 0);
+      font-size: 0.688rem;
+      margin-left: 0.125rem;
+      cursor: pointer;
+      transform: rotate(90deg);
+    }
+  }
+
+  .text-animation {
+    @include text-animation("off", "left", 0);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0 0.5rem;
+  }
+
+  .nav {
+    &.nav-tabs {
+      border-bottom: none;
+      li {
+        white-space: nowrap;
+        flex-basis: 3rem;
+        flex-shrink: 0;
+      }
+
+      .nav-item {
+        user-select: none;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .nav-link {
+        height: auto;
+        border: 0;
+        padding-left: 14px;
+        flex-grow: 1;
+        margin-right: 0;
+
+        .icon-size-16,
+        > img,
+        .title-app,
+        .title-folder {
+          margin: 0 0.5rem;
+        }
+        img {
+        @include transition('filter','0');
+        }
+      }
+    }
+
+    &.flex-column {
+      flex-wrap: nowrap;
+      .nav-link {
+        margin-bottom: 0 !important;
+      }
+    }
+
+    .applications-nav {
+      position: relative;
+      overflow: hidden;
+
+      i {
+        @include transition("opacity, transform", 0);
+      }
+
+      &:hover,
+      &.active {
+        .icon-angle-down {
+          opacity: 1;
+        }
+      }
+    }
+
+    .favorite {
+      white-space: nowrap;
+      flex-basis: 1.25rem !important;
+      user-select: none;
+      overflow: hidden;
+      text-align: center;
+
+      i {
+        position: relative;
+        z-index: 20;
+        padding: 0 0.25rem;
+      }
+
+      &::after {
+        content: "";
+        height: 1px;
+        left: 8px;
+        position: absolute;
+        width: calc(100% - 16px);
+        bottom: 11px;
+      }
+    }
+
+    #fav-apps {
+      & > li:not(.nav-item) {
+        @include transition("opacity", 0);
+        opacity: 0;
+        white-space: nowrap;
+      }
+    }
+
+    ul.nav .nav-item .nav-link.active::before,
+    ul.nav .nav-item .nav-link:hover::before {
+      width: 0;
+      height: 0;
+    }
+
+    .chavron-rotate {
+      transform: rotate(180deg);
+    }
+
+    .action-menu-tool {
+      @include transition("opacity", 0);
+      opacity: 0.65;
+      margin-left: auto;
+
+      .dropdown-menu {
+        left: auto;
+        right: 0;
+        z-index: 20;
+      }
+    }
+
+    .action-menu {
+      cursor: pointer;
+      overflow: hidden;
+
+      .dropdown-menu {
+        min-width: auto;
+      }
+
+      a {
+        @include non-underline();
+      }
+
+      span:last-of-type {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        @include transition("opacity", 0);
+      }
+      .add-favorite {
+        padding: 0;
+        height: 2rem;
+        width: 2rem;
+      }
+
+      &:hover {
+        .action-menu-tool {
+          opacity: 1;
+        }
+
+        span:last-of-type {
+          padding-right: 1.25rem;
+        }
+      }
+    }
+
+    .layout-menu-tool {
+      @include transition("width", 0);
+      display: flex;
+      height: 3rem;
+      opacity: 0;
+      position: absolute;
+      visibility: hidden;
+      width: 100%;
+      top: 0;
+
+      div {
+        align-items: center;
+        cursor: pointer;
+        display: flex;
+        height: 100%;
+        justify-content: center;
+        width: 100%;
+      }
+    }
+
+    .show-actions {
+      position: relative;
+      flex-shrink: 0;
+
+      &:hover,
+      &.active {
+        i,
+        .text-animation,
+        .action-menu-tool,
+        span {
+          opacity: 0;
+          visibility: hidden;
+        }
+
+        .layout-menu-tool {
+          opacity: 1;
+          visibility: visible;
+
+          div {
+            &:first-of-type {
+              animation: runleft 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+            }
+
+            &:last-of-type {
+              animation: runright 300ms cubic-bezier(0.34, 0.03, 0.13, 0.93);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .nav-item[client-id],
+  .nav-item[instrument-id] {
+    .action-menu {
+      cursor: initial;
+    }
+
+    .second-level .nav-link {
+      cursor: pointer;
+    }
+  }
+
+  .view-port {
+    @include transition("width", 0);
+    border: 1px solid rgba(255, 255, 255, 0.075);
+    width: 60px;
+    user-select: none;
+
+    .menu {
+      display: none;
+      .icon-window-minimize {
+        font-size: 0.5rem;
+      }
+
+      .dropdown-menu {
+        transition: none;
+      }
+    }
+
+    .view-port-header {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+      padding-left: 1.125rem;
+      padding-right: 0.25rem;
+      position: relative;
+
+      a {
+        @include non-underline();
+      }
+
+      .menu {
+        position: relative;
+      }
+
+      .dropdown-menu {
+        left: auto;
+        right: 0;
+      }
+
+      .logo {
+        min-width: 120px;
+      }
+    }
+
+    .accordion {
+      .active-app {
+        position: absolute;
+        left: 57px;
+      }
+    }
+
+    .view-port-footer {
+      position: relative;
+      margin-top: auto;
+
+      .nav.nav-tabs {
+        .nav-link {
+          @include non-underline();
+          // height: 3rem;
+        }
+      }
+
+      .circle-index {
+        @include transition("transform", "0");
+
+        align-items: center;
+        background-color: #2080d3;
+        border-radius: 50%;
+        display: flex;
+        font-size: 0.5rem;
+        height: 0.875rem;
+        justify-content: center;
+        margin-left: 0.875rem;
+        margin-top: -0.375rem;
+        position: absolute;
+        transform: scale(1);
+        width: 0.875rem;
+
+        &.empty {
+          transform: scale(0);
+        }
+      }
+    }
+  }
+
+  .modal.fade {
+    display: block;
+    width: 200px;
+    visibility: hidden;
+    .about-logo {
+      width: 2.5rem;
+      overflow: hidden;
+      margin: 0 auto;
+    }
+    .modal-fill-in {
+      justify-content: flex-start;
+      .modal-header .close {
+        position: absolute;
+        right: 1rem;
+        top: 1rem;
+      }
+    }
+    &.show {
+      visibility: visible;
+    }
+  }
+
+  .active-app {
+    margin-left: -14px;
+  }
+
+  [app-name] {
+    &.nav-item.fav-app {
+      i.icon-star-empty-1 {
+        display: none;
+      }
+    }
+
+    &.nav-item:not(.fav-app) {
+      i.icon-star-full {
+        display: none;
+      }
+    }
+  }
+  @import "select";
+  @import "vertical";
+  @import "horizontal";
+}
+
+.app-active {
+  position: relative;
+  background-color: rgba(255, 255, 255, 0.025);
+
+  &::before {
+    content: "";
+    width: 3px;
+    position: absolute;
+    top: 30%;
+    bottom: 30%;
+    left: 0;
+    background-color: #2080d3;
+    transition: top 0.3s cubic-bezier(0.34, 0.03, 0.13, 0.93), bottom 0.3s cubic-bezier(0.34, 0.03, 0.13, 0.93);
+  }
+
+  &:hover {
+    &::before {
+      top: 0;
+      bottom: 0;
+    }
+  }
+}

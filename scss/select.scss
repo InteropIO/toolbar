@@ -1,0 +1,122 @@
+.select {
+    input[type="radio"] {
+        opacity: 1;
+    }
+
+    list-style: none;
+    display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	height: 2rem;
+	cursor: pointer;
+
+    position: relative;
+    
+	&_expand {
+		width: 0;
+		height: 2rem;
+		position: absolute;
+		top: 0;
+		right: 0;
+		
+		&::after {
+            font-family: "tick42-icons";
+			content: '\F107';
+			position: absolute;
+			top: 50%;
+			right: 0;
+            transform: translate(-65%, -55%);
+			font-size: 21px;
+			pointer-events: none;
+			z-index: 2;
+            transition: transform 250ms cubic-bezier(.4,.25,.3,1);
+		}
+		
+		&:hover::after {opacity: 1}
+
+		&:checked::after {transform: translate(-65%, -55%) rotate(-180deg);}
+	}
+	
+	&_expandLabel {
+		display: block;
+		width: 100%;
+		height: 2rem;
+		position: absolute;
+		top: 0;
+		left: 0;
+        cursor: pointer;
+        margin-bottom: 0;
+	}
+	
+	&_close {display: none}
+	
+	&_closeLabel {
+		position: fixed;
+		top: 0;
+		left: 0;
+        display: none;
+        margin-bottom: 0;
+	}
+	
+	&_items {
+		width: 100%;
+		position: absolute;
+		top: 0;
+		left: 0;
+        min-height: 2rem;
+        border-width:1px;
+        border-style: solid;
+	}
+	
+	&_input {display: none}
+	
+	&_label {
+        transition: all 250ms cubic-bezier(.4,.25,.3,1);
+		display: block;
+		height: 0;
+		line-height: 2rem;
+		overflow: hidden;
+		cursor: pointer;
+        margin-bottom: 0;
+        padding-left: .875rem;
+		
+		&-placeholder {
+			height: 2rem;
+			vertical-align: middle;
+			position: absolute;
+			top: 0;
+			left: 0;
+
+			background-color: transparent;
+		}
+	}
+	
+	&_expand:checked {
+		+ .select_closeLabel {
+            display: block;
+            &::before,
+            &::after {
+                display: none;
+            }
+			
+			+ .select_options {
+				.select_label {
+					height: 2rem;
+				}
+				
+				+ .select_expandLabel {display: none}
+			}
+		}
+	}
+	
+	&_input:checked + .select_label {
+		height: 2rem;
+		//margin-top: -2rem;
+    }
+
+    &_options {
+        list-style: none;
+        padding-left: 0;
+    }
+}
