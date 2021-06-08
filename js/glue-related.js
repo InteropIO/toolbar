@@ -251,6 +251,11 @@ async function openNotificationPanel() {
   glue.agm.invoke('T42.Notifications.Show');
 }
 
+async function openFeedbackForm() {
+  await gluePromise;
+  glue.feedback && glue.feedback();
+}
+
 async function registerHotkey() {
   await gluePromise;
   glue.hotkeys.register('Ctrl+Alt+T', () => {
@@ -369,6 +374,7 @@ export {
   notificationEnabledObs,
   allWorkspacesObs,
   openNotificationPanel,
+  openFeedbackForm,
   removeLayout,
   restoreLayout,
   saveLayout,

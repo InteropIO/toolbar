@@ -17,7 +17,8 @@ minimize,
 raiseNotification,
 isMinimizeAllowed,
 saveLayout,
-setDefaultGlobal
+setDefaultGlobal,
+openFeedbackForm
 } from './glue-related.js';
 import {
   setSetting,
@@ -40,6 +41,7 @@ let arrowKeysObs = rxjs.fromEvent(document, 'keydown')
 
 function handleClicks() {
   handleNotificationClick();
+  handleFeedbackClick();
   handleOrientationChange();
   handleThemeChange();
   populateAboutPage();
@@ -341,6 +343,15 @@ async function handleNotificationClick() {
     e.stopImmediatePropagation();
     openNotificationPanel();
   });
+}
+
+async function handleFeedbackClick() {
+  q('#feedback-panel').addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    openFeedbackForm();
+  })
 }
 
 async function startTutorial() {
