@@ -53,7 +53,7 @@ const runningApps = allApplicationsObs
 
 function shouldAppBeVisible(app) {
   let shouldBeVisible = true;
-  if (!getSetting('showHiddenApps') && (app.hidden)) {
+  if (!getSetting('showHiddenApps') && (app.hidden || app.name === glue42gd.applicationName)) {
     shouldBeVisible = false;
   }
 
