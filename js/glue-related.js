@@ -79,7 +79,7 @@ function pushAllApps() {
       name: a.name,
       title: a.title,
       userProperties: a.userProperties,
-      instances: a.instances.map(i => true),
+      instances: a.instances.map(i => i.id),
       hidden: a.hidden,
       icon: a.icon
     }
