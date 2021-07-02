@@ -60,7 +60,7 @@ function printApps() {
       let search = searchInput.toLowerCase().trim();
       return {
         search,
-        filteredApps: apps.filter(app => app.title.toLowerCase().indexOf(search) >= 0)
+        filteredApps: apps.filter(app => (app.title || app.name).toLowerCase().indexOf(search) >= 0)
       };
     }))
     .pipe(rxCombineLatest(refreshAppsObs.asObservable()))
