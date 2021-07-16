@@ -1,4 +1,4 @@
-## Glue42 Floating Toolbar
+# Glue42 Floating Toolbar
 
 Pure JavaScript implementation of a Glue42 Floating Toolbar for [**Glue42 Enterprise**](https://glue42.com/enterprise/).
 
