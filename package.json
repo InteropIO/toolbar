@@ -5,11 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "live-server --port=8080"
-  },
-  "repository": {
-    "type": "git",
-    "url": "ssh://git@stash.tick42.com:7999/~ppetkov/app-manager-vanilla.git"
-  },
+  },  
   "author": "",
   "license": "ISC",
   "devDependencies": {
