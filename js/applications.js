@@ -72,7 +72,9 @@ function orderApps(a, b) {
   } else if ((typeof aOrder === 'number') && (typeof bOrder === 'number') && (aOrder !== bOrder)) {
     return aOrder - bOrder;
   } else {
-    return a.title.localeCompare(b.title);
+    const aTitleOrName = typeof a.title === "undefined" ? a.name : a.title;
+    const bTitleOrName = typeof b.title === "undefined" ? b.name : a.title;
+    return aTitleOrName.localeCompare(bTitleOrName);
   }
 }
 
