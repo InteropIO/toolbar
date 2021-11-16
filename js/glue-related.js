@@ -341,14 +341,14 @@ async function getMonitorInfo() {
   await gluePromise;
 
   return (await glue.displays.all()).map(display => ({
-    left: display.bounds.x,
-    top: display.bounds.y,
+    left: display.bounds.left,
+    top: display.bounds.top,
     width: display.bounds.width,
     height: display.bounds.height,
     workingAreaWidth: display.workArea.width,
     workingAreaHeight: display.workArea.height,
-    workingAreaLeft: display.workArea.x,
-    workingAreaTop: display.workArea.y,
+    workingAreaLeft: display.workArea.left,
+    workingAreaTop: display.workArea.top,
   }));
 }
 
