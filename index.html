@@ -241,12 +241,12 @@
         </div>
 
         <div class="toggle-content hide" id="profile-contet" menu-id="profile">
-            <div class="p-2">
+            <div class="d-flex flex-column h-100 p-2">
                 <h5 class="d-flex justify-content-between mb-2">
                     Profile
                     <span class="icon-arrow-up-down close-drawer"></span>
                 </h5>
-                <table class="ml-auto mr-auto mt-5">
+                <table class="mb-auto ml-auto mr-auto mt-5">
                     <tr>
                         <td class="text-right">Profile</td>
                         <td class="pl-3"><span class="profile-sid"></span></td>
@@ -268,11 +268,6 @@
                         <td class="pl-3"><span class="profile-gwport"></span></td>
                     </tr>
                 </table>
-                <div class="btn-group mb-2">
-                    <button type="button" class="btn btn-secondary" id="Profile_Restart">Restart</button>
-                    <button type="button" class="btn btn-secondary" id="Profile_Shutdown">Shutdown</button>
-                    <button type="button" class="btn btn-secondary" id="Profile_Feedback">Feedback</button>
-                </div>
                 <h5>Select theme</h5>
                 <ul class="select theme-select">
                     <li class="select_items">
@@ -283,6 +278,12 @@
                         <label class="select_expandLabel" for="opener"></label>
                     </li>
                 </ul>
+                <h5>Actions</h5>
+                <div class="d-flex justify-content-between">
+                    <button type="button" class="btn btn-secondary" id="Profile_Restart">Restart</button>
+                    <button type="button" class="btn btn-secondary" id="Profile_Shutdown">Shutdown</button>
+                    <button type="button" class="btn btn-secondary" id="Profile_Feedback">Feedback</button>
+                </div>
             </div>
         </div>
 
