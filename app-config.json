@@ -28,16 +28,18 @@
         "moveAreaPassThroughMouseHover": true,
         "backgroundColor": "#21252d",
         "processAffinity": "util",
-        "visibleAreas": [
-            {
-                "top": 350,
-                "left": 350,
-                "width": 60,
-                "height": 400
-            }
-        ]
+        "visibleAreas": [{
+            "top": 350,
+            "left": 350,
+            "width": 60,
+            "height": 400
+        }]
     },
     "autoStart": true,
     "allowMultiple": false,
-    "ignoreSavedLayout": false
+    "ignoreSavedLayout": false,
+    "customProperties": {
+        "hideFeedbackButton": true,
+        "hideProfileButton": false
+    }
 }

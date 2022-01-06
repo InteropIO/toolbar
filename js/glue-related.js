@@ -357,6 +357,38 @@ async function glueVersion() {
   return glue.version;
 }
 
+async function restart() {
+  await gluePromise;
+  glue.appManager.restart({
+    autoSave: getSetting('saveDefaultLayout')
+  });
+}
+
+function getGWURL() {
+  return glue42gd.gwURL;
+}
+
+function getSID() {
+  return glue42gd.sid;
+}
+
+function getEnvData() {
+  return glue42gd.env;
+}
+
+function getGDVersion() {
+  return glue42gd.version;
+}
+
+async function getUserProperties() {
+  await gluePromise;
+  return glue.appManager.myInstance.application.userProperties;
+}
+
+async function getProfileConfigs() {
+  return await glue42gd.getConfigs()
+}
+
 export {
   gluePromise,
   glueVersion,
@@ -392,5 +424,12 @@ export {
   isMinimizeAllowed,
   raiseNotification,
   getMonitorInfo,
-  getWindowBounds
+  getWindowBounds,
+  getSID,
+  getEnvData,
+  getGDVersion,
+  restart,
+  getGWURL,
+  getUserProperties,
+  getProfileConfigs
 };

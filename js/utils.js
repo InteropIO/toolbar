@@ -29,6 +29,7 @@ import {
   getMonitor
 } from './visible-area.js';
 import { searchInputObs } from './applications.js';
+import {populateProfileData, profile_handleShutdownClick, profile_handleRestartClick, profile_handleFeedbackClick} from './profile.js'
 const windowMargin = 50;
 let isVertical;
 
@@ -51,6 +52,10 @@ function handleClicks() {
   handleMinimizeClick();
   handleMouseHover();
   handleModalClose();
+  populateProfileData();
+  profile_handleShutdownClick();
+  profile_handleRestartClick();
+  profile_handleFeedbackClick();
 }
 
 function handleThemeChange() {
