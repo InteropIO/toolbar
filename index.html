@@ -25,12 +25,14 @@
                         <img src="./assets/logo.svg" width="120">
                     </div>
                     <div class="menu">
-                        <button class="btn btn-icon btn-icon-action minimize d-none" type="button" id="dropdownMenuButton">
-              <i class="icon-window-minimize"></i>
-            </button>
-                        <button class="btn btn-icon btn-icon-action" type="button" id="dropdownMenuButton" dropdown-button-id="top-menu">
-              <i class="icon-ellipsis-vert"></i>
-            </button>
+                        <button class="btn btn-icon btn-icon-action minimize d-none" type="button"
+                            id="dropdownMenuButton">
+                            <i class="icon-window-minimize"></i>
+                        </button>
+                        <button class="btn btn-icon btn-icon-action" type="button" id="dropdownMenuButton"
+                            dropdown-button-id="top-menu">
+                            <i class="icon-ellipsis-vert"></i>
+                        </button>
                         <div class="dropdown-menu" id="menu-top" dropdown-id="top-menu">
                             <a class="dropdown-item" href="#" id="toggle">Switch to <span class="mode"></span></a>
                             <a class="dropdown-item" href="#" menu-button-id="settings">Settings</a>
@@ -43,8 +45,8 @@
                 <li class="nav-item applications-nav" id="apps" menu-button-id="apps">
                     <a class="nav-link" href="#">
                         <span class="icon-size-16">
-              <i class="icon-th-large"></i>
-            </span>
+                            <i class="icon-th-large"></i>
+                        </span>
                         <span class="text-animation">Applications</span>
                         <i class="icon-angle-right ml-auto chavron" id="apps-chavron"></i>
                     </a>
@@ -125,11 +127,12 @@
                     <span class="icon-arrow-up-down close-drawer"></span>
                 </h5>
                 <div class="input-group">
-                    <input type="text" id="layout-save-name" class="form-control" autofocus placeholder="Layout name ...">
+                    <input type="text" id="layout-save-name" class="form-control" autofocus
+                        placeholder="Layout name ...">
                     <div class="input-group-append">
                         <button class="btn btn-secondary" id="layout-save-btn">
-              <i class="icon-floppy"></i>
-            </button>
+                            <i class="icon-floppy"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -146,54 +149,59 @@
                 </h5>
                 <form>
                     <p>
-                        <div class="form-check show-tutorial-check ml-2">
-                            <input class="form-check-input show-tutorial" type="checkbox" value="1" id="show-tutorial" setting="showTutorial">
-                            <label class="form-check-label" for="show-tutorial">
-                Show tutorial on startup
-              </label>
-                        </div>
-                        <div class="form-check save-default-layout-check ml-2" title="If this option is turned on, you won't be able to specify default layouts">
-                            <input class="form-check-input save-default-layout" type="checkbox" value="1" id="save-default-layout" setting="saveDefaultLayout">
-                            <label class="form-check-label" for="save-default-layout">
-                Save layout on exit
-              </label>
-                        </div>
+                    <div class="form-check show-tutorial-check ml-2">
+                        <input class="form-check-input show-tutorial" type="checkbox" value="1" id="show-tutorial"
+                            setting="showTutorial">
+                        <label class="form-check-label" for="show-tutorial">
+                            Show tutorial on startup
+                        </label>
+                    </div>
+                    <div class="form-check save-default-layout-check ml-2"
+                        title="If this option is turned on, you won't be able to specify default layouts">
+                        <input class="form-check-input save-default-layout" type="checkbox" value="1"
+                            id="save-default-layout" setting="saveDefaultLayout">
+                        <label class="form-check-label" for="save-default-layout">
+                            Save layout on exit
+                        </label>
+                    </div>
                     </p>
                     <p>
-                        <h5 class="d-flex justify-content-between mb-2">
-                            Search
-                        </h5>
-                        <div class="form-check ml-2">
-                            <input class="form-check-input search-clients" type="checkbox" value="1" id="search-clients" setting="searchClients">
-                            <label class="form-check-label" for="search-clients">
-                Search clients
-              </label>
-                        </div>
-                        <div class="form-check ml-2">
-                            <input class="form-check-input search-instruments" type="checkbox" value="1" id="search-instruments" setting="searchInstruments">
-                            <label class="form-check-label" for="search-instruments">
-                Search instruments
-              </label>
-                        </div>
+                    <h5 class="d-flex justify-content-between mb-2">
+                        Search
+                    </h5>
+                    <div class="form-check ml-2">
+                        <input class="form-check-input search-clients" type="checkbox" value="1" id="search-clients"
+                            setting="searchClients">
+                        <label class="form-check-label" for="search-clients">
+                            Search clients
+                        </label>
+                    </div>
+                    <div class="form-check ml-2">
+                        <input class="form-check-input search-instruments" type="checkbox" value="1"
+                            id="search-instruments" setting="searchInstruments">
+                        <label class="form-check-label" for="search-instruments">
+                            Search instruments
+                        </label>
+                    </div>
                     </p>
-                    <!-- <h5>Select theme</h5>
-          <ul class="select theme-select">
-            <li class="select_items">
-              <input class="select_expand" type="radio" name="theme" id="opener" />
-              <label class="select_closeLabel" for="close"></label>
+                    <h5>Select theme</h5>
+                    <ul class="select theme-select">
+                        <li class="select_items">
+                            <input class="select_expand" type="radio" name="theme" id="opener" />
+                            <label class="select_closeLabel" for="close"></label>
 
-              <ul class="select_options">
+                            <ul class="select_options">
 
-              </ul>
+                            </ul>
 
-              <label class="select_expandLabel" for="opener"></label>
-            </li>
-          </ul> -->
+                            <label class="select_expandLabel" for="opener"></label>
+                        </li>
+                    </ul>
                     <!-- <h5>Select style</h5>
-          <div class="btn-group mb-2">
-            <button type="button" class="btn btn-primary active">Vertical</button>
-            <button type="button" class="btn btn-secondary">Horizontal</button>
-          </div> -->
+                <div class="btn-group mb-2">
+                  <button type="button" class="btn btn-primary active">Vertical</button>
+                  <button type="button" class="btn btn-secondary">Horizontal</button>
+                </div> -->
                 </form>
             </div>
         </div>
@@ -225,14 +233,14 @@
                         <td class="text-right">Status</td>
                         <td class="pl-3 status-connected d-none">
                             <span class="icon-size-12 ">
-                <i class="icon-record position-relative text-success"></i>
-              </span>
+                                <i class="icon-record position-relative text-success"></i>
+                            </span>
                             <span>Connected</span>
                         </td>
                         <td class="pl-3 status-disconnected">
                             <span class="icon-size-12 ">
-                <i class="icon-record position-relative text-danger"></i>
-              </span>
+                                <i class="icon-record position-relative text-danger"></i>
+                            </span>
                             <span>Disconnected</span>
                         </td>
                     </tr>
@@ -248,7 +256,7 @@
                 </h5>
                 <table class="mb-auto ml-auto mr-auto mt-5">
                     <tr>
-                        <td class="text-right">Profile</td>
+                        <td class="text-right">User</td>
                         <td class="pl-3"><span class="profile-sid"></span></td>
                     </tr>
                     <tr>
@@ -260,22 +268,29 @@
                         <td class="pl-3"><span class="profile-env"></span></td>
                     </tr>
                     <tr>
-                        <td class="text-right">GD Version</td>
+                        <td class="text-right">Version</td>
                         <td class="pl-3"><span class="profile-version"></span></td>
                     </tr>
                     <tr>
-                        <td class="text-right">GWPort</td>
+                        <td class="text-right">Gateway Port</td>
                         <td class="pl-3"><span class="profile-gwport"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="text-right">Server</td>
+                        <td class="pl-3"><span class="server-info"></span></td>
                     </tr>
                 </table>
                 <h5>Select theme</h5>
                 <ul class="select theme-select">
                     <li class="select_items">
-                        <input class="select_expand" type="radio" name="theme" id="opener" />
+                        <input class="select_expand" type="radio" name="theme" id="theme-select-profile" />
                         <label class="select_closeLabel" for="close"></label>
+
                         <ul class="select_options">
+
                         </ul>
-                        <label class="select_expandLabel" for="opener"></label>
+
+                        <label class="select_expandLabel" for="theme-select-profile"></label>
                     </li>
                 </ul>
                 <h5>Actions</h5>

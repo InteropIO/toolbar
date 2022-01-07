@@ -385,8 +385,9 @@ async function getUserProperties() {
   return glue.appManager.myInstance.application.userProperties;
 }
 
-async function getProfileConfigs() {
-  return await glue42gd.getConfigs()
+async function getServerInfo() {
+  const configs = await glue42gd.getConfigs()
+  return configs.server;
 }
 
 export {
@@ -431,5 +432,5 @@ export {
   restart,
   getGWURL,
   getUserProperties,
-  getProfileConfigs
+  getServerInfo
 };

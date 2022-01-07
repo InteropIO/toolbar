@@ -5,44 +5,49 @@ function populateSID() {
     q("#sid").firstChild.data = SID;
 }
 
-function populateProfileData() {
+async function populateProfileData() {
     const envObject = glueModule.getEnvData();
     const GDVer = glueModule.getGDVersion();
     const SID = glueModule.getSID();
     const env = envObject.env;
     const reg = envObject.region;
-
     const url = new URL(glueModule.getGWURL());
     const port = url.port;
+    let serverInfo;
+    const serverInfoObj = await glueModule.getServerInfo();
+    if(serverInfoObj.initialized === false) {
+        serverInfo = "X"
+    }
 
-
-    q('.profile-sid').innerText = SID;
+    if (SID.length > 15) {
+        const trimmedSID = SID.substring(0, 15) + "...";
+        q('.profile-sid').innerText = trimmedSID;
+    } else {
+        q('.profile-sid').innerText = SID;
+    };
     q('.profile-reg').innerText = reg;
     q('.profile-env').innerText = env;
     q('.profile-version').innerText = GDVer;
     q('.profile-gwport').innerText = port;
-}
-
-function populateAdvancedGDData() {
-  
+    q('.server-info').innerText = serverInfo;
 }
 
 function profile_handleShutdownClick() {
-  q('#Profile_Shutdown').addEventListener('click', () => {
-    glueModule.shutdown();
-  });
+    q('#Profile_Shutdown').addEventListener('click', () => {
+        glueModule.shutdown();
+    });
 }
 
 function profile_handleRestartClick() {
-  q('#Profile_Restart').addEventListener('click', () => {
-    glueModule.restart();
-  });
+    q('#Profile_Restart').addEventListener('click', () => {
+        glueModule.restart();
+    });
 }
 
 function profile_handleFeedbackClick() {
-  q('#Profile_Feedback').addEventListener('click', () => {
-    glueModule.openFeedbackForm();
-  });
+    q('#Profile_Feedback').addEventListener('click', () => {
+        glueModule.openFeedbackForm();
+    });
 }
 
 
