@@ -67,7 +67,6 @@ function handleThemeChange() {
             }
         });
     });
-    console.log(qa('.theme-select .select_options'))
     themeObs.subscribe(themeObj => {
         if (themeObj) {
             themeObj.all.forEach(theme => {
@@ -75,16 +74,13 @@ function handleThemeChange() {
             });
 
             q('html').classList.add(themeObj.selected.name);
-
-            let allThemesHtml = ``;
-            themeObj.all.forEach(theme => {
-                allThemesHtml += `<li class="select_option">
-          <input class="select_input" type="radio" name="theme" id="theme-${theme.name}" theme-name="${theme.name}" ${theme.name === themeObj.selected.name ? 'checked' : ''}/>
-          <label class="select_label" for="theme-${theme.name}">${theme.displayName}</label></li>`;
-            });
-            
-            qa('.theme-select .select_options')
-            .forEach((item) => {
+            qa('.theme-select .select_options').forEach((item, i) => {
+                let allThemesHtml = ``;
+                themeObj.all.forEach(theme => {
+                    allThemesHtml += `<li class="select_option">
+          <input class="select_input" type="radio" name="theme" id="theme-${theme.name + i}" theme-name="${theme.name}" ${theme.name === themeObj.selected.name ? 'checked' : ''}/>
+          <label class="select_label" for="theme-${theme.name + i}">${theme.displayName}</label></li>`;
+                });
                 item.innerHTML = allThemesHtml;
             })
         }
@@ -102,7 +98,7 @@ async function handleOrientationChange() {
     }
 
 
-    q('#toggle').addEventListener('click', async() => {
+    q('#toggle').addEventListener('click', async () => {
         await ensureWindowHasSpace(isVertical);
         q('.app').classList.add('switching-orientation');
         isVertical = !isVertical;
@@ -168,7 +164,7 @@ function populateAboutPage() {
     q('.gw-url').innerText = glue42gd.gwURL;
     q('.username').innerText = glue42gd.user;
 
-    gluePromise.then(async(glue) => {
+    gluePromise.then(async (glue) => {
         q('.glue-js-version').innerText = await glueVersion();
     });
 }
@@ -180,7 +176,7 @@ function handleShutdownClick() {
 }
 
 function handleTopMenuClicks() {
-    document.addEventListener('click', async(e) => {
+    document.addEventListener('click', async (e) => {
 
         if (e.target.matches('a, a *') && e.ctrlKey) {
             e.preventDefault();
@@ -312,7 +308,7 @@ async function handleMouseHover() {
         }
     });
 
-    q('.app').addEventListener('mouseleave', async(e) => {
+    q('.app').addEventListener('mouseleave', async (e) => {
         let { offsetWidth: viewPortWidth, offsetHeight: viewPortHeight } = q('.view-port');
         let margin = windowMargin;
 
@@ -331,7 +327,7 @@ async function handleMouseHover() {
             return;
         }
 
-        closeTimeout = setTimeout(async() => {
+        closeTimeout = setTimeout(async () => {
             await applyOpenClasses();
             q('.view-port').classList.remove('expand');
             q('.app').classList.remove('expand-wrapper');
