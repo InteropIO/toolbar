@@ -15,8 +15,14 @@ async function populateProfileData() {
     const port = url.port;
     let serverInfo;
     const serverInfoObj = await glueModule.getServerInfo();
+    
     if(serverInfoObj.initialized === false) {
-        serverInfo = "X"
+        serverInfo = 
+        `<span class="icon-size-24">
+        <i class="icon-cancel"></i>
+        </span>`
+    } else {
+        serverInfo = serverInfoObj.config.url;
     }
 
     if (SID.length > 15) {
@@ -29,7 +35,7 @@ async function populateProfileData() {
     q('.profile-env').innerText = env;
     q('.profile-version').innerText = GDVer;
     q('.profile-gwport').innerText = port;
-    q('.server-info').innerText = serverInfo;
+    q('.server-info').innerHTML = serverInfo;
 }
 
 function profile_handleShutdownClick() {
