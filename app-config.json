@@ -39,7 +39,7 @@
     "allowMultiple": false,
     "ignoreSavedLayout": false,
     "customProperties": {
-        "hideFeedbackButton": true,
-        "hideProfileButton": false
+        "hideFeedbackButton": false,
+        "hideProfileButton": true
     }
 }
