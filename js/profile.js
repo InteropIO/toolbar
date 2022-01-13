@@ -30,7 +30,7 @@ async function populateProfileData() {
         q('.profile-sid').innerText = trimmedSID;
     } else {
         q('.profile-sid').innerText = SID;
-    };
+    }
     q('.profile-reg').innerText = reg;
     q('.profile-env').innerText = env;
     q('.profile-version').innerText = GDVer;
