@@ -227,7 +227,7 @@ function printNotificationCount() {
 async function showFeedbackPanel() {
   const userProperties = await glueModule.getUserProperties();
   const hideFeedback = userProperties.hideFeedbackButton;
-  if(hideFeedback===true){
+  if(hideFeedback === true){
     q('#feedback-panel').style.display = "none";
   }
 }
@@ -235,7 +235,7 @@ async function showFeedbackPanel() {
 async function showProfilePanel() {
   const userProperties = await glueModule.getUserProperties();
   const hideProfile = userProperties.hideProfileButton;
-  if(hideProfile===true){
+  if(hideProfile === true){
     q('#profile-panel').style.display = "none";
   }
 }
