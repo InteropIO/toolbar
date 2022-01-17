@@ -39,5 +39,9 @@
     },
     "autoStart": true,
     "allowMultiple": false,
-    "ignoreSavedLayout": false
+    "ignoreSavedLayout": false,
+    "customProperties": {
+        "hideFeedbackButton": false,
+        "hideProfileButton": true
+    }
 }

@@ -21,6 +21,7 @@ import {handleWidthChange, handleDropDownClicks} from './visible-area.js';
 import {gssPromise} from './gss.js';
 import { clientHTMLTemplate, searchClients, searchInstruments, instrumentHTMLTemplate, handleClientAndInstrumentClicks } from './clients-and-instrument-search.js';
 import { getSetting } from './settings.js';
+import {populateSID} from './profile.js';
 
 let {
   map: rxMap,
@@ -50,6 +51,10 @@ document.addEventListener('DOMContentLoaded', () => {
   utils.handleClicks();
   utils.startTutorial();
   glueModule.registerHotkey();
+
+  populateSID();
+  showFeedbackPanel();
+  showProfilePanel();
 });
 
 
@@ -217,6 +222,22 @@ function printNotificationCount() {
       }
     }
   });
+}
+
+async function showFeedbackPanel() {
+  const userProperties = await glueModule.getUserProperties();
+  const hideFeedback = userProperties.hideFeedbackButton;
+  if(hideFeedback === true){
+    q('#feedback-panel').style.display = "none";
+  }
+}
+
+async function showProfilePanel() {
+  const userProperties = await glueModule.getUserProperties();
+  const hideProfile = userProperties.hideProfileButton;
+  if(hideProfile === true){
+    q('#profile-panel').style.display = "none";
+  }
 }
 
 export {
