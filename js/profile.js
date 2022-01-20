@@ -31,8 +31,19 @@ async function populateProfileData() {
     } else {
         q('.profile-sid').innerText = SID;
     }
-    q('.profile-reg').innerText = reg;
-    q('.profile-env').innerText = env;
+    if (reg.length > 15) {
+        const trimmedReg = reg.substring(0, 15) + "...";
+        q('.profile-reg').innerText = trimmedReg;
+    } else {
+        q('.profile-reg').innerText = reg;
+    }
+    if (env.length > 15) {
+        const trimmedEnv = env.substring(0, 15) + "...";
+        q('.profile-env').innerText = trimmedEnv;
+    } else {
+        q('.profile-env').innerText = env;
+    }
+    
     q('.profile-version').innerText = GDVer;
     q('.profile-gwport').innerText = port;
     q('.server-info').innerHTML = serverInfo;

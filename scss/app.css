@@ -1117,3 +1117,6 @@ html .h .close-drawer {
   bottom: 0;
 }
 
+.profile-sid {
+  word-wrap: break-all;
+}
