@@ -184,11 +184,14 @@ function favoriteApplicationHTMLTemplate(app) {
   if (!app) {
     return '';
   }
+
+  const displayName = typeof app.title === 'string' ? app.title : app.name;
+
   return `
   <li class="nav-item ${app.instances.length > 0 ? 'app-active' : ''}" app-name="${app.name}">
-    <a class="nav-link" href="#" draggable="false" title="${app.title}">
+    <a class="nav-link" href="#" draggable="false" title="${displayName}">
       ${getAppIcon(app)}
-      <span class="text-animation">${app.title}</span>
+      <span class="text-animation">${displayName}</span>
     </a>
   </li>
   `;
