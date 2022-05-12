@@ -20,19 +20,6 @@
 		top: 0;
 		right: 0;
 		
-		&::after {
-            font-family: "tick42-icons";
-			content: '\F107';
-			position: absolute;
-			top: 50%;
-			right: 0;
-            transform: translate(-65%, -55%);
-			font-size: 21px;
-			pointer-events: none;
-			z-index: 2;
-            transition: transform 250ms cubic-bezier(.4,.25,.3,1);
-		}
-		
 		&:hover::after {opacity: 1}
 
 		&:checked::after {transform: translate(-65%, -55%) rotate(-180deg);}
