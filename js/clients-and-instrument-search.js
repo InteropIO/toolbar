@@ -99,42 +99,53 @@ function handleClientAndInstrumentClicks() {
   });
 }
 
-async function searchClients(search) {
-  return new Promise(async (res, rej) => {
-    if (getCurrentEntityTypes().includes('Client')) {
-      let searchQuery =  gss.createQuery('Client');
-      searchQuery.onData(res);
-      searchQuery.search(
-        {name: 'name.value', value: search.trim().toLowerCase()},
-        {name: 'email.value', value: search.trim().toLowerCase()},
-        {name: 'id.value', value: search.trim().toLowerCase()},
-      );
+async function searchEntities({ type, criteria }) {
+  const emptyResult = { entities: [] };
+  
+  const typeRegistered = getCurrentEntityTypes().includes(type);
+  if (typeRegistered === false) {
+    return emptyResult;
+  }
 
-      setTimeout(() => {
-        rej(new Error('Timeout'));
-      }, 1500);
-    } else {
-      res({entities: []});
-    }
+  let timeout;
+  return new Promise((resolve, reject) => {
+    timeout = setTimeout(() => reject(new Error(`Timeout`)), 1500);
+
+    const query = gss.createQuery(type);
+    query.onData((searchResult) => {
+      clearTimeout(timeout);
+      resolve(searchResult);
+    });
+
+    query.search(...criteria);
+  })
+  .catch((error) => {
+    console.warn(`GSS search for entity type "${type}" failed. Error: `, error.message);
+    
+    clearTimeout(timeout);
+    return emptyResult;
   });
 }
 
-async function searchInstruments(search) {
-  return new Promise(async (res, rej) => {
-    if (getCurrentEntityTypes().includes('Instrument')) {
-      let searchQuery =  gss.createQuery('Instrument');
-      searchQuery.onData(res);
-      searchQuery.search(
-        {name: 'ric', value: search.trim().toLowerCase()},
-      );
+async function searchClients(term) {
+  const type = 'Client';
+  const value = term?.trim()?.toLowerCase();
+  const criteria = [
+    { name: 'name.value', value },
+    { name: 'email.value', value },
+    { name: 'id.value', value }
+  ];
 
-      setTimeout(() => {
-        rej(new Error('Timeout'));
-      }, 1500);
-    } else {
-      res({entities: []});
-    }
-  });
+  return searchEntities({ type, criteria });
+}
+
+async function searchInstruments(term) {
+  const type = 'Instrument';
+  const criteria = [
+    { name: 'ric', value: term?.trim()?.toLowerCase() }
+  ];
+
+  return searchEntities({ type, criteria });
 }
 
 
