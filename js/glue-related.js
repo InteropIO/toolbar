@@ -62,9 +62,9 @@ async function checkWindowSize() {
     console.debug('Start bounds are wrong, correcting to 940x800')
     win.moveResize({width: 940, height: 800});
   }
-  win.onBoundsChanged(() => {
+  win.onBoundsChanged((win) => {
     if (win.bounds.width !== 940 || win.bounds.height !== 800) {
-      console.debug('Start bounds are wrong, correcting to 940x800')
+      console.debug(`Resizing to incorrect bounds for width: ${win.bounds.width} and height: ${win.bounds.height}, correcting to 940x800`)
       win.moveResize({width: 940, height: 800});
     }
   });
