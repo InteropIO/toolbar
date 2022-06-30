@@ -49,8 +49,10 @@ function populateSettings() {
   });
 }
 
-function trackSettingsChange() {
+async function trackSettingsChange() {
   const settings = getSettings();
+  const glue = await gluePromise;
+  const prefs = await glue.prefs.get();
   const changedSetting = {};
 
   q('#settings-content').addEventListener('change', e => {
@@ -65,10 +67,12 @@ function trackSettingsChange() {
       );
     }
 
-    changedSetting[e.target.getAttribute('setting')] =
-      settings[e.target.getAttribute('setting')];
+    if (prefs) {
+      changedSetting[e.target.getAttribute('setting')] =
+        settings[e.target.getAttribute('setting')];
 
-    updateAppPrefs(changedSetting);
+      updateAppPrefs(changedSetting);
+    }
   });
 }
 
