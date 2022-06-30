@@ -116,7 +116,6 @@ async function handleOrientationChange() {
     isVertical = !isVertical;
     setSetting('vertical', isVertical);
     q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
-
     q('.view-port').classList.add(isVertical ? 'vertical' : 'horizontal');
     q('.view-port').classList.remove(isVertical ? 'horizontal' : 'vertical');
     q('.app').classList.add(isVertical ? 'd-inline-flex' : 'h');
