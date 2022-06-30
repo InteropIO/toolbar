@@ -10,7 +10,7 @@ import {
   noApplicationsHTML,
   noFavoriteAppsHTML,
   applicationFolderHTMLTemplate,
-  getItemHTMLTemplate
+  getItemHTMLTemplate,
 } from './applications.js';
 import { favoriteApps, updateFavoriteApps } from './favorites.js';
 import {
@@ -18,7 +18,7 @@ import {
   layoutHTMLTemplate,
   handleLayoutClick,
   handleLayoutSave,
-  noLayoutsHTML
+  noLayoutsHTML,
 } from './layouts.js';
 import * as glueModule from './glue-related.js';
 import * as utils from './utils.js';
@@ -29,7 +29,7 @@ import {
   searchClients,
   searchInstruments,
   instrumentHTMLTemplate,
-  handleClientAndInstrumentClicks
+  handleClientAndInstrumentClicks,
 } from './clients-and-instrument-search.js';
 import { getSetting, getSettings } from './settings.js';
 import { populateSID } from './profile.js';
@@ -37,7 +37,7 @@ import { populateSID } from './profile.js';
 let {
   map: rxMap,
   combineLatest: rxCombineLatest,
-  distinctUntilChanged: rxDistinctUntilChanged
+  distinctUntilChanged: rxDistinctUntilChanged,
 } = rxjs.operators;
 
 let refreshAppsObs = new rxjs.BehaviorSubject(true);
@@ -79,11 +79,8 @@ function printApps() {
         return {
           search,
           filteredApps: apps.filter(
-            app =>
-              (app.title || app.name)
-                .toLowerCase()
-                .indexOf(search) >= 0
-          )
+            (app) => (app.title || app.name).toLowerCase().indexOf(search) >= 0
+          ),
         };
       })
     )
@@ -94,14 +91,16 @@ function printApps() {
       if (search.trim().length > 1) {
         if (getSetting('searchClients')) {
           let clientsSearch = await searchClients(search);
-          clientsSearch.entities.forEach(client => {
+
+          clientsSearch.entities.forEach((client) => {
             newResultsHTML += clientHTMLTemplate(client);
           });
         }
 
         if (getSetting('searchInstruments')) {
           let instrumentSearch = await searchInstruments(search);
-          instrumentSearch.entities.forEach(instrument => {
+
+          instrumentSearch.entities.forEach((instrument) => {
             newResultsHTML += instrumentHTMLTemplate(instrument);
           });
         }
@@ -109,12 +108,11 @@ function printApps() {
 
       newResultsHTML += buildAppHTML(apps, {
         favoriteBtn: true,
-        hasSearch: search.trim().length > 1
+        hasSearch: search.trim().length > 1,
       });
 
       // apps.forEach(app => newResultsHTML += applicationHTMLTemplate(app, {favoriteBtn: true}));
-      q('#search-results').innerHTML =
-        newResultsHTML || noApplicationsHTML;
+      q('#search-results').innerHTML = newResultsHTML || noApplicationsHTML;
       updateFavoriteApps();
     });
 }
@@ -135,7 +133,7 @@ function buildAppHTML(apps, options) {
 
       return 0;
     })
-    .forEach(item => {
+    .forEach((item) => {
       html += getItemHTMLTemplate(item, options);
     });
 
@@ -145,12 +143,12 @@ function buildAppHTML(apps, options) {
 function buildFolderStructure(apps) {
   let results = [];
 
-  apps.forEach(app => {
+  apps.forEach((app) => {
     let appFolder = app.userProperties.folder || '';
-    let appFolderSplit = appFolder.split('/').filter(f => f);
-
+    let appFolderSplit = appFolder.split('/').filter((f) => f);
     let currentFolder = [];
-    appFolderSplit.forEach(folder => {
+
+    appFolderSplit.forEach((folder) => {
       currentFolder.push(folder);
       createFolder(currentFolder, results);
     });
@@ -168,7 +166,7 @@ function createFolder(folderPath, root) {
 
   let nextFolderName = folderPath[0];
   let folderExists = root.find(
-    item => item.type === 'folder' && item.item === nextFolderName
+    (item) => item.type === 'folder' && item.item === nextFolderName
   );
 
   if (!folderExists) {
@@ -177,9 +175,8 @@ function createFolder(folderPath, root) {
 
   createFolder(
     folderPath.slice(1),
-    root.find(
-      item => item.type === 'folder' && item.item === nextFolderName
-    ).children
+    root.find((item) => item.type === 'folder' && item.item === nextFolderName)
+      .children
   );
 }
 
@@ -187,10 +184,11 @@ function insertInFolder(appFolder, app, results) {
   let currentFolder = results;
 
   appFolder = appFolder || [];
-  appFolder.forEach(folder => {
+  appFolder.forEach((folder) => {
     currentFolder = currentFolder.find(
-      item => item.type === 'folder' && item.item === folder
+      (item) => item.type === 'folder' && item.item === folder
     );
+
     if (currentFolder) {
       currentFolder = currentFolder.children;
     }
@@ -200,15 +198,15 @@ function insertInFolder(appFolder, app, results) {
 }
 
 function printRunningApps() {
-  runningApps.subscribe(runningApps => {
+  runningApps.subscribe((runningApps) => {
     let newRunningAppsHTML = '';
 
     if (runningApps.length > 0) {
       runningApps.forEach(
-        runningApp =>
-        (newRunningAppsHTML += applicationHTMLTemplate(runningApp, {
-          favoriteBtn: false
-        }))
+        (runningApp) =>
+          (newRunningAppsHTML += applicationHTMLTemplate(runningApp, {
+            favoriteBtn: false,
+          }))
       );
       q('#running-apps').innerHTML = newRunningAppsHTML;
     } else {
@@ -218,13 +216,13 @@ function printRunningApps() {
 }
 
 function printLayouts() {
-  filteredLayouts.subscribe(layouts => {
+  filteredLayouts.subscribe((layouts) => {
     let newLayoutsHTML = '';
     // console.log(layouts);
 
     if (layouts.length > 0) {
       layouts.forEach(
-        layout => (newLayoutsHTML += layoutHTMLTemplate(layout))
+        (layout) => (newLayoutsHTML += layoutHTMLTemplate(layout))
       );
       q('#layout-load>ul').innerHTML = newLayoutsHTML;
     } else {
@@ -238,18 +236,18 @@ function printFavoriteApps() {
     .pipe(rxjs.operators.combineLatest(allApplicationsObs))
     .subscribe(([favApps, allApps]) => {
       let favAppsHtml = ``;
-      let existingFavApps = favApps.filter(favApp =>
-        allApps.find(a => a.name === favApp)
+      let existingFavApps = favApps.filter((favApp) =>
+        allApps.find((a) => a.name === favApp)
       );
 
       if (existingFavApps.length > 0) {
-        existingFavApps.forEach(favApp => {
-          let fullApp = allApps.find(a => a.name === favApp);
+        existingFavApps.forEach((favApp) => {
+          let fullApp = allApps.find((a) => a.name === favApp);
+
           if (fullApp) {
-            favAppsHtml += favoriteApplicationHTMLTemplate(
-              fullApp,
-              { favoriteBtn: false }
-            );
+            favAppsHtml += favoriteApplicationHTMLTemplate(fullApp, {
+              favoriteBtn: false,
+            });
           }
         });
       } else {
@@ -271,7 +269,7 @@ async function printNotificationButton() {
 }
 
 function printNotificationCount() {
-  glueModule.notificationsCountObs.subscribe(count => {
+  glueModule.notificationsCountObs.subscribe((count) => {
     if (count !== null) {
       q('#notifications-count').innerHTML = count;
 

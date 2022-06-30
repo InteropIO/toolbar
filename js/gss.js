@@ -16,11 +16,11 @@ function init() {
       .then(() => {
         console.debug('GSS ready');
         gssInstance.onEntityTypes((err, entityTypes) => {
-          currentEntityTypes = entityTypes.entries().map(e => e[0]);
+          currentEntityTypes = entityTypes.entries().map((e) => e[0]);
         });
         res(gssInstance);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log('GSS initialization failed', err);
       });
   });

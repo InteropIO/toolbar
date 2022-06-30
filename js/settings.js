@@ -7,7 +7,7 @@ let defaultSettings = {
   searchClients: true,
   searchInstruments: true,
   enableNotifications: true,
-  enableToasts: true
+  enableToasts: true,
 };
 
 let localStorageSettings;
@@ -35,7 +35,7 @@ function setInitialSettings() {
 }
 
 function populateSettings() {
-  Object.keys(settings).forEach(settingName => {
+  Object.keys(settings).forEach((settingName) => {
     if (
       typeof settings[settingName] === 'boolean' &&
       q(`#settings-content [setting='${settingName}']`)
@@ -55,16 +55,13 @@ async function trackSettingsChange() {
   const prefs = await glue.prefs.get();
   const changedSetting = {};
 
-  q('#settings-content').addEventListener('change', e => {
+  q('#settings-content').addEventListener('change', (e) => {
     let settingElement = e.path.find(
-      e => e && e.getAttribute && e.getAttribute('setting')
+      (e) => e && e.getAttribute && e.getAttribute('setting')
     );
 
     if (settingElement) {
-      setSetting(
-        settingElement.getAttribute('setting'),
-        e.srcElement.checked
-      );
+      setSetting(settingElement.getAttribute('setting'), e.srcElement.checked);
     }
 
     if (prefs) {
