@@ -20,7 +20,7 @@ import {
   setDefaultGlobal,
   openFeedbackForm,
 } from './glue-related.js';
-import { setSetting, getSetting, getSettings } from './settings.js';
+import { updateSetting, getSetting } from './settings.js';
 import { applyOpenClasses, getMonitor } from './visible-area.js';
 import { searchInputObs } from './applications.js';
 import {
@@ -114,7 +114,7 @@ async function handleOrientationChange() {
     await ensureWindowHasSpace(isVertical);
     q('.app').classList.add('switching-orientation');
     isVertical = !isVertical;
-    setSetting('vertical', isVertical);
+    updateSetting({ vertical: isVertical });
     q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
     q('.view-port').classList.add(isVertical ? 'vertical' : 'horizontal');
     q('.view-port').classList.remove(isVertical ? 'horizontal' : 'vertical');
@@ -208,7 +208,7 @@ function handleTopMenuClicks() {
       e.preventDefault();
       e.stopPropagation();
       e.stopImmediatePropagation();
-      setSetting('showHiddenApps', !getSetting('showHiddenApps'));
+      updateSetting({ showHiddenApps: !getSetting('showHiddenApps') });
       refreshApps();
       return;
     }
@@ -397,11 +397,9 @@ async function handleMouseHover() {
 }
 
 async function handleNotificationClick() {
-  const glue = await gluePromise;
-  const prefs = await glue.prefs.get();
-  const settings = getSettings();
+  const enableNotifications = getSetting('enableNotifications');
 
-  if (settings.enableNotifications || prefs.data.enableNotifications) {
+  if (enableNotifications) {
     notificationEnabledObs.subscribe((data) => {
       q('#notification-panel').classList[data ? 'remove' : 'add']('d-none');
     });
@@ -417,24 +415,31 @@ async function handleNotificationClick() {
 
 function handleEnableNotificationsClick() {
   const notificationPanel = q('#notification-panel');
+  const enableNotifications = q('#enable-notifications');
+  const enableToasts = q('#enable-toasts');
 
-  q('#enable-notifications').addEventListener('click', (e) => {
+  enableNotifications.addEventListener('click', (e) => {
     if (e.target.checked) {
-      console.log('Notifications Enabled!');
+      glue.notifications.configure({ enableNotifications: true });
       notificationPanel.classList.remove('d-none');
+      enableToasts.disabled = false;
     } else {
-      console.log('Notifications Disabled!');
       notificationPanel.classList.add('d-none');
+      enableToasts.checked = false;
+      enableToasts.disabled = true;
+      glue.notifications.configure({ enableNotifications: false });
     }
   });
 }
 
 function handleEnableToastsClick() {
-  q('#enable-toasts').addEventListener('click', (e) => {
+  const enableToasts = q('#enable-toasts');
+
+  enableToasts.addEventListener('click', (e) => {
     if (e.target.checked) {
-      console.log('Toasts Enabled!');
+      glue.notifications.configure({ enableToasts: true });
     } else {
-      console.log('Toasts Disabled!');
+      glue.notifications.configure({ enableToasts: false });
     }
   });
 }
@@ -449,14 +454,15 @@ async function handleFeedbackClick() {
 }
 
 async function startTutorial() {
-  let tutorialApp = await getApp('getting-started');
+  const tutorialApp = await getApp('getting-started');
+  const showTutorial = getSetting('showTutorial');
 
   if (!tutorialApp) {
-    setSetting('showTutorial', false);
+    updateSetting({ showTutorial: false });
     q('.show-tutorial-check').classList.add('d-none');
   }
 
-  if (getSetting('showTutorial')) {
+  if (showTutorial) {
     try {
       startApp('getting-started');
     } catch (e) {

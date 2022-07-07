@@ -31,7 +31,7 @@ import {
   instrumentHTMLTemplate,
   handleClientAndInstrumentClicks,
 } from './clients-and-instrument-search.js';
-import { getSetting, getSettings } from './settings.js';
+import { getSetting } from './settings.js';
 import { populateSID } from './profile.js';
 
 let {
@@ -43,6 +43,14 @@ let {
 let refreshAppsObs = new rxjs.BehaviorSubject(true);
 
 document.addEventListener('DOMContentLoaded', () => {
+  glueModule.getPrefs();
+
+  setTimeout(() => {
+    init();
+  }, 400);
+});
+
+function init() {
   console.log('window loaded');
   printApps();
   printRunningApps();
@@ -50,6 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
   printFavoriteApps();
   printNotificationCount();
   printNotificationButton();
+  printInitialToastState();
 
   handleWidthChange();
   handleAppClick();
@@ -67,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
   populateSID();
   showFeedbackPanel();
   showProfilePanel();
-});
+}
 
 function printApps() {
   searchInputObs
@@ -258,16 +267,6 @@ function printFavoriteApps() {
     });
 }
 
-async function printNotificationButton() {
-  const glue = await glueModule.gluePromise;
-  const prefs = await glue.prefs.get();
-  const settings = getSettings();
-
-  if (!prefs.data.enableNotifications || !settings.enableNotifications) {
-    q('#notification-panel').classList.add('d-none');
-  }
-}
-
 function printNotificationCount() {
   glueModule.notificationsCountObs.subscribe((count) => {
     if (count !== null) {
@@ -282,12 +281,31 @@ function printNotificationCount() {
   });
 }
 
+function printNotificationButton() {
+  const notificationsEnabled = getSetting('enableNotifications');
+  const notificationButton = q('#notification-panel');
+
+  if (!notificationsEnabled) {
+    notificationButton.classList.add('d-none');
+  }
+}
+
+function printInitialToastState() {
+  const notificationsEnabled = getSetting('enableNotifications');
+  const enableToasts = q('#enable-toasts');
+
+  if (!notificationsEnabled) {
+    enableToasts.checked = false;
+    enableToasts.disabled = true;
+  }
+}
+
 async function showFeedbackPanel() {
   const userProperties = await glueModule.getUserProperties();
   const hideFeedback = userProperties.hideFeedbackButton;
 
-  if (hideFeedback === true) {
-    q('#feedback-panel').style.display = 'none';
+  if (!hideFeedback) {
+    q('#feedback-panel').classList.remove('d-none');
   }
 }
 
@@ -296,7 +314,7 @@ async function showProfilePanel() {
   const hideProfile = userProperties.hideProfileButton;
 
   if (hideProfile === true) {
-    q('#profile-panel').style.display = 'none';
+    q('#profile-panel').classList.add('d-none');
   }
 }
 
