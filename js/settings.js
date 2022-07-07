@@ -14,6 +14,10 @@ let settings = {
 function init() {
   populateSettings();
   trackSettingsChange();
+  glue.notifications.configure({
+    enable: settings.enableNotifications,
+    enableToasts: settings.enableToasts,
+  });
 }
 
 function populateSettings() {

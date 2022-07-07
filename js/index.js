@@ -43,14 +43,12 @@ let {
 let refreshAppsObs = new rxjs.BehaviorSubject(true);
 
 document.addEventListener('DOMContentLoaded', () => {
-  glueModule.getPrefs();
-
-  setTimeout(() => {
-    init();
-  }, 400);
+  init();
 });
 
-function init() {
+async function init() {
+  await glueModule.getPrefs();
+
   console.log('window loaded');
   printApps();
   printRunningApps();
