@@ -420,14 +420,14 @@ function handleEnableNotificationsClick() {
 
   enableNotifications.addEventListener('click', (e) => {
     if (e.target.checked) {
-      glue.notifications.configure({ enableNotifications: true });
+      glue.notifications.configure({ enable: true });
       notificationPanel.classList.remove('d-none');
       enableToasts.disabled = false;
     } else {
       notificationPanel.classList.add('d-none');
       enableToasts.checked = false;
       enableToasts.disabled = true;
-      glue.notifications.configure({ enableNotifications: false });
+      glue.notifications.configure({ enable: false });
     }
   });
 }
