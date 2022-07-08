@@ -1,10 +1,12 @@
-
-import { glueAppsObs, startApp} from './glue-related.js';
-import { favoriteApps, addFavoriteApp, removeFavoriteApp } from './favorites.js';
-import {getSetting, getSettings} from './settings.js';
+import { glueAppsObs, startApp } from './glue-related.js';
+import {
+  favoriteApps,
+  addFavoriteApp,
+  removeFavoriteApp,
+} from './favorites.js';
+import { getSetting, getSettings } from './settings.js';
 import { clearSearch, getAppIcon } from './utils.js';
-import { changeFolderState, isFolderOpened} from './folders.js';
-
+import { changeFolderState, isFolderOpened } from './folders.js';
 
 const searchInputObs = new rxjs.BehaviorSubject('');
 
@@ -12,49 +14,70 @@ let {
   filter: rxFilter,
   map: rxMap,
   distinctUntilChanged: rxDistinctUntilChanged,
-  combineLatest: rxCombineLatest
+  combineLatest: rxCombineLatest,
 } = rxjs.operators;
 
 const allApplicationsObs = glueAppsObs
-  .pipe(rxFilter(apps => apps.length > 0))
-  .pipe(rxDistinctUntilChanged(undefined, (apps) => {
-    // console.log(apps);
-    // distinct apps have changed by creating an unique "hash" containing all the info that differentiate an app
+  .pipe(rxFilter((apps) => apps.length > 0))
+  .pipe(
+    rxDistinctUntilChanged(undefined, (apps) => {
+      // console.log(apps);
+      // distinct apps have changed by creating an unique "hash" containing all the info that differentiate an app
 
-    return apps.map(app => app.title +
-      JSON.stringify(app.userProperties.appManagerOrder || '') +
-      JSON.stringify(app.userProperties.consumes || '') +
-      JSON.stringify(app.userProperties.folder || '') +
-      app.instances.join()).join() +
-      JSON.stringify(getSettings());
-  }))
-  .pipe(rxMap(allApps => allApps.filter(app => shouldAppBeVisible(app))))
-  .pipe(rxMap(apps => apps.sort(orderApps)))
-  .pipe(rxMap(apps => {
-    const duplicatedApps = [];
-    apps.forEach(app => {
-      if (app.userProperties.folder && Array.isArray(app.userProperties.folder)) {
-        app.userProperties.folder.forEach(singleFolder => {
-          let appCopy = JSON.parse(JSON.stringify(app));
-          appCopy.userProperties.folder = singleFolder;
-          duplicatedApps.push(appCopy);
-         });
-      } else {
-        duplicatedApps.push(app)
-      }
-    });
+      return (
+        apps
+          .map(
+            (app) =>
+              app.title +
+              JSON.stringify(app.userProperties.appManagerOrder || '') +
+              JSON.stringify(app.userProperties.consumes || '') +
+              JSON.stringify(app.userProperties.folder || '') +
+              app.instances.join()
+          )
+          .join() + JSON.stringify(getSettings())
+      );
+    })
+  )
+  .pipe(rxMap((allApps) => allApps.filter((app) => shouldAppBeVisible(app))))
+  .pipe(rxMap((apps) => apps.sort(orderApps)))
+  .pipe(
+    rxMap((apps) => {
+      const duplicatedApps = [];
+      apps.forEach((app) => {
+        if (
+          app.userProperties.folder &&
+          Array.isArray(app.userProperties.folder)
+        ) {
+          app.userProperties.folder.forEach((singleFolder) => {
+            let appCopy = JSON.parse(JSON.stringify(app));
+            appCopy.userProperties.folder = singleFolder;
+            duplicatedApps.push(appCopy);
+          });
+        } else {
+          duplicatedApps.push(app);
+        }
+      });
 
-    return duplicatedApps;
-  }))
+      return duplicatedApps;
+    })
+  );
 
-const runningApps = allApplicationsObs
-  .pipe(rxMap((apps) => {
-    return apps.filter(app => app.instances.length > 0).filter(app => app.name !== glue.appManager.myInstance.application.name)
-  }));
+const runningApps = allApplicationsObs.pipe(
+  rxMap((apps) => {
+    return apps
+      .filter((app) => app.instances.length > 0)
+      .filter(
+        (app) => app.name !== glue.appManager.myInstance.application.name
+      );
+  })
+);
 
 function shouldAppBeVisible(app) {
   let shouldBeVisible = true;
-  if (!getSetting('showHiddenApps') && (app.hidden || app.name === glue42gd.applicationName)) {
+  if (
+    !getSetting('showHiddenApps') &&
+    (app.hidden || app.name === glue42gd.applicationName)
+  ) {
     shouldBeVisible = false;
   }
 
@@ -69,11 +92,15 @@ function orderApps(a, b) {
     return -1;
   } else if (typeof aOrder !== 'number' && typeof bOrder !== 'number') {
     return 1;
-  } else if ((typeof aOrder === 'number') && (typeof bOrder === 'number') && (aOrder !== bOrder)) {
+  } else if (
+    typeof aOrder === 'number' &&
+    typeof bOrder === 'number' &&
+    aOrder !== bOrder
+  ) {
     return aOrder - bOrder;
   } else {
-    const aTitleOrName = typeof a.title === "undefined" ? a.name : a.title;
-    const bTitleOrName = typeof b.title === "undefined" ? b.name : a.title;
+    const aTitleOrName = typeof a.title === 'undefined' ? a.name : a.title;
+    const bTitleOrName = typeof b.title === 'undefined' ? b.name : a.title;
     return aTitleOrName.localeCompare(bTitleOrName);
   }
 }
@@ -81,7 +108,9 @@ function orderApps(a, b) {
 function handleAppClick() {
   q('#search-results').addEventListener('click', (e) => {
     let appName = e.path.reduce((name, el) => {
-      return (el.getAttribute && el.getAttribute('app-name')) ? el.getAttribute('app-name') : name;
+      return el.getAttribute && el.getAttribute('app-name')
+        ? el.getAttribute('app-name')
+        : name;
     }, '');
 
     if (e.target.matches('.add-favorite, .add-favorite *')) {
@@ -96,12 +125,11 @@ function handleAppClick() {
       if (!e.ctrlKey) {
         clearSearch();
       }
-
     } else if (e.target.matches('[folder-name], [folder-name] *')) {
-      let folderElement = e.path.find(e => e.getAttribute('folder-name'));
+      let folderElement = e.path.find((e) => e.getAttribute('folder-name'));
       let folderName = folderElement.getAttribute('folder-name');
       let isFolderOpen = folderElement.classList.contains('folder-open');
-      changeFolderState(folderName, !isFolderOpen)
+      changeFolderState(folderName, !isFolderOpen);
     }
   });
 }
@@ -126,19 +154,21 @@ function applicationFolderHTMLTemplate(folder, options) {
   let folderContents = '';
   let isFolderOpen = options.hasSearch || isFolderOpened(folderName);
   folder.children
-  .sort((a, b) => {
-    if (a.type !== b.type) {
-      return a.type === 'folder' ? -1 : 1;
-    } else {
-      return 0;
-    }
-  })
-  .forEach(child => {
-    folderContents += getItemHTMLTemplate(child, options);
-  });
-  let folderHeight = 48 + (folder.children.length * 48);
+    .sort((a, b) => {
+      if (a.type !== b.type) {
+        return a.type === 'folder' ? -1 : 1;
+      } else {
+        return 0;
+      }
+    })
+    .forEach((child) => {
+      folderContents += getItemHTMLTemplate(child, options);
+    });
+  let folderHeight = 48 + folder.children.length * 48;
 
-  return `<li class="nav-item folder ${isFolderOpen ? 'folder-open': ''}" folder-name="${folderName}" >
+  return `<li class="nav-item folder ${
+    isFolderOpen ? 'folder-open' : ''
+  }" folder-name="${folderName}" >
           <div class="nav-link action-menu">
             <span class="icon-size-16">
               <i class="icon-folder-empty" draggable="false"></i>
@@ -155,32 +185,40 @@ function applicationFolderHTMLTemplate(folder, options) {
           <ul class="flex-column nav folder-content">
           ${folderContents}
           </ul>
-        </li>`
+        </li>`;
 }
 
 function applicationHTMLTemplate(app, options = {}) {
-  let {favoriteBtn} = options;
+  let { favoriteBtn } = options;
 
-  return `
-    <li class="nav-item ${app.instances.length > 0 ? 'app-active' : ''}"" app-name="${app.name}" tabindex="${1}">
+  return (
+    `
+    <li class="nav-item ${
+      app.instances.length > 0 ? 'app-active' : ''
+    }"" app-name="${app.name}" tabindex="${1}">
       <div class="nav-link action-menu">
         ${getAppIcon(app)}
-        ${app.instances.length > 0 ? '<!--<span class="icon-size-24 active-app text-success"><i class="icon-dot mr-2 "></i></span>-->' : ''}
+        ${
+          app.instances.length > 0
+            ? '<!--<span class="icon-size-24 active-app text-success"><i class="icon-dot mr-2 "></i></span>-->'
+            : ''
+        }
         <span class="title-app">${app.title || app.name}</span>` +
-        (favoriteBtn ? `
+    (favoriteBtn
+      ? `
         <div class="action-menu-tool">
           <button class="btn btn-icon secondary add-favorite">
           <i class="icon-star-empty-1" draggable="false"></i>
           <i class="icon-star-full" draggable="false"></i>
           </button>
-        </div>` : '') +
-      `</div>
-    </li>`;
+        </div>`
+      : '') +
+    `</div>
+    </li>`
+  );
 }
 
-
 function favoriteApplicationHTMLTemplate(app) {
-
   if (!app) {
     return '';
   }
@@ -188,7 +226,9 @@ function favoriteApplicationHTMLTemplate(app) {
   const displayName = typeof app.title === 'string' ? app.title : app.name;
 
   return `
-  <li class="nav-item ${app.instances.length > 0 ? 'app-active' : ''}" app-name="${app.name}">
+  <li class="nav-item ${
+    app.instances.length > 0 ? 'app-active' : ''
+  }" app-name="${app.name}">
     <a class="nav-link" href="#" draggable="false" title="${displayName}">
       ${getAppIcon(app)}
       <span class="text-animation">${displayName}</span>
@@ -197,9 +237,8 @@ function favoriteApplicationHTMLTemplate(app) {
   `;
 }
 
-
 const noApplicationsHTML = `<li class="text-center pt-3">No applications</li>`;
-const noRunningAppsHTML =  `<li class="text-center pt-3">No running applications</li><li class="text-center pt-3"><button class="btn btn-secondary" menu-button-id="apps">Start application</button></li>`;
+const noRunningAppsHTML = `<li class="text-center pt-3">No running applications</li><li class="text-center pt-3"><button class="btn btn-secondary" menu-button-id="apps">Start application</button></li>`;
 const noFavoriteAppsHTML = `<li class="text-center pt-3">No favorite apps</li>`;
 
 export {
@@ -215,5 +254,5 @@ export {
   runningApps,
   noApplicationsHTML,
   noRunningAppsHTML,
-  noFavoriteAppsHTML
+  noFavoriteAppsHTML,
 };

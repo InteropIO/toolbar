@@ -9,7 +9,10 @@ let layoutOpenedTimeout;
 init();
 function init() {
   q('.layouts-nav').addEventListener('mouseenter', (e) => {
-    if (e.target.matches && e.target.matches('.horizontal .layouts-nav, .horizontal .layouts-nav *')) {
+    if (
+      e.target.matches &&
+      e.target.matches('.horizontal .layouts-nav, .horizontal .layouts-nav *')
+    ) {
       layoutOpenedTimeout = setTimeout(() => {
         applyOpenClasses();
         layoutDropDownVisibleObs.next(true);
@@ -18,7 +21,10 @@ function init() {
   });
 
   q('.layouts-nav').addEventListener('mouseleave', (e) => {
-    if (e.target.matches && e.target.matches('.horizontal .layouts-nav, .horizontal .layouts-nav *')) {
+    if (
+      e.target.matches &&
+      e.target.matches('.horizontal .layouts-nav, .horizontal .layouts-nav *')
+    ) {
       layoutDropDownVisibleObs.next(false);
       if (layoutOpenedTimeout) {
         clearInterval(layoutOpenedTimeout);
@@ -30,15 +36,14 @@ function init() {
     width: Math.round(q('.app').offsetWidth),
     height: Math.round(q('.app').offsetHeight),
     left: 200,
-    top: 50
+    top: 50,
   });
   window.appBoundsObs = appBoundsObs;
 
   glueModule.boundsObs
-  .pipe(rxjs.operators.filter(bounds => bounds))
-  .subscribe((windowBounds) => {
-    glueModule.getMonitorInfo()
-      .then(monitors => {
+    .pipe(rxjs.operators.filter((bounds) => bounds))
+    .subscribe((windowBounds) => {
+      glueModule.getMonitorInfo().then((monitors) => {
         const launcherBounds = q('.view-port').getBoundingClientRect();
         let viewPortBounds = {
           left: windowBounds.left + launcherBounds.left,
@@ -54,42 +59,47 @@ function init() {
         }
 
         if (!q('.view-port').classList.contains('horizontal')) {
-          let shouldOpenLeft = (viewPortBounds.left + 500) > (currentMonitor.left + currentMonitor.width);
+          let shouldOpenLeft =
+            viewPortBounds.left + 500 >
+            currentMonitor.left + currentMonitor.width;
           openLeftObs.next(shouldOpenLeft);
           if (shouldOpenLeft) {
             openTopObs.next(false);
           }
         } else {
-          let shouldOpenTop = (viewPortBounds.top + viewPortBounds.height + 300) > (currentMonitor.workingAreaTop + currentMonitor.workingAreaHeight);
+          let shouldOpenTop =
+            viewPortBounds.top + viewPortBounds.height + 300 >
+            currentMonitor.workingAreaTop + currentMonitor.workingAreaHeight;
           openTopObs.next(shouldOpenTop);
           if (shouldOpenTop) {
             openLeftObs.next(false);
           }
         }
-      })
-  });
+      });
+    });
 
   appBoundsObs
-  .pipe(rxjs.operators.combineLatest(topMenuVisibleObs, layoutDropDownVisibleObs))
-  .subscribe(([appBounds, topMenuVisible, layoutDropDownVisible]) => {
-    resizeVisibleArea(appBounds, topMenuVisible, layoutDropDownVisible);
-  });
+    .pipe(
+      rxjs.operators.combineLatest(topMenuVisibleObs, layoutDropDownVisibleObs)
+    )
+    .subscribe(([appBounds, topMenuVisible, layoutDropDownVisible]) => {
+      resizeVisibleArea(appBounds, topMenuVisible, layoutDropDownVisible);
+    });
 }
 
 function handleDropDownClicks() {
   document.addEventListener('click', (e) => {
-
     if (e.target.matches('[dropdown-button-id], [dropdown-button-id] *')) {
       //dropdown button click  - toggle dropdown
       applyOpenClasses();
-      let btnElement = e.path.find(e => e.getAttribute('dropdown-button-id'));
+      let btnElement = e.path.find((e) => e.getAttribute('dropdown-button-id'));
       let menuId = btnElement.getAttribute('dropdown-button-id');
       let menu = q(`[dropdown-id="${menuId}"]`);
       menu.classList.toggle('show');
       topMenuVisibleObs.next(menu.classList.contains('show'));
     } else {
       //click is not on dropdown button - close opened dropdowns
-      qa(`[dropdown-id].show`).forEach(e => e.classList.remove('show'));
+      qa(`[dropdown-id].show`).forEach((e) => e.classList.remove('show'));
       topMenuVisibleObs.next(false);
     }
   });
@@ -101,7 +111,7 @@ function applyOpenClasses() {
   }
 
   let openLeft = openLeftObs.value;
-  let openTop =  openTopObs.value;
+  let openTop = openTopObs.value;
   if (openLeft && !q('.view-port.horizontal')) {
     document.body.classList.add('open-left');
   }
@@ -119,7 +129,9 @@ function applyOpenClasses() {
   }
 
   return new Promise((res, rej) => {
-    setTimeout(() => {res()});
+    setTimeout(() => {
+      res();
+    });
   });
 }
 
@@ -138,44 +150,55 @@ function resizeVisibleArea(appBounds, topMenuVisible, layoutDropDownVisible) {
     top: Math.round(appBounds.top),
     left: Math.round(appBounds.left),
     width: Math.round(appBounds.width),
-    height: Math.round(appBounds.height)
+    height: Math.round(appBounds.height),
   });
 
   if (q('.view-port.horizontal') && topMenuVisible) {
-    let {top, left, width, height} = q('#menu-top').getBoundingClientRect();
+    let { top, left, width, height } = q('#menu-top').getBoundingClientRect();
     // TODO
     top = Math.round(top);
     left = Math.round(left);
     width = Math.round(width);
     height = Math.round(height);
-    visibleAreas.push({top, left, width, height});
+    visibleAreas.push({ top, left, width, height });
   }
 
   if (layoutDropDownVisible) {
-    let {top, left, width, height} = q('.layout-menu-tool').getBoundingClientRect();
+    let { top, left, width, height } =
+      q('.layout-menu-tool').getBoundingClientRect();
     // TODO
     top = Math.round(top);
     left = Math.round(left);
     width = Math.round(width);
     height = Math.round(height);
     // TODO
-    visibleAreas.push({top, left, width, height});
+    visibleAreas.push({ top, left, width, height });
   }
 
   glueModule.resizeWindowVisibleArea(visibleAreas);
 }
 
 function getMonitor(bounds, displays) {
-  const monitorsSortedByOverlap = displays.map((m) => {
-      const { left, top, workingAreaWidth: width, workingAreaHeight: height } = m;
-      const overlap = calculateTotalOverlap({ left, top, width, height }, bounds);
+  const monitorsSortedByOverlap = displays
+    .map((m) => {
+      const {
+        left,
+        top,
+        workingAreaWidth: width,
+        workingAreaHeight: height,
+      } = m;
+      const overlap = calculateTotalOverlap(
+        { left, top, width, height },
+        bounds
+      );
       return {
-          monitor: m,
-          totalOverlap: overlap
+        monitor: m,
+        totalOverlap: overlap,
       };
-  }).sort((a, b) => b.totalOverlap - a.totalOverlap);
+    })
+    .sort((a, b) => b.totalOverlap - a.totalOverlap);
 
-  if (!monitorsSortedByOverlap.find(m => m.totalOverlap > 0)) {
+  if (!monitorsSortedByOverlap.find((m) => m.totalOverlap > 0)) {
     return false;
   }
 
@@ -199,10 +222,9 @@ function calculateTotalOverlap(r1, r2) {
   return xOverlap * yOverlap;
 }
 
-
 export {
   handleWidthChange,
   handleDropDownClicks,
   applyOpenClasses,
-  getMonitor
-}
+  getMonitor,
+};
