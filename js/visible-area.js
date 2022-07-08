@@ -65,6 +65,7 @@ function init() {
           let shouldOpenLeft =
             viewPortBounds.left + 500 >
             currentMonitor.left + currentMonitor.width;
+
           openLeftObs.next(shouldOpenLeft);
 
           if (shouldOpenLeft) {
@@ -74,6 +75,7 @@ function init() {
           let shouldOpenTop =
             viewPortBounds.top + viewPortBounds.height + 300 >
             currentMonitor.workingAreaTop + currentMonitor.workingAreaHeight;
+
           openTopObs.next(shouldOpenTop);
 
           if (shouldOpenTop) {
@@ -118,6 +120,7 @@ function applyOpenClasses() {
 
   let openLeft = openLeftObs.value;
   let openTop = openTopObs.value;
+
   if (openLeft && !q('.view-port.horizontal')) {
     document.body.classList.add('open-left');
   }
@@ -162,6 +165,7 @@ function resizeVisibleArea(appBounds, topMenuVisible, layoutDropDownVisible) {
 
   if (q('.view-port.horizontal') && topMenuVisible) {
     let { top, left, width, height } = q('#menu-top').getBoundingClientRect();
+
     // TODO
     top = Math.round(top);
     left = Math.round(left);
@@ -173,6 +177,7 @@ function resizeVisibleArea(appBounds, topMenuVisible, layoutDropDownVisible) {
   if (layoutDropDownVisible) {
     let { top, left, width, height } =
       q('.layout-menu-tool').getBoundingClientRect();
+
     // TODO
     top = Math.round(top);
     left = Math.round(left);

@@ -76,6 +76,7 @@ const runningApps = allApplicationsObs.pipe(
 
 function shouldAppBeVisible(app) {
   let shouldBeVisible = true;
+
   if (
     !getSetting('showHiddenApps') &&
     (app.hidden || app.name === glue42gd.applicationName)
@@ -103,6 +104,7 @@ function orderApps(a, b) {
   } else {
     const aTitleOrName = typeof a.title === 'undefined' ? a.name : a.title;
     const bTitleOrName = typeof b.title === 'undefined' ? b.name : a.title;
+
     return aTitleOrName.localeCompare(bTitleOrName);
   }
 }
@@ -132,6 +134,7 @@ function handleAppClick() {
       let folderElement = e.path.find((e) => e.getAttribute('folder-name'));
       let folderName = folderElement.getAttribute('folder-name');
       let isFolderOpen = folderElement.classList.contains('folder-open');
+
       changeFolderState(folderName, !isFolderOpen);
     }
   });

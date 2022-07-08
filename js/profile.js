@@ -26,18 +26,21 @@ async function populateProfileData() {
 
   if (SID.length > 15) {
     const trimmedSID = SID.substring(0, 15) + '...';
+
     q('.profile-sid').innerText = trimmedSID;
   } else {
     q('.profile-sid').innerText = SID;
   }
   if (reg.length > 15) {
     const trimmedReg = reg.substring(0, 15) + '...';
+
     q('.profile-reg').innerText = trimmedReg;
   } else {
     q('.profile-reg').innerText = reg;
   }
   if (env.length > 15) {
     const trimmedEnv = env.substring(0, 15) + '...';
+
     q('.profile-env').innerText = trimmedEnv;
   } else {
     q('.profile-env').innerText = env;

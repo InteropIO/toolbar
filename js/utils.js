@@ -29,6 +29,7 @@ import {
   profile_handleRestartClick,
   profile_handleFeedbackClick,
 } from './profile.js';
+
 const windowMargin = 50;
 let isVertical;
 
@@ -141,6 +142,7 @@ async function handleOrientationChange() {
 
 async function ensureWindowHasSpace(isVertical) {
   console.log('check near edge');
+
   let monitorInfo = await getMonitorInfo();
   let windowBounds = await getWindowBounds();
   let visibleAreaBounds = q('.view-port').getBoundingClientRect();
@@ -151,6 +153,7 @@ async function ensureWindowHasSpace(isVertical) {
     height: visibleAreaBounds.height,
   };
   let currentMonitor = getMonitor(realBounds, monitorInfo);
+
   if (isVertical) {
     // should have enough space on the right
     let newRight = windowBounds.left + visibleAreaBounds.right + 340 + 20;
@@ -326,6 +329,7 @@ function handleModalClose() {
       )
     ) {
       let modal = e.path.find((el) => el.classList.contains('modal'));
+
       modal.classList.remove('show');
     }
   });
@@ -523,6 +527,7 @@ function openDrawer(drawerId) {
     view: window,
     bubbles: true,
   });
+
   menuButton.dispatchEvent(hoverEvent);
   menuButton.click();
 }

@@ -82,6 +82,7 @@ function printApps() {
     .pipe(
       rxMap(([searchInput, apps]) => {
         let search = searchInput.toLowerCase().trim();
+
         return {
           search,
           filteredApps: apps.filter(
@@ -97,6 +98,7 @@ function printApps() {
       if (search.trim().length > 1) {
         if (getSetting('searchClients')) {
           let clientsSearch = await searchClients(search);
+
           clientsSearch.entities.forEach((client) => {
             newResultsHTML += clientHTMLTemplate(client);
           });
@@ -104,6 +106,7 @@ function printApps() {
 
         if (getSetting('searchInstruments')) {
           let instrumentSearch = await searchInstruments(search);
+
           instrumentSearch.entities.forEach((instrument) => {
             newResultsHTML += instrumentHTMLTemplate(instrument);
           });
@@ -114,6 +117,7 @@ function printApps() {
         favoriteBtn: true,
         hasSearch: search.trim().length > 1,
       });
+
       // apps.forEach(app => newResultsHTML += applicationHTMLTemplate(app, {favoriteBtn: true}));
       q('#search-results').innerHTML = newResultsHTML || noApplicationsHTML;
       updateFavoriteApps();
@@ -191,6 +195,7 @@ function insertInFolder(appFolder, app, results) {
     currentFolder = currentFolder.find(
       (item) => item.type === 'folder' && item.item === folder
     );
+
     if (currentFolder) {
       currentFolder = currentFolder.children;
     }
