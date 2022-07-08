@@ -10,13 +10,11 @@
 <body class="">
   <script>
     if (!window.Glue) {
-      console.warn(
-        "Glue is not auto imported, will add it as a script"
-      );
+      console.warn('Glue is not auto imported, will add it as a script');
 
-      let scriptEl = document.createElement("script");
+      let scriptEl = document.createElement('script');
 
-      scriptEl.setAttribute("src", "assets/desktop.umd.min.js");
+      scriptEl.setAttribute('src', 'assets/desktop.umd.min.js');
       document.body.appendChild(scriptEl);
     }
   </script>
@@ -345,8 +343,8 @@
   </script>
   <script>
     if (window.glue42gd && glue42gd.theme) {
-      const allThemes = ["dark", "light"];
-      const html = q("html");
+      const allThemes = ['dark', 'light'];
+      const html = q('html');
 
       html.classList.remove(...allThemes);
       html.classList.add(glue42gd.theme);

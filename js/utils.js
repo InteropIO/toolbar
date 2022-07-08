@@ -218,16 +218,16 @@ function handleTopMenuClicks() {
       let topElement = e.path.find((e) => e.getAttribute('menu-button-id'));
       let menuId = topElement.getAttribute('menu-button-id');
 
-      qa(`[menu-id]:not([menu-id='${menuId}'])`).forEach((menu) => {
+      qa(`[menu-id]:not([menu-id="${menuId}"])`).forEach((menu) => {
         menu.classList.add('hide');
       });
-      qa(`[menu-id]:not([menu-button-id='${menuId}']) .chavron`).forEach(
+      qa(`[menu-id]:not([menu-button-id="${menuId}"]) .chavron`).forEach(
         (menuBtnChavron) => {
           menuBtnChavron.classList.remove('chavron-rotate');
         }
       );
 
-      let menuToToggle = q(`[menu-id='${menuId}']`);
+      let menuToToggle = q(`[menu-id="${menuId}"]`);
 
       if (menuToToggle.classList.contains('hide')) {
         await applyOpenClasses();
@@ -268,7 +268,7 @@ function handleCloseDrawerClicks() {
       let menuId = menu && menu.getAttribute('menu-id');
 
       if (menuId) {
-        q(`[menu-button-id='${menuId}']`).click();
+        q(`[menu-button-id="${menuId}"]`).click();
         // q('.expand').classList.remove('expand');
       }
     }
@@ -288,17 +288,18 @@ function handleMinimizeClick() {
   );
 }
 
+// TODO: Maybe use Chevron instead of Chavron?
 function toggleTopButtonState(id) {
-  qa(`[menu-button-id='${id}'] .chavron`).forEach((chavron) =>
+  qa(`[menu-button-id="${id}"] .chavron`).forEach((chavron) =>
     chavron.classList.toggle('chavron-rotate')
   );
-  qa(`[menu-button-id='${id}'] > a`).forEach((chavron) =>
+  qa(`[menu-button-id="${id}"] > a`).forEach((chavron) =>
     chavron.classList.toggle('active')
   );
-  qa(`[menu-button-id]:not([menu-button-id='${id}']) .chavron`).forEach(
+  qa(`[menu-button-id]:not([menu-button-id="${id}"]) .chavron`).forEach(
     (chavron) => chavron.classList.remove('chavron-rotate')
   );
-  qa(`[menu-button-id]:not([menu-button-id='${id}']) > a`).forEach((chavron) =>
+  qa(`[menu-button-id]:not([menu-button-id="${id}"]) > a`).forEach((chavron) =>
     chavron.classList.remove('active')
   );
 }
@@ -478,10 +479,10 @@ function getAppIcon(app = {}) {
     if (!icon.includes('://')) {
       icon = 'data:image/png;base64, ' + icon;
     }
-    return `<img src='${icon}' draggable='false' style='width:16px;'/>`;
+    return `<img src="${icon}" draggable="false" style="width:16px;"/>`;
   } else {
-    return `<span class='icon-size-16'>
-    <i class='icon-app' draggable='false'></i>
+    return `<span class="icon-size-16">
+    <i class="icon-app" draggable="false"></i>
   </span>`;
   }
 }
@@ -496,7 +497,7 @@ function escapeHtml(unsafe) {
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/'/g, '&quot;')
+    .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
 }
 

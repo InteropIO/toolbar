@@ -18,6 +18,7 @@ async function init() {
 
     apps.forEach((app) => {
       let consumes = app.userProperties && app.userProperties.consumes;
+
       if (consumes) {
         let appDescription = {
           name: app.name,
@@ -142,7 +143,6 @@ function handleClientAndInstrumentClicks() {
 
 async function searchEntities({ type, criteria }) {
   const emptyResult = { entities: [] };
-
   const typeRegistered = getCurrentEntityTypes().includes(type);
 
   if (typeRegistered === false) {

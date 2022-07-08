@@ -99,6 +99,7 @@ function handleDropDownClicks() {
     if (e.target.matches('[dropdown-button-id], [dropdown-button-id] *')) {
       //dropdown button click  - toggle dropdown
       applyOpenClasses();
+
       let btnElement = e.path.find((e) => e.getAttribute('dropdown-button-id'));
       let menuId = btnElement.getAttribute('dropdown-button-id');
       let menu = q(`[dropdown-id="${menuId}"]`);
