@@ -16,7 +16,6 @@ function init() {
 
 function updateFavoriteApps() {
   let currentFavoriteApps = favoriteApps.value;
-
   document.querySelectorAll('[app-name]').forEach((appElement) => {
     let appName = appElement.getAttribute('app-name');
 
@@ -49,7 +48,6 @@ function removeFavoriteApp(appName) {
   console.log('removing favorite app');
 
   let currentApps = favoriteApps.value.slice();
-
   currentApps = currentApps.filter(
     (checkedAppName) => checkedAppName !== appName
   );

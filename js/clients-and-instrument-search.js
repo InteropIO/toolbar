@@ -83,7 +83,6 @@ function handleClientAndInstrumentClicks() {
       let clientId = e.path
         .find((e) => e && e.getAttribute('client-id'))
         .getAttribute('client-id');
-
       startApp(appId, {
         contact: { ids: [{ systemName: 'rest.id', nativeId: clientId }] },
         clientId,
@@ -240,7 +239,6 @@ function getClientApps() {
     return '';
   } else {
     let clientAppsHTML = '';
-
     clientAppsObs.value.forEach((clientApp) => {
       clientAppsHTML += `<li class="nav-link" client-app-id="${clientApp.name}">
         ${clientApp.icon}
@@ -257,7 +255,6 @@ function getInstrumentApps() {
     return '';
   } else {
     let instrumentAppsHTML = '';
-
     instrumentAppsObs.value.forEach((instrumentApp) => {
       instrumentAppsHTML += `<li class="nav-link" instrument-app-id="${instrumentApp.name}">
         ${instrumentApp.icon}
@@ -286,7 +283,6 @@ function getWorkspaceApps(workspace) {
 
   if (workspace.type === 'swimlane') {
     console.log('Swimlane', workspace.name);
-
     workspace.canvas.lanes.forEach((lane) => {
       lane.items.forEach((tabGroup) => {
         let items = [];
@@ -298,7 +294,6 @@ function getWorkspaceApps(workspace) {
             null,
             tabGroup.canvas.lanes.map((lane) => lane.items)
           );
-
           items = Array.concat.apply(
             null,
             tabs.map((tab) => tab.items)
