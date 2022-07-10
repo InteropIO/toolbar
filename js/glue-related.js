@@ -56,11 +56,18 @@ gluePromise.then((glue) => {
 
 async function checkWindowSize() {
   await gluePromise;
-  let currentBounds = glue.windows.my().bounds;
+  let win = glue.windows.my();
+  let currentBounds = win.bounds;
   if (currentBounds.width !== 940 || currentBounds.height !== 800) {
-    console.debug('Start bounds are wrong, correcting to 940x800');
-    glue.windows.my().moveResize({ width: 940, height: 800 });
+    console.debug('Start bounds are wrong, correcting to 940x800')
+    win.moveResize({width: 940, height: 800});
   }
+  win.onBoundsChanged(() => {
+    if (win.bounds.width !== 940 || win.bounds.height !== 800) {
+      console.debug(`Resizing to incorrect bounds for width: ${win.bounds.width} and height: ${win.bounds.height}, correcting to 940x800`)
+      win.moveResize({width: 940, height: 800});
+    }
+  });
 }
 
 function trackApplications() {
