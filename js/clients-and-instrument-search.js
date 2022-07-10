@@ -12,84 +12,116 @@ let instrumentWorkspacesObs = new rxjs.BehaviorSubject([]);
 init();
 async function init() {
   gss = await gssPromise;
-  allApplicationsObs
-    .subscribe(apps => {
-      let clientApps = [];
-      let instrumentApps = [];
-      apps.forEach(app => {
-        let consumes = app.userProperties && app.userProperties.consumes;
-        if (consumes) {
-          let appDescription = {name: app.name, displayName: app.title, icon: getAppIcon(app)};
+  allApplicationsObs.subscribe((apps) => {
+    let clientApps = [];
+    let instrumentApps = [];
+    apps.forEach((app) => {
+      let consumes = app.userProperties && app.userProperties.consumes;
+      if (consumes) {
+        let appDescription = {
+          name: app.name,
+          displayName: app.title,
+          icon: getAppIcon(app),
+        };
 
-          if (consumes.includes('Client')) {
-            clientApps.push(appDescription);
-          } else if (consumes.includes('Instrument')) {
-            instrumentApps.push(appDescription);
-          }
+        if (consumes.includes('Client')) {
+          clientApps.push(appDescription);
+        } else if (consumes.includes('Instrument')) {
+          instrumentApps.push(appDescription);
         }
-      });
-
-      clientAppsObs.next(clientApps);
-      instrumentAppsObs.next(instrumentApps);
+      }
     });
 
-  allWorkspacesObs
-    .subscribe(workspaces => {
-      let clientWorkspaces = [];
-      let instrumentWorkspaces = [];
+    clientAppsObs.next(clientApps);
+    instrumentAppsObs.next(instrumentApps);
+  });
 
-      workspaces
-      .filter(workspace => workspace.type === 'swimlane' || workspace.type === 'workspace')
-      .forEach(workspace => {
+  allWorkspacesObs.subscribe((workspaces) => {
+    let clientWorkspaces = [];
+    let instrumentWorkspaces = [];
+
+    workspaces
+      .filter(
+        (workspace) =>
+          workspace.type === 'swimlane' || workspace.type === 'workspace'
+      )
+      .forEach((workspace) => {
         let workspaceApps = [];
         workspaceApps = getWorkspaceApps(workspace);
 
-
-        if (clientAppsObs.value.find(app => workspaceApps.includes(app.name))) {
-          clientWorkspaces.push({name:workspace.name, type: workspace.type});
+        if (
+          clientAppsObs.value.find((app) => workspaceApps.includes(app.name))
+        ) {
+          clientWorkspaces.push({ name: workspace.name, type: workspace.type });
         }
 
-        if (instrumentAppsObs.value.find(app => workspaceApps.includes(app.name))) {
-          instrumentWorkspaces.push({ name: workspace.name, type: workspace.type });
+        if (
+          instrumentAppsObs.value.find((app) =>
+            workspaceApps.includes(app.name)
+          )
+        ) {
+          instrumentWorkspaces.push({
+            name: workspace.name,
+            type: workspace.type,
+          });
         }
       });
 
-      clientWorkspacesObs.next(clientWorkspaces);
-      instrumentWorkspacesObs.next(instrumentWorkspaces);
-    });
+    clientWorkspacesObs.next(clientWorkspaces);
+    instrumentWorkspacesObs.next(instrumentWorkspaces);
+  });
 }
 
 function handleClientAndInstrumentClicks() {
   document.addEventListener('click', (e) => {
     if (e.target.matches('[client-app-id], [client-app-id] *')) {
-      let appId = e.path.find(e => e && e.getAttribute('client-app-id')).getAttribute('client-app-id');
-      let clientId = e.path.find(e => e && e.getAttribute('client-id')).getAttribute('client-id');
-      startApp(appId, { contact: { ids: [{ systemName: 'rest.id', nativeId: clientId }] }, clientId });
+      let appId = e.path
+        .find((e) => e && e.getAttribute('client-app-id'))
+        .getAttribute('client-app-id');
+      let clientId = e.path
+        .find((e) => e && e.getAttribute('client-id'))
+        .getAttribute('client-id');
+      startApp(appId, {
+        contact: { ids: [{ systemName: 'rest.id', nativeId: clientId }] },
+        clientId,
+      });
       if (!e.ctrlKey) {
         clearSearch();
       }
     }
 
     if (e.target.matches('[instrument-app-id], [instrument-app-id] *')) {
-      let appId = e.path.find(e => e && e.getAttribute('instrument-app-id')).getAttribute('instrument-app-id');
-      let insturmentId = e.path.find(e => e && e.getAttribute('instrument-id')).getAttribute('instrument-id');
-      startApp(appId, {ric: insturmentId});
+      let appId = e.path
+        .find((e) => e && e.getAttribute('instrument-app-id'))
+        .getAttribute('instrument-app-id');
+      let insturmentId = e.path
+        .find((e) => e && e.getAttribute('instrument-id'))
+        .getAttribute('instrument-id');
+      startApp(appId, { ric: insturmentId });
       if (!e.ctrlKey) {
         clearSearch();
       }
     }
 
     if (e.target.matches('[workspace-id], [workspace-id] *')) {
-      let workspaceId = e.path.find(e => e.getAttribute && e.getAttribute('workspace-id')).getAttribute('workspace-id');
-      let workspaceType = e.path.find(e => e.getAttribute && e.getAttribute('workspace-type')).getAttribute('workspace-type');
-      let clientIdElement = e.path.find(e => e.getAttribute && e.getAttribute('client-id'));
-      let instrumentIdElement = e.path.find(e => e.getAttribute && e.getAttribute('instrument-id'));
+      let workspaceId = e.path
+        .find((e) => e.getAttribute && e.getAttribute('workspace-id'))
+        .getAttribute('workspace-id');
+      let workspaceType = e.path
+        .find((e) => e.getAttribute && e.getAttribute('workspace-type'))
+        .getAttribute('workspace-type');
+      let clientIdElement = e.path.find(
+        (e) => e.getAttribute && e.getAttribute('client-id')
+      );
+      let instrumentIdElement = e.path.find(
+        (e) => e.getAttribute && e.getAttribute('instrument-id')
+      );
       if (clientIdElement) {
         let clientId = clientIdElement.getAttribute('client-id');
-        openWorkspace(workspaceId, workspaceType, {clientId});
+        openWorkspace(workspaceId, workspaceType, { clientId });
       } else if (instrumentIdElement) {
         let instrumentId = instrumentIdElement.getAttribute('instrument-id');
-        openWorkspace(workspaceId, workspaceType, {ric: instrumentId});
+        openWorkspace(workspaceId, workspaceType, { ric: instrumentId });
       }
 
       if (!e.ctrlKey) {
@@ -101,7 +133,7 @@ function handleClientAndInstrumentClicks() {
 
 async function searchEntities({ type, criteria }) {
   const emptyResult = { entities: [] };
-  
+
   const typeRegistered = getCurrentEntityTypes().includes(type);
   if (typeRegistered === false) {
     return emptyResult;
@@ -118,10 +150,12 @@ async function searchEntities({ type, criteria }) {
     });
 
     query.search(...criteria);
-  })
-  .catch((error) => {
-    console.warn(`GSS search for entity type "${type}" failed. Error: `, error.message);
-    
+  }).catch((error) => {
+    console.warn(
+      `GSS search for entity type "${type}" failed. Error: `,
+      error.message
+    );
+
     clearTimeout(timeout);
     return emptyResult;
   });
@@ -133,7 +167,7 @@ async function searchClients(term) {
   const criteria = [
     { name: 'name.value', value },
     { name: 'email.value', value },
-    { name: 'id.value', value }
+    { name: 'id.value', value },
   ];
 
   return searchEntities({ type, criteria });
@@ -141,17 +175,14 @@ async function searchClients(term) {
 
 async function searchInstruments(term) {
   const type = 'Instrument';
-  const criteria = [
-    { name: 'ric', value: term?.trim()?.toLowerCase() }
-  ];
+  const criteria = [{ name: 'ric', value: term?.trim()?.toLowerCase() }];
 
   return searchEntities({ type, criteria });
 }
 
-
 function clientHTMLTemplate(client, options = {}) {
   let keysPriority = ['name', 'email', 'id'];
-  let matchedKey = keysPriority.find(key => client[key].isMatch);
+  let matchedKey = keysPriority.find((key) => client[key].isMatch);
   let apps = getClientApps();
   let workspaces = getWorkspaces('Client');
 
@@ -196,7 +227,7 @@ function getClientApps() {
     return '';
   } else {
     let clientAppsHTML = '';
-    clientAppsObs.value.forEach(clientApp => {
+    clientAppsObs.value.forEach((clientApp) => {
       clientAppsHTML += `<li class="nav-link" client-app-id="${clientApp.name}">
         ${clientApp.icon}
         ${clientApp.displayName}
@@ -212,7 +243,7 @@ function getInstrumentApps() {
     return '';
   } else {
     let instrumentAppsHTML = '';
-    instrumentAppsObs.value.forEach(instrumentApp => {
+    instrumentAppsObs.value.forEach((instrumentApp) => {
       instrumentAppsHTML += `<li class="nav-link" instrument-app-id="${instrumentApp.name}">
         ${instrumentApp.icon}
         ${instrumentApp.displayName}
@@ -238,17 +269,23 @@ function getWorkspaceApps(workspace) {
   let workspaceApps = [];
   if (workspace.type === 'swimlane') {
     console.log('Swimlane', workspace.name);
-    workspace.canvas.lanes.forEach(lane => {
-      lane.items.forEach(tabGroup => {
+    workspace.canvas.lanes.forEach((lane) => {
+      lane.items.forEach((tabGroup) => {
         let items = [];
         if (tabGroup.type === 'tab') {
           items = tabGroup.items;
         } else if (tabGroup.type === 'canvas') {
-          let tabs = Array.concat.apply(null, tabGroup.canvas.lanes.map(lane => lane.items))
-          items = Array.concat.apply(null, tabs.map(tab => tab.items));
+          let tabs = Array.concat.apply(
+            null,
+            tabGroup.canvas.lanes.map((lane) => lane.items)
+          );
+          items = Array.concat.apply(
+            null,
+            tabs.map((tab) => tab.items)
+          );
         }
 
-        workspaceApps = workspaceApps.concat(items.map(item => item.name));
+        workspaceApps = workspaceApps.concat(items.map((item) => item.name));
       });
     });
   } else if (workspace.type === 'workspace') {
@@ -261,25 +298,33 @@ function getWorkspaceApps(workspace) {
 function extractApps(children) {
   let apps = [];
   if (Array.isArray(children)) {
-    children.forEach(child => {
+    children.forEach((child) => {
       if (child.type === 'window') {
         apps = apps.concat(child.config.appName);
       } else if (['group', 'column', 'row'].includes(child.type)) {
-        apps = apps.concat(extractApps(child.children))
+        apps = apps.concat(extractApps(child.children));
       }
-    })
+    });
   }
 
   return apps;
 }
 
 function workspaceHTMLTemplate(workspaces) {
-  return workspaces.map(workspace => `<li class="nav-link" workspace-id="${workspace.name}" workspace-type="${workspace.type}">
+  return workspaces
+    .map(
+      (workspace) => `<li class="nav-link" workspace-id="${
+        workspace.name
+      }" workspace-type="${workspace.type}">
     <span class="icon-size-16">
       <i class="icon-app" draggable="false"></i>
     </span>
-    ${workspace.name} (${workspace.type === 'workspace' ? 'Workspace' : 'Swimlane'})
-  </li>`).join('');
+    ${workspace.name} (${
+        workspace.type === 'workspace' ? 'Workspace' : 'Swimlane'
+      })
+  </li>`
+    )
+    .join('');
 }
 
 export {
@@ -287,5 +332,5 @@ export {
   searchInstruments,
   clientHTMLTemplate,
   instrumentHTMLTemplate,
-  handleClientAndInstrumentClicks
+  handleClientAndInstrumentClicks,
 };

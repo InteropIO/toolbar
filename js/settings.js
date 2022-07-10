@@ -1,17 +1,16 @@
-
 let defaultSettings = {
   showHiddenApps: false,
   showTutorial: true,
   searchClients: true,
   searchInstruments: true,
-  saveDefaultLayout: false
-}
+  saveDefaultLayout: false,
+};
 
 let localStorageSettings;
 
 try {
   localStorageSettings = JSON.parse(localStorage.getItem('toolbar-settings'));
-} catch(er) {
+} catch (er) {
   localStorageSettings = {};
 }
 
@@ -29,18 +28,24 @@ function setInitialSettings() {
 }
 
 function populateSettings() {
-  Object.keys(settings).forEach(settingName => {
-    if ((typeof settings[settingName] === 'boolean') && q(`#settings-content [setting="${settingName}"]`)) {
+  Object.keys(settings).forEach((settingName) => {
+    if (
+      typeof settings[settingName] === 'boolean' &&
+      q(`#settings-content [setting="${settingName}"]`)
+    ) {
       let checkbox = q(`#settings-content [setting="${settingName}"]`);
-      getSetting(settingName) ? checkbox.setAttribute('checked', true) : checkbox.removeAttribute('checked');
+      getSetting(settingName)
+        ? checkbox.setAttribute('checked', true)
+        : checkbox.removeAttribute('checked');
     }
   });
-
 }
 
 function trackSettingsChange() {
   q('#settings-content ').addEventListener('change', (e) => {
-    let settingElement = e.path.find(e => e && e.getAttribute && e.getAttribute('setting'));
+    let settingElement = e.path.find(
+      (e) => e && e.getAttribute && e.getAttribute('setting')
+    );
     if (settingElement) {
       setSetting(settingElement.getAttribute('setting'), e.srcElement.checked);
     }
@@ -65,8 +70,4 @@ function saveSettings() {
   localStorage.setItem('toolbar-settings', JSON.stringify(settings));
 }
 
-export {
-  setSetting,
-  getSetting,
-  getSettings
-}
+export { setSetting, getSetting, getSettings };
