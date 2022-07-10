@@ -43,12 +43,20 @@ let {
 let refreshAppsObs = new rxjs.BehaviorSubject(true);
 
 document.addEventListener('DOMContentLoaded', () => {
+  init();
+});
+
+async function init() {
+  await glueModule.getPrefs();
+
   console.log('window loaded');
   printApps();
   printRunningApps();
   printLayouts();
   printFavoriteApps();
   printNotificationCount();
+  printNotificationButton();
+  printInitialToastState();
 
   handleWidthChange();
   handleAppClick();
@@ -66,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
   populateSID();
   showFeedbackPanel();
   showProfilePanel();
-});
+}
 
 function printApps() {
   searchInputObs
@@ -74,6 +82,7 @@ function printApps() {
     .pipe(
       rxMap(([searchInput, apps]) => {
         let search = searchInput.toLowerCase().trim();
+
         return {
           search,
           filteredApps: apps.filter(
@@ -89,6 +98,7 @@ function printApps() {
       if (search.trim().length > 1) {
         if (getSetting('searchClients')) {
           let clientsSearch = await searchClients(search);
+
           clientsSearch.entities.forEach((client) => {
             newResultsHTML += clientHTMLTemplate(client);
           });
@@ -96,6 +106,7 @@ function printApps() {
 
         if (getSetting('searchInstruments')) {
           let instrumentSearch = await searchInstruments(search);
+
           instrumentSearch.entities.forEach((instrument) => {
             newResultsHTML += instrumentHTMLTemplate(instrument);
           });
@@ -106,6 +117,7 @@ function printApps() {
         favoriteBtn: true,
         hasSearch: search.trim().length > 1,
       });
+
       // apps.forEach(app => newResultsHTML += applicationHTMLTemplate(app, {favoriteBtn: true}));
       q('#search-results').innerHTML = newResultsHTML || noApplicationsHTML;
       updateFavoriteApps();
@@ -141,8 +153,8 @@ function buildFolderStructure(apps) {
   apps.forEach((app) => {
     let appFolder = app.userProperties.folder || '';
     let appFolderSplit = appFolder.split('/').filter((f) => f);
-
     let currentFolder = [];
+
     appFolderSplit.forEach((folder) => {
       currentFolder.push(folder);
       createFolder(currentFolder, results);
@@ -163,9 +175,11 @@ function createFolder(folderPath, root) {
   let folderExists = root.find(
     (item) => item.type === 'folder' && item.item === nextFolderName
   );
+
   if (!folderExists) {
     root.push({ type: 'folder', item: nextFolderName, children: [] });
   }
+
   createFolder(
     folderPath.slice(1),
     root.find((item) => item.type === 'folder' && item.item === nextFolderName)
@@ -175,11 +189,13 @@ function createFolder(folderPath, root) {
 
 function insertInFolder(appFolder, app, results) {
   let currentFolder = results;
+
   appFolder = appFolder || [];
   appFolder.forEach((folder) => {
     currentFolder = currentFolder.find(
       (item) => item.type === 'folder' && item.item === folder
     );
+
     if (currentFolder) {
       currentFolder = currentFolder.children;
     }
@@ -191,6 +207,7 @@ function insertInFolder(appFolder, app, results) {
 function printRunningApps() {
   runningApps.subscribe((runningApps) => {
     let newRunningAppsHTML = '';
+
     if (runningApps.length > 0) {
       runningApps.forEach(
         (runningApp) =>
@@ -209,6 +226,7 @@ function printLayouts() {
   filteredLayouts.subscribe((layouts) => {
     let newLayoutsHTML = '';
     // console.log(layouts);
+
     if (layouts.length > 0) {
       layouts.forEach(
         (layout) => (newLayoutsHTML += layoutHTMLTemplate(layout))
@@ -232,6 +250,7 @@ function printFavoriteApps() {
       if (existingFavApps.length > 0) {
         existingFavApps.forEach((favApp) => {
           let fullApp = allApps.find((a) => a.name === favApp);
+
           if (fullApp) {
             favAppsHtml += favoriteApplicationHTMLTemplate(fullApp, {
               favoriteBtn: false,
@@ -250,6 +269,7 @@ function printNotificationCount() {
   glueModule.notificationsCountObs.subscribe((count) => {
     if (count !== null) {
       q('#notifications-count').innerHTML = count;
+
       if (count === 0) {
         q('#notifications-count').classList.add('empty');
       } else {
@@ -259,19 +279,40 @@ function printNotificationCount() {
   });
 }
 
+function printNotificationButton() {
+  const notificationsEnabled = getSetting('enableNotifications');
+  const notificationButton = q('#notification-panel');
+
+  if (!notificationsEnabled) {
+    notificationButton.classList.add('d-none');
+  }
+}
+
+function printInitialToastState() {
+  const notificationsEnabled = getSetting('enableNotifications');
+  const enableToasts = q('#enable-toasts');
+
+  if (!notificationsEnabled) {
+    enableToasts.checked = false;
+    enableToasts.disabled = true;
+  }
+}
+
 async function showFeedbackPanel() {
   const userProperties = await glueModule.getUserProperties();
   const hideFeedback = userProperties.hideFeedbackButton;
-  if (hideFeedback === true) {
-    q('#feedback-panel').style.display = 'none';
+
+  if (!hideFeedback) {
+    q('#feedback-panel').classList.remove('d-none');
   }
 }
 
 async function showProfilePanel() {
   const userProperties = await glueModule.getUserProperties();
   const hideProfile = userProperties.hideProfileButton;
+
   if (hideProfile === true) {
-    q('#profile-panel').style.display = 'none';
+    q('#profile-panel').classList.add('d-none');
   }
 }
 

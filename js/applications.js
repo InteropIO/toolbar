@@ -43,6 +43,7 @@ const allApplicationsObs = glueAppsObs
   .pipe(
     rxMap((apps) => {
       const duplicatedApps = [];
+
       apps.forEach((app) => {
         if (
           app.userProperties.folder &&
@@ -50,6 +51,7 @@ const allApplicationsObs = glueAppsObs
         ) {
           app.userProperties.folder.forEach((singleFolder) => {
             let appCopy = JSON.parse(JSON.stringify(app));
+
             appCopy.userProperties.folder = singleFolder;
             duplicatedApps.push(appCopy);
           });
@@ -74,6 +76,7 @@ const runningApps = allApplicationsObs.pipe(
 
 function shouldAppBeVisible(app) {
   let shouldBeVisible = true;
+
   if (
     !getSetting('showHiddenApps') &&
     (app.hidden || app.name === glue42gd.applicationName)
@@ -101,6 +104,7 @@ function orderApps(a, b) {
   } else {
     const aTitleOrName = typeof a.title === 'undefined' ? a.name : a.title;
     const bTitleOrName = typeof b.title === 'undefined' ? b.name : a.title;
+
     return aTitleOrName.localeCompare(bTitleOrName);
   }
 }
@@ -115,6 +119,7 @@ function handleAppClick() {
 
     if (e.target.matches('.add-favorite, .add-favorite *')) {
       let isAppFavorite = favoriteApps.value.includes(appName);
+
       if (isAppFavorite) {
         removeFavoriteApp(appName);
       } else {
@@ -129,6 +134,7 @@ function handleAppClick() {
       let folderElement = e.path.find((e) => e.getAttribute('folder-name'));
       let folderName = folderElement.getAttribute('folder-name');
       let isFolderOpen = folderElement.classList.contains('folder-open');
+
       changeFolderState(folderName, !isFolderOpen);
     }
   });
@@ -153,6 +159,7 @@ function applicationFolderHTMLTemplate(folder, options) {
   let folderName = folder.item;
   let folderContents = '';
   let isFolderOpen = options.hasSearch || isFolderOpened(folderName);
+
   folder.children
     .sort((a, b) => {
       if (a.type !== b.type) {
@@ -164,6 +171,7 @@ function applicationFolderHTMLTemplate(folder, options) {
     .forEach((child) => {
       folderContents += getItemHTMLTemplate(child, options);
     });
+
   let folderHeight = 48 + folder.children.length * 48;
 
   return `<li class="nav-item folder ${

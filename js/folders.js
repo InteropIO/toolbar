@@ -9,6 +9,7 @@ function changeFolderState(folderName, newState) {
 }
 
 console.log('init is folder opened');
+
 function isFolderOpened(folderName) {
   return foldersState[folderName] && foldersState[folderName].isOpened;
 }

@@ -1,73 +1,77 @@
-let defaultSettings = {
-  showHiddenApps: false,
+import { updatePrefs } from './glue-related.js';
+
+let settings = {
   showTutorial: true,
+  saveDefaultLayout: false,
   searchClients: true,
   searchInstruments: true,
-  saveDefaultLayout: false,
+  enableNotifications: true,
+  enableToasts: true,
+  showHiddenApps: false,
+  vertical: true,
 };
 
-let localStorageSettings;
-
-try {
-  localStorageSettings = JSON.parse(localStorage.getItem('toolbar-settings'));
-} catch (er) {
-  localStorageSettings = {};
-}
-
-let settings = Object.assign(defaultSettings, localStorageSettings);
-
-init();
 function init() {
-  setInitialSettings();
   populateSettings();
   trackSettingsChange();
-}
-
-function setInitialSettings() {
-  settings['showHiddenApps'] = false;
+  glue.notifications.configure({
+    enable: settings.enableNotifications,
+    enableToasts: settings.enableToasts,
+  });
 }
 
 function populateSettings() {
-  Object.keys(settings).forEach((settingName) => {
+  for (const setting in settings) {
     if (
-      typeof settings[settingName] === 'boolean' &&
-      q(`#settings-content [setting="${settingName}"]`)
+      typeof settings[setting] === 'boolean' &&
+      q(`#settings-content [setting='${setting}']`)
     ) {
-      let checkbox = q(`#settings-content [setting="${settingName}"]`);
-      getSetting(settingName)
+      let checkbox = q(`#settings-content [setting='${setting}']`);
+
+      getSetting(setting)
         ? checkbox.setAttribute('checked', true)
         : checkbox.removeAttribute('checked');
     }
-  });
+  }
 }
 
 function trackSettingsChange() {
-  q('#settings-content ').addEventListener('change', (e) => {
+  q('#settings-content').addEventListener('change', (e) => {
     let settingElement = e.path.find(
       (e) => e && e.getAttribute && e.getAttribute('setting')
     );
+
     if (settingElement) {
-      setSetting(settingElement.getAttribute('setting'), e.srcElement.checked);
+      const setting = {};
+
+      setting[settingElement.getAttribute('setting')] = e.srcElement.checked;
+      updateSetting(setting);
+
+      if (
+        e.target.getAttribute('setting') === 'enableNotifications' &&
+        e.srcElement.checked === false
+      ) {
+        updateSetting({ enableNotifications: false, enableToasts: false });
+      }
     }
   });
 }
 
-function setSetting(settingName, value) {
-  console.info('set setting', settingName, value);
-  settings[settingName] = value;
-  saveSettings();
+function setSettings(prefs) {
+  settings = { ...settings, ...prefs };
+  init();
 }
 
-function getSetting(settingName) {
-  return settings[settingName];
+function updateSetting(setting) {
+  updatePrefs(setting);
+}
+
+function getSetting(setting) {
+  return settings[setting];
 }
 
 function getSettings() {
   return settings;
 }
 
-function saveSettings() {
-  localStorage.setItem('toolbar-settings', JSON.stringify(settings));
-}
-
-export { setSetting, getSetting, getSettings };
+export { setSettings, updateSetting, getSetting, getSettings };

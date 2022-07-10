@@ -4,10 +4,12 @@ let gssPromise;
 let currentEntityTypes = [];
 
 init();
+
 function init() {
   gssPromise = new Promise(async (res, rej) => {
     let glue = await gluePromise;
     let gssInstance = new gss.GlueSearchService(glue.agm);
+
     window['gssInstance'] = gssInstance;
     gssInstance
       .ready()

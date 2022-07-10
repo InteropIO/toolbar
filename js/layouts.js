@@ -14,6 +14,7 @@ import { getSetting } from './settings.js';
 let filteredLayouts;
 
 init();
+
 function init() {
   let allLayouts = layoutsObs.pipe(
     rxjs.operators.map((layouts) => {
@@ -62,9 +63,11 @@ function handleLayoutClick() {
     const layoutElement = e.path.find(
       (e) => e.getAttribute && e.getAttribute('layout-name')
     );
+
     if (!layoutElement) {
       return;
     }
+
     const name = layoutElement.getAttribute('layout-name');
     const type = layoutElement.getAttribute('layout-type');
 
@@ -73,6 +76,7 @@ function handleLayoutClick() {
       layoutElement.classList.add('active');
     } else if (e.target.matches('.set-default, .set-default *')) {
       const isDefault = layoutElement.classList.contains('default-layout');
+
       if (isDefault) {
         clearDefaultLayout();
       } else {
@@ -134,7 +138,6 @@ function layoutHTMLTemplate(layout) {
       <div class="cancel">Cancel</div>
     </div>
   </li>
-
   `
   );
 }

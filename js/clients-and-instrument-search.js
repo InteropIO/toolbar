@@ -15,8 +15,10 @@ async function init() {
   allApplicationsObs.subscribe((apps) => {
     let clientApps = [];
     let instrumentApps = [];
+
     apps.forEach((app) => {
       let consumes = app.userProperties && app.userProperties.consumes;
+
       if (consumes) {
         let appDescription = {
           name: app.name,
@@ -47,6 +49,7 @@ async function init() {
       )
       .forEach((workspace) => {
         let workspaceApps = [];
+
         workspaceApps = getWorkspaceApps(workspace);
 
         if (
@@ -81,10 +84,12 @@ function handleClientAndInstrumentClicks() {
       let clientId = e.path
         .find((e) => e && e.getAttribute('client-id'))
         .getAttribute('client-id');
+
       startApp(appId, {
         contact: { ids: [{ systemName: 'rest.id', nativeId: clientId }] },
         clientId,
       });
+
       if (!e.ctrlKey) {
         clearSearch();
       }
@@ -97,7 +102,9 @@ function handleClientAndInstrumentClicks() {
       let insturmentId = e.path
         .find((e) => e && e.getAttribute('instrument-id'))
         .getAttribute('instrument-id');
+
       startApp(appId, { ric: insturmentId });
+
       if (!e.ctrlKey) {
         clearSearch();
       }
@@ -116,11 +123,14 @@ function handleClientAndInstrumentClicks() {
       let instrumentIdElement = e.path.find(
         (e) => e.getAttribute && e.getAttribute('instrument-id')
       );
+
       if (clientIdElement) {
         let clientId = clientIdElement.getAttribute('client-id');
+
         openWorkspace(workspaceId, workspaceType, { clientId });
       } else if (instrumentIdElement) {
         let instrumentId = instrumentIdElement.getAttribute('instrument-id');
+
         openWorkspace(workspaceId, workspaceType, { ric: instrumentId });
       }
 
@@ -133,17 +143,19 @@ function handleClientAndInstrumentClicks() {
 
 async function searchEntities({ type, criteria }) {
   const emptyResult = { entities: [] };
-
   const typeRegistered = getCurrentEntityTypes().includes(type);
+
   if (typeRegistered === false) {
     return emptyResult;
   }
 
   let timeout;
+
   return new Promise((resolve, reject) => {
     timeout = setTimeout(() => reject(new Error(`Timeout`)), 1500);
 
     const query = gss.createQuery(type);
+
     query.onData((searchResult) => {
       clearTimeout(timeout);
       resolve(searchResult);
@@ -157,6 +169,7 @@ async function searchEntities({ type, criteria }) {
     );
 
     clearTimeout(timeout);
+
     return emptyResult;
   });
 }
@@ -227,6 +240,7 @@ function getClientApps() {
     return '';
   } else {
     let clientAppsHTML = '';
+
     clientAppsObs.value.forEach((clientApp) => {
       clientAppsHTML += `<li class="nav-link" client-app-id="${clientApp.name}">
         ${clientApp.icon}
@@ -243,6 +257,7 @@ function getInstrumentApps() {
     return '';
   } else {
     let instrumentAppsHTML = '';
+
     instrumentAppsObs.value.forEach((instrumentApp) => {
       instrumentAppsHTML += `<li class="nav-link" instrument-app-id="${instrumentApp.name}">
         ${instrumentApp.icon}
@@ -256,6 +271,7 @@ function getInstrumentApps() {
 
 function getWorkspaces(workspaceType) {
   let workspacesHTML = '';
+
   if (workspaceType === 'Client') {
     workspacesHTML += workspaceHTMLTemplate(clientWorkspacesObs.value);
   } else if (workspaceType === 'Instrument') {
@@ -267,11 +283,14 @@ function getWorkspaces(workspaceType) {
 
 function getWorkspaceApps(workspace) {
   let workspaceApps = [];
+
   if (workspace.type === 'swimlane') {
     console.log('Swimlane', workspace.name);
+
     workspace.canvas.lanes.forEach((lane) => {
       lane.items.forEach((tabGroup) => {
         let items = [];
+
         if (tabGroup.type === 'tab') {
           items = tabGroup.items;
         } else if (tabGroup.type === 'canvas') {
@@ -279,6 +298,7 @@ function getWorkspaceApps(workspace) {
             null,
             tabGroup.canvas.lanes.map((lane) => lane.items)
           );
+
           items = Array.concat.apply(
             null,
             tabs.map((tab) => tab.items)
@@ -297,6 +317,7 @@ function getWorkspaceApps(workspace) {
 
 function extractApps(children) {
   let apps = [];
+
   if (Array.isArray(children)) {
     children.forEach((child) => {
       if (child.type === 'window') {

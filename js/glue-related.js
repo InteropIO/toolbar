@@ -1,4 +1,4 @@
-import { getSetting } from './settings.js';
+import { setSettings, getSetting } from './settings.js';
 
 console.time('Glue');
 var gluePromise = new Promise(async (res, rej) => {
@@ -420,6 +420,16 @@ async function getUserProperties() {
   return glue.appManager.myInstance.application.userProperties;
 }
 
+async function getPrefs() {
+  await gluePromise;
+  const prefs = await glue.prefs.get();
+  setSettings(prefs.data);
+}
+
+async function updatePrefs(setting) {
+  await glue.prefs.update({ ...setting });
+}
+
 async function getServerInfo() {
   const configs = await glue42gd.getConfigs();
   return configs.server;
@@ -468,4 +478,6 @@ export {
   getGWURL,
   getUserProperties,
   getServerInfo,
+  getPrefs,
+  updatePrefs,
 };

@@ -7,6 +7,7 @@ let openLeftObs = new rxjs.BehaviorSubject(false);
 let layoutOpenedTimeout;
 
 init();
+
 function init() {
   q('.layouts-nav').addEventListener('mouseenter', (e) => {
     if (
@@ -26,6 +27,7 @@ function init() {
       e.target.matches('.horizontal .layouts-nav, .horizontal .layouts-nav *')
     ) {
       layoutDropDownVisibleObs.next(false);
+
       if (layoutOpenedTimeout) {
         clearInterval(layoutOpenedTimeout);
       }
@@ -52,6 +54,7 @@ function init() {
           width: launcherBounds.width,
         };
         let currentMonitor = getMonitor(viewPortBounds, monitors);
+
         if (!currentMonitor) {
           q('.view-port').classList.add('expand');
           q('.app').classList.add('expand-wrapper');
@@ -62,7 +65,9 @@ function init() {
           let shouldOpenLeft =
             viewPortBounds.left + 500 >
             currentMonitor.left + currentMonitor.width;
+
           openLeftObs.next(shouldOpenLeft);
+
           if (shouldOpenLeft) {
             openTopObs.next(false);
           }
@@ -70,7 +75,9 @@ function init() {
           let shouldOpenTop =
             viewPortBounds.top + viewPortBounds.height + 300 >
             currentMonitor.workingAreaTop + currentMonitor.workingAreaHeight;
+
           openTopObs.next(shouldOpenTop);
+
           if (shouldOpenTop) {
             openLeftObs.next(false);
           }
@@ -92,9 +99,11 @@ function handleDropDownClicks() {
     if (e.target.matches('[dropdown-button-id], [dropdown-button-id] *')) {
       //dropdown button click  - toggle dropdown
       applyOpenClasses();
+
       let btnElement = e.path.find((e) => e.getAttribute('dropdown-button-id'));
       let menuId = btnElement.getAttribute('dropdown-button-id');
       let menu = q(`[dropdown-id="${menuId}"]`);
+
       menu.classList.toggle('show');
       topMenuVisibleObs.next(menu.classList.contains('show'));
     } else {
@@ -112,6 +121,7 @@ function applyOpenClasses() {
 
   let openLeft = openLeftObs.value;
   let openTop = openTopObs.value;
+
   if (openLeft && !q('.view-port.horizontal')) {
     document.body.classList.add('open-left');
   }
@@ -145,6 +155,7 @@ function handleWidthChange() {
 
 function resizeVisibleArea(appBounds, topMenuVisible, layoutDropDownVisible) {
   let visibleAreas = [];
+
   appBounds = q('.app').getBoundingClientRect();
   visibleAreas.push({
     top: Math.round(appBounds.top),
@@ -155,6 +166,7 @@ function resizeVisibleArea(appBounds, topMenuVisible, layoutDropDownVisible) {
 
   if (q('.view-port.horizontal') && topMenuVisible) {
     let { top, left, width, height } = q('#menu-top').getBoundingClientRect();
+
     // TODO
     top = Math.round(top);
     left = Math.round(left);
@@ -166,6 +178,7 @@ function resizeVisibleArea(appBounds, topMenuVisible, layoutDropDownVisible) {
   if (layoutDropDownVisible) {
     let { top, left, width, height } =
       q('.layout-menu-tool').getBoundingClientRect();
+
     // TODO
     top = Math.round(top);
     left = Math.round(left);
@@ -191,6 +204,7 @@ function getMonitor(bounds, displays) {
         { left, top, width, height },
         bounds
       );
+
       return {
         monitor: m,
         totalOverlap: overlap,

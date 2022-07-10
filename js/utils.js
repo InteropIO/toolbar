@@ -20,7 +20,7 @@ import {
   setDefaultGlobal,
   openFeedbackForm,
 } from './glue-related.js';
-import { setSetting, getSetting } from './settings.js';
+import { updateSetting, getSetting } from './settings.js';
 import { applyOpenClasses, getMonitor } from './visible-area.js';
 import { searchInputObs } from './applications.js';
 import {
@@ -29,6 +29,7 @@ import {
   profile_handleRestartClick,
   profile_handleFeedbackClick,
 } from './profile.js';
+
 const windowMargin = 50;
 let isVertical;
 
@@ -44,6 +45,8 @@ let arrowKeysObs = rxjs
 
 function handleClicks() {
   handleNotificationClick();
+  handleEnableNotificationsClick();
+  handleEnableToastsClick();
   handleFeedbackClick();
   handleOrientationChange();
   handleThemeChange();
@@ -65,6 +68,7 @@ function handleThemeChange() {
     a.addEventListener('click', (e) => {
       if (e.target.matches('input.select_input[type="radio"]')) {
         let themeToSelect = e.target.getAttribute('theme-name');
+
         changeTheme(themeToSelect);
       }
     });
@@ -78,6 +82,7 @@ function handleThemeChange() {
       q('html').classList.add(themeObj.selected.name);
       qa('.theme-select .select_options').forEach((item, i) => {
         let allThemesHtml = ``;
+
         themeObj.all.forEach((theme) => {
           allThemesHtml += `<li class="select_option">
           <input class="select_input" type="radio" name="theme" id="theme-${
@@ -109,9 +114,8 @@ async function handleOrientationChange() {
     await ensureWindowHasSpace(isVertical);
     q('.app').classList.add('switching-orientation');
     isVertical = !isVertical;
-    setSetting('vertical', isVertical);
+    updateSetting({ vertical: isVertical });
     q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
-
     q('.view-port').classList.add(isVertical ? 'vertical' : 'horizontal');
     q('.view-port').classList.remove(isVertical ? 'horizontal' : 'vertical');
     q('.app').classList.add(isVertical ? 'd-inline-flex' : 'h');
@@ -138,6 +142,7 @@ async function handleOrientationChange() {
 
 async function ensureWindowHasSpace(isVertical) {
   console.log('check near edge');
+
   let monitorInfo = await getMonitorInfo();
   let windowBounds = await getWindowBounds();
   let visibleAreaBounds = q('.view-port').getBoundingClientRect();
@@ -148,21 +153,28 @@ async function ensureWindowHasSpace(isVertical) {
     height: visibleAreaBounds.height,
   };
   let currentMonitor = getMonitor(realBounds, monitorInfo);
+
   if (isVertical) {
     // should have enough space on the right
     let newRight = windowBounds.left + visibleAreaBounds.right + 340 + 20;
     let monitorMostRight =
       currentMonitor.left + currentMonitor.workingAreaWidth;
+
     if (newRight > monitorMostRight) {
-      moveMyWindow({ left: windowBounds.left - (newRight - monitorMostRight) });
+      moveMyWindow({
+        left: windowBounds.left - (newRight - monitorMostRight),
+      });
     }
   } else {
     // should have enough space below
     let newBottom = windowBounds.top + visibleAreaBounds.bottom + 350 + 20;
     let monitorMostBottom =
       currentMonitor.top + currentMonitor.workingAreaHeight;
+
     if (newBottom > monitorMostBottom) {
-      moveMyWindow({ top: windowBounds.top - (newBottom - monitorMostBottom) });
+      moveMyWindow({
+        top: windowBounds.top - (newBottom - monitorMostBottom),
+      });
     }
   }
 }
@@ -196,7 +208,7 @@ function handleTopMenuClicks() {
       e.preventDefault();
       e.stopPropagation();
       e.stopImmediatePropagation();
-      setSetting('showHiddenApps', !getSetting('showHiddenApps'));
+      updateSetting({ showHiddenApps: !getSetting('showHiddenApps') });
       refreshApps();
       return;
     }
@@ -205,6 +217,7 @@ function handleTopMenuClicks() {
       //open selected drawer (apps, layouts)
       let topElement = e.path.find((e) => e.getAttribute('menu-button-id'));
       let menuId = topElement.getAttribute('menu-button-id');
+
       qa(`[menu-id]:not([menu-id="${menuId}"])`).forEach((menu) => {
         menu.classList.add('hide');
       });
@@ -215,9 +228,11 @@ function handleTopMenuClicks() {
       );
 
       let menuToToggle = q(`[menu-id="${menuId}"]`);
+
       if (menuToToggle.classList.contains('hide')) {
         await applyOpenClasses();
       }
+
       menuToToggle.addEventListener(
         'transitionend',
         focusMenuInputAfterTransition
@@ -227,6 +242,7 @@ function handleTopMenuClicks() {
       toggleTopButtonState(menuId);
 
       let hasVisibleDrawers = q('.toggle-content:not(.hide)');
+
       if (hasVisibleDrawers) {
         q('.app').classList.add('has-drawer');
       } else {
@@ -250,6 +266,7 @@ function handleCloseDrawerClicks() {
     if (e.target.matches('.close-drawer, .close-drawer *')) {
       let menu = e.path.find((e) => e && e.getAttribute('menu-id'));
       let menuId = menu && menu.getAttribute('menu-id');
+
       if (menuId) {
         q(`[menu-button-id="${menuId}"]`).click();
         // q('.expand').classList.remove('expand');
@@ -271,6 +288,7 @@ function handleMinimizeClick() {
   );
 }
 
+// TODO: Maybe use Chevron instead of Chavron?
 function toggleTopButtonState(id) {
   qa(`[menu-button-id="${id}"] .chavron`).forEach((chavron) =>
     chavron.classList.toggle('chavron-rotate')
@@ -278,7 +296,6 @@ function toggleTopButtonState(id) {
   qa(`[menu-button-id="${id}"] > a`).forEach((chavron) =>
     chavron.classList.toggle('active')
   );
-
   qa(`[menu-button-id]:not([menu-button-id="${id}"]) .chavron`).forEach(
     (chavron) => chavron.classList.remove('chavron-rotate')
   );
@@ -293,9 +310,12 @@ function focusMenuInputAfterTransition(e) {
   }
 
   let menu = e.srcElement;
+
   menu.removeEventListener('transitionend', focusMenuInputAfterTransition);
+
   if (!menu.classList.contains('hide')) {
     let autofocusInput = menu.querySelector('input[autofocus]');
+
     if (autofocusInput) {
       autofocusInput.focus();
     }
@@ -310,6 +330,7 @@ function handleModalClose() {
       )
     ) {
       let modal = e.path.find((el) => el.classList.contains('modal'));
+
       modal.classList.remove('show');
     }
   });
@@ -331,6 +352,7 @@ async function handleMouseHover() {
   q('.app').addEventListener('mouseenter', (e) => {
     q('.view-port').classList.add('expand');
     q('.app').classList.add('expand-wrapper');
+
     if (closeTimeout) {
       clearTimeout(closeTimeout);
     }
@@ -359,6 +381,7 @@ async function handleMouseHover() {
 
     let viewPortBounds = q('.view-port').getBoundingClientRect();
     let outOfMonitor = isOutOfMonitor(viewPortBounds);
+
     if (await outOfMonitor) {
       console.warn('window is positioned outside of monitor. will not shrink');
       return;
@@ -375,15 +398,50 @@ async function handleMouseHover() {
 }
 
 async function handleNotificationClick() {
-  notificationEnabledObs.subscribe((data) => {
-    q('#notification-panel').classList[data ? 'remove' : 'add']('d-none');
-  });
+  const enableNotifications = getSetting('enableNotifications');
+
+  if (enableNotifications) {
+    notificationEnabledObs.subscribe((data) => {
+      q('#notification-panel').classList[data ? 'remove' : 'add']('d-none');
+    });
+  }
 
   q('#notification-panel').addEventListener('click', (e) => {
     e.preventDefault();
     e.stopPropagation();
     e.stopImmediatePropagation();
     openNotificationPanel();
+  });
+}
+
+function handleEnableNotificationsClick() {
+  const notificationPanel = q('#notification-panel');
+  const enableNotifications = q('#enable-notifications');
+  const enableToasts = q('#enable-toasts');
+
+  enableNotifications.addEventListener('click', (e) => {
+    if (e.target.checked) {
+      glue.notifications.configure({ enable: true, enableToasts: false });
+      notificationPanel.classList.remove('d-none');
+      enableToasts.disabled = false;
+    } else {
+      glue.notifications.configure({ enable: false, enableToasts: false });
+      notificationPanel.classList.add('d-none');
+      enableToasts.checked = false;
+      enableToasts.disabled = true;
+    }
+  });
+}
+
+function handleEnableToastsClick() {
+  const enableToasts = q('#enable-toasts');
+
+  enableToasts.addEventListener('click', (e) => {
+    if (e.target.checked) {
+      glue.notifications.configure({ enableToasts: true });
+    } else {
+      glue.notifications.configure({ enableToasts: false });
+    }
   });
 }
 
@@ -397,13 +455,15 @@ async function handleFeedbackClick() {
 }
 
 async function startTutorial() {
-  let tutorialApp = await getApp('getting-started');
+  const tutorialApp = await getApp('getting-started');
+  const showTutorial = getSetting('showTutorial');
+
   if (!tutorialApp) {
-    setSetting('showTutorial', false);
+    updateSetting({ showTutorial: false });
     q('.show-tutorial-check').classList.add('d-none');
   }
 
-  if (getSetting('showTutorial')) {
+  if (showTutorial) {
     try {
       startApp('getting-started');
     } catch (e) {
@@ -415,6 +475,7 @@ async function startTutorial() {
 function getAppIcon(app = {}) {
   if (app.icon) {
     let icon = app.icon;
+
     if (!icon.includes('://')) {
       icon = 'data:image/png;base64, ' + icon;
     }
@@ -467,6 +528,7 @@ function openDrawer(drawerId) {
     view: window,
     bubbles: true,
   });
+
   menuButton.dispatchEvent(hoverEvent);
   menuButton.click();
 }

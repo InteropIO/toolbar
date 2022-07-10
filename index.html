@@ -11,18 +11,21 @@
   <script>
     if (!window.Glue) {
       console.warn('Glue is not auto imported, will add it as a script');
+
       let scriptEl = document.createElement('script');
+
       scriptEl.setAttribute('src', 'assets/desktop.umd.min.js');
       document.body.appendChild(scriptEl);
     }
   </script>
+
   <div class="app d-inline-flex">
     <div id="applicationLauncher" class="view-port vertical">
       <ul class="nav nav-tabs flex-column" column>
         <li class="view-port-header">
           <div class="dragable"></div>
           <div class="logo">
-            <img src="./assets/logo.svg" width="120">
+            <img src="./assets/logo.svg" width="120" />
           </div>
           <div class="menu">
             <button class="btn btn-icon btn-icon-action minimize d-none" type="button" id="dropdownMenuButton">
@@ -56,8 +59,12 @@
             <span class="text-animation">Layouts</span>
           </a>
           <div class="layout-menu-tool">
-            <div id="load" menu-button-id="layout-load">Load</div>
-            <div id="save" menu-button-id="layout-save">Save</div>
+            <div id="load" menu-button-id="layout-load">
+              Load
+            </div>
+            <div id="save" menu-button-id="layout-save">
+              Save
+            </div>
           </div>
         </li>
         <li class="favorite position-relative">
@@ -65,12 +72,9 @@
           <i class="icon-star-full"></i>
         </li>
         <li class="fav-app-nav">
-
-          <ul id="fav-apps" class="nav nav-tabs  flex-column accordion" column>
-
-          </ul>
+          <ul id="fav-apps" class="nav nav-tabs  flex-column accordion" column></ul>
         </li>
-        <li class="nav-item view-port-footer" id="feedback-panel">
+        <li class="nav-item view-port-footer d-none" id="feedback-panel">
           <a class="nav-link" href="#">
             <i class="icon-feedback ml-2 mr-4"></i>
             <span class="text-animation">Feedback</span>
@@ -90,7 +94,6 @@
           </a>
         </li>
       </ul>
-
     </div>
 
     <div class="toggle-content hide" id="app-content" menu-id="apps">
@@ -99,12 +102,9 @@
           Applications
           <span class="icon-arrow-up-down close-drawer"></span>
         </h5>
-        <input class="form-control" id="app-search" autofocus placeholder="Search...">
+        <input class="form-control" id="app-search" autofocus placeholder="Search..." />
       </div>
-
-      <ul id="search-results" class="nav nav-tabs flex-column">
-
-      </ul>
+      <ul id="search-results" class="nav nav-tabs flex-column"></ul>
     </div>
 
     <div class="toggle-content hide" id="layout-load" menu-id="layout-load">
@@ -113,10 +113,9 @@
           Load layouts
           <span class="icon-arrow-up-down close-drawer"></span>
         </h5>
-        <input class="form-control" id="layout-search" autofocus placeholder="Search layout...">
+        <input class="form-control" id="layout-search" autofocus placeholder="Search Layout..." />
       </div>
-      <ul class="nav nav-tabs flex-column">
-      </ul>
+      <ul class="nav nav-tabs flex-column"></ul>
     </div>
 
     <div class="toggle-content hide" id="layout-content" menu-id="layout-save">
@@ -126,7 +125,7 @@
           <span class="icon-arrow-up-down close-drawer"></span>
         </h5>
         <div class="input-group">
-          <input type="text" id="layout-save-name" class="form-control" autofocus placeholder="Layout name ...">
+          <input type="text" id="layout-save-name" class="form-control" autofocus placeholder="Layout name ..." />
           <div class="input-group-append">
             <button class="btn btn-secondary" id="layout-save-btn">
               <i class="icon-floppy"></i>
@@ -134,22 +133,19 @@
           </div>
         </div>
       </div>
-      <ul id="running-apps" class="nav nav-tabs flex-column">
-
-      </ul>
+      <ul id="running-apps" class="nav nav-tabs flex-column"></ul>
     </div>
 
     <div class="toggle-content hide" id="settings-content" menu-id="settings">
       <div class="p-2">
-        <h5 class="d-flex justify-content-between mb-2">
+        <h5 class="d-flex justify-content-between">
           Settings
           <span class="icon-arrow-up-down close-drawer"></span>
         </h5>
         <form>
-          <p>
           <div class="form-check show-tutorial-check ml-2">
             <input class="form-check-input show-tutorial" type="checkbox" value="1" id="show-tutorial"
-              setting="showTutorial">
+              setting="showTutorial" />
             <label class="form-check-label" for="show-tutorial">
               Show tutorial on startup
             </label>
@@ -157,49 +153,70 @@
           <div class="form-check save-default-layout-check ml-2"
             title="If this option is turned on, you won't be able to specify default layouts">
             <input class="form-check-input save-default-layout" type="checkbox" value="1" id="save-default-layout"
-              setting="saveDefaultLayout">
+              setting="saveDefaultLayout" />
             <label class="form-check-label" for="save-default-layout">
               Save layout on exit
             </label>
           </div>
-          </p>
-          <p>
-          <h5 class="d-flex justify-content-between mb-2">
+          <hr class="mt-2 mb-2" />
+          <h5 class="d-flex justify-content-between">
             Search
           </h5>
           <div class="form-check ml-2">
             <input class="form-check-input search-clients" type="checkbox" value="1" id="search-clients"
-              setting="searchClients">
+              setting="searchClients" />
             <label class="form-check-label" for="search-clients">
               Search clients
             </label>
           </div>
           <div class="form-check ml-2">
             <input class="form-check-input search-instruments" type="checkbox" value="1" id="search-instruments"
-              setting="searchInstruments">
+              setting="searchInstruments" />
             <label class="form-check-label" for="search-instruments">
               Search instruments
             </label>
           </div>
-          </p>
+          <hr class="mt-2 mb-2" />
+          <h5 class="d-flex justify-content-between">
+            Notifications
+          </h5>
+          <div class="form-check ml-2">
+            <input class="form-check-input enable-notifications" type="checkbox" value="1" id="enable-notifications"
+              setting="enableNotifications" />
+            <label class="form-check-label" for="enable-notifications">
+              Enable Notifications
+            </label>
+          </div>
+          <div class="form-check ml-2">
+            <input class="form-check-input enable-toasts" type="checkbox" value="1" id="enable-toasts"
+              setting="enableToasts" />
+            <label class="form-check-label" for="enable-toasts">
+              Enable Toasts
+            </label>
+            <br />
+          </div>
+          <hr class="mt-2 mb-2" />
           <h5>Select theme</h5>
           <ul class="select theme-select">
             <li class="select_items">
               <input class="select_expand" type="radio" name="theme" id="opener" />
               <label class="select_closeLabel" for="close"></label>
-
-              <ul class="select_options">
-
-              </ul>
-
+              <ul class="select_options"></ul>
               <label class="select_expandLabel" for="opener"></label>
             </li>
           </ul>
           <!-- <h5>Select style</h5>
-                <div class="btn-group mb-2">
-                  <button type="button" class="btn btn-primary active">Vertical</button>
-                  <button type="button" class="btn btn-secondary">Horizontal</button>
-                </div> -->
+          <div class="btn-group mb-2">
+              <button
+                  type="button"
+                  class="btn btn-primary active"
+              >
+                  Vertical
+              </button>
+              <button type="button" class="btn btn-secondary">
+                  Horizontal
+              </button>
+          </div> -->
         </form>
       </div>
     </div>
@@ -213,11 +230,15 @@
         <table class="ml-auto mr-auto mt-5">
           <tr>
             <td class="text-right">GD version</td>
-            <td class="pl-3"><span class="gd-version"></span></td>
+            <td class="pl-3">
+              <span class="gd-version"></span>
+            </td>
           </tr>
           <tr>
             <td class="text-right">Glue.js version</td>
-            <td class="pl-3"><span class="glue-js-version"></span></td>
+            <td class="pl-3">
+              <span class="glue-js-version"></span>
+            </td>
           </tr>
           <tr>
             <td class="text-right">GW URL</td>
@@ -255,60 +276,76 @@
         <table class="mb-auto">
           <tr>
             <td class="text-right">User</td>
-            <td class="pl-3"><span class="profile-sid"></span></td>
+            <td class="pl-3">
+              <span class="profile-sid"></span>
+            </td>
           </tr>
           <tr>
             <td class="text-right">Region</td>
-            <td class="pl-3"><span class="profile-reg"></span></td>
+            <td class="pl-3">
+              <span class="profile-reg"></span>
+            </td>
           </tr>
           <tr>
             <td class="text-right">Environment</td>
-            <td class="pl-3"><span class="profile-env"></span></td>
+            <td class="pl-3">
+              <span class="profile-env"></span>
+            </td>
           </tr>
           <tr>
             <td class="text-right">Version</td>
-            <td class="pl-3"><span class="profile-version"></span></td>
+            <td class="pl-3">
+              <span class="profile-version"></span>
+            </td>
           </tr>
           <tr>
             <td class="text-right">Gateway Port</td>
-            <td class="pl-3"><span class="profile-gwport"></span></td>
+            <td class="pl-3">
+              <span class="profile-gwport"></span>
+            </td>
           </tr>
           <tr>
             <td class="text-right">Server</td>
-            <td class="pl-3"><span class="server-info"></span></td>
+            <td class="pl-3">
+              <span class="server-info"></span>
+            </td>
           </tr>
         </table>
+
         <h5>Select theme</h5>
         <ul class="select theme-select">
           <li class="select_items">
             <input class="select_expand" type="radio" name="theme" id="theme-select-profile" />
             <label class="select_closeLabel" for="close"></label>
-
-            <ul class="select_options">
-
-            </ul>
-
+            <ul class="select_options"></ul>
             <label class="select_expandLabel" for="theme-select-profile"></label>
           </li>
         </ul>
         <h5>Actions</h5>
         <div class="d-flex justify-content-between">
-          <button type="button" class="btn btn-secondary" id="Profile_Restart">Restart</button>
-          <button type="button" class="btn btn-secondary" id="Profile_Shutdown">Shutdown</button>
-          <button type="button" class="btn btn-secondary" id="Profile_Feedback">Feedback</button>
+          <button type="button" class="btn btn-secondary" id="Profile_Restart">
+            Restart
+          </button>
+          <button type="button" class="btn btn-secondary" id="Profile_Shutdown">
+            Shutdown
+          </button>
+          <button type="button" class="btn btn-secondary" id="Profile_Feedback">
+            Feedback
+          </button>
         </div>
       </div>
     </div>
-
   </div>
+
   <script>
     window.q = document.querySelector.bind(document);
     window.qa = document.querySelectorAll.bind(document);
   </script>
   <script>
     if (window.glue42gd && glue42gd.theme) {
-      let allThemes = ['dark', 'light'];
-      let html = q('html');
+      const allThemes = ['dark', 'light'];
+      const html = q('html');
+
       html.classList.remove(...allThemes);
       html.classList.add(glue42gd.theme);
     }
