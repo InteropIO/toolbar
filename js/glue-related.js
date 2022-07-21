@@ -1,4 +1,4 @@
-import { setSettings, getSetting } from './settings.js';
+import { setSettings, updateSettings, getSetting } from './settings.js';
 
 console.time('Glue');
 var gluePromise = new Promise(async (res, rej) => {
@@ -424,6 +424,9 @@ async function getPrefs() {
   await gluePromise;
   const prefs = await glue.prefs.get();
   setSettings(prefs.data);
+  glue.prefs.subscribe(prefs => {
+    updateSettings(prefs.data);
+  })
 }
 
 async function updatePrefs(setting) {

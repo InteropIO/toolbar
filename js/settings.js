@@ -14,13 +14,14 @@ let settings = {
 function init() {
   populateSettings();
   trackSettingsChange();
+}
+
+function populateSettings() {
   glue.notifications.configure({
     enable: settings.enableNotifications,
     enableToasts: settings.enableToasts,
   });
-}
 
-function populateSettings() {
   for (const setting in settings) {
     if (
       typeof settings[setting] === 'boolean' &&
@@ -58,12 +59,17 @@ function trackSettingsChange() {
 }
 
 function setSettings(prefs) {
-  settings = { ...settings, ...prefs };
+  updateSettings(prefs);
   init();
 }
 
 function updateSetting(setting) {
   updatePrefs(setting);
+}
+
+function updateSettings(prefs) {
+  settings = { ...settings, ...prefs };
+  populateSettings();
 }
 
 function getSetting(setting) {
@@ -74,4 +80,4 @@ function getSettings() {
   return settings;
 }
 
-export { setSettings, updateSetting, getSetting, getSettings };
+export { setSettings, updateSetting, updateSettings, getSetting, getSettings };
