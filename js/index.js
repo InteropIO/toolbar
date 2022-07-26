@@ -22,7 +22,7 @@ import {
 } from './layouts.js';
 import * as glueModule from './glue-related.js';
 import * as utils from './utils.js';
-import { handleWidthChange, handleDropDownClicks } from './visible-area.js';
+import { handleDropDownClicks, handleWidthChange } from './visible-area.js';
 import { gssPromise } from './gss.js';
 import {
   clientHTMLTemplate,

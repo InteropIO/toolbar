@@ -44,31 +44,31 @@ const glueInfo = {
 };
 
 gluePromise.then((glue) => {
-  checkWindowSize();
+  // checkWindowSize();
   trackApplications();
   trackLayouts();
   trackWorkspaces();
   trackThemeChanges();
-  trackWindowMove();
+  // trackWindowMove();
   trackConnection();
   trackNotificationCount();
 });
 
-async function checkWindowSize() {
-  await gluePromise;
-  let win = glue.windows.my();
-  let currentBounds = win.bounds;
-  if (currentBounds.width !== 940 || currentBounds.height !== 800) {
-    console.debug('Start bounds are wrong, correcting to 940x800')
-    win.moveResize({width: 940, height: 800});
-  }
-  win.onBoundsChanged(() => {
-    if (win.bounds.width !== 940 || win.bounds.height !== 800) {
-      console.debug(`Resizing to incorrect bounds for width: ${win.bounds.width} and height: ${win.bounds.height}, correcting to 940x800`)
-      win.moveResize({width: 940, height: 800});
-    }
-  });
-}
+// async function checkWindowSize() {
+//   await gluePromise;
+//   let win = glue.windows.my();
+//   let currentBounds = win.bounds;
+//   if (currentBounds.width !== 940 || currentBounds.height !== 800) {
+//     console.debug('Start bounds are wrong, correcting to 940x800')
+//     win.moveResize({width: 940, height: 800});
+//   }
+//   win.onBoundsChanged(() => {
+//     if (win.bounds.width !== 940 || win.bounds.height !== 800) {
+//       console.debug(`Resizing to incorrect bounds for width: ${win.bounds.width} and height: ${win.bounds.height}, correcting to 940x800`)
+//       win.moveResize({width: 940, height: 800});
+//     }
+//   });
+// }
 
 function trackApplications() {
   pushAllApps();
@@ -162,12 +162,12 @@ async function trackThemeChanges() {
   });
 }
 
-async function trackWindowMove() {
-  boundsObs.next(glue.windows.my().bounds);
-  glue.windows.my().onBoundsChanged(() => {
-    boundsObs.next(glue.windows.my().bounds);
-  });
-}
+// async function trackWindowMove() {
+//   boundsObs.next(glue.windows.my().bounds);
+//   glue.windows.my().onBoundsChanged(() => {
+//     boundsObs.next(glue.windows.my().bounds);
+//   });
+// }
 
 async function startApp(appName, context) {
   await gluePromise;
@@ -296,35 +296,35 @@ async function shutdown() {
   });
 }
 
-async function resizeWindowVisibleArea(visibleAreas) {
-  await gluePromise;
+// async function resizeWindowVisibleArea(visibleAreas) {
+//   await gluePromise;
 
-  window.glue.agm
-    .invoke('T42.Wnd.Execute', {
-      command: 'updateVisibleAreas',
-      windowId: glue.windows.my().id,
-      options: {
-        areas: visibleAreas,
-      },
-    })
-    .then(() => {})
-    .catch(() => {}); // TODO
-}
+//   window.glue.agm
+//     .invoke('T42.Wnd.Execute', {
+//       command: 'updateVisibleAreas',
+//       windowId: glue.windows.my().id,
+//       options: {
+//         areas: visibleAreas,
+//       },
+//     })
+//     .then(() => {})
+//     .catch(() => {}); // TODO
+// }
 
 async function changeTheme(themeName) {
   glue.themes.select(themeName);
 }
 
-async function openWindow(name, url, options) {
-  await gluePromise;
-  const myBounds = glue.windows.my().bounds;
-  options = {
-    ...options,
-    top: myBounds.top + 100,
-    left: myBounds.left + 100,
-  };
-  window.glue.windows.open(name, url, options);
-}
+// async function openWindow(name, url, options) {
+//   await gluePromise;
+//   const myBounds = glue.windows.my().bounds;
+//   options = {
+//     ...options,
+//     top: myBounds.top + 100,
+//     left: myBounds.left + 100,
+//   };
+//   window.glue.windows.open(name, url, options);
+// }
 
 async function getWindowBounds() {
   await gluePromise;
@@ -336,15 +336,15 @@ async function moveMyWindow(bounds) {
   return glue.windows.my().moveResize(bounds);
 }
 
-async function minimize() {
-  await gluePromise;
-  glue.windows.my().minimize();
-}
+// async function minimize() {
+//   await gluePromise;
+//   glue.windows.my().minimize();
+// }
 
-async function isMinimizeAllowed() {
-  await gluePromise;
-  return glue.windows.my().windowStyleAttributes.allowMinimize;
-}
+// async function isMinimizeAllowed() {
+//   await gluePromise;
+//   return glue.windows.my().windowStyleAttributes.allowMinimize;
+// }
 
 async function raiseNotification(options) {
   await gluePromise;
@@ -424,9 +424,9 @@ async function getPrefs() {
   await gluePromise;
   const prefs = await glue.prefs.get();
   setSettings(prefs.data);
-  glue.prefs.subscribe(prefs => {
+  glue.prefs.subscribe((prefs) => {
     updateSettings(prefs.data);
-  })
+  });
 }
 
 async function updatePrefs(setting) {
@@ -466,11 +466,11 @@ export {
   openWorkspace,
   registerHotkey,
   shutdown,
-  resizeWindowVisibleArea,
-  openWindow,
+  // resizeWindowVisibleArea,
+  // openWindow,
   moveMyWindow,
-  minimize,
-  isMinimizeAllowed,
+  // minimize,
+  // isMinimizeAllowed,
   raiseNotification,
   getMonitorInfo,
   getWindowBounds,

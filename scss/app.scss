@@ -6,20 +6,24 @@ html {
   height: 100%;
 
   body {
-    padding: 350px 50px 50px 350px;
+    // padding: 350px 50px 50px 350px;
     height: 100%;
+    background-color: transparent;
   }
 
   .app {
     height: 100%;
+    background-color: var(--t42-body);
 
     &.switching-orientation * {
       transition: none !important;
+
       &::before,
       &::after {
         transition: none !important;
       }
     }
+
     *:focus {
       outline: none;
     }
@@ -32,11 +36,12 @@ html {
     -webkit-user-select: none;
   }
 
-  .dragable {
+  .draggable {
     position: absolute;
     height: 3rem;
-    width: 140px;
+    width: 3.65rem;
     left: 0;
+    -webkit-app-region: drag;
   }
 
   .toggle-content {
@@ -52,9 +57,11 @@ html {
     .input-group {
       flex-wrap: nowrap;
     }
+
     &.hide {
       width: 0;
       border-right: 0 solid transparent;
+
       .action-menu-tool {
         opacity: 0;
       }
@@ -90,6 +97,7 @@ html {
   .nav {
     &.nav-tabs {
       border-bottom: none;
+
       li {
         white-space: nowrap;
         flex-basis: 3rem;
@@ -116,14 +124,16 @@ html {
         .title-folder {
           margin: 0 0.5rem;
         }
+
         img {
-        @include transition('filter','0');
+          @include transition("filter", "0");
         }
       }
     }
 
     &.flex-column {
       flex-wrap: nowrap;
+
       .nav-link {
         margin-bottom: 0 !important;
       }
@@ -215,6 +225,7 @@ html {
         overflow: hidden;
         @include transition("opacity", 0);
       }
+
       .add-favorite {
         padding: 0;
         height: 2rem;
@@ -295,7 +306,7 @@ html {
     }
   }
 
-  .view-port {
+  .viewport {
     @include transition("width", 0);
     border: 1px solid rgba(255, 255, 255, 0.075);
     width: 60px;
@@ -312,7 +323,7 @@ html {
       }
     }
 
-    .view-port-header {
+    .viewport-header {
       align-items: center;
       display: flex;
       justify-content: space-between;
@@ -346,7 +357,7 @@ html {
       }
     }
 
-    .view-port-footer {
+    .viewport-footer {
       position: relative;
       margin-top: auto;
 
@@ -359,7 +370,6 @@ html {
 
       .circle-index {
         @include transition("transform", "0");
-
         align-items: center;
         background-color: #2080d3;
         border-radius: 50%;
@@ -384,19 +394,23 @@ html {
     display: block;
     width: 200px;
     visibility: hidden;
+
     .about-logo {
       width: 2.5rem;
       overflow: hidden;
       margin: 0 auto;
     }
+
     .modal-fill-in {
       justify-content: flex-start;
+
       .modal-header .close {
         position: absolute;
         right: 1rem;
         top: 1rem;
       }
     }
+
     &.show {
       visibility: visible;
     }
@@ -436,7 +450,8 @@ html {
     bottom: 30%;
     left: 0;
     background-color: #2080d3;
-    transition: top 0.3s cubic-bezier(0.34, 0.03, 0.13, 0.93), bottom 0.3s cubic-bezier(0.34, 0.03, 0.13, 0.93);
+    transition: top 0.3s cubic-bezier(0.34, 0.03, 0.13, 0.93),
+      bottom 0.3s cubic-bezier(0.34, 0.03, 0.13, 0.93);
   }
 
   &:hover {

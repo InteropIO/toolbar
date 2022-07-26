@@ -2,7 +2,7 @@ import {
   shutdown,
   gluePromise,
   startApp,
-  focusApp,
+  // focusApp,
   getApp,
   themeObs,
   changeTheme,
@@ -13,11 +13,11 @@ import {
   getWindowBounds,
   notificationEnabledObs,
   moveMyWindow,
-  minimize,
-  raiseNotification,
-  isMinimizeAllowed,
-  saveLayout,
-  setDefaultGlobal,
+  // minimize,
+  // raiseNotification,
+  // isMinimizeAllowed,
+  // saveLayout,
+  // setDefaultGlobal,
   openFeedbackForm,
 } from './glue-related.js';
 import { updateSetting, getSetting } from './settings.js';
@@ -101,7 +101,7 @@ function handleThemeChange() {
 }
 
 async function handleOrientationChange() {
-  isVertical = !!q('.view-port.vertical');
+  isVertical = !!q('.viewport.vertical');
   q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
 
   if (getSetting('vertical') === false) {
@@ -116,8 +116,8 @@ async function handleOrientationChange() {
     isVertical = !isVertical;
     updateSetting({ vertical: isVertical });
     q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
-    q('.view-port').classList.add(isVertical ? 'vertical' : 'horizontal');
-    q('.view-port').classList.remove(isVertical ? 'horizontal' : 'vertical');
+    q('.viewport').classList.add(isVertical ? 'vertical' : 'horizontal');
+    q('.viewport').classList.remove(isVertical ? 'horizontal' : 'vertical');
     q('.app').classList.add(isVertical ? 'd-inline-flex' : 'h');
     q('.app').classList.remove(isVertical ? 'h' : 'd-inline-flex');
     qa('[column]').forEach((col) => {
@@ -145,7 +145,7 @@ async function ensureWindowHasSpace(isVertical) {
 
   let monitorInfo = await getMonitorInfo();
   let windowBounds = await getWindowBounds();
-  let visibleAreaBounds = q('.view-port').getBoundingClientRect();
+  let visibleAreaBounds = q('.viewport').getBoundingClientRect();
   let realBounds = {
     top: windowBounds.top + visibleAreaBounds.top,
     left: windowBounds.left + visibleAreaBounds.left,
@@ -283,9 +283,9 @@ function handleMinimizeClick() {
     }
   });
 
-  isMinimizeAllowed().then(
-    (allowed) => allowed && q('.minimize').classList.remove('d-none')
-  );
+  // isMinimizeAllowed().then(
+  //   (allowed) => allowed && q('.minimize').classList.remove('d-none')
+  // );
 }
 
 // TODO: Maybe use Chevron instead of Chavron?
@@ -350,7 +350,7 @@ async function handleMouseHover() {
   let closeTimeout;
 
   q('.app').addEventListener('mouseenter', (e) => {
-    q('.view-port').classList.add('expand');
+    q('.viewport').classList.add('expand');
     q('.app').classList.add('expand-wrapper');
 
     if (closeTimeout) {
@@ -360,7 +360,7 @@ async function handleMouseHover() {
 
   q('.app').addEventListener('mouseleave', async (e) => {
     let { offsetWidth: viewPortWidth, offsetHeight: viewPortHeight } =
-      q('.view-port');
+      q('.viewport');
     let margin = windowMargin;
 
     if (
@@ -379,7 +379,7 @@ async function handleMouseHover() {
       return;
     }
 
-    let viewPortBounds = q('.view-port').getBoundingClientRect();
+    let viewPortBounds = q('.viewport').getBoundingClientRect();
     let outOfMonitor = isOutOfMonitor(viewPortBounds);
 
     if (await outOfMonitor) {
@@ -389,11 +389,11 @@ async function handleMouseHover() {
 
     closeTimeout = setTimeout(async () => {
       await applyOpenClasses();
-      q('.view-port').classList.remove('expand');
+      q('.viewport').classList.remove('expand');
       q('.app').classList.remove('expand-wrapper');
       qa('.toggle-content').forEach((e) => e.classList.add('hide'));
       // qa('[dropdown-id].show').forEach(e => e.classList.remove('show'));
-    }, 500);
+    }, 1000);
   });
 }
 

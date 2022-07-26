@@ -1,6 +1,6 @@
 // color scheme
 html.dark {
-  .view-port {
+  .viewport {
     border: 1px solid rgba(255, 255, 255, 0.075);
   }
 
@@ -9,7 +9,7 @@ html.dark {
     border-top: 1px solid rgba(255, 255, 255, 0.075);
     border-bottom: 1px solid rgba(255, 255, 255, 0.075);
     border-right: 1px solid rgba(255, 255, 255, 0.075);
-    border-left-color:  rgba(255, 255, 255, 0.075);
+    border-left-color: rgba(255, 255, 255, 0.075);
 
     .close-drawer {
       color: #bbb;
@@ -23,7 +23,7 @@ html.dark {
     @include divider("dark");
   }
 
-  .view-port-footer {
+  .viewport-footer {
     @include divider("dark");
   }
 
@@ -104,12 +104,16 @@ html.dark {
   }
   // Folders
   .folder-content {
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.05) 100%);
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.05) 100%
+    );
   }
 }
 
 html.light {
-  .view-port {
+  .viewport {
     border: 1px solid rgba(219, 222, 230, 0.8);
   }
 
@@ -118,7 +122,7 @@ html.light {
     border-top: 1px solid rgba(219, 222, 230, 0.8);
     border-bottom: 1px solid rgba(219, 222, 230, 0.8);
     border-right: 1px solid rgba(219, 222, 230, 0.8);
-    border-left-color:  rgba(219, 222, 230, 0.8);
+    border-left-color: rgba(219, 222, 230, 0.8);
     .close-drawer {
       color: #757575;
       &:hover {
@@ -135,7 +139,7 @@ html.light {
     @include divider("");
   }
 
-  .view-port-footer {
+  .viewport-footer {
     @include divider("");
   }
 
@@ -221,6 +225,10 @@ html.light {
   }
   // Folders
   .folder-content {
-    background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.05) 100%);
+    background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.05) 100%
+    );
   }
 }

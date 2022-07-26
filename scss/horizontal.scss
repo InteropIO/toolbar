@@ -11,18 +11,21 @@
     width: calc(100% - 40px);
   }
 
-  .dragable {
+  .draggable {
     width: 3.375rem;
   }
+
   .accordion {
     overflow-x: hidden;
     overflow-y: auto;
   }
-  &.view-port .view-port-header {
+
+  &.viewport .viewport-header {
     .logo {
       min-width: initial;
       overflow: hidden;
     }
+
     .dropdown-menu {
       right: -0.188rem;
       margin-top: 0.5rem;
@@ -31,7 +34,7 @@
 
   .app-active {
     &::before {
-      @include transition("width, left, right",0);
+      @include transition("width, left, right", 0);
       width: 23px;
       height: 3px;
       top: unset;
@@ -52,7 +55,7 @@
   .nav {
     .applications-nav::before,
     .favorite::after,
-    .view-port-footer:before {
+    .viewport-footer:before {
       @include horizontal-divider;
     }
 
@@ -68,18 +71,22 @@
         top: 1rem;
       }
     }
+
     .icon-angle-right {
       transform: rotate(90deg);
     }
+
     .chavron-rotate {
       transform: rotate(-90deg);
     }
 
     .show-actions {
       overflow: hidden;
+
       &:hover,
       &.active {
         overflow: visible;
+
         i,
         .text-animation,
         .action-menu-tool,
@@ -87,6 +94,7 @@
           opacity: 1;
           visibility: visible;
         }
+
         .layout-menu-tool div {
           &:first-of-type {
             animation: none;
@@ -105,8 +113,9 @@
     flex-wrap: nowrap;
   }
 
-  .view-port-header {
+  .viewport-header {
     position: static;
+
     .menu {
       position: absolute;
       top: 0.875rem;
@@ -118,6 +127,7 @@
 
   .nav-tabs {
     height: 100%;
+
     li {
       flex-basis: 59px;
       width: 60px;
@@ -134,18 +144,19 @@
         .nav {
           flex-wrap: nowrap;
           width: 100%;
-          
+
           &::-webkit-scrollbar {
             width: 0;
             height: 1px;
           }
+
           &::-webkit-scrollbar-button {
             display: none;
           }
-          &::-webkit-scrollbar-thumb {
-            background-color:rgba(255, 255, 255, 0.3);
-          }
 
+          &::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.3);
+          }
 
           &:hover {
             overflow-x: auto;
@@ -159,11 +170,11 @@
           .nav-item {
             flex-basis: 59px;
             overflow: hidden;
-              
-              .text-animation,
-              .text-animation:hover {
-               display: none;
-              }
+
+            .text-animation,
+            .text-animation:hover {
+              display: none;
+            }
           }
         }
       }
@@ -174,6 +185,7 @@
 
       &:hover {
         flex-basis: 11rem;
+
         .nav-link {
           .text-animation {
             @include text-animation("on", "", 100);
@@ -182,15 +194,15 @@
       }
 
       .nav-link {
-    
-
         &.active {
           &::before {
             bottom: 0;
           }
+
           .text-animation {
             @include text-animation("off", "", 100);
           }
+
           &:hover {
             .text-animation {
               @include text-animation("on", "", 100);
@@ -212,7 +224,8 @@
         display: flex;
       }
     }
-    .view-port-footer {
+
+    .viewport-footer {
       margin-top: initial;
       margin-left: auto;
       overflow-x: hidden;
@@ -224,7 +237,6 @@
 
   .toggle-content {
     @include transition("height", 0);
-
     width: 100%;
     height: 300px;
     border-top: 0 solid transparent;
@@ -241,10 +253,12 @@
       height: 0;
       border-bottom: 0 solid transparent;
     }
+
     h5 {
       padding-right: 1.25rem;
     }
   }
+
   .close-drawer {
     transform: rotate(180deg);
     margin-left: 0;
