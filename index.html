@@ -28,7 +28,7 @@
             <img src="./assets/logo.svg" width="120" />
           </div>
           <div class="menu">
-            <button class="btn btn-icon btn-icon-action minimize d-none" type="button" id="dropdownMenuButton">
+            <button class="btn btn-icon btn-icon-action minimize" type="button" id="dropdownMenuButton">
               <i class="icon-window-minimize"></i>
             </button>
             <button class="btn btn-icon btn-icon-action" type="button" id="dropdownMenuButton"
@@ -97,14 +97,14 @@
     </div>
 
     <div class="toggle-content hide" id="app-content" menu-id="apps">
-      <div class="p-2">
+      <div class="app-content-header p-2">
         <h5 class="d-flex justify-content-between mb-2">
           Applications
           <span class="icon-arrow-up-down close-drawer"></span>
         </h5>
         <input class="form-control" id="app-search" autofocus placeholder="Search..." />
       </div>
-      <ul id="search-results" class="nav nav-tabs flex-column"></ul>
+      <ul id="search-results" class="nav nav-tabs flex-column content-items"></ul>
     </div>
 
     <div class="toggle-content hide" id="layout-load" menu-id="layout-load">
@@ -143,6 +143,28 @@
           <span class="icon-arrow-up-down close-drawer"></span>
         </h5>
         <form>
+          <hr class="mt-2 mb-2" />
+          <h5>Select Theme</h5>
+          <ul class="select theme-select">
+            <li class="select_items">
+              <input class="select_expand" type="radio" name="theme" id="theme-opener" />
+              <label class="select_closeLabel" for="closeTheme"></label>
+              <ul class="select_options"></ul>
+              <label class="select_expandLabel" for="theme-opener"></label>
+            </li>
+          </ul>
+          <hr class="mt-2 mb-2" />
+          <h5>Select Toolbar length</h5>
+          <ul class="select length-select mb-1">
+            <li class="select_items">
+              <input class="select_expand" type="radio" name="length" id="length-opener" />
+              <label class="select_closeLabel" for="closeLength"></label>
+              <ul class="select_options"></ul>
+              <label class="select_expandLabel" for="length-opener"></label>
+            </li>
+          </ul>
+          <p class="fs-6 fst-italic mb-2">*How many menu items will be shown at a time.</p>
+          <hr class="mt-2 mb-2" />
           <div class="form-check show-tutorial-check ml-2">
             <input class="form-check-input show-tutorial" type="checkbox" value="1" id="show-tutorial"
               setting="showTutorial" />
@@ -195,16 +217,6 @@
             </label>
             <br />
           </div>
-          <hr class="mt-2 mb-2" />
-          <h5>Select theme</h5>
-          <ul class="select theme-select">
-            <li class="select_items">
-              <input class="select_expand" type="radio" name="theme" id="opener" />
-              <label class="select_closeLabel" for="close"></label>
-              <ul class="select_options"></ul>
-              <label class="select_expandLabel" for="opener"></label>
-            </li>
-          </ul>
           <!-- <h5>Select style</h5>
           <div class="btn-group mb-2">
               <button

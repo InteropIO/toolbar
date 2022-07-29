@@ -1,4 +1,5 @@
 import * as glueModule from './glue-related.js';
+import { toolbarWidth, toolbarPadding, getSetting } from './settings.js';
 
 let topMenuVisibleObs = new rxjs.BehaviorSubject(false);
 let layoutDropDownVisibleObs = new rxjs.BehaviorSubject(false);
@@ -6,9 +7,7 @@ let openTopObs = new rxjs.BehaviorSubject(false);
 let openLeftObs = new rxjs.BehaviorSubject(false);
 let layoutOpenedTimeout;
 
-init();
-
-function init() {
+function initVisibleArea() {
   q('.layouts-nav').addEventListener('mouseenter', (e) => {
     if (
       e.target.matches &&
@@ -63,7 +62,7 @@ function init() {
 
         if (!q('.view-port').classList.contains('horizontal')) {
           let shouldOpenLeft =
-            viewPortBounds.left + 500 >
+            glueModule.boundsObs.value.left + glueModule.boundsObs.value.width >
             currentMonitor.left + currentMonitor.width;
 
           openLeftObs.next(shouldOpenLeft);
@@ -73,7 +72,7 @@ function init() {
           }
         } else {
           let shouldOpenTop =
-            viewPortBounds.top + viewPortBounds.height + 300 >
+            viewPortBounds.top + viewPortBounds.height >
             currentMonitor.workingAreaTop + currentMonitor.workingAreaHeight;
 
           openTopObs.next(shouldOpenTop);
@@ -237,6 +236,7 @@ function calculateTotalOverlap(r1, r2) {
 }
 
 export {
+  initVisibleArea,
   handleWidthChange,
   handleDropDownClicks,
   applyOpenClasses,

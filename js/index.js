@@ -22,7 +22,11 @@ import {
 } from './layouts.js';
 import * as glueModule from './glue-related.js';
 import * as utils from './utils.js';
-import { handleWidthChange, handleDropDownClicks } from './visible-area.js';
+import {
+  initVisibleArea,
+  handleWidthChange,
+  handleDropDownClicks,
+} from './visible-area.js';
 import { gssPromise } from './gss.js';
 import {
   clientHTMLTemplate,
@@ -48,6 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function init() {
   await glueModule.getPrefs();
+
+  initVisibleArea();
 
   console.log('window loaded');
   printApps();

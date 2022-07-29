@@ -5,7 +5,7 @@ html.dark {
   }
 
   .toggle-content {
-    background-color: #1e1e1e;
+    background-color: var(--t42-body);
     border-top: 1px solid rgba(255, 255, 255, 0.075);
     border-bottom: 1px solid rgba(255, 255, 255, 0.075);
     border-right: 1px solid rgba(255, 255, 255, 0.075);

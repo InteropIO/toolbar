@@ -6,9 +6,16 @@ html {
   height: 100%;
 
   body {
-    padding: 350px 50px 50px 350px;
     height: 100%;
   }
+
+  //   .has-horizontal-toolbar {
+  //     padding: 0 0 300px
+  //   }
+
+  //   .has-vertical-toolbar {
+  //     padding: 0 300px;
+  //   }
 
   .app {
     height: 100%;
@@ -117,7 +124,7 @@ html {
           margin: 0 0.5rem;
         }
         img {
-        @include transition('filter','0');
+          @include transition("filter", "0");
         }
       }
     }
@@ -436,7 +443,8 @@ html {
     bottom: 30%;
     left: 0;
     background-color: #2080d3;
-    transition: top 0.3s cubic-bezier(0.34, 0.03, 0.13, 0.93), bottom 0.3s cubic-bezier(0.34, 0.03, 0.13, 0.93);
+    transition: top 0.3s cubic-bezier(0.34, 0.03, 0.13, 0.93),
+      bottom 0.3s cubic-bezier(0.34, 0.03, 0.13, 0.93);
   }
 
   &:hover {

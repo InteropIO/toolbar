@@ -3,6 +3,7 @@ import {
   gluePromise,
   startApp,
   focusApp,
+  boundsObs,
   getApp,
   themeObs,
   changeTheme,
@@ -14,13 +15,20 @@ import {
   notificationEnabledObs,
   moveMyWindow,
   minimize,
+  resizeWindowMoveArea,
   raiseNotification,
-  isMinimizeAllowed,
+  //   isMinimizeAllowed,
   saveLayout,
   setDefaultGlobal,
   openFeedbackForm,
 } from './glue-related.js';
-import { updateSetting, getSetting } from './settings.js';
+import {
+  toolbarWidth,
+  toolbarPadding,
+  toolbarPosition,
+  updateSetting,
+  getSetting,
+} from './settings.js';
 import { applyOpenClasses, getMonitor } from './visible-area.js';
 import { searchInputObs } from './applications.js';
 import {
@@ -50,6 +58,7 @@ function handleClicks() {
   handleFeedbackClick();
   handleOrientationChange();
   handleThemeChange();
+  handleToolbarAppRowsChange();
   populateAboutPage();
   handleShutdownClick();
   handleTopMenuClicks();
@@ -73,6 +82,7 @@ function handleThemeChange() {
       }
     });
   });
+
   themeObs.subscribe((themeObj) => {
     if (themeObj) {
       themeObj.all.forEach((theme) => {
@@ -80,24 +90,130 @@ function handleThemeChange() {
       });
 
       q('html').classList.add(themeObj.selected.name);
-      qa('.theme-select .select_options').forEach((item, i) => {
-        let allThemesHtml = ``;
 
-        themeObj.all.forEach((theme) => {
-          allThemesHtml += `<li class="select_option">
-          <input class="select_input" type="radio" name="theme" id="theme-${
-            theme.name + i
-          }" theme-name="${theme.name}" ${
-            theme.name === themeObj.selected.name ? 'checked' : ''
-          }/>
-          <label class="select_label" for="theme-${theme.name + i}">${
-            theme.displayName
-          }</label></li>`;
-        });
-        item.innerHTML = allThemesHtml;
-      });
+      populateSettingsDropdown(
+        qa('.theme-select .select_options'),
+        themeObj,
+        'theme'
+      );
     }
   });
+}
+
+function handleToolbarAppRowsChange() {
+  const numberOfRows = getSetting('toolbarAppRows');
+  const appSelectOptions = {
+    all: [
+      { name: '8', displayName: '8 Items' },
+      { name: '10', displayName: '10 Items (Default)' },
+      { name: '12', displayName: '12 Items' },
+      { name: '14', displayName: '14 Items' },
+      { name: '16', displayName: '16 Items' },
+      { name: '18', displayName: '18 Items' },
+    ],
+  };
+
+  appSelectOptions.selected = {
+    name: numberOfRows,
+    displayName: appSelectOptions.all.find((el) => el.name === numberOfRows)
+      .displayName,
+  };
+
+  populateSettingsDropdown(
+    qa('.length-select .select_options'),
+    appSelectOptions,
+    'length'
+  );
+
+  q('.length-select .select_options').addEventListener('click', (e) => {
+    if (e.target.matches('input.select_input[type="radio"]')) {
+      const lengthToSelect = e.target.getAttribute('length-name');
+
+      updateSetting({ toolbarAppRows: lengthToSelect });
+    }
+  });
+}
+
+function populateSettingsDropdown(
+  selectElement,
+  selectOptionsObj,
+  elementName
+) {
+  selectElement.forEach((item, i) => {
+    let html = ``;
+
+    selectOptionsObj.all.forEach((element) => {
+      html += `
+            <li class="select_option">
+                <input
+                    class="select_input"
+                    type="radio"
+                    name="${elementName}"
+                    id="${elementName}-${element.name + i}"
+                    ${elementName}-name="${element.name}"
+                    ${
+                      element.name === selectOptionsObj.selected.name
+                        ? 'checked'
+                        : ''
+                    }
+                />
+                <label class="select_label" for="${elementName}-${
+        element.name + i
+      }">${element.displayName}</label>
+            </li>
+            `;
+    });
+
+    item.innerHTML = html;
+  });
+}
+
+function calculateToolbarHeight() {
+  const appLancher = q('.view-port-header');
+  const appContentHeader = q('.app-content-header');
+  const appRowsNumber = getSetting('toolbarAppRows');
+  const navItem = q('.nav-item');
+  const contentItems = q('.content-items');
+
+  appLancher.style.height = `${appLancher.offsetHeight}px`;
+  appContentHeader.style.height = `${appContentHeader.offsetHeight}px`;
+  navItem.style.height = `${navItem.offsetHeight}px`;
+  contentItems.style.height = `${navItem.offsetHeight * appRowsNumber}px`;
+
+  return {
+    appLauncherHeight: appLancher.offsetHeight,
+    appContentHeaderHeight: appContentHeader.offsetHeight,
+    navItemHeight: navItem.offsetHeight,
+    contentItemsHeight: navItem.offsetHeight * appRowsNumber,
+    appDrawerHeight:
+      appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber,
+    appRowsNumber,
+  };
+}
+
+function setToolbarSize() {
+  const isVertical = getSetting('vertical');
+  const toolbarItemHeights = calculateToolbarHeight();
+
+  if (isVertical) {
+    document.body.style.padding = `0 ${toolbarPadding.vertical}px`;
+    // document.body.classList.remove('has-horizontal-toolbar');
+    // document.body.classList.add('has-vertical-toolbar');
+    moveMyWindow({
+      width: toolbarWidth.vertical + toolbarPadding.vertical * 2,
+      height: toolbarItemHeights.appDrawerHeight,
+    });
+  } else {
+    document.body.style.padding = `0 0 ${toolbarItemHeights.appDrawerHeight}px 0`;
+    // document.body.classList.remove('has-vertical-toolbar');
+    // document.body.classList.add('has-horizontal-toolbar');
+    moveMyWindow({
+      width: toolbarWidth.horizontal,
+      height:
+        toolbarItemHeights.appLauncherHeight +
+        toolbarItemHeights.appDrawerHeight,
+    });
+  }
 }
 
 async function handleOrientationChange() {
@@ -134,10 +250,34 @@ async function handleOrientationChange() {
       document.body.classList.remove('open-left');
     }
 
+    setToolbarPosition();
+
     setTimeout(() => {
       q('.app').classList.remove('switching-orientation');
     });
   });
+}
+
+async function setToolbarPosition() {
+  const startPosition = toolbarPosition;
+  const bounds = boundsObs.value;
+  const monitors = await getMonitorInfo();
+
+  monitors.forEach((monitor) => {
+    if (bounds.left < monitor.left) {
+      moveMyWindow({
+        top: startPosition.top,
+        left: startPosition.left,
+      });
+    } else {
+      moveMyWindow({
+        top: bounds.top,
+        left: bounds.left,
+      });
+    }
+  });
+
+  resizeWindowMoveArea();
 }
 
 async function ensureWindowHasSpace(isVertical) {
@@ -283,9 +423,9 @@ function handleMinimizeClick() {
     }
   });
 
-  isMinimizeAllowed().then(
-    (allowed) => allowed && q('.minimize').classList.remove('d-none')
-  );
+  //   isMinimizeAllowed().then(
+  //     (allowed) => allowed && q('.minimize').classList.remove('d-none')
+  //   );
 }
 
 // TODO: Maybe use Chevron instead of Chavron?
@@ -543,6 +683,9 @@ export {
   handleNotificationClick,
   handleModalClose,
   handleMouseHover,
+  calculateToolbarHeight,
+  setToolbarSize,
+  setToolbarPosition,
   windowMargin,
   startTutorial,
   clearSearch,

@@ -1,4 +1,12 @@
-import { setSettings, updateSettings, getSetting } from './settings.js';
+import {
+  setSettings,
+  updateSetting,
+  updateSettings,
+  getSetting,
+  toolbarPadding,
+  toolbarWidth,
+} from './settings.js';
+import { calculateToolbarHeight } from './utils.js';
 
 console.time('Glue');
 var gluePromise = new Promise(async (res, rej) => {
@@ -44,7 +52,7 @@ const glueInfo = {
 };
 
 gluePromise.then((glue) => {
-  checkWindowSize();
+  //   checkWindowSize();
   trackApplications();
   trackLayouts();
   trackWorkspaces();
@@ -54,20 +62,46 @@ gluePromise.then((glue) => {
   trackNotificationCount();
 });
 
-async function checkWindowSize() {
+// async function checkWindowSize() {
+//   await gluePromise;
+//   let win = glue.windows.my();
+//   let currentBounds = win.bounds;
+//   if (currentBounds.width !== 940 || currentBounds.height !== 800) {
+//     console.debug('Start bounds are wrong, correcting to 940x800')
+//     win.moveResize({width: 940, height: 800});
+//   }
+//   win.onBoundsChanged(() => {
+//     if (win.bounds.width !== 940 || win.bounds.height !== 800) {
+//       console.debug(`Resizing to incorrect bounds for width: ${win.bounds.width} and height: ${win.bounds.height}, correcting to 940x800`)
+//       win.moveResize({width: 940, height: 800});
+//     }
+//   });
+// }
+
+async function resizeWindowMoveArea() {
   await gluePromise;
-  let win = glue.windows.my();
-  let currentBounds = win.bounds;
-  if (currentBounds.width !== 940 || currentBounds.height !== 800) {
-    console.debug('Start bounds are wrong, correcting to 940x800')
-    win.moveResize({width: 940, height: 800});
+  const win = glue.windows.my();
+  const isVertical = getSetting('vertical');
+  const bounds = boundsObs;
+  const toolbarItemHeights = calculateToolbarHeight();
+  const dragAreaSize = toolbarItemHeights.navItemHeight;
+
+  if (isVertical) {
+    win.configure({
+      moveAreaTopMargin: `
+              ${toolbarPadding.vertical},
+              0,
+              ${toolbarWidth.vertical + toolbarPadding.vertical - dragAreaSize},
+              0
+            `,
+      moveAreaThickness: `0, ${dragAreaSize}, 0, 0`,
+    });
+  } else {
+    win.configure({
+      moveAreaTopMargin: `0, 0, ${bounds.value.width - dragAreaSize}, 0`,
+      moveAreaThickness: `0, ${dragAreaSize}, 0, 0`,
+    });
   }
-  win.onBoundsChanged(() => {
-    if (win.bounds.width !== 940 || win.bounds.height !== 800) {
-      console.debug(`Resizing to incorrect bounds for width: ${win.bounds.width} and height: ${win.bounds.height}, correcting to 940x800`)
-      win.moveResize({width: 940, height: 800});
-    }
-  });
 }
 
 function trackApplications() {
@@ -341,10 +375,10 @@ async function minimize() {
   glue.windows.my().minimize();
 }
 
-async function isMinimizeAllowed() {
-  await gluePromise;
-  return glue.windows.my().windowStyleAttributes.allowMinimize;
-}
+// async function isMinimizeAllowed() {
+//   await gluePromise;
+//   return glue.windows.my().settings.allowMinimize;
+// }
 
 async function raiseNotification(options) {
   await gluePromise;
@@ -424,9 +458,9 @@ async function getPrefs() {
   await gluePromise;
   const prefs = await glue.prefs.get();
   setSettings(prefs.data);
-  glue.prefs.subscribe(prefs => {
+  glue.prefs.subscribe((prefs) => {
     updateSettings(prefs.data);
-  })
+  });
 }
 
 async function updatePrefs(setting) {
@@ -469,8 +503,9 @@ export {
   resizeWindowVisibleArea,
   openWindow,
   moveMyWindow,
+  resizeWindowMoveArea,
   minimize,
-  isMinimizeAllowed,
+  //   isMinimizeAllowed,
   raiseNotification,
   getMonitorInfo,
   getWindowBounds,
