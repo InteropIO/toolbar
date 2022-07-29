@@ -505,7 +505,7 @@ export {
   moveMyWindow,
   resizeWindowMoveArea,
   minimize,
-  //   isMinimizeAllowed,
+  // isMinimizeAllowed,
   raiseNotification,
   getMonitorInfo,
   getWindowBounds,

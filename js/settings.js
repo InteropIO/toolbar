@@ -21,7 +21,7 @@ const toolbarPadding = {
   vertical: 300,
   horizontal: 500,
 };
-const toolbarPosition = {
+const initialPosition = {
   top: 20,
   left: 20,
 };
@@ -100,7 +100,7 @@ function getSettings() {
 export {
   toolbarWidth,
   toolbarPadding,
-  toolbarPosition,
+  initialPosition,
   setSettings,
   updateSetting,
   updateSettings,

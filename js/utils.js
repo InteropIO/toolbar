@@ -25,7 +25,7 @@ import {
 import {
   toolbarWidth,
   toolbarPadding,
-  toolbarPosition,
+  initialPosition,
   updateSetting,
   getSetting,
 } from './settings.js';
@@ -259,16 +259,24 @@ async function handleOrientationChange() {
 }
 
 async function setToolbarPosition() {
-  const startPosition = toolbarPosition;
+  const startPosition = initialPosition;
   const bounds = boundsObs.value;
   const monitors = await getMonitorInfo();
+  const isVertical = getSetting('vertical');
 
   monitors.forEach((monitor) => {
-    if (bounds.left < monitor.left) {
-      moveMyWindow({
-        top: startPosition.top,
-        left: startPosition.left,
-      });
+    if (bounds.left < monitor.left || bounds.top < monitor.top) {
+      if (isVertical) {
+        moveMyWindow({
+          top: startPosition.top,
+          left: startPosition.left - toolbarPadding.vertical,
+        });
+      } else {
+        moveMyWindow({
+          top: startPosition.top,
+          left: startPosition.left,
+        });
+      }
     } else {
       moveMyWindow({
         top: bounds.top,
