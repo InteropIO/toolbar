@@ -501,10 +501,10 @@ function getAppIcon(app = {}) {
   }
 }
 
-function clearSearch() {
-  searchInputObs.next('');
-  q('#app-search').value = '';
-}
+// function clearSearch() {
+//   searchInputObs.next('');
+//   q('#app-search').value = '';
+// }
 
 function escapeHtml(unsafe) {
   return unsafe
@@ -560,7 +560,7 @@ export {
   focusInputAfterWindowRecover,
   windowMargin,
   startTutorial,
-  clearSearch,
+  // clearSearch,
   escapeHtml,
   getAppIcon,
   openDrawer,
