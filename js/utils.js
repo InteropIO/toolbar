@@ -469,19 +469,23 @@ async function handleFeedbackClick() {
 }
 
 async function startTutorial() {
+  const userProperties = await getUserProperties();
+  const hideTutorialOnStartup = userProperties.hideTutorialOnStartup;
   const tutorialApp = await getApp('getting-started');
-  const showTutorial = getSetting('showTutorial');
-
   if (!tutorialApp) {
     updateSetting({ showTutorial: false });
     q('.show-tutorial-check').classList.add('d-none');
   }
-
-  if (showTutorial) {
-    try {
-      startApp('getting-started');
-    } catch (e) {
-      console.log('could not start Getting started app', e);
+  if (hideTutorialOnStartup) {
+    updateSetting({ showTutorial: false });
+  } else {
+    const showTutorial = getSetting('showTutorial');
+    if (showTutorial) {
+      try {
+        startApp('getting-started');
+      } catch (e) {
+        console.log('could not start Getting started app', e);
+      }
     }
   }
 }
