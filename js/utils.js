@@ -85,14 +85,11 @@ function handleThemeChange() {
 
         themeObj.all.forEach((theme) => {
           allThemesHtml += `<li class="select_option">
-          <input class="select_input" type="radio" name="theme" id="theme-${
-            theme.name + i
-          }" theme-name="${theme.name}" ${
-            theme.name === themeObj.selected.name ? 'checked' : ''
-          }/>
-          <label class="select_label" for="theme-${theme.name + i}">${
-            theme.displayName
-          }</label></li>`;
+          <input class="select_input" type="radio" name="theme" id="theme-${theme.name + i
+            }" theme-name="${theme.name}" ${theme.name === themeObj.selected.name ? 'checked' : ''
+            }/>
+          <label class="select_label" for="theme-${theme.name + i}">${theme.displayName
+            }</label></li>`;
         });
         item.innerHTML = allThemesHtml;
       });
@@ -472,12 +469,9 @@ async function startTutorial() {
   const userProperties = await getUserProperties();
   const hideTutorialOnStartup = userProperties.hideTutorialOnStartup;
   const tutorialApp = await getApp('getting-started');
-  if (!tutorialApp) {
+  if (!tutorialApp || hideTutorialOnStartup) {
     updateSetting({ showTutorial: false });
     q('.show-tutorial-check').classList.add('d-none');
-  }
-  if (hideTutorialOnStartup) {
-    updateSetting({ showTutorial: false });
   } else {
     const showTutorial = getSetting('showTutorial');
     if (showTutorial) {
