@@ -19,6 +19,7 @@ import {
   saveLayout,
   setDefaultGlobal,
   openFeedbackForm,
+  getUserProperties
 } from './glue-related.js';
 import { updateSetting, getSetting } from './settings.js';
 import { applyOpenClasses, getMonitor } from './visible-area.js';
