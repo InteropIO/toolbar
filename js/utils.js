@@ -328,7 +328,11 @@ function focusInputAfterWindowRecover(window) {
   if (window.isFocused) {
     drawer.forEach((el) => {
       if (!el.classList.contains('hide')) {
-        el.querySelector('.input-control').focus();
+        const input = el.querySelector('.input-control');
+
+        if (input) {
+          input.focus();
+        }
       }
     });
   } else {
