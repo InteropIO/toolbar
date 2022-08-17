@@ -4,6 +4,7 @@ import {
   startApp,
   focusApp,
   getApp,
+  getUserProperties,
   themeObs,
   changeTheme,
   refreshApps,
@@ -484,20 +485,33 @@ async function handleFeedbackClick() {
 
 async function startTutorial() {
   const tutorialApp = await getApp('getting-started');
-  const showTutorial = getSetting('showTutorial');
 
   if (!tutorialApp) {
     updateSetting({ showTutorial: false });
-    q('.show-tutorial-check').classList.add('d-none');
+    hideStartTutorialSetting();
   } else {
-    if (showTutorial) {
-      try {
-        startApp('getting-started');
-      } catch (e) {
-        console.log('could not start Getting started app', e);
+    const userProperties = await getUserProperties();
+    const hideTutorialOnStartup = userProperties.hideTutorialOnStartup;
+
+    if (hideTutorialOnStartup) {
+      updateSetting({ showTutorial: false });
+      hideStartTutorialSetting();
+    } else {
+      const showTutorial = getSetting('showTutorial');
+
+      if (showTutorial) {
+        try {
+          startApp('getting-started');
+        } catch (e) {
+          console.log('could not start Getting started app', e);
+        }
       }
     }
   }
+}
+
+function hideStartTutorialSetting() {
+  q('.show-tutorial-check').classList.add('d-none');
 }
 
 function getAppIcon(app = {}) {

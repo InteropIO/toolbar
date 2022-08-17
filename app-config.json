@@ -42,6 +42,7 @@
     "ignoreSavedLayout": false,
     "customProperties": {
         "hideFeedbackButton": true,
-        "hideProfileButton": false
+        "hideProfileButton": false,
+        "hideTutorialOnStartup": false
     }
 }
