@@ -475,13 +475,13 @@ async function startTutorial() {
   if (!tutorialApp) {
     updateSetting({ showTutorial: false });
     q('.show-tutorial-check').classList.add('d-none');
-  }
-
-  if (showTutorial) {
-    try {
-      startApp('getting-started');
-    } catch (e) {
-      console.log('could not start Getting started app', e);
+  } else {
+    if (showTutorial) {
+      try {
+        startApp('getting-started');
+      } catch (e) {
+        console.log('could not start Getting started app', e);
+      }
     }
   }
 }
