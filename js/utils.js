@@ -484,34 +484,22 @@ async function handleFeedbackClick() {
 }
 
 async function startTutorial() {
+  const userProperties = await getUserProperties();
+  const hideTutorialOnStartup = userProperties.hideTutorialOnStartup;
   const tutorialApp = await getApp('getting-started');
-
-  if (!tutorialApp) {
+  if (hideTutorialOnStartup || !tutorialApp) {
     updateSetting({ showTutorial: false });
-    hideStartTutorialSetting();
+    q('.show-tutorial-check').classList.add('d-none');
   } else {
-    const userProperties = await getUserProperties();
-    const hideTutorialOnStartup = userProperties.hideTutorialOnStartup;
-
-    if (hideTutorialOnStartup) {
-      updateSetting({ showTutorial: false });
-      hideStartTutorialSetting();
-    } else {
-      const showTutorial = getSetting('showTutorial');
-
-      if (showTutorial) {
-        try {
-          startApp('getting-started');
-        } catch (e) {
-          console.log('could not start Getting started app', e);
-        }
+    const showTutorial = getSetting('showTutorial');
+    if (showTutorial) {
+      try {
+        startApp('getting-started');
+      } catch (e) {
+        console.log('could not start Getting started app', e);
       }
     }
   }
-}
-
-function hideStartTutorialSetting() {
-  q('.show-tutorial-check').classList.add('d-none');
 }
 
 function getAppIcon(app = {}) {
