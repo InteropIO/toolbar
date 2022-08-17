@@ -470,7 +470,7 @@ async function startTutorial() {
   const userProperties = await getUserProperties();
   const hideTutorialOnStartup = userProperties.hideTutorialOnStartup;
   const tutorialApp = await getApp('getting-started');
-  if (!tutorialApp || hideTutorialOnStartup) {
+  if (hideTutorialOnStartup || !tutorialApp) {
     updateSetting({ showTutorial: false });
     q('.show-tutorial-check').classList.add('d-none');
   } else {
