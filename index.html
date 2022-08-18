@@ -138,7 +138,7 @@
     </div>
 
     <div class="toggle-content hide" id="settings-content" menu-id="settings">
-      <div class="p-2">
+      <div class="settings-general p-2 border-bottom border-secondary">
         <h5 class="d-flex justify-content-between">
           Settings
           <span class="icon-arrow-up-down close-drawer"></span>
@@ -159,10 +159,13 @@
               Save layout on exit
             </label>
           </div>
-          <hr class="mt-2 mb-2" />
-          <h5 class="d-flex justify-content-between">
-            Search
-          </h5>
+        </form>
+      </div>
+      <div class="settings-search p-2 border-bottom border-secondary">
+        <h5 class="d-flex justify-content-between">
+          Search
+        </h5>
+        <form>
           <div class="form-check ml-2">
             <input class="form-check-input search-clients" type="checkbox" value="1" id="search-clients"
               setting="searchClients" />
@@ -177,10 +180,13 @@
               Search instruments
             </label>
           </div>
-          <hr class="mt-2 mb-2" />
-          <h5 class="d-flex justify-content-between">
-            Notifications
-          </h5>
+        </form>
+      </div>
+      <div class="settings-notifications p-2 border-bottom border-secondary">
+        <h5 class="d-flex justify-content-between">
+          Notifications
+        </h5>
+        <form>
           <div class="form-check ml-2">
             <input class="form-check-input enable-notifications" type="checkbox" value="1" id="enable-notifications"
               setting="enableNotifications" />
@@ -196,8 +202,12 @@
             </label>
             <br />
           </div>
-          <hr class="mt-2 mb-2" />
-          <h5>Select theme</h5>
+        </form>
+      </div>
+
+      <div class="settings-theme p-2">
+        <h5>Select theme</h5>
+        <form>
           <ul class="select theme-select">
             <li class="select_items">
               <input class="select_expand" type="radio" name="theme" id="opener" />
@@ -206,134 +216,122 @@
               <label class="select_expandLabel" for="opener"></label>
             </li>
           </ul>
-          <!-- <h5>Select style</h5>
-          <div class="btn-group mb-2">
-              <button
-                  type="button"
-                  class="btn btn-primary active"
-              >
-                  Vertical
-              </button>
-              <button type="button" class="btn btn-secondary">
-                  Horizontal
-              </button>
-          </div> -->
         </form>
       </div>
     </div>
+  </div>
 
-    <div class="toggle-content hide" id="about-content" menu-id="about">
-      <div class="p-2">
-        <h5 class="d-flex justify-content-between mb-2">
-          About
-          <span class="icon-arrow-up-down close-drawer"></span>
-        </h5>
-        <table class="ml-auto mr-auto mt-5">
-          <tr>
-            <td class="text-right">GD version</td>
-            <td class="pl-3">
-              <span class="gd-version"></span>
-            </td>
-          </tr>
-          <tr>
-            <td class="text-right">Glue.js version</td>
-            <td class="pl-3">
-              <span class="glue-js-version"></span>
-            </td>
-          </tr>
-          <tr>
-            <td class="text-right">GW URL</td>
-            <td class="pl-3"><span class="gw-url"></span></td>
-          </tr>
-          <tr>
-            <td class="text-right">Username</td>
-            <td class="pl-3"><span class="username"></span></td>
-          </tr>
-          <tr>
-            <td class="text-right">Status</td>
-            <td class="pl-3 status-connected d-none">
-              <span class="icon-size-12 ">
-                <i class="icon-record position-relative text-success"></i>
-              </span>
-              <span>Connected</span>
-            </td>
-            <td class="pl-3 status-disconnected">
-              <span class="icon-size-12 ">
-                <i class="icon-record position-relative text-danger"></i>
-              </span>
-              <span>Disconnected</span>
-            </td>
-          </tr>
-        </table>
-      </div>
+  <div class="toggle-content hide" id="about-content" menu-id="about">
+    <div class="p-2">
+      <h5 class="d-flex justify-content-between mb-2">
+        About
+        <span class="icon-arrow-up-down close-drawer"></span>
+      </h5>
+      <table class="ml-auto mr-auto mt-5">
+        <tr>
+          <td class="text-right">GD version</td>
+          <td class="pl-3">
+            <span class="gd-version"></span>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-right">Glue.js version</td>
+          <td class="pl-3">
+            <span class="glue-js-version"></span>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-right">GW URL</td>
+          <td class="pl-3"><span class="gw-url"></span></td>
+        </tr>
+        <tr>
+          <td class="text-right">Username</td>
+          <td class="pl-3"><span class="username"></span></td>
+        </tr>
+        <tr>
+          <td class="text-right">Status</td>
+          <td class="pl-3 status-connected d-none">
+            <span class="icon-size-12 ">
+              <i class="icon-record position-relative text-success"></i>
+            </span>
+            <span>Connected</span>
+          </td>
+          <td class="pl-3 status-disconnected">
+            <span class="icon-size-12 ">
+              <i class="icon-record position-relative text-danger"></i>
+            </span>
+            <span>Disconnected</span>
+          </td>
+        </tr>
+      </table>
     </div>
+  </div>
 
-    <div class="toggle-content hide" id="profile-contet" menu-id="profile">
-      <div class="d-flex flex-column h-100 p-2">
-        <h5 class="d-flex justify-content-between mb-2">
-          Profile
-          <span class="icon-arrow-up-down close-drawer"></span>
-        </h5>
-        <table class="mb-auto">
-          <tr>
-            <td class="text-right">User</td>
-            <td class="pl-3">
-              <span class="profile-sid"></span>
-            </td>
-          </tr>
-          <tr>
-            <td class="text-right">Region</td>
-            <td class="pl-3">
-              <span class="profile-reg"></span>
-            </td>
-          </tr>
-          <tr>
-            <td class="text-right">Environment</td>
-            <td class="pl-3">
-              <span class="profile-env"></span>
-            </td>
-          </tr>
-          <tr>
-            <td class="text-right">Version</td>
-            <td class="pl-3">
-              <span class="profile-version"></span>
-            </td>
-          </tr>
-          <tr>
-            <td class="text-right">Gateway Port</td>
-            <td class="pl-3">
-              <span class="profile-gwport"></span>
-            </td>
-          </tr>
-          <tr>
-            <td class="text-right">Server</td>
-            <td class="pl-3">
-              <span class="server-info"></span>
-            </td>
-          </tr>
-        </table>
+  <div class="toggle-content hide" id="profile-contet" menu-id="profile">
+    <div class="d-flex flex-column h-100 p-2">
+      <h5 class="d-flex justify-content-between mb-2">
+        Profile
+        <span class="icon-arrow-up-down close-drawer"></span>
+      </h5>
+      <table class="mb-auto">
+        <tr>
+          <td class="text-right">User</td>
+          <td class="pl-3">
+            <span class="profile-sid"></span>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-right">Region</td>
+          <td class="pl-3">
+            <span class="profile-reg"></span>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-right">Environment</td>
+          <td class="pl-3">
+            <span class="profile-env"></span>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-right">Version</td>
+          <td class="pl-3">
+            <span class="profile-version"></span>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-right">Gateway Port</td>
+          <td class="pl-3">
+            <span class="profile-gwport"></span>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-right">Server</td>
+          <td class="pl-3">
+            <span class="server-info"></span>
+          </td>
+        </tr>
+      </table>
 
-        <h5>Select theme</h5>
-        <ul class="select theme-select">
-          <li class="select_items">
-            <input class="select_expand" type="radio" name="theme" id="theme-select-profile" />
-            <label class="select_closeLabel" for="close"></label>
-            <ul class="select_options"></ul>
-            <label class="select_expandLabel" for="theme-select-profile"></label>
-          </li>
-        </ul>
-        <h5>Actions</h5>
-        <div class="d-flex justify-content-between">
-          <button type="button" class="btn btn-secondary" id="Profile_Restart">
-            Restart
-          </button>
-          <button type="button" class="btn btn-secondary" id="Profile_Shutdown">
-            Shutdown
-          </button>
-          <button type="button" class="btn btn-secondary" id="Profile_Feedback">
-            Feedback
-          </button>
-        </div>
+      <h5>Select theme</h5>
+      <ul class="select theme-select">
+        <li class="select_items">
+          <input class="select_expand" type="radio" name="theme" id="theme-select-profile" />
+          <label class="select_closeLabel" for="close"></label>
+          <ul class="select_options"></ul>
+          <label class="select_expandLabel" for="theme-select-profile"></label>
+        </li>
+      </ul>
+      <h5>Actions</h5>
+      <div class="d-flex justify-content-between">
+        <button type="button" class="btn btn-secondary" id="Profile_Restart">
+          Restart
+        </button>
+        <button type="button" class="btn btn-secondary" id="Profile_Shutdown">
+          Shutdown
+        </button>
+        <button type="button" class="btn btn-secondary" id="Profile_Feedback">
+          Feedback
+        </button>
       </div>
     </div>
   </div>

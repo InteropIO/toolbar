@@ -4,6 +4,7 @@ import {
   startApp,
   focusApp,
   getApp,
+  getUserProperties,
   themeObs,
   changeTheme,
   refreshApps,
@@ -16,10 +17,11 @@ import {
   minimize,
   raiseNotification,
   isMinimizeAllowed,
+  checkNotificationsConfigure,
+  configureNotifications,
   saveLayout,
   setDefaultGlobal,
   openFeedbackForm,
-  getUserProperties
 } from './glue-related.js';
 import { updateSetting, getSetting } from './settings.js';
 import { applyOpenClasses, getMonitor } from './visible-area.js';
@@ -46,8 +48,7 @@ let arrowKeysObs = rxjs
 
 function handleClicks() {
   handleNotificationClick();
-  handleEnableNotificationsClick();
-  handleEnableToastsClick();
+  handleEnableNotifications();
   handleFeedbackClick();
   handleOrientationChange();
   handleThemeChange();
@@ -86,11 +87,14 @@ function handleThemeChange() {
 
         themeObj.all.forEach((theme) => {
           allThemesHtml += `<li class="select_option">
-          <input class="select_input" type="radio" name="theme" id="theme-${theme.name + i
-            }" theme-name="${theme.name}" ${theme.name === themeObj.selected.name ? 'checked' : ''
-            }/>
-          <label class="select_label" for="theme-${theme.name + i}">${theme.displayName
-            }</label></li>`;
+          <input class="select_input" type="radio" name="theme" id="theme-${
+            theme.name + i
+          }" theme-name="${theme.name}" ${
+            theme.name === themeObj.selected.name ? 'checked' : ''
+          }/>
+          <label class="select_label" for="theme-${theme.name + i}">${
+            theme.displayName
+          }</label></li>`;
         });
         item.innerHTML = allThemesHtml;
       });
@@ -326,7 +330,11 @@ function focusInputAfterWindowRecover(window) {
   if (window.isFocused) {
     drawer.forEach((el) => {
       if (!el.classList.contains('hide')) {
-        el.querySelector('.input-control').focus();
+        const input = el.querySelector('.input-control');
+
+        if (input) {
+          input.focus();
+        }
       }
     });
   } else {
@@ -426,6 +434,15 @@ async function handleNotificationClick() {
   });
 }
 
+async function handleEnableNotifications() {
+  const methodExists = await checkNotificationsConfigure();
+
+  if (methodExists) {
+    handleEnableNotificationsClick();
+    handleEnableToastsClick();
+  }
+}
+
 function handleEnableNotificationsClick() {
   const notificationPanel = q('#notification-panel');
   const enableNotifications = q('#enable-notifications');
@@ -433,11 +450,11 @@ function handleEnableNotificationsClick() {
 
   enableNotifications.addEventListener('click', (e) => {
     if (e.target.checked) {
-      glue.notifications.configure({ enable: true, enableToasts: false });
+      configureNotifications({ enable: true, enableToasts: false });
       notificationPanel.classList.remove('d-none');
       enableToasts.disabled = false;
     } else {
-      glue.notifications.configure({ enable: false, enableToasts: false });
+      configureNotifications({ enable: false, enableToasts: false });
       notificationPanel.classList.add('d-none');
       enableToasts.checked = false;
       enableToasts.disabled = true;
@@ -450,9 +467,9 @@ function handleEnableToastsClick() {
 
   enableToasts.addEventListener('click', (e) => {
     if (e.target.checked) {
-      glue.notifications.configure({ enableToasts: true });
+      configureNotifications({ enableToasts: true });
     } else {
-      glue.notifications.configure({ enableToasts: false });
+      configureNotifications({ enableToasts: false });
     }
   });
 }

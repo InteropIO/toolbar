@@ -279,6 +279,24 @@ async function trackNotificationsEnabled() {
     .subscribe((data) => notificationEnabledObs.next(data));
 }
 
+async function checkNotificationsConfigure() {
+  const glue = await gluePromise;
+
+  if (typeof glue.notifications.configure === 'function') {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+async function configureNotifications(config) {
+  const methodExists = await checkNotificationsConfigure();
+
+  if (methodExists) {
+    glue.notifications.configure(config);
+  }
+}
+
 async function openNotificationPanel() {
   await gluePromise;
   glue.agm.invoke('T42.Notifications.Show');
@@ -461,6 +479,8 @@ export {
   themeObs,
   changeTheme,
   notificationEnabledObs,
+  configureNotifications,
+  checkNotificationsConfigure,
   allWorkspacesObs,
   openNotificationPanel,
   openFeedbackForm,
