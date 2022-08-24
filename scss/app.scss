@@ -39,7 +39,7 @@ html {
     -webkit-user-select: none;
   }
 
-  .dragable {
+  .draggable {
     position: absolute;
     height: 3rem;
     width: 140px;
@@ -322,7 +322,7 @@ html {
       }
     }
 
-    .view-port-header {
+    .viewport-header {
       align-items: center;
       display: flex;
       justify-content: space-between;

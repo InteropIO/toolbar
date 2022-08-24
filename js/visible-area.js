@@ -55,12 +55,12 @@ function initVisibleArea() {
         let currentMonitor = getMonitor(viewPortBounds, monitors);
 
         if (!currentMonitor) {
-          q('.view-port').classList.add('expand');
+          q('.viewport').classList.add('expand');
           q('.app').classList.add('expand-wrapper');
           return;
         }
 
-        if (!q('.view-port').classList.contains('horizontal')) {
+        if (!q('.viewport').classList.contains('horizontal')) {
           let shouldOpenLeft =
             glueModule.boundsObs.value.left + glueModule.boundsObs.value.width >
             currentMonitor.left + currentMonitor.width;
@@ -121,11 +121,11 @@ function applyOpenClasses() {
   let openLeft = openLeftObs.value;
   let openTop = openTopObs.value;
 
-  if (openLeft && !q('.view-port.horizontal')) {
+  if (openLeft && !q('.viewport.horizontal')) {
     document.body.classList.add('open-left');
   }
 
-  if (openTop && q('.view-port.horizontal')) {
+  if (openTop && q('.viewport.horizontal')) {
     document.body.classList.add('open-top');
   }
 
