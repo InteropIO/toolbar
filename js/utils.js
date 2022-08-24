@@ -128,10 +128,10 @@ function handleToolbarAppRowsChange() {
 
   q('.length-select .select_options').addEventListener('click', (e) => {
     if (e.target.matches('input.select_input[type="radio"]')) {
-      const lengthToSelect = e.target.getAttribute('length-name');
+      const selectedLength = e.target.getAttribute('length-name');
 
       changeToolbarPosition(oldBounds);
-      updateSetting({ toolbarAppRows: lengthToSelect });
+      updateSetting({ toolbarAppRows: selectedLength });
 
       if (!isVertical) {
         qa('.toggle-content').forEach((toggle) => {
@@ -265,7 +265,6 @@ function setToolbarSize() {
 
 async function handleOrientationChange() {
   isVertical = !!q('.viewport.vertical');
-
   q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
 
   if (getSetting('vertical') === false) {
