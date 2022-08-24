@@ -19,7 +19,7 @@ const toolbarWidth = {
 };
 const toolbarPadding = {
   vertical: 300,
-  horizontal: 500,
+  horizontal: 550,
 };
 const initialPosition = {
   top: 20,
