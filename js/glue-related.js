@@ -1,12 +1,11 @@
 import {
   setSettings,
-  updateSetting,
   updateSettings,
   getSetting,
   toolbarPadding,
   toolbarWidth,
 } from './settings.js';
-import { calculateToolbarHeight } from './utils.js';
+import { calculateToolbarHeight, setToolbarPosition } from './utils.js';
 
 console.time('Glue');
 var gluePromise = new Promise(async (res, rej) => {
@@ -180,6 +179,7 @@ async function trackWindowMove() {
   boundsObs.next(glue.windows.my().bounds);
   glue.windows.my().onBoundsChanged(() => {
     boundsObs.next(glue.windows.my().bounds);
+    setToolbarPosition();
   });
 }
 

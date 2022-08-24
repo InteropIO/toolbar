@@ -264,9 +264,13 @@ function setToolbarSize() {
 }
 
 async function handleOrientationChange() {
+  const toolbarItemHeights = calculateToolbarHeight();
+  const bounds = boundsObs.value;
+
   isVertical = !!q('.viewport.vertical');
   q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
 
+  // TODO: Galin Fix this...
   if (getSetting('vertical') === false) {
     gluePromise.then(() => {
       q('#toggle').click();
@@ -290,10 +294,19 @@ async function handleOrientationChange() {
       }
     });
 
+    // TODO: Galin Fix this...
     if (isVertical) {
       document.body.classList.remove('open-top');
+      moveMyWindow({
+        top: bounds.top + toolbarItemHeights.appDrawerHeight,
+        left: bounds.left - toolbarPadding.vertical,
+      });
     } else {
       document.body.classList.remove('open-left');
+      moveMyWindow({
+        top: bounds.top - toolbarItemHeights.appDrawerHeight,
+        left: bounds.left + toolbarPadding.vertical,
+      });
     }
 
     setToolbarPosition();
