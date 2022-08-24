@@ -1,5 +1,4 @@
 import * as glueModule from './glue-related.js';
-import { toolbarWidth, toolbarPadding, getSetting } from './settings.js';
 
 let topMenuVisibleObs = new rxjs.BehaviorSubject(false);
 let layoutDropDownVisibleObs = new rxjs.BehaviorSubject(false);
@@ -45,7 +44,7 @@ function initVisibleArea() {
     .pipe(rxjs.operators.filter((bounds) => bounds))
     .subscribe((windowBounds) => {
       glueModule.getMonitorInfo().then((monitors) => {
-        const launcherBounds = q('.view-port').getBoundingClientRect();
+        const launcherBounds = q('.viewport').getBoundingClientRect();
         let viewPortBounds = {
           left: windowBounds.left + launcherBounds.left,
           top: windowBounds.top + launcherBounds.top,

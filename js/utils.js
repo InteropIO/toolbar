@@ -2,7 +2,6 @@ import {
   shutdown,
   gluePromise,
   startApp,
-  focusApp,
   boundsObs,
   getApp,
   themeObs,
@@ -16,10 +15,7 @@ import {
   moveMyWindow,
   minimize,
   resizeWindowMoveArea,
-  raiseNotification,
   //   isMinimizeAllowed,
-  saveLayout,
-  setDefaultGlobal,
   openFeedbackForm,
 } from './glue-related.js';
 import {
@@ -29,7 +25,7 @@ import {
   updateSetting,
   getSetting,
 } from './settings.js';
-import { applyOpenClasses, getMonitor } from './visible-area.js';
+import { applyOpenClasses } from './visible-area.js';
 import { searchInputObs } from './applications.js';
 import {
   populateProfileData,
@@ -169,7 +165,7 @@ function populateSettingsDropdown(
 }
 
 function calculateToolbarHeight() {
-  const appLancher = q('.view-port-header');
+  const appLancher = q('.viewport-header');
   const appContentHeader = q('.app-content-header');
   const appRowsNumber = getSetting('toolbarAppRows');
   const navItem = q('.nav-item');

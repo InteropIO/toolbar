@@ -9,7 +9,6 @@ import {
   noRunningAppsHTML,
   noApplicationsHTML,
   noFavoriteAppsHTML,
-  applicationFolderHTMLTemplate,
   getItemHTMLTemplate,
 } from './applications.js';
 import { favoriteApps, updateFavoriteApps } from './favorites.js';
@@ -27,7 +26,6 @@ import {
   handleWidthChange,
   handleDropDownClicks,
 } from './visible-area.js';
-import { gssPromise } from './gss.js';
 import {
   clientHTMLTemplate,
   searchClients,

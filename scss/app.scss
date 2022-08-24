@@ -7,26 +7,21 @@ html {
 
   body {
     height: 100%;
+    overflow: hidden;
   }
-
-  //   .has-horizontal-toolbar {
-  //     padding: 0 0 300px
-  //   }
-
-  //   .has-vertical-toolbar {
-  //     padding: 0 300px;
-  //   }
 
   .app {
     height: 100%;
 
     &.switching-orientation * {
       transition: none !important;
+
       &::before,
       &::after {
         transition: none !important;
       }
     }
+
     *:focus {
       outline: none;
     }
