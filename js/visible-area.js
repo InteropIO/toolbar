@@ -1,4 +1,5 @@
 import * as glueModule from './glue-related.js';
+import { resizeVisibleArea } from './utils.js';
 
 let topMenuVisibleObs = new rxjs.BehaviorSubject(false);
 let layoutDropDownVisibleObs = new rxjs.BehaviorSubject(false);
@@ -149,45 +150,6 @@ function handleWidthChange() {
   });
 
   appBoundsObserver.observe(q('.app'));
-}
-
-function resizeVisibleArea(topMenuVisible, layoutDropDownVisible) {
-  const visibleAreas = [];
-
-  visibleAreas.push(buildVisibleArea(q('.viewport')));
-
-  if (!q('.app.h')) {
-    visibleAreas.push(buildVisibleArea(q('.app')));
-  } else {
-    const toggles = qa('.toggle-content');
-
-    toggles.forEach((toggle) => {
-      if (!toggle.classList.contains('hide')) {
-        visibleAreas.push(buildVisibleArea(toggle));
-      }
-    });
-
-    if (topMenuVisible) {
-      visibleAreas.push(buildVisibleArea(q('#menu-top')));
-    }
-
-    if (layoutDropDownVisible) {
-      visibleAreas.push(buildVisibleArea(q('.layout-menu-tool')));
-    }
-  }
-
-  glueModule.resizeWindowVisibleArea(visibleAreas);
-}
-
-function buildVisibleArea(element) {
-  const { top, left, width, height } = element.getBoundingClientRect();
-
-  return {
-    top: Math.round(top),
-    left: Math.round(left),
-    width: Math.round(width),
-    height: Math.round(height),
-  };
 }
 
 function getMonitor(bounds, displays) {

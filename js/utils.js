@@ -13,6 +13,7 @@ import {
   getWindowBounds,
   notificationEnabledObs,
   moveMyWindow,
+  resizeWindowVisibleArea,
   minimize,
   resizeWindowMoveArea,
   //   isMinimizeAllowed,
@@ -121,10 +122,13 @@ function handleToolbarAppRowsChange() {
     'length'
   );
 
+  const oldBounds = boundsObs.value;
+
   q('.length-select .select_options').addEventListener('click', (e) => {
     if (e.target.matches('input.select_input[type="radio"]')) {
       const lengthToSelect = e.target.getAttribute('length-name');
 
+      changeToolbarPosition(oldBounds);
       updateSetting({ toolbarAppRows: lengthToSelect });
     }
   });
@@ -162,6 +166,45 @@ function populateSettingsDropdown(
 
     item.innerHTML = html;
   });
+}
+
+function resizeVisibleArea(topMenuVisible, layoutDropDownVisible) {
+  const visibleAreas = [];
+
+  visibleAreas.push(buildVisibleArea(q('.viewport')));
+
+  if (!q('.app.h')) {
+    visibleAreas.push(buildVisibleArea(q('.app')));
+  } else {
+    const toggles = qa('.toggle-content');
+
+    toggles.forEach((toggle) => {
+      if (!toggle.classList.contains('hide')) {
+        visibleAreas.push(buildVisibleArea(toggle));
+      }
+    });
+
+    if (topMenuVisible) {
+      visibleAreas.push(buildVisibleArea(q('#menu-top')));
+    }
+
+    if (layoutDropDownVisible) {
+      visibleAreas.push(buildVisibleArea(q('.layout-menu-tool')));
+    }
+  }
+
+  resizeWindowVisibleArea(visibleAreas);
+}
+
+function buildVisibleArea(element) {
+  const { top, left, width, height } = element.getBoundingClientRect();
+
+  return {
+    top: Math.round(top),
+    left: Math.round(left),
+    width: Math.round(width),
+    height: Math.round(height),
+  };
 }
 
 function calculateToolbarHeight() {
@@ -206,10 +249,14 @@ function setToolbarSize() {
         toolbarItemHeights.appDrawerHeight * 2,
     });
   }
+
+  resizeVisibleArea();
+  resizeWindowMoveArea();
 }
 
 async function handleOrientationChange() {
   isVertical = !!q('.viewport.vertical');
+
   q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
 
   if (getSetting('vertical') === false) {
@@ -249,6 +296,19 @@ async function handleOrientationChange() {
   });
 }
 
+function changeToolbarPosition(oldBounds) {
+  const startPosition = initialPosition;
+  const isVertical = getSetting('vertical');
+  const toolbarItemHeights = calculateToolbarHeight();
+
+  if (!isVertical) {
+    moveMyWindow({
+      top: oldBounds.top - toolbarItemHeights.appDrawerHeight,
+      left: startPosition.left,
+    });
+  }
+}
+
 async function setToolbarPosition() {
   const startPosition = initialPosition;
   const bounds = boundsObs.value;
@@ -257,34 +317,85 @@ async function setToolbarPosition() {
   const toolbarItemHeights = calculateToolbarHeight();
 
   monitors.forEach((monitor) => {
-    if (bounds.left < monitor.left || bounds.top < monitor.top) {
-      if (isVertical) {
+    if (isVertical) {
+      // if toolbar position is outside of top monitor working area
+      if (bounds.top < monitor.top) {
         moveMyWindow({
           top: startPosition.top,
-          left: startPosition.left - toolbarPadding.vertical,
         });
-      } else {
+      }
+
+      // if toolbar position is outside of right monitor working area
+      if (
+        bounds.left + toolbarPadding.vertical + toolbarWidth.vertical >
+        monitor.workingAreaWidth
+      ) {
         moveMyWindow({
-          top: startPosition.top - toolbarItemHeights.appDrawerHeight,
-          left: startPosition.left,
+          left:
+            monitor.workingAreaWidth -
+            (toolbarWidth.vertical +
+              toolbarPadding.vertical +
+              startPosition.left),
+        });
+      }
+
+      // if toolbar position is outside of bottom monitor working area
+      if (bounds.top + bounds.height > monitor.workingAreaHeight) {
+        moveMyWindow({
+          top: monitor.workingAreaHeight - (bounds.height + startPosition.top),
+        });
+      }
+
+      // if toolbar position is outside of left monitor working area
+      if (bounds.left < monitor.left) {
+        moveMyWindow({
+          left: startPosition.left - toolbarPadding.vertical,
         });
       }
     } else {
-      if (isVertical) {
+      // if toolbar position is outside of top monitor working area
+      if (
+        bounds.top + toolbarItemHeights.appDrawerHeight < monitor.top ||
+        bounds.top === -toolbarItemHeights.appDrawerHeight
+      ) {
         moveMyWindow({
-          top: bounds.top + toolbarItemHeights.appDrawerHeight,
-          left: bounds.left - toolbarPadding.vertical,
+          top: startPosition.top - toolbarItemHeights.appDrawerHeight,
         });
-      } else {
+      }
+
+      // if toolbar position is outside of right monitor working area
+      if (bounds.left + toolbarWidth.horizontal > monitor.workingAreaWidth) {
         moveMyWindow({
-          top: bounds.top - toolbarItemHeights.appDrawerHeight,
-          left: bounds.left + toolbarPadding.vertical,
+          left:
+            monitor.workingAreaWidth -
+            (toolbarWidth.horizontal + startPosition.left),
+        });
+      }
+
+      // if toolbar position is outside of bottom monitor working area
+      if (
+        bounds.top +
+          toolbarItemHeights.appLauncherHeight +
+          toolbarItemHeights.appDrawerHeight >
+        monitor.workingAreaHeight
+      ) {
+        moveMyWindow({
+          top:
+            monitor.workingAreaHeight -
+            (toolbarItemHeights.appLauncherHeight +
+              toolbarItemHeights.appDrawerHeight +
+              startPosition.top),
+        });
+      }
+
+      // if toolbar position is outside of left monitor working area
+      if (bounds.left < monitor.left) {
+        moveMyWindow({
+          left: startPosition.left,
         });
       }
     }
   });
-
-  resizeWindowMoveArea();
 }
 
 function populateAboutPage() {
@@ -651,6 +762,7 @@ export {
   handleNotificationClick,
   handleModalClose,
   handleMouseHover,
+  resizeVisibleArea,
   calculateToolbarHeight,
   setToolbarSize,
   setToolbarPosition,
