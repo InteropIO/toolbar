@@ -62,44 +62,24 @@ gluePromise.then((glue) => {
   trackNotificationCount();
 });
 
-// async function checkWindowSize() {
-//   await gluePromise;
-//   let win = glue.windows.my();
-//   let currentBounds = win.bounds;
-//   if (currentBounds.width !== 940 || currentBounds.height !== 800) {
-//     console.debug('Start bounds are wrong, correcting to 940x800')
-//     win.moveResize({width: 940, height: 800});
-//   }
-//   win.onBoundsChanged(() => {
-//     if (win.bounds.width !== 940 || win.bounds.height !== 800) {
-//       console.debug(`Resizing to incorrect bounds for width: ${win.bounds.width} and height: ${win.bounds.height}, correcting to 940x800`)
-//       win.moveResize({width: 940, height: 800});
-//     }
-//   });
-// }
-
 async function resizeWindowMoveArea() {
   await gluePromise;
   const win = glue.windows.my();
   const isVertical = getSetting('vertical');
-  const bounds = boundsObs;
   const toolbarItemHeights = calculateToolbarHeight();
   const dragAreaSize = toolbarItemHeights.navItemHeight;
 
   if (isVertical) {
     win.configure({
-      moveAreaTopMargin: `
-              ${toolbarPadding.vertical},
-              0,
-              ${toolbarWidth.vertical + toolbarPadding.vertical - dragAreaSize},
-              0
-            `,
+      moveAreaTopMargin: `${toolbarPadding.vertical}, 0, ${
+        toolbarWidth.vertical + toolbarPadding.vertical - dragAreaSize
+      }, 0`,
       moveAreaThickness: `0, ${dragAreaSize}, 0, 0`,
     });
   } else {
     win.configure({
-      moveAreaTopMargin: `0, 0, ${bounds.value.width - dragAreaSize}, 0`,
-      moveAreaThickness: `0, ${dragAreaSize}, 0, 0`,
+      moveAreaLeftMargin: `0, ${toolbarItemHeights.appDrawerHeight}, 0, ${toolbarItemHeights.appDrawerHeight}`,
+      moveAreaThickness: `${dragAreaSize * 1.25}, 0, 0, 0`,
     });
   }
 }
