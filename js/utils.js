@@ -98,6 +98,7 @@ function handleThemeChange() {
 }
 
 function handleToolbarAppRowsChange() {
+  const isVertical = getSetting('vertical');
   const numberOfRows = getSetting('toolbarAppRows');
   const appSelectOptions = {
     all: [
@@ -130,6 +131,11 @@ function handleToolbarAppRowsChange() {
 
       changeToolbarPosition(oldBounds);
       updateSetting({ toolbarAppRows: lengthToSelect });
+
+      if (!isVertical) {
+        q('#settings-content').classList.add('hide');
+        document.body.classList.remove('open-top');
+      }
     }
   });
 }
@@ -440,9 +446,9 @@ function handleTopMenuClicks() {
       qa(`[menu-id]:not([menu-id="${menuId}"])`).forEach((menu) => {
         menu.classList.add('hide');
       });
-      qa(`[menu-id]:not([menu-button-id="${menuId}"]) .chavron`).forEach(
-        (menuBtnChavron) => {
-          menuBtnChavron.classList.remove('chavron-rotate');
+      qa(`[menu-id]:not([menu-button-id="${menuId}"]) .chevron`).forEach(
+        (menuBtnChevron) => {
+          menuBtnChevron.classList.remove('chevron-rotate');
         }
       );
 
@@ -507,19 +513,18 @@ function handleMinimizeClick() {
   //   );
 }
 
-// TODO: Maybe use Chevron instead of Chavron?
 function toggleTopButtonState(id) {
-  qa(`[menu-button-id="${id}"] .chavron`).forEach((chavron) =>
-    chavron.classList.toggle('chavron-rotate')
+  qa(`[menu-button-id="${id}"] .chevron`).forEach((chevron) =>
+    chevron.classList.toggle('chevron-rotate')
   );
-  qa(`[menu-button-id="${id}"] > a`).forEach((chavron) =>
-    chavron.classList.toggle('active')
+  qa(`[menu-button-id="${id}"] > a`).forEach((chevron) =>
+    chevron.classList.toggle('active')
   );
-  qa(`[menu-button-id]:not([menu-button-id="${id}"]) .chavron`).forEach(
-    (chavron) => chavron.classList.remove('chavron-rotate')
+  qa(`[menu-button-id]:not([menu-button-id="${id}"]) .chevron`).forEach(
+    (chevron) => chevron.classList.remove('chevron-rotate')
   );
-  qa(`[menu-button-id]:not([menu-button-id="${id}"]) > a`).forEach((chavron) =>
-    chavron.classList.remove('active')
+  qa(`[menu-button-id]:not([menu-button-id="${id}"]) > a`).forEach((chevron) =>
+    chevron.classList.remove('active')
   );
 }
 
