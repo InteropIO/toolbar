@@ -1,28 +1,31 @@
 @import "top";
 
 .horizontal {
+  position: relative;
   display: flex;
   width: 100%;
   height: 3rem;
-  position: relative;
 
   > .nav {
     flex-wrap: nowrap;
     width: calc(100% - 40px);
   }
 
-  .dragable {
-    width: 3.375rem;
+  .draggable {
+    width: 3.75rem;
   }
+
   .accordion {
     overflow-x: hidden;
     overflow-y: auto;
   }
-  &.view-port .view-port-header {
+
+  &.viewport .viewport-header {
     .logo {
       min-width: initial;
       overflow: hidden;
     }
+
     .dropdown-menu {
       right: -0.188rem;
       margin-top: 0.5rem;
@@ -52,7 +55,7 @@
   .nav {
     .applications-nav::before,
     .favorite::after,
-    .view-port-footer:before {
+    .viewport-footer:before {
       @include horizontal-divider;
     }
 
@@ -105,8 +108,9 @@
     flex-wrap: nowrap;
   }
 
-  .view-port-header {
+  .viewport-header {
     position: static;
+
     .menu {
       position: absolute;
       top: 0.875rem;
@@ -212,24 +216,26 @@
         display: flex;
       }
     }
-    .view-port-footer {
+
+    .viewport-footer {
       margin-top: initial;
       margin-left: auto;
       overflow-x: hidden;
     }
   }
 }
+
 .h {
+  width: 100%;
   height: auto;
 
   .toggle-content {
-    @include transition("height", 0);
-
     width: 100%;
-    // height: 300px;
+    max-height: 1000px;
     border-top: 0 solid transparent;
     border-left-width: 1px;
     border-left-style: solid;
+    @include transition("max-height", 0);
 
     > .nav,
     > div {

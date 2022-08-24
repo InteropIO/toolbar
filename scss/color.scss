@@ -1,6 +1,6 @@
 // color scheme
 html.dark {
-  .view-port {
+  .viewport {
     border: 1px solid rgba(255, 255, 255, 0.075);
   }
 
@@ -23,7 +23,7 @@ html.dark {
     @include divider("dark");
   }
 
-  .view-port-footer {
+  .viewport-footer {
     @include divider("dark");
   }
 
@@ -97,19 +97,25 @@ html.dark {
   .horizontal {
     .layout-menu-tool {
       border: 1px solid rgba(255, 255, 255, 0.075);
+
       div:first-child {
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       }
     }
   }
+
   // Folders
   .folder-content {
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.05) 100%);
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.05) 100%
+    );
   }
 }
 
 html.light {
-  .view-port {
+  .viewport {
     border: 1px solid rgba(219, 222, 230, 0.8);
   }
 
@@ -135,7 +141,7 @@ html.light {
     @include divider("");
   }
 
-  .view-port-footer {
+  .viewport-footer {
     @include divider("");
   }
 

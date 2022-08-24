@@ -21,23 +21,33 @@
       .layout-menu-tool {
         top: -6rem;
       }
+
       .icon-angle-right {
         transform: rotate(-90deg);
       }
+
       .chavron-rotate {
         transform: rotate(90deg);
       }
     }
 
+    .viewport {
+      order: 1;
+    }
+
     .toggle-content {
       border-top: 1px solid rgba(255, 255, 255, 0.075);
       border-bottom: 0;
+      transform: translateY(-100%);
+
       &.hide {
         border-top: 0;
       }
+
       h3 {
         padding-right: 0.25rem;
       }
+
       .close-drawer {
         transform: rotate(0);
         margin: 0.25rem 0 0 0;

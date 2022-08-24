@@ -197,27 +197,23 @@ function setToolbarSize() {
 
   if (isVertical) {
     document.body.style.padding = `0 ${toolbarPadding.vertical}px`;
-    // document.body.classList.remove('has-horizontal-toolbar');
-    // document.body.classList.add('has-vertical-toolbar');
     moveMyWindow({
       width: toolbarWidth.vertical + toolbarPadding.vertical * 2,
       height: toolbarItemHeights.appDrawerHeight,
     });
   } else {
-    document.body.style.padding = `0 0 ${toolbarItemHeights.appDrawerHeight}px 0`;
-    // document.body.classList.remove('has-vertical-toolbar');
-    // document.body.classList.add('has-horizontal-toolbar');
+    document.body.style.padding = `${toolbarItemHeights.appDrawerHeight}px 0 ${toolbarItemHeights.appDrawerHeight}px 0`;
     moveMyWindow({
       width: toolbarWidth.horizontal,
       height:
         toolbarItemHeights.appLauncherHeight +
-        toolbarItemHeights.appDrawerHeight,
+        toolbarItemHeights.appDrawerHeight * 2,
     });
   }
 }
 
 async function handleOrientationChange() {
-  isVertical = !!q('.view-port.vertical');
+  isVertical = !!q('.viewport.vertical');
   q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
 
   if (getSetting('vertical') === false) {
@@ -227,13 +223,12 @@ async function handleOrientationChange() {
   }
 
   q('#toggle').addEventListener('click', async () => {
-    await ensureWindowHasSpace(isVertical);
     q('.app').classList.add('switching-orientation');
     isVertical = !isVertical;
     updateSetting({ vertical: isVertical });
     q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
-    q('.view-port').classList.add(isVertical ? 'vertical' : 'horizontal');
-    q('.view-port').classList.remove(isVertical ? 'horizontal' : 'vertical');
+    q('.viewport').classList.add(isVertical ? 'vertical' : 'horizontal');
+    q('.viewport').classList.remove(isVertical ? 'horizontal' : 'vertical');
     q('.app').classList.add(isVertical ? 'd-inline-flex' : 'h');
     q('.app').classList.remove(isVertical ? 'h' : 'd-inline-flex');
     qa('[column]').forEach((col) => {
@@ -498,7 +493,7 @@ async function handleMouseHover() {
   let closeTimeout;
 
   q('.app').addEventListener('mouseenter', (e) => {
-    q('.view-port').classList.add('expand');
+    q('.viewport').classList.add('expand');
     q('.app').classList.add('expand-wrapper');
 
     if (closeTimeout) {
@@ -508,7 +503,7 @@ async function handleMouseHover() {
 
   q('.app').addEventListener('mouseleave', async (e) => {
     let { offsetWidth: viewPortWidth, offsetHeight: viewPortHeight } =
-      q('.view-port');
+      q('.viewport');
     let margin = windowMargin;
 
     if (
@@ -527,7 +522,7 @@ async function handleMouseHover() {
       return;
     }
 
-    let viewPortBounds = q('.view-port').getBoundingClientRect();
+    let viewPortBounds = q('.viewport').getBoundingClientRect();
     let outOfMonitor = isOutOfMonitor(viewPortBounds);
 
     if (await outOfMonitor) {
@@ -537,7 +532,7 @@ async function handleMouseHover() {
 
     closeTimeout = setTimeout(async () => {
       await applyOpenClasses();
-      q('.view-port').classList.remove('expand');
+      q('.viewport').classList.remove('expand');
       q('.app').classList.remove('expand-wrapper');
       qa('.toggle-content').forEach((e) => e.classList.add('hide'));
       // qa('[dropdown-id].show').forEach(e => e.classList.remove('show'));

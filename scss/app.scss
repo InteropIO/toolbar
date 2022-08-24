@@ -302,14 +302,17 @@ html {
     }
   }
 
-  .view-port {
-    @include transition("width", 0);
+  .viewport {
+    z-index: 1;
     border: 1px solid rgba(255, 255, 255, 0.075);
+    background-color: var(--t42-body);
     width: 60px;
     user-select: none;
+    @include transition("width", 0);
 
     .menu {
       display: none;
+
       .icon-window-minimize {
         font-size: 0.5rem;
       }
@@ -353,7 +356,7 @@ html {
       }
     }
 
-    .view-port-footer {
+    .viewport-footer {
       position: relative;
       margin-top: auto;
 
