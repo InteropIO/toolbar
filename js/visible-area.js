@@ -15,7 +15,7 @@ function initVisibleArea() {
       layoutOpenedTimeout = setTimeout(() => {
         applyOpenClasses();
         layoutDropDownVisibleObs.next(true);
-      }, 300);
+      }, 500);
     }
   });
 
@@ -71,7 +71,7 @@ function initVisibleArea() {
           }
         } else {
           let shouldOpenTop =
-            viewPortBounds.top + viewPortBounds.height >
+            glueModule.boundsObs.value.top + glueModule.boundsObs.value.height >
             currentMonitor.workingAreaTop + currentMonitor.workingAreaHeight;
 
           openTopObs.next(shouldOpenTop);
@@ -88,7 +88,7 @@ function initVisibleArea() {
       rxjs.operators.combineLatest(topMenuVisibleObs, layoutDropDownVisibleObs)
     )
     .subscribe(([appBounds, topMenuVisible, layoutDropDownVisible]) => {
-      resizeVisibleArea(appBounds, topMenuVisible, layoutDropDownVisible);
+      resizeVisibleArea(topMenuVisible, layoutDropDownVisible);
     });
 }
 
@@ -151,42 +151,43 @@ function handleWidthChange() {
   appBoundsObserver.observe(q('.app'));
 }
 
-function resizeVisibleArea(appBounds, topMenuVisible, layoutDropDownVisible) {
-  let visibleAreas = [];
+function resizeVisibleArea(topMenuVisible, layoutDropDownVisible) {
+  const visibleAreas = [];
 
-  appBounds = q('.app').getBoundingClientRect();
-  visibleAreas.push({
-    top: Math.round(appBounds.top),
-    left: Math.round(appBounds.left),
-    width: Math.round(appBounds.width),
-    height: Math.round(appBounds.height),
-  });
+  visibleAreas.push(buildVisibleArea(q('.viewport')));
 
-  if (q('.view-port.horizontal') && topMenuVisible) {
-    let { top, left, width, height } = q('#menu-top').getBoundingClientRect();
+  if (!q('.app.h')) {
+    visibleAreas.push(buildVisibleArea(q('.app')));
+  } else {
+    const toggles = qa('.toggle-content');
 
-    // TODO
-    top = Math.round(top);
-    left = Math.round(left);
-    width = Math.round(width);
-    height = Math.round(height);
-    visibleAreas.push({ top, left, width, height });
-  }
+    toggles.forEach((toggle) => {
+      if (!toggle.classList.contains('hide')) {
+        visibleAreas.push(buildVisibleArea(toggle));
+      }
+    });
 
-  if (layoutDropDownVisible) {
-    let { top, left, width, height } =
-      q('.layout-menu-tool').getBoundingClientRect();
+    if (topMenuVisible) {
+      visibleAreas.push(buildVisibleArea(q('#menu-top')));
+    }
 
-    // TODO
-    top = Math.round(top);
-    left = Math.round(left);
-    width = Math.round(width);
-    height = Math.round(height);
-    // TODO
-    visibleAreas.push({ top, left, width, height });
+    if (layoutDropDownVisible) {
+      visibleAreas.push(buildVisibleArea(q('.layout-menu-tool')));
+    }
   }
 
   glueModule.resizeWindowVisibleArea(visibleAreas);
+}
+
+function buildVisibleArea(element) {
+  const { top, left, width, height } = element.getBoundingClientRect();
+
+  return {
+    top: Math.round(top),
+    left: Math.round(left),
+    width: Math.round(width),
+    height: Math.round(height),
+  };
 }
 
 function getMonitor(bounds, displays) {
@@ -240,4 +241,5 @@ export {
   handleDropDownClicks,
   applyOpenClasses,
   getMonitor,
+  openTopObs,
 };
