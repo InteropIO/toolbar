@@ -254,6 +254,7 @@ async function setToolbarPosition() {
   const bounds = boundsObs.value;
   const monitors = await getMonitorInfo();
   const isVertical = getSetting('vertical');
+  const toolbarItemHeights = calculateToolbarHeight();
 
   monitors.forEach((monitor) => {
     if (bounds.left < monitor.left || bounds.top < monitor.top) {
@@ -264,58 +265,26 @@ async function setToolbarPosition() {
         });
       } else {
         moveMyWindow({
-          top: startPosition.top,
+          top: startPosition.top - toolbarItemHeights.appDrawerHeight,
           left: startPosition.left,
         });
       }
     } else {
-      moveMyWindow({
-        top: bounds.top,
-        left: bounds.left,
-      });
+      if (isVertical) {
+        moveMyWindow({
+          top: bounds.top + toolbarItemHeights.appDrawerHeight,
+          left: bounds.left - toolbarPadding.vertical,
+        });
+      } else {
+        moveMyWindow({
+          top: bounds.top - toolbarItemHeights.appDrawerHeight,
+          left: bounds.left + toolbarPadding.vertical,
+        });
+      }
     }
   });
 
   resizeWindowMoveArea();
-}
-
-async function ensureWindowHasSpace(isVertical) {
-  console.log('check near edge');
-
-  let monitorInfo = await getMonitorInfo();
-  let windowBounds = await getWindowBounds();
-  let visibleAreaBounds = q('.view-port').getBoundingClientRect();
-  let realBounds = {
-    top: windowBounds.top + visibleAreaBounds.top,
-    left: windowBounds.left + visibleAreaBounds.left,
-    width: visibleAreaBounds.width,
-    height: visibleAreaBounds.height,
-  };
-  let currentMonitor = getMonitor(realBounds, monitorInfo);
-
-  if (isVertical) {
-    // should have enough space on the right
-    let newRight = windowBounds.left + visibleAreaBounds.right + 340 + 20;
-    let monitorMostRight =
-      currentMonitor.left + currentMonitor.workingAreaWidth;
-
-    if (newRight > monitorMostRight) {
-      moveMyWindow({
-        left: windowBounds.left - (newRight - monitorMostRight),
-      });
-    }
-  } else {
-    // should have enough space below
-    let newBottom = windowBounds.top + visibleAreaBounds.bottom + 350 + 20;
-    let monitorMostBottom =
-      currentMonitor.top + currentMonitor.workingAreaHeight;
-
-    if (newBottom > monitorMostBottom) {
-      moveMyWindow({
-        top: windowBounds.top - (newBottom - monitorMostBottom),
-      });
-    }
-  }
 }
 
 function populateAboutPage() {
