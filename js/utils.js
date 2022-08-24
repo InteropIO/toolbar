@@ -4,6 +4,7 @@ import {
   startApp,
   boundsObs,
   getApp,
+  getUserProperties,
   themeObs,
   changeTheme,
   refreshApps,
@@ -17,6 +18,8 @@ import {
   minimize,
   resizeWindowMoveArea,
   //   isMinimizeAllowed,
+  checkNotificationsConfigure,
+  configureNotifications,
   openFeedbackForm,
 } from './glue-related.js';
 import {
@@ -50,8 +53,7 @@ let arrowKeysObs = rxjs
 
 function handleClicks() {
   handleNotificationClick();
-  handleEnableNotificationsClick();
-  handleEnableToastsClick();
+  handleEnableNotifications();
   handleFeedbackClick();
   handleOrientationChange();
   handleThemeChange();
@@ -546,6 +548,24 @@ function focusMenuInputAfterTransition(e) {
   }
 }
 
+function focusInputAfterWindowRecover(window) {
+  const drawer = qa('.toggle-content');
+
+  if (window.isFocused) {
+    drawer.forEach((el) => {
+      if (!el.classList.contains('hide')) {
+        const input = el.querySelector('.input-control');
+
+        if (input) {
+          input.focus();
+        }
+      }
+    });
+  } else {
+    console.log('Window focus lost...');
+  }
+}
+
 function handleModalClose() {
   document.addEventListener('click', (e) => {
     if (
@@ -638,6 +658,15 @@ async function handleNotificationClick() {
   });
 }
 
+async function handleEnableNotifications() {
+  const methodExists = await checkNotificationsConfigure();
+
+  if (methodExists) {
+    handleEnableNotificationsClick();
+    handleEnableToastsClick();
+  }
+}
+
 function handleEnableNotificationsClick() {
   const notificationPanel = q('#notification-panel');
   const enableNotifications = q('#enable-notifications');
@@ -645,11 +674,11 @@ function handleEnableNotificationsClick() {
 
   enableNotifications.addEventListener('click', (e) => {
     if (e.target.checked) {
-      glue.notifications.configure({ enable: true, enableToasts: false });
+      configureNotifications({ enable: true, enableToasts: false });
       notificationPanel.classList.remove('d-none');
       enableToasts.disabled = false;
     } else {
-      glue.notifications.configure({ enable: false, enableToasts: false });
+      configureNotifications({ enable: false, enableToasts: false });
       notificationPanel.classList.add('d-none');
       enableToasts.checked = false;
       enableToasts.disabled = true;
@@ -662,9 +691,9 @@ function handleEnableToastsClick() {
 
   enableToasts.addEventListener('click', (e) => {
     if (e.target.checked) {
-      glue.notifications.configure({ enableToasts: true });
+      configureNotifications({ enableToasts: true });
     } else {
-      glue.notifications.configure({ enableToasts: false });
+      configureNotifications({ enableToasts: false });
     }
   });
 }
@@ -679,19 +708,20 @@ async function handleFeedbackClick() {
 }
 
 async function startTutorial() {
+  const userProperties = await getUserProperties();
+  const hideTutorialOnStartup = userProperties.hideTutorialOnStartup;
   const tutorialApp = await getApp('getting-started');
-  const showTutorial = getSetting('showTutorial');
-
-  if (!tutorialApp) {
+  if (!tutorialApp || hideTutorialOnStartup) {
     updateSetting({ showTutorial: false });
     q('.show-tutorial-check').classList.add('d-none');
-  }
-
-  if (showTutorial) {
-    try {
-      startApp('getting-started');
-    } catch (e) {
-      console.log('could not start Getting started app', e);
+  } else {
+    const showTutorial = getSetting('showTutorial');
+    if (showTutorial) {
+      try {
+        startApp('getting-started');
+      } catch (e) {
+        console.log('could not start Getting started app', e);
+      }
     }
   }
 }
@@ -711,10 +741,10 @@ function getAppIcon(app = {}) {
   }
 }
 
-function clearSearch() {
-  searchInputObs.next('');
-  q('#app-search').value = '';
-}
+// function clearSearch() {
+//   searchInputObs.next('');
+//   q('#app-search').value = '';
+// }
 
 function escapeHtml(unsafe) {
   return unsafe
@@ -771,9 +801,10 @@ export {
   calculateToolbarHeight,
   setToolbarSize,
   setToolbarPosition,
+  focusInputAfterWindowRecover,
   windowMargin,
   startTutorial,
-  clearSearch,
+  // clearSearch,
   escapeHtml,
   getAppIcon,
   openDrawer,

@@ -210,6 +210,11 @@ async function focusApp(appName) {
   app.instances.forEach((i) => i.activate());
 }
 
+async function focusWindow(callback) {
+  await gluePromise;
+  glue.windows.my().onFocusChanged(callback);
+}
+
 async function refreshApps() {
   await gluePromise;
   pushAllApps();
@@ -284,6 +289,20 @@ async function trackNotificationsEnabled() {
   notificationMethoExists
     .pipe(rxjs.operators.distinctUntilChanged())
     .subscribe((data) => notificationEnabledObs.next(data));
+}
+
+async function checkNotificationsConfigure() {
+  const glue = await gluePromise;
+
+  return typeof glue.notifications.configure === 'function';
+}
+
+async function configureNotifications(config) {
+  const methodExists = await checkNotificationsConfigure();
+
+  if (methodExists) {
+    glue.notifications.configure(config);
+  }
 }
 
 async function openNotificationPanel() {
@@ -461,12 +480,15 @@ export {
   boundsObs,
   startApp,
   focusApp,
+  focusWindow,
   getApp,
   refreshApps,
   notificationsCountObs,
   themeObs,
   changeTheme,
   notificationEnabledObs,
+  configureNotifications,
+  checkNotificationsConfigure,
   allWorkspacesObs,
   openNotificationPanel,
   openFeedbackForm,

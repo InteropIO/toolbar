@@ -74,6 +74,7 @@ async function init() {
   utils.handleClicks();
   utils.startTutorial();
   glueModule.registerHotkey();
+  glueModule.focusWindow(utils.focusInputAfterWindowRecover);
 
   populateSID();
   showFeedbackPanel();

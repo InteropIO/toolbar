@@ -228,7 +228,7 @@
     .viewport-footer {
       margin-top: initial;
       margin-left: auto;
-      overflow-x: hidden;
+      overflow-x: clip;
     }
   }
 }

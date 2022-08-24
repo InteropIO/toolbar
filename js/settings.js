@@ -1,4 +1,8 @@
-import { updatePrefs } from './glue-related.js';
+import {
+  updatePrefs,
+  checkNotificationsConfigure,
+  configureNotifications,
+} from './glue-related.js';
 import { setToolbarSize, setToolbarPosition } from './utils.js';
 
 let settings = {
@@ -31,13 +35,20 @@ function init() {
   trackSettingsChange();
 }
 
-function populateSettings() {
+async function populateSettings() {
+  const methodExists = await checkNotificationsConfigure();
+
+  if (methodExists) {
+    configureNotifications({
+      enable: settings.enableNotifications,
+      enableToasts: settings.enableToasts,
+    });
+  } else {
+    q('.settings-notifications').classList.add('d-none');
+  }
+
   setToolbarSize();
   setToolbarPosition();
-  glue.notifications.configure({
-    enable: settings.enableNotifications,
-    enableToasts: settings.enableToasts,
-  });
 
   for (const setting in settings) {
     if (
