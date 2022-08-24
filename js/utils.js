@@ -101,6 +101,7 @@ function handleThemeChange() {
 
 function handleToolbarAppRowsChange() {
   const isVertical = getSetting('vertical');
+  const oldBounds = boundsObs.value;
   const numberOfRows = getSetting('toolbarAppRows');
   const appSelectOptions = {
     all: [
@@ -125,8 +126,6 @@ function handleToolbarAppRowsChange() {
     'length'
   );
 
-  const oldBounds = boundsObs.value;
-
   q('.length-select .select_options').addEventListener('click', (e) => {
     if (e.target.matches('input.select_input[type="radio"]')) {
       const lengthToSelect = e.target.getAttribute('length-name');
@@ -135,7 +134,9 @@ function handleToolbarAppRowsChange() {
       updateSetting({ toolbarAppRows: lengthToSelect });
 
       if (!isVertical) {
-        q('#settings-content').classList.add('hide');
+        qa('.toggle-content').forEach((toggle) => {
+          toggle.classList.add('hide');
+        });
         document.body.classList.remove('open-top');
       }
     }
@@ -355,7 +356,7 @@ async function setToolbarPosition() {
       }
 
       // if toolbar position is outside of left monitor working area
-      if (bounds.left < monitor.left) {
+      if (bounds.left + toolbarPadding.vertical < monitor.left) {
         moveMyWindow({
           left: startPosition.left - toolbarPadding.vertical,
         });

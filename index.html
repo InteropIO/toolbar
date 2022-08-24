@@ -226,113 +226,113 @@
           </div>
         </form>
       </div>
+    </div>
 
-      <div class="settings-theme p-2">
-        <h5>Select theme</h5>
-        <form>
-          <ul class="select theme-select">
-            <li class="select_items">
-              <input class="select_expand" type="radio" name="theme" id="opener" />
-              <label class="select_closeLabel" for="close"></label>
-              <ul class="select_options"></ul>
-              <label class="select_expandLabel" for="opener"></label>
-            </li>
-          </ul>
-        </form>
+    <div class="toggle-content hide" id="about-content" menu-id="about">
+      <div class="p-2">
+        <h5 class="d-flex justify-content-between mb-2">
+          About
+          <span class="icon-arrow-up-down close-drawer"></span>
+        </h5>
+        <table>
+          <tr>
+            <td class="text-right">GD version:</td>
+            <td class="pl-3">
+              <span class="gd-version"></span>
+            </td>
+          </tr>
+          <tr>
+            <td class="text-right">Glue.js version:</td>
+            <td class="pl-3">
+              <span class="glue-js-version"></span>
+            </td>
+          </tr>
+          <tr>
+            <td class="text-right">GW URL:</td>
+            <td class="pl-3"><span class="gw-url"></span></td>
+          </tr>
+          <tr>
+            <td class="text-right">Username:</td>
+            <td class="pl-3"><span class="username"></span></td>
+          </tr>
+          <tr>
+            <td class="text-right">Status:</td>
+            <td class="pl-3 status-connected d-none">
+              <span class="icon-size-12 ">
+                <i class="icon-record position-relative text-success"></i>
+              </span>
+              <span>Connected</span>
+            </td>
+            <td class="pl-3 status-disconnected">
+              <span class="icon-size-12 ">
+                <i class="icon-record position-relative text-danger"></i>
+              </span>
+              <span>Disconnected</span>
+            </td>
+          </tr>
+        </table>
       </div>
     </div>
-  </div>
 
-  <div class="toggle-content hide" id="about-content" menu-id="about">
-    <div class="p-2">
-      <h5 class="d-flex justify-content-between mb-2">
-        About
-        <span class="icon-arrow-up-down close-drawer"></span>
-      </h5>
-      <table class="ml-auto mr-auto mt-5">
-        <tr>
-          <td class="text-right">GD version</td>
-          <td class="pl-3">
-            <span class="gd-version"></span>
-          </td>
-        </tr>
-        <tr>
-          <td class="text-right">Glue.js version</td>
-          <td class="pl-3">
-            <span class="glue-js-version"></span>
-          </td>
-        </tr>
-        <tr>
-          <td class="text-right">GW URL</td>
-          <td class="pl-3"><span class="gw-url"></span></td>
-        </tr>
-        <tr>
-          <td class="text-right">Username</td>
-          <td class="pl-3"><span class="username"></span></td>
-        </tr>
-        <tr>
-          <td class="text-right">Status</td>
-          <td class="pl-3 status-connected d-none">
-            <span class="icon-size-12 ">
-              <i class="icon-record position-relative text-success"></i>
-            </span>
-            <span>Connected</span>
-          </td>
-          <td class="pl-3 status-disconnected">
-            <span class="icon-size-12 ">
-              <i class="icon-record position-relative text-danger"></i>
-            </span>
-            <span>Disconnected</span>
-          </td>
-        </tr>
-      </table>
-    </div>
-  </div>
-
-  <div class="toggle-content hide" id="profile-content" menu-id="profile">
-    <div class="d-flex flex-column h-100 p-2">
-      <h5 class="d-flex justify-content-between mb-2">
-        Profile
-        <span class="icon-arrow-up-down close-drawer"></span>
-      </h5>
-      <table class="mb-auto">
-        <tr>
-          <td class="text-right">User</td>
-          <td class="pl-3">
-            <span class="profile-sid"></span>
-          </td>
-        </tr>
-        <tr>
-          <td class="text-right">Region</td>
-          <td class="pl-3">
-            <span class="profile-reg"></span>
-          </td>
-        </tr>
-        <tr>
-          <td class="text-right">Environment</td>
-          <td class="pl-3">
-            <span class="profile-env"></span>
-          </td>
-        </tr>
-        <tr>
-          <td class="text-right">Version</td>
-          <td class="pl-3">
-            <span class="profile-version"></span>
-          </td>
-        </tr>
-        <tr>
-          <td class="text-right">Gateway Port</td>
-          <td class="pl-3">
-            <span class="profile-gwport"></span>
-          </td>
-        </tr>
-        <tr>
-          <td class="text-right">Server</td>
-          <td class="pl-3">
-            <span class="server-info"></span>
-          </td>
-        </tr>
-      </table>
+    <div class="toggle-content hide" id="profile-content" menu-id="profile">
+      <div class="p-2 border-bottom border-secondary">
+        <h5 class="d-flex justify-content-between">
+          Profile
+          <span class="icon-arrow-up-down close-drawer"></span>
+        </h5>
+        <table class="mb-auto">
+          <tr>
+            <td class="text-right">User:</td>
+            <td class="pl-3">
+              <span class="profile-sid"></span>
+            </td>
+          </tr>
+          <tr>
+            <td class="text-right">Region:</td>
+            <td class="pl-3">
+              <span class="profile-reg"></span>
+            </td>
+          </tr>
+          <tr>
+            <td class="text-right">Environment:</td>
+            <td class="pl-3">
+              <span class="profile-env"></span>
+            </td>
+          </tr>
+          <tr>
+            <td class="text-right">Version:</td>
+            <td class="pl-3">
+              <span class="profile-version"></span>
+            </td>
+          </tr>
+          <tr>
+            <td class="text-right">Gateway Port:</td>
+            <td class="pl-3">
+              <span class="profile-gwport"></span>
+            </td>
+          </tr>
+          <tr>
+            <td class="text-right">Server:</td>
+            <td class="pl-3">
+              <span class="server-info"></span>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="p-2">
+        <h5 class="d-flex justify-content-between">Actions</h5>
+        <div class="d-flex justify-content-between">
+          <button type="button" class="btn btn-secondary" id="Profile_Restart">
+            Restart
+          </button>
+          <button type="button" class="btn btn-secondary" id="Profile_Shutdown">
+            Shutdown
+          </button>
+          <button type="button" class="btn btn-secondary" id="Profile_Feedback">
+            Feedback
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
