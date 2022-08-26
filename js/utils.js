@@ -299,8 +299,6 @@ async function handleOrientationChange() {
       document.body.classList.remove('open-left');
     }
 
-    setToolbarPosition();
-
     setTimeout(() => {
       q('.app').classList.remove('switching-orientation');
     });
