@@ -1,18 +1,19 @@
 // color scheme
 html.dark {
-  .view-port {
+  .viewport {
     border: 1px solid rgba(255, 255, 255, 0.075);
   }
 
   .toggle-content {
-    background-color: #1e1e1e;
+    background-color: var(--t42-body);
     border-top: 1px solid rgba(255, 255, 255, 0.075);
     border-bottom: 1px solid rgba(255, 255, 255, 0.075);
     border-right: 1px solid rgba(255, 255, 255, 0.075);
-    border-left-color:  rgba(255, 255, 255, 0.075);
+    border-left-color: rgba(255, 255, 255, 0.075);
 
     .close-drawer {
       color: #bbb;
+
       &:hover {
         color: white;
       }
@@ -23,7 +24,7 @@ html.dark {
     @include divider("dark");
   }
 
-  .view-port-footer {
+  .viewport-footer {
     @include divider("dark");
   }
 
@@ -31,6 +32,7 @@ html.dark {
     &::after {
       background-color: rgba(255, 255, 255, 0.075);
     }
+
     i {
       background: #1e1e1e;
     }
@@ -67,6 +69,7 @@ html.dark {
       }
     }
   }
+
   .select {
     &:hover {
       background-color: #252525;
@@ -74,6 +77,7 @@ html.dark {
 
     &_items {
       border-color: rgba(255, 255, 255, 0.075);
+
       &:hover {
         border-color: #2080d3;
       }
@@ -87,6 +91,7 @@ html.dark {
       &::after {
         color: #eeeeee;
       }
+
       &:checked {
         + .select_closeLabel + .select_options .select_label:hover {
           background-color: #252525;
@@ -97,19 +102,25 @@ html.dark {
   .horizontal {
     .layout-menu-tool {
       border: 1px solid rgba(255, 255, 255, 0.075);
+
       div:first-child {
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       }
     }
   }
+
   // Folders
   .folder-content {
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.05) 100%);
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.05) 100%
+    );
   }
 }
 
 html.light {
-  .view-port {
+  .viewport {
     border: 1px solid rgba(219, 222, 230, 0.8);
   }
 
@@ -118,9 +129,11 @@ html.light {
     border-top: 1px solid rgba(219, 222, 230, 0.8);
     border-bottom: 1px solid rgba(219, 222, 230, 0.8);
     border-right: 1px solid rgba(219, 222, 230, 0.8);
-    border-left-color:  rgba(219, 222, 230, 0.8);
+    border-left-color: rgba(219, 222, 230, 0.8);
+
     .close-drawer {
       color: #757575;
+
       &:hover {
         color: #0d0d0d;
       }
@@ -135,7 +148,7 @@ html.light {
     @include divider("");
   }
 
-  .view-port-footer {
+  .viewport-footer {
     @include divider("");
   }
 
@@ -143,6 +156,7 @@ html.light {
     &::after {
       background-color: rgba(219, 222, 230, 0.8);
     }
+
     i {
       background: #fafafa;
     }
@@ -202,6 +216,7 @@ html.light {
       &::after {
         color: #2c2c2c;
       }
+
       &:checked {
         + .select_closeLabel + .select_options .select_label:hover {
           background-color: #f2f2f2;
@@ -214,13 +229,19 @@ html.light {
   .horizontal {
     .layout-menu-tool {
       border: 1px solid rgba(219, 222, 230, 0.8);
+
       div:first-child {
         border-bottom: 1px solid rgba(0, 0, 0, 0.075);
       }
     }
   }
+
   // Folders
   .folder-content {
-    background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.05) 100%);
+    background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.05) 100%
+    );
   }
 }

@@ -2,7 +2,7 @@ import {
   shutdown,
   gluePromise,
   startApp,
-  focusApp,
+  boundsObs,
   getApp,
   getUserProperties,
   themeObs,
@@ -14,17 +14,22 @@ import {
   getWindowBounds,
   notificationEnabledObs,
   moveMyWindow,
+  resizeWindowVisibleArea,
   minimize,
-  raiseNotification,
-  isMinimizeAllowed,
+  resizeWindowMoveArea,
+  //   isMinimizeAllowed,
   checkNotificationsConfigure,
   configureNotifications,
-  saveLayout,
-  setDefaultGlobal,
   openFeedbackForm,
 } from './glue-related.js';
-import { updateSetting, getSetting } from './settings.js';
-import { applyOpenClasses, getMonitor } from './visible-area.js';
+import {
+  toolbarWidth,
+  toolbarPadding,
+  initialPosition,
+  updateSetting,
+  getSetting,
+} from './settings.js';
+import { applyOpenClasses } from './visible-area.js';
 import { searchInputObs } from './applications.js';
 import {
   populateProfileData,
@@ -52,6 +57,7 @@ function handleClicks() {
   handleFeedbackClick();
   handleOrientationChange();
   handleThemeChange();
+  handleToolbarAppRowsChange();
   populateAboutPage();
   handleShutdownClick();
   handleTopMenuClicks();
@@ -75,6 +81,7 @@ function handleThemeChange() {
       }
     });
   });
+
   themeObs.subscribe((themeObj) => {
     if (themeObj) {
       themeObj.all.forEach((theme) => {
@@ -82,28 +89,185 @@ function handleThemeChange() {
       });
 
       q('html').classList.add(themeObj.selected.name);
-      qa('.theme-select .select_options').forEach((item, i) => {
-        let allThemesHtml = ``;
 
-        themeObj.all.forEach((theme) => {
-          allThemesHtml += `<li class="select_option">
-          <input class="select_input" type="radio" name="theme" id="theme-${
-            theme.name + i
-          }" theme-name="${theme.name}" ${
-            theme.name === themeObj.selected.name ? 'checked' : ''
-          }/>
-          <label class="select_label" for="theme-${theme.name + i}">${
-            theme.displayName
-          }</label></li>`;
-        });
-        item.innerHTML = allThemesHtml;
-      });
+      populateSettingsDropdown(
+        qa('.theme-select .select_options'),
+        themeObj,
+        'theme'
+      );
     }
   });
 }
 
+function handleToolbarAppRowsChange() {
+  const isVertical = getSetting('vertical');
+  const oldBounds = boundsObs.value;
+  const numberOfRows = getSetting('toolbarAppRows');
+  const appSelectOptions = {
+    all: [
+      { name: '8', displayName: '8 Items' },
+      { name: '10', displayName: '10 Items (Default)' },
+      { name: '12', displayName: '12 Items' },
+      { name: '14', displayName: '14 Items' },
+      { name: '16', displayName: '16 Items' },
+      { name: '18', displayName: '18 Items' },
+    ],
+  };
+
+  appSelectOptions.selected = {
+    name: numberOfRows,
+    displayName: appSelectOptions.all.find((el) => el.name === numberOfRows)
+      .displayName,
+  };
+
+  populateSettingsDropdown(
+    qa('.length-select .select_options'),
+    appSelectOptions,
+    'length'
+  );
+
+  q('.length-select .select_options').addEventListener('click', (e) => {
+    if (e.target.matches('input.select_input[type="radio"]')) {
+      const selectedLength = e.target.getAttribute('length-name');
+
+      changeToolbarPosition(oldBounds);
+      updateSetting({ toolbarAppRows: selectedLength });
+
+      if (!isVertical) {
+        qa('.toggle-content').forEach((toggle) => {
+          toggle.classList.add('hide');
+        });
+        document.body.classList.remove('open-top');
+      }
+    }
+  });
+}
+
+function populateSettingsDropdown(
+  selectElement,
+  selectOptionsObj,
+  elementName
+) {
+  selectElement.forEach((item, i) => {
+    let html = ``;
+
+    selectOptionsObj.all.forEach((element) => {
+      html += `
+            <li class="select_option">
+                <input
+                    class="select_input"
+                    type="radio"
+                    name="${elementName}"
+                    id="${elementName}-${element.name + i}"
+                    ${elementName}-name="${element.name}"
+                    ${
+                      element.name === selectOptionsObj.selected.name
+                        ? 'checked'
+                        : ''
+                    }
+                />
+                <label class="select_label" for="${elementName}-${
+        element.name + i
+      }">${element.displayName}</label>
+            </li>
+            `;
+    });
+
+    item.innerHTML = html;
+  });
+}
+
+function resizeVisibleArea(topMenuVisible, layoutDropDownVisible) {
+  const visibleAreas = [];
+
+  visibleAreas.push(buildVisibleArea(q('.viewport')));
+
+  if (!q('.app.h')) {
+    visibleAreas.push(buildVisibleArea(q('.app')));
+  } else {
+    const toggles = qa('.toggle-content');
+
+    toggles.forEach((toggle) => {
+      if (!toggle.classList.contains('hide')) {
+        visibleAreas.push(buildVisibleArea(toggle));
+      }
+    });
+
+    if (topMenuVisible) {
+      visibleAreas.push(buildVisibleArea(q('#menu-top')));
+    }
+
+    if (layoutDropDownVisible) {
+      visibleAreas.push(buildVisibleArea(q('.layout-menu-tool')));
+    }
+  }
+
+  resizeWindowVisibleArea(visibleAreas);
+}
+
+function buildVisibleArea(element) {
+  const { top, left, width, height } = element.getBoundingClientRect();
+
+  return {
+    top: Math.round(top),
+    left: Math.round(left),
+    width: Math.round(width),
+    height: Math.round(height),
+  };
+}
+
+function calculateToolbarHeight() {
+  const appLancher = q('.viewport-header');
+  const appContentHeader = q('.app-content-header');
+  const appRowsNumber = getSetting('toolbarAppRows');
+  const navItem = q('.nav-item');
+  const contentItems = q('.content-items');
+
+  appLancher.style.height = `${appLancher.offsetHeight}px`;
+  appContentHeader.style.height = `${appContentHeader.offsetHeight}px`;
+  navItem.style.height = `${navItem.offsetHeight}px`;
+  contentItems.style.height = `${navItem.offsetHeight * appRowsNumber}px`;
+
+  return {
+    appLauncherHeight: appLancher.offsetHeight,
+    appContentHeaderHeight: appContentHeader.offsetHeight,
+    navItemHeight: navItem.offsetHeight,
+    contentItemsHeight: navItem.offsetHeight * appRowsNumber,
+    appDrawerHeight:
+      appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber,
+    appRowsNumber,
+  };
+}
+
+function setToolbarSize() {
+  const isVertical = getSetting('vertical');
+  const toolbarItemHeights = calculateToolbarHeight();
+
+  if (isVertical) {
+    document.body.style.padding = `0 ${toolbarPadding.vertical}px`;
+    moveMyWindow({
+      width: toolbarWidth.vertical + toolbarPadding.vertical * 2,
+      height: toolbarItemHeights.appDrawerHeight,
+    });
+  } else {
+    document.body.style.padding = `${toolbarItemHeights.appDrawerHeight}px 0 ${toolbarItemHeights.appDrawerHeight}px 0`;
+    moveMyWindow({
+      width: toolbarWidth.horizontal,
+      height:
+        toolbarItemHeights.appLauncherHeight +
+        toolbarItemHeights.appDrawerHeight * 2,
+    });
+  }
+
+  resizeVisibleArea();
+  resizeWindowMoveArea();
+}
+
 async function handleOrientationChange() {
-  isVertical = !!q('.view-port.vertical');
+  const toolbarItemHeights = calculateToolbarHeight();
+  const bounds = boundsObs.value;
+
+  isVertical = !!q('.viewport.vertical');
   q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
 
   if (getSetting('vertical') === false) {
@@ -113,13 +277,12 @@ async function handleOrientationChange() {
   }
 
   q('#toggle').addEventListener('click', async () => {
-    await ensureWindowHasSpace(isVertical);
     q('.app').classList.add('switching-orientation');
     isVertical = !isVertical;
     updateSetting({ vertical: isVertical });
     q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
-    q('.view-port').classList.add(isVertical ? 'vertical' : 'horizontal');
-    q('.view-port').classList.remove(isVertical ? 'horizontal' : 'vertical');
+    q('.viewport').classList.add(isVertical ? 'vertical' : 'horizontal');
+    q('.viewport').classList.remove(isVertical ? 'horizontal' : 'vertical');
     q('.app').classList.add(isVertical ? 'd-inline-flex' : 'h');
     q('.app').classList.remove(isVertical ? 'h' : 'd-inline-flex');
     qa('[column]').forEach((col) => {
@@ -142,43 +305,106 @@ async function handleOrientationChange() {
   });
 }
 
-async function ensureWindowHasSpace(isVertical) {
-  console.log('check near edge');
+function changeToolbarPosition(oldBounds) {
+  const startPosition = initialPosition;
+  const isVertical = getSetting('vertical');
+  const toolbarItemHeights = calculateToolbarHeight();
 
-  let monitorInfo = await getMonitorInfo();
-  let windowBounds = await getWindowBounds();
-  let visibleAreaBounds = q('.view-port').getBoundingClientRect();
-  let realBounds = {
-    top: windowBounds.top + visibleAreaBounds.top,
-    left: windowBounds.left + visibleAreaBounds.left,
-    width: visibleAreaBounds.width,
-    height: visibleAreaBounds.height,
-  };
-  let currentMonitor = getMonitor(realBounds, monitorInfo);
-
-  if (isVertical) {
-    // should have enough space on the right
-    let newRight = windowBounds.left + visibleAreaBounds.right + 340 + 20;
-    let monitorMostRight =
-      currentMonitor.left + currentMonitor.workingAreaWidth;
-
-    if (newRight > monitorMostRight) {
-      moveMyWindow({
-        left: windowBounds.left - (newRight - monitorMostRight),
-      });
-    }
-  } else {
-    // should have enough space below
-    let newBottom = windowBounds.top + visibleAreaBounds.bottom + 350 + 20;
-    let monitorMostBottom =
-      currentMonitor.top + currentMonitor.workingAreaHeight;
-
-    if (newBottom > monitorMostBottom) {
-      moveMyWindow({
-        top: windowBounds.top - (newBottom - monitorMostBottom),
-      });
-    }
+  if (!isVertical) {
+    moveMyWindow({
+      top: oldBounds.top - toolbarItemHeights.appDrawerHeight,
+      left: startPosition.left,
+    });
   }
+}
+
+async function setToolbarPosition() {
+  const startPosition = initialPosition;
+  const bounds = boundsObs.value;
+  const monitors = await getMonitorInfo();
+  const isVertical = getSetting('vertical');
+  const toolbarItemHeights = calculateToolbarHeight();
+
+  monitors.forEach((monitor) => {
+    if (isVertical) {
+      // if toolbar position is outside of top monitor working area
+      if (bounds.top < monitor.top) {
+        moveMyWindow({
+          top: startPosition.top,
+        });
+      }
+
+      // if toolbar position is outside of right monitor working area
+      if (
+        bounds.left + toolbarPadding.vertical + toolbarWidth.vertical >
+        monitor.workingAreaWidth
+      ) {
+        moveMyWindow({
+          left:
+            monitor.workingAreaWidth -
+            (toolbarWidth.vertical +
+              toolbarPadding.vertical +
+              startPosition.left),
+        });
+      }
+
+      // if toolbar position is outside of bottom monitor working area
+      if (bounds.top + bounds.height > monitor.workingAreaHeight) {
+        moveMyWindow({
+          top: monitor.workingAreaHeight - (bounds.height + startPosition.top),
+        });
+      }
+
+      // if toolbar position is outside of left monitor working area
+      if (bounds.left + toolbarPadding.vertical < monitor.left) {
+        moveMyWindow({
+          left: startPosition.left - toolbarPadding.vertical,
+        });
+      }
+    } else {
+      // if toolbar position is outside of top monitor working area
+      if (
+        bounds.top + toolbarItemHeights.appDrawerHeight < monitor.top ||
+        bounds.top === -toolbarItemHeights.appDrawerHeight
+      ) {
+        moveMyWindow({
+          top: startPosition.top - toolbarItemHeights.appDrawerHeight,
+        });
+      }
+
+      // if toolbar position is outside of right monitor working area
+      if (bounds.left + toolbarWidth.horizontal > monitor.workingAreaWidth) {
+        moveMyWindow({
+          left:
+            monitor.workingAreaWidth -
+            (toolbarWidth.horizontal + startPosition.left),
+        });
+      }
+
+      // if toolbar position is outside of bottom monitor working area
+      if (
+        bounds.top +
+          toolbarItemHeights.appLauncherHeight +
+          toolbarItemHeights.appDrawerHeight >
+        monitor.workingAreaHeight
+      ) {
+        moveMyWindow({
+          top:
+            monitor.workingAreaHeight -
+            (toolbarItemHeights.appLauncherHeight +
+              toolbarItemHeights.appDrawerHeight +
+              startPosition.top),
+        });
+      }
+
+      // if toolbar position is outside of left monitor working area
+      if (bounds.left < monitor.left) {
+        moveMyWindow({
+          left: startPosition.left,
+        });
+      }
+    }
+  });
 }
 
 function populateAboutPage() {
@@ -223,9 +449,9 @@ function handleTopMenuClicks() {
       qa(`[menu-id]:not([menu-id="${menuId}"])`).forEach((menu) => {
         menu.classList.add('hide');
       });
-      qa(`[menu-id]:not([menu-button-id="${menuId}"]) .chavron`).forEach(
-        (menuBtnChavron) => {
-          menuBtnChavron.classList.remove('chavron-rotate');
+      qa(`[menu-id]:not([menu-button-id="${menuId}"]) .chevron`).forEach(
+        (menuBtnChevron) => {
+          menuBtnChevron.classList.remove('chevron-rotate');
         }
       );
 
@@ -285,24 +511,23 @@ function handleMinimizeClick() {
     }
   });
 
-  isMinimizeAllowed().then(
-    (allowed) => allowed && q('.minimize').classList.remove('d-none')
-  );
+  //   isMinimizeAllowed().then(
+  //     (allowed) => allowed && q('.minimize').classList.remove('d-none')
+  //   );
 }
 
-// TODO: Maybe use Chevron instead of Chavron?
 function toggleTopButtonState(id) {
-  qa(`[menu-button-id="${id}"] .chavron`).forEach((chavron) =>
-    chavron.classList.toggle('chavron-rotate')
+  qa(`[menu-button-id="${id}"] .chevron`).forEach((chevron) =>
+    chevron.classList.toggle('chevron-rotate')
   );
-  qa(`[menu-button-id="${id}"] > a`).forEach((chavron) =>
-    chavron.classList.toggle('active')
+  qa(`[menu-button-id="${id}"] > a`).forEach((chevron) =>
+    chevron.classList.toggle('active')
   );
-  qa(`[menu-button-id]:not([menu-button-id="${id}"]) .chavron`).forEach(
-    (chavron) => chavron.classList.remove('chavron-rotate')
+  qa(`[menu-button-id]:not([menu-button-id="${id}"]) .chevron`).forEach(
+    (chevron) => chevron.classList.remove('chevron-rotate')
   );
-  qa(`[menu-button-id]:not([menu-button-id="${id}"]) > a`).forEach((chavron) =>
-    chavron.classList.remove('active')
+  qa(`[menu-button-id]:not([menu-button-id="${id}"]) > a`).forEach((chevron) =>
+    chevron.classList.remove('active')
   );
 }
 
@@ -370,7 +595,7 @@ async function handleMouseHover() {
   let closeTimeout;
 
   q('.app').addEventListener('mouseenter', (e) => {
-    q('.view-port').classList.add('expand');
+    q('.viewport').classList.add('expand');
     q('.app').classList.add('expand-wrapper');
 
     if (closeTimeout) {
@@ -380,7 +605,7 @@ async function handleMouseHover() {
 
   q('.app').addEventListener('mouseleave', async (e) => {
     let { offsetWidth: viewPortWidth, offsetHeight: viewPortHeight } =
-      q('.view-port');
+      q('.viewport');
     let margin = windowMargin;
 
     if (
@@ -399,7 +624,7 @@ async function handleMouseHover() {
       return;
     }
 
-    let viewPortBounds = q('.view-port').getBoundingClientRect();
+    let viewPortBounds = q('.viewport').getBoundingClientRect();
     let outOfMonitor = isOutOfMonitor(viewPortBounds);
 
     if (await outOfMonitor) {
@@ -409,7 +634,7 @@ async function handleMouseHover() {
 
     closeTimeout = setTimeout(async () => {
       await applyOpenClasses();
-      q('.view-port').classList.remove('expand');
+      q('.viewport').classList.remove('expand');
       q('.app').classList.remove('expand-wrapper');
       qa('.toggle-content').forEach((e) => e.classList.add('hide'));
       // qa('[dropdown-id].show').forEach(e => e.classList.remove('show'));
@@ -487,7 +712,7 @@ async function startTutorial() {
   const userProperties = await getUserProperties();
   const hideTutorialOnStartup = userProperties.hideTutorialOnStartup;
   const tutorialApp = await getApp('getting-started');
-  if (hideTutorialOnStartup || !tutorialApp) {
+  if (!tutorialApp || hideTutorialOnStartup) {
     updateSetting({ showTutorial: false });
     q('.show-tutorial-check').classList.add('d-none');
   } else {
@@ -573,6 +798,10 @@ export {
   handleNotificationClick,
   handleModalClose,
   handleMouseHover,
+  resizeVisibleArea,
+  calculateToolbarHeight,
+  setToolbarSize,
+  setToolbarPosition,
   focusInputAfterWindowRecover,
   windowMargin,
   startTutorial,

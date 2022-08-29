@@ -9,7 +9,6 @@ import {
   noRunningAppsHTML,
   noApplicationsHTML,
   noFavoriteAppsHTML,
-  applicationFolderHTMLTemplate,
   getItemHTMLTemplate,
 } from './applications.js';
 import { favoriteApps, updateFavoriteApps } from './favorites.js';
@@ -22,8 +21,11 @@ import {
 } from './layouts.js';
 import * as glueModule from './glue-related.js';
 import * as utils from './utils.js';
-import { handleWidthChange, handleDropDownClicks } from './visible-area.js';
-import { gssPromise } from './gss.js';
+import {
+  initVisibleArea,
+  handleWidthChange,
+  handleDropDownClicks,
+} from './visible-area.js';
 import {
   clientHTMLTemplate,
   searchClients,
@@ -48,6 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function init() {
   await glueModule.getPrefs();
+
+  initVisibleArea();
 
   console.log('window loaded');
   printApps();

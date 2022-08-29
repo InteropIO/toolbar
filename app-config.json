@@ -16,8 +16,6 @@
         "top": 5,
         "left": 5,
         "isSticky": true,
-        "width": 940,
-        "height": 800,
         "allowClose": false,
         "allowMaximize": false,
         "allowMinimize": true,
@@ -26,16 +24,7 @@
         "moveAreaThickness": "0, 398, 0, 0",
         "moveAreaTopMargin": "350, 350, 520, 0",
         "moveAreaPassThroughMouseHover": true,
-        "backgroundColor": "#21252d",
-        "processAffinity": "util",
-        "visibleAreas": [
-            {
-                "top": 350,
-                "left": 350,
-                "width": 60,
-                "height": 400
-            }
-        ]
+        "processAffinity": "util"
     },
     "autoStart": true,
     "allowMultiple": false,

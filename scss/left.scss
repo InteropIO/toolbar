@@ -1,5 +1,6 @@
 .open-left {
   overflow: hidden;
+
   .app {
     position: relative;
     left: 0;
@@ -10,13 +11,16 @@
   .app .toggle-content {
     width: 300px;
     @include transition("width, left", 0);
+
     > div,
     > .nav {
       width: auto;
     }
+
     h3 {
       padding-right: 0;
     }
+
     .close-drawer {
       transform: rotate(-90deg);
     }
@@ -34,11 +38,7 @@
     left: -440px;
   }
 
-  .view-port {
+  .viewport {
     order: 2;
-  }
-
-  .logo {
-    // border: 1px solid red;
   }
 }
