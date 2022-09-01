@@ -20,7 +20,7 @@ import {
   checkNotificationsConfigure,
   configureNotifications,
   openFeedbackForm,
-  workingAreaSizeObs,
+  workAreaSizeObs,
 } from './glue-related.js';
 import {
   toolbarWidth,
@@ -570,7 +570,7 @@ async function setToolbarSize(appRows) {
   contentItems.style.height = `${navItem.offsetHeight * appRowsNumber}px`;
 
   if (isVertical) {
-    document.body.style.padding = `0 ${toolbarPadding.vertical}px`;
+    document.body.style.padding = `0 ${toolbarPadding.vertical}px `;
     moveMyWindow({
       width: toolbarWidth.vertical + toolbarPadding.vertical * 2,
       height:
@@ -638,23 +638,16 @@ function buildVisibleArea(element) {
   };
 }
 
-async function setDrawerOpenClass() {
-  const workingArea = await workingAreaSizeObs.value;
+function setDrawerOpenClass() {
+  const workArea = workAreaSizeObs.value;
   const windowBounds = boundsObs.value;
 
-  // console.log('------------------------------');
-  // console.log(windowBounds);
-  // console.log('tova mi e novata working area:', workingArea);
-  // console.log('------------------------------');
-  // console.log('sumata e slednata:', windowBounds.left + windowBounds.width);
-  // console.log('razmera na prozoreca e sledniq:', workingArea.workingAreaOffsetWidth);
-
   if (isVertical) {
-    windowBounds.left + windowBounds.width > workingArea.workingAreaOffsetWidth
+    windowBounds.left + windowBounds.width > workArea.offsetWidth
       ? document.body.classList.add('open-left')
       : document.body.classList.remove('open-left');
   } else {
-    windowBounds.top + windowBounds.height > workingArea.workingAreaOffsetHeight
+    windowBounds.top + windowBounds.height > workArea.offsetHeight
       ? document.body.classList.add('open-top')
       : document.body.classList.remove('open-top');
   }

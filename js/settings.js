@@ -4,7 +4,7 @@ import {
   configureNotifications,
   setWindowMoveArea,
   trackToolbarLength,
-  trackWorkingAreaSize,
+  trackWorkAreaSize,
 } from './glue-related.js';
 
 let settings = {
@@ -37,7 +37,7 @@ function init() {
   trackSettingsChange();
   trackToolbarLength();
   setWindowMoveArea();
-  trackWorkingAreaSize();
+  trackWorkAreaSize();
 }
 
 async function populateSettings() {

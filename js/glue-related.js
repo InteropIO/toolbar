@@ -39,7 +39,7 @@ const activeLayout = new rxjs.BehaviorSubject({});
 const notificationsCountObs = new rxjs.BehaviorSubject(null);
 const themeObs = new rxjs.BehaviorSubject(null);
 const boundsObs = new rxjs.BehaviorSubject(null);
-const workingAreaSizeObs = new rxjs.BehaviorSubject(null);
+const workAreaSizeObs = new rxjs.BehaviorSubject(null);
 let notificationEnabledObs = new rxjs.BehaviorSubject(false);
 
 if (!window.glue42gd) {
@@ -70,7 +70,7 @@ async function setWindowMoveArea() {
 
   if (isVertical) {
     win.configure({
-      moveAreaTopMargin: `0, 0, ${
+      moveAreaTopMargin: `${toolbarPadding.vertical}, 0, ${
         toolbarWidth.vertical +
         toolbarPadding.vertical -
         Math.round(dragArea.width)
@@ -179,72 +179,57 @@ async function trackThemeChanges() {
 
 async function trackWindowMove() {
   boundsObs.next(glue.windows.my().bounds);
-  trackWorkingAreaSize();
+  trackWorkAreaSize();
 
   glue.windows.my().onBoundsChanged(() => {
     boundsObs.next(glue.windows.my().bounds);
-    trackWorkingAreaSize();
+    trackWorkAreaSize();
   });
 }
 
-async function trackWorkingAreaSize() {
+async function trackWorkAreaSize() {
+  await gluePromise;
   let currentMonitorOffsetWidth;
   let currentMonitorOffsetHeight;
-  const windowBounds = boundsObs.value;
+  const currentMonitor = await glue.windows.my().getDisplay();
   const monitors = await getMonitorInfo();
-  const currentMonitor = getMonitor(windowBounds, monitors);
-  const workingAreas = {
+  const workAreas = {
     width: [],
     height: [],
   };
 
   monitors.forEach((monitor) => {
-    workingAreas.width.push(monitor.workingAreaWidth);
-    workingAreas.height.push(monitor.workingAreaHeight);
+    workAreas.width.push(monitor.workingAreaWidth);
+    workAreas.height.push(monitor.workingAreaHeight);
   });
 
   // if monitors are ordered horizontally
-  if (currentMonitor.left > currentMonitor.workingAreaWidth) {
-    currentMonitorOffsetWidth = workingAreas.width.reduce(
+  if (currentMonitor.bounds.left > currentMonitor.workArea.width) {
+    currentMonitorOffsetWidth = workAreas.width.reduce(
       (acc, curr) => acc + curr,
       0
     );
   } else {
-    currentMonitorOffsetWidth = currentMonitor.workingAreaWidth;
+    currentMonitorOffsetWidth = currentMonitor.workArea.width;
   }
 
   // if monitors are ordered vertically
-  if (currentMonitor.top > currentMonitor.workingAreaHeight) {
-    currentMonitorOffsetHeight = workingAreas.height.reduce(
+  if (currentMonitor.bounds.top > currentMonitor.workArea.height) {
+    currentMonitorOffsetHeight = workAreas.height.reduce(
       (acc, curr) => acc + curr,
       0
     );
   } else {
-    currentMonitorOffsetHeight = currentMonitor.workingAreaHeight;
+    currentMonitorOffsetHeight = currentMonitor.workArea.height;
   }
 
-  console.log(
-    'current monitor width constraints:',
-    currentMonitor.workingAreaWidth
-  );
-  console.log(
-    'current monitor height constraints:',
-    currentMonitor.workingAreaHeight
-  );
-  console.log(
-    'current monitor offset width constraints:',
-    currentMonitorOffsetWidth
-  );
-  console.log(
-    'current monitor offset height constraints:',
-    currentMonitorOffsetHeight
-  );
-
-  workingAreaSizeObs.next({
-    workingAreaWidth: currentMonitor.workingAreaWidth,
-    workingAreaHeight: currentMonitor.workingAreaHeight,
-    workingAreaOffsetWidth: currentMonitorOffsetWidth,
-    workingAreaOffsetHeight: currentMonitorOffsetHeight,
+  workAreaSizeObs.next({
+    left: currentMonitor.workArea.left,
+    top: currentMonitor.workArea.top,
+    width: currentMonitor.workArea.width,
+    height: currentMonitor.workArea.height,
+    offsetWidth: currentMonitorOffsetWidth,
+    offsetHeight: currentMonitorOffsetHeight,
   });
 }
 
@@ -552,7 +537,7 @@ export {
   glueAppsObs,
   layoutsObs,
   boundsObs,
-  workingAreaSizeObs,
+  workAreaSizeObs,
   startApp,
   focusApp,
   focusWindow,
@@ -596,5 +581,5 @@ export {
   getPrefs,
   updatePrefs,
   trackToolbarLength,
-  trackWorkingAreaSize,
+  trackWorkAreaSize,
 };

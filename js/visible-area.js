@@ -3,8 +3,6 @@ import { setVisibleArea } from './utils.js';
 
 let topMenuVisibleObs = new rxjs.BehaviorSubject(false);
 let layoutDropDownVisibleObs = new rxjs.BehaviorSubject(false);
-let openTopObs = new rxjs.BehaviorSubject(false);
-let openLeftObs = new rxjs.BehaviorSubject(false);
 let layoutOpenedTimeout;
 
 function initVisibleArea() {
@@ -54,35 +52,11 @@ function initVisibleArea() {
         };
         let currentMonitor = getMonitor(viewPortBounds, monitors);
 
-        // console.log('current monitor', currentMonitor);
-
         if (!currentMonitor) {
           q('.viewport').classList.add('expand');
           q('.app').classList.add('expand-wrapper');
           return;
         }
-
-        // if (!q('.viewport').classList.contains('horizontal')) {
-        //   let shouldOpenLeft =
-        //     glueModule.boundsObs.value.left + glueModule.boundsObs.value.width >
-        //     currentMonitor.left + currentMonitor.width;
-
-        //   openLeftObs.next(shouldOpenLeft);
-
-        //   if (shouldOpenLeft) {
-        //     openTopObs.next(false);
-        //   }
-        // } else {
-        //   let shouldOpenTop =
-        //     glueModule.boundsObs.value.top + glueModule.boundsObs.value.height >
-        //     currentMonitor.workingAreaTop + currentMonitor.workingAreaHeight;
-
-        //   openTopObs.next(shouldOpenTop);
-
-        //   if (shouldOpenTop) {
-        //     openLeftObs.next(false);
-        //   }
-        // }
       });
     });
 
@@ -114,37 +88,6 @@ function handleDropDownClicks() {
     }
   });
 }
-
-// function applyOpenClasses() {
-//   if (q('.has-drawer')) {
-//     return;
-//   }
-
-//   let openLeft = openLeftObs.value;
-//   let openTop = openTopObs.value;
-
-//   if (openLeft && !q('.viewport.horizontal')) {
-//     document.body.classList.add('open-left');
-//   }
-
-//   if (openTop && q('.viewport.horizontal')) {
-//     document.body.classList.add('open-top');
-//   }
-
-//   if (!openLeft) {
-//     document.body.classList.remove('open-left');
-//   }
-
-//   if (!openTop) {
-//     document.body.classList.remove('open-top');
-//   }
-
-//   return new Promise((res, rej) => {
-//     setTimeout(() => {
-//       res();
-//     });
-//   });
-// }
 
 function handleWidthChange() {
   const appBoundsObserver = new ResizeObserver((elements) => {
@@ -199,11 +142,4 @@ function calculateTotalOverlap(r1, r2) {
   return xOverlap * yOverlap;
 }
 
-export {
-  initVisibleArea,
-  handleWidthChange,
-  handleDropDownClicks,
-  // applyOpenClasses,
-  getMonitor,
-  openTopObs,
-};
+export { initVisibleArea, handleWidthChange, handleDropDownClicks, getMonitor };
