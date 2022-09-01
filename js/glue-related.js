@@ -5,7 +5,8 @@ import {
   toolbarPadding,
   toolbarWidth,
 } from './settings.js';
-import { calculateToolbarHeight, setToolbarPosition } from './utils.js';
+import { getMonitor } from './visible-area.js';
+import { setToolbarSize } from './utils.js';
 
 console.time('Glue');
 var gluePromise = new Promise(async (res, rej) => {
@@ -38,6 +39,7 @@ const activeLayout = new rxjs.BehaviorSubject({});
 const notificationsCountObs = new rxjs.BehaviorSubject(null);
 const themeObs = new rxjs.BehaviorSubject(null);
 const boundsObs = new rxjs.BehaviorSubject(null);
+const workingAreaSizeObs = new rxjs.BehaviorSubject(null);
 let notificationEnabledObs = new rxjs.BehaviorSubject(false);
 
 if (!window.glue42gd) {
@@ -51,7 +53,6 @@ const glueInfo = {
 };
 
 gluePromise.then((glue) => {
-  //   checkWindowSize();
   trackApplications();
   trackLayouts();
   trackWorkspaces();
@@ -61,24 +62,25 @@ gluePromise.then((glue) => {
   trackNotificationCount();
 });
 
-async function resizeWindowMoveArea() {
+async function setWindowMoveArea() {
   await gluePromise;
   const win = glue.windows.my();
   const isVertical = getSetting('vertical');
-  const toolbarItemHeights = calculateToolbarHeight();
-  const dragAreaSize = toolbarItemHeights.navItemHeight;
+  const dragArea = q('.draggable').getBoundingClientRect();
 
   if (isVertical) {
     win.configure({
-      moveAreaTopMargin: `${toolbarPadding.vertical}, 0, ${
-        toolbarWidth.vertical + toolbarPadding.vertical - dragAreaSize
+      moveAreaTopMargin: `0, 0, ${
+        toolbarWidth.vertical +
+        toolbarPadding.vertical -
+        Math.round(dragArea.width)
       }, 0`,
-      moveAreaThickness: `0, ${dragAreaSize}, 0, 0`,
+      moveAreaThickness: `0, ${Math.round(dragArea.height)}, 0, 0`,
     });
   } else {
     win.configure({
-      moveAreaLeftMargin: `0, ${toolbarItemHeights.appDrawerHeight}, 0, ${toolbarItemHeights.appDrawerHeight}`,
-      moveAreaThickness: `${dragAreaSize * 1.25}, 0, 0, 0`,
+      moveAreaLeftMargin: `0, 0, 0, 0`,
+      moveAreaThickness: `0, 0, 0, 0`,
     });
   }
 }
@@ -177,9 +179,72 @@ async function trackThemeChanges() {
 
 async function trackWindowMove() {
   boundsObs.next(glue.windows.my().bounds);
+  trackWorkingAreaSize();
+
   glue.windows.my().onBoundsChanged(() => {
     boundsObs.next(glue.windows.my().bounds);
-    setToolbarPosition();
+    trackWorkingAreaSize();
+  });
+}
+
+async function trackWorkingAreaSize() {
+  let currentMonitorOffsetWidth;
+  let currentMonitorOffsetHeight;
+  const windowBounds = boundsObs.value;
+  const monitors = await getMonitorInfo();
+  const currentMonitor = getMonitor(windowBounds, monitors);
+  const workingAreas = {
+    width: [],
+    height: [],
+  };
+
+  monitors.forEach((monitor) => {
+    workingAreas.width.push(monitor.workingAreaWidth);
+    workingAreas.height.push(monitor.workingAreaHeight);
+  });
+
+  // if monitors are ordered horizontally
+  if (currentMonitor.left > currentMonitor.workingAreaWidth) {
+    currentMonitorOffsetWidth = workingAreas.width.reduce(
+      (acc, curr) => acc + curr,
+      0
+    );
+  } else {
+    currentMonitorOffsetWidth = currentMonitor.workingAreaWidth;
+  }
+
+  // if monitors are ordered vertically
+  if (currentMonitor.top > currentMonitor.workingAreaHeight) {
+    currentMonitorOffsetHeight = workingAreas.height.reduce(
+      (acc, curr) => acc + curr,
+      0
+    );
+  } else {
+    currentMonitorOffsetHeight = currentMonitor.workingAreaHeight;
+  }
+
+  console.log(
+    'current monitor width constraints:',
+    currentMonitor.workingAreaWidth
+  );
+  console.log(
+    'current monitor height constraints:',
+    currentMonitor.workingAreaHeight
+  );
+  console.log(
+    'current monitor offset width constraints:',
+    currentMonitorOffsetWidth
+  );
+  console.log(
+    'current monitor offset height constraints:',
+    currentMonitorOffsetHeight
+  );
+
+  workingAreaSizeObs.next({
+    workingAreaWidth: currentMonitor.workingAreaWidth,
+    workingAreaHeight: currentMonitor.workingAreaHeight,
+    workingAreaOffsetWidth: currentMonitorOffsetWidth,
+    workingAreaOffsetHeight: currentMonitorOffsetHeight,
   });
 }
 
@@ -408,6 +473,8 @@ function trackConnection() {
 async function getMonitorInfo() {
   await gluePromise;
 
+  // console.log(await glue.displays.all());
+
   return (await glue.displays.all()).map((display) => ({
     left: display.bounds.left,
     top: display.bounds.top,
@@ -462,6 +529,13 @@ async function getPrefs() {
   });
 }
 
+async function trackToolbarLength() {
+  await gluePromise;
+  glue.prefs.subscribe((prefs) => {
+    setToolbarSize(parseInt(prefs.data.toolbarAppRows));
+  });
+}
+
 async function updatePrefs(setting) {
   await glue.prefs.update({ ...setting });
 }
@@ -478,6 +552,7 @@ export {
   glueAppsObs,
   layoutsObs,
   boundsObs,
+  workingAreaSizeObs,
   startApp,
   focusApp,
   focusWindow,
@@ -505,7 +580,7 @@ export {
   resizeWindowVisibleArea,
   openWindow,
   moveMyWindow,
-  resizeWindowMoveArea,
+  setWindowMoveArea,
   minimize,
   // isMinimizeAllowed,
   raiseNotification,
@@ -520,4 +595,6 @@ export {
   getServerInfo,
   getPrefs,
   updatePrefs,
+  trackToolbarLength,
+  trackWorkingAreaSize,
 };

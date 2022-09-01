@@ -16,11 +16,11 @@ import {
   moveMyWindow,
   resizeWindowVisibleArea,
   minimize,
-  resizeWindowMoveArea,
   //   isMinimizeAllowed,
   checkNotificationsConfigure,
   configureNotifications,
   openFeedbackForm,
+  workingAreaSizeObs,
 } from './glue-related.js';
 import {
   toolbarWidth,
@@ -29,8 +29,7 @@ import {
   updateSetting,
   getSetting,
 } from './settings.js';
-import { applyOpenClasses } from './visible-area.js';
-import { searchInputObs } from './applications.js';
+// import { searchInputObs } from './applications.js';
 import {
   populateProfileData,
   profile_handleShutdownClick,
@@ -99,314 +98,6 @@ function handleThemeChange() {
   });
 }
 
-function handleToolbarAppRowsChange() {
-  const isVertical = getSetting('vertical');
-  const oldBounds = boundsObs.value;
-  const numberOfRows = getSetting('toolbarAppRows');
-  const appSelectOptions = {
-    all: [
-      { name: '8', displayName: '8 Items' },
-      { name: '10', displayName: '10 Items (Default)' },
-      { name: '12', displayName: '12 Items' },
-      { name: '14', displayName: '14 Items' },
-      { name: '16', displayName: '16 Items' },
-      { name: '18', displayName: '18 Items' },
-    ],
-  };
-
-  appSelectOptions.selected = {
-    name: numberOfRows,
-    displayName: appSelectOptions.all.find((el) => el.name === numberOfRows)
-      .displayName,
-  };
-
-  populateSettingsDropdown(
-    qa('.length-select .select_options'),
-    appSelectOptions,
-    'length'
-  );
-
-  q('.length-select .select_options').addEventListener('click', (e) => {
-    if (e.target.matches('input.select_input[type="radio"]')) {
-      const selectedLength = e.target.getAttribute('length-name');
-
-      changeToolbarPosition(oldBounds);
-      updateSetting({ toolbarAppRows: selectedLength });
-
-      if (!isVertical) {
-        qa('.toggle-content').forEach((toggle) => {
-          toggle.classList.add('hide');
-        });
-        document.body.classList.remove('open-top');
-      }
-    }
-  });
-}
-
-function populateSettingsDropdown(
-  selectElement,
-  selectOptionsObj,
-  elementName
-) {
-  selectElement.forEach((item, i) => {
-    let html = ``;
-
-    selectOptionsObj.all.forEach((element) => {
-      html += `
-            <li class="select_option">
-                <input
-                    class="select_input"
-                    type="radio"
-                    name="${elementName}"
-                    id="${elementName}-${element.name + i}"
-                    ${elementName}-name="${element.name}"
-                    ${
-                      element.name === selectOptionsObj.selected.name
-                        ? 'checked'
-                        : ''
-                    }
-                />
-                <label class="select_label" for="${elementName}-${
-        element.name + i
-      }">${element.displayName}</label>
-            </li>
-            `;
-    });
-
-    item.innerHTML = html;
-  });
-}
-
-function resizeVisibleArea(topMenuVisible, layoutDropDownVisible) {
-  const visibleAreas = [];
-
-  visibleAreas.push(buildVisibleArea(q('.viewport')));
-
-  if (!q('.app.h')) {
-    visibleAreas.push(buildVisibleArea(q('.app')));
-  } else {
-    const toggles = qa('.toggle-content');
-
-    toggles.forEach((toggle) => {
-      if (!toggle.classList.contains('hide')) {
-        visibleAreas.push(buildVisibleArea(toggle));
-      }
-    });
-
-    if (topMenuVisible) {
-      visibleAreas.push(buildVisibleArea(q('#menu-top')));
-    }
-
-    if (layoutDropDownVisible) {
-      visibleAreas.push(buildVisibleArea(q('.layout-menu-tool')));
-    }
-  }
-
-  resizeWindowVisibleArea(visibleAreas);
-}
-
-function buildVisibleArea(element) {
-  const { top, left, width, height } = element.getBoundingClientRect();
-
-  return {
-    top: Math.round(top),
-    left: Math.round(left),
-    width: Math.round(width),
-    height: Math.round(height),
-  };
-}
-
-function calculateToolbarHeight() {
-  const appLancher = q('.viewport-header');
-  const appContentHeader = q('.app-content-header');
-  const appRowsNumber = getSetting('toolbarAppRows');
-  const navItem = q('.nav-item');
-  const contentItems = q('.content-items');
-
-  appLancher.style.height = `${appLancher.offsetHeight}px`;
-  appContentHeader.style.height = `${appContentHeader.offsetHeight}px`;
-  navItem.style.height = `${navItem.offsetHeight}px`;
-  contentItems.style.height = `${navItem.offsetHeight * appRowsNumber}px`;
-
-  return {
-    appLauncherHeight: appLancher.offsetHeight,
-    appContentHeaderHeight: appContentHeader.offsetHeight,
-    navItemHeight: navItem.offsetHeight,
-    contentItemsHeight: navItem.offsetHeight * appRowsNumber,
-    appDrawerHeight:
-      appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber,
-    appRowsNumber,
-  };
-}
-
-function setToolbarSize() {
-  const isVertical = getSetting('vertical');
-  const toolbarItemHeights = calculateToolbarHeight();
-
-  if (isVertical) {
-    document.body.style.padding = `0 ${toolbarPadding.vertical}px`;
-    moveMyWindow({
-      width: toolbarWidth.vertical + toolbarPadding.vertical * 2,
-      height: toolbarItemHeights.appDrawerHeight,
-    });
-  } else {
-    document.body.style.padding = `${toolbarItemHeights.appDrawerHeight}px 0 ${toolbarItemHeights.appDrawerHeight}px 0`;
-    moveMyWindow({
-      width: toolbarWidth.horizontal,
-      height:
-        toolbarItemHeights.appLauncherHeight +
-        toolbarItemHeights.appDrawerHeight * 2,
-    });
-  }
-
-  resizeVisibleArea();
-  resizeWindowMoveArea();
-}
-
-async function handleOrientationChange() {
-  const toolbarItemHeights = calculateToolbarHeight();
-  const bounds = boundsObs.value;
-
-  isVertical = !!q('.viewport.vertical');
-  q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
-
-  if (getSetting('vertical') === false) {
-    gluePromise.then(() => {
-      q('#toggle').click();
-    });
-  }
-
-  q('#toggle').addEventListener('click', async () => {
-    q('.app').classList.add('switching-orientation');
-    isVertical = !isVertical;
-    updateSetting({ vertical: isVertical });
-    q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
-    q('.viewport').classList.add(isVertical ? 'vertical' : 'horizontal');
-    q('.viewport').classList.remove(isVertical ? 'horizontal' : 'vertical');
-    q('.app').classList.add(isVertical ? 'd-inline-flex' : 'h');
-    q('.app').classList.remove(isVertical ? 'h' : 'd-inline-flex');
-    qa('[column]').forEach((col) => {
-      if (isVertical) {
-        col.classList.add('flex-column');
-      } else {
-        col.classList.remove('flex-column');
-      }
-    });
-
-    if (isVertical) {
-      document.body.classList.remove('open-top');
-    } else {
-      document.body.classList.remove('open-left');
-    }
-
-    setTimeout(() => {
-      q('.app').classList.remove('switching-orientation');
-    });
-  });
-}
-
-function changeToolbarPosition(oldBounds) {
-  const startPosition = initialPosition;
-  const isVertical = getSetting('vertical');
-  const toolbarItemHeights = calculateToolbarHeight();
-
-  if (!isVertical) {
-    moveMyWindow({
-      top: oldBounds.top - toolbarItemHeights.appDrawerHeight,
-      left: startPosition.left,
-    });
-  }
-}
-
-async function setToolbarPosition() {
-  const startPosition = initialPosition;
-  const bounds = boundsObs.value;
-  const monitors = await getMonitorInfo();
-  const isVertical = getSetting('vertical');
-  const toolbarItemHeights = calculateToolbarHeight();
-
-  monitors.forEach((monitor) => {
-    if (isVertical) {
-      // if toolbar position is outside of top monitor working area
-      if (bounds.top < monitor.top) {
-        moveMyWindow({
-          top: startPosition.top,
-        });
-      }
-
-      // if toolbar position is outside of right monitor working area
-      if (
-        bounds.left + toolbarPadding.vertical + toolbarWidth.vertical >
-        monitor.workingAreaWidth
-      ) {
-        moveMyWindow({
-          left:
-            monitor.workingAreaWidth -
-            (toolbarWidth.vertical +
-              toolbarPadding.vertical +
-              startPosition.left),
-        });
-      }
-
-      // if toolbar position is outside of bottom monitor working area
-      if (bounds.top + bounds.height > monitor.workingAreaHeight) {
-        moveMyWindow({
-          top: monitor.workingAreaHeight - (bounds.height + startPosition.top),
-        });
-      }
-
-      // if toolbar position is outside of left monitor working area
-      if (bounds.left + toolbarPadding.vertical < monitor.left) {
-        moveMyWindow({
-          left: startPosition.left - toolbarPadding.vertical,
-        });
-      }
-    } else {
-      // if toolbar position is outside of top monitor working area
-      if (
-        bounds.top + toolbarItemHeights.appDrawerHeight < monitor.top ||
-        bounds.top === -toolbarItemHeights.appDrawerHeight
-      ) {
-        moveMyWindow({
-          top: startPosition.top - toolbarItemHeights.appDrawerHeight,
-        });
-      }
-
-      // if toolbar position is outside of right monitor working area
-      if (bounds.left + toolbarWidth.horizontal > monitor.workingAreaWidth) {
-        moveMyWindow({
-          left:
-            monitor.workingAreaWidth -
-            (toolbarWidth.horizontal + startPosition.left),
-        });
-      }
-
-      // if toolbar position is outside of bottom monitor working area
-      if (
-        bounds.top +
-          toolbarItemHeights.appLauncherHeight +
-          toolbarItemHeights.appDrawerHeight >
-        monitor.workingAreaHeight
-      ) {
-        moveMyWindow({
-          top:
-            monitor.workingAreaHeight -
-            (toolbarItemHeights.appLauncherHeight +
-              toolbarItemHeights.appDrawerHeight +
-              startPosition.top),
-        });
-      }
-
-      // if toolbar position is outside of left monitor working area
-      if (bounds.left < monitor.left) {
-        moveMyWindow({
-          left: startPosition.left,
-        });
-      }
-    }
-  });
-}
-
 function populateAboutPage() {
   q('.gd-version').innerText = glue42gd.version;
   q('.gw-url').innerText = glue42gd.gwURL;
@@ -457,15 +148,16 @@ function handleTopMenuClicks() {
 
       let menuToToggle = q(`[menu-id="${menuId}"]`);
 
-      if (menuToToggle.classList.contains('hide')) {
-        await applyOpenClasses();
-      }
+      // if (menuToToggle.classList.contains('hide')) {
+      //   await applyOpenClasses();
+      // }
 
       menuToToggle.addEventListener(
         'transitionend',
         focusMenuInputAfterTransition
       );
       menuToToggle.classList.toggle('hide');
+      setDrawerOpenClass();
 
       toggleTopButtonState(menuId);
 
@@ -633,7 +325,7 @@ async function handleMouseHover() {
     }
 
     closeTimeout = setTimeout(async () => {
-      await applyOpenClasses();
+      // await applyOpenClasses();
       q('.viewport').classList.remove('expand');
       q('.app').classList.remove('expand-wrapper');
       qa('.toggle-content').forEach((e) => e.classList.add('hide'));
@@ -788,6 +480,225 @@ function openDrawer(drawerId) {
   menuButton.click();
 }
 
+function populateSettingsDropdown(
+  selectElement,
+  selectOptionsObj,
+  elementName
+) {
+  selectElement.forEach((item, i) => {
+    let html = ``;
+
+    selectOptionsObj.all.forEach((element) => {
+      html += `
+            <li class="select_option">
+                <input
+                    class="select_input"
+                    type="radio"
+                    name="${elementName}"
+                    id="${elementName}-${element.name + i}"
+                    ${elementName}-name="${element.name}"
+                    ${
+                      element.name === selectOptionsObj.selected.name
+                        ? 'checked'
+                        : ''
+                    }
+                />
+                <label class="select_label" for="${elementName}-${
+        element.name + i
+      }">${element.displayName}</label>
+            </li>
+            `;
+    });
+
+    item.innerHTML = html;
+  });
+}
+
+function handleToolbarAppRowsChange() {
+  const isVertical = getSetting('vertical');
+  const numberOfRows = getSetting('toolbarAppRows');
+  const appSelectOptions = {
+    all: [
+      { name: '8', displayName: '8 Items' },
+      { name: '10', displayName: '10 Items (Default)' },
+      { name: '12', displayName: '12 Items' },
+      { name: '14', displayName: '14 Items' },
+      { name: '16', displayName: '16 Items' },
+      { name: '18', displayName: '18 Items' },
+    ],
+  };
+
+  appSelectOptions.selected = {
+    name: numberOfRows,
+    displayName: appSelectOptions.all.find((el) => el.name === numberOfRows)
+      .displayName,
+  };
+
+  populateSettingsDropdown(
+    qa('.length-select .select_options'),
+    appSelectOptions,
+    'length'
+  );
+
+  q('.length-select .select_options').addEventListener('click', (e) => {
+    if (e.target.matches('input.select_input[type="radio"]')) {
+      const selectedLength = e.target.getAttribute('length-name');
+
+      updateSetting({ toolbarAppRows: selectedLength });
+
+      if (!isVertical) {
+        qa('.toggle-content').forEach((toggle) => {
+          toggle.classList.add('hide');
+        });
+        document.body.classList.remove('open-top');
+      }
+    }
+  });
+}
+
+async function setToolbarSize(appRows) {
+  const isVertical = getSetting('vertical');
+  const appLancher = q('.viewport-header');
+  const appContentHeader = q('.app-content-header');
+  const appRowsNumber = appRows || getSetting('toolbarAppRows');
+  const navItem = q('.nav-item');
+  const contentItems = q('.content-items');
+
+  appLancher.style.height = `${appLancher.offsetHeight}px`;
+  appContentHeader.style.height = `${appContentHeader.offsetHeight}px`;
+  navItem.style.height = `${navItem.offsetHeight}px`;
+  contentItems.style.height = `${navItem.offsetHeight * appRowsNumber}px`;
+
+  if (isVertical) {
+    document.body.style.padding = `0 ${toolbarPadding.vertical}px`;
+    moveMyWindow({
+      width: toolbarWidth.vertical + toolbarPadding.vertical * 2,
+      height:
+        appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber,
+    });
+  } else {
+    // document.body.style.padding = `0 0 0 0`;
+    moveMyWindow({
+      width: toolbarWidth.horizontal,
+      height:
+        appLancher.offsetHeight +
+        (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber) *
+          2,
+    });
+  }
+
+  console.log('-----------------------');
+  console.log(
+    'toolbar width:',
+    toolbarWidth.vertical + toolbarPadding.vertical * 2
+  );
+  console.log(
+    'toolbar height',
+    appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
+  );
+  console.log('-----------------------');
+
+  setVisibleArea();
+}
+
+function setVisibleArea(topMenuVisible, layoutDropDownVisible) {
+  const visibleAreas = [];
+
+  if (!q('.app.h')) {
+    visibleAreas.push(buildVisibleArea(q('.app')));
+  } else {
+    const toggles = qa('.toggle-content');
+
+    toggles.forEach((toggle) => {
+      if (!toggle.classList.contains('hide')) {
+        visibleAreas.push(buildVisibleArea(toggle));
+      }
+    });
+
+    if (topMenuVisible) {
+      visibleAreas.push(buildVisibleArea(q('#menu-top')));
+    }
+
+    if (layoutDropDownVisible) {
+      visibleAreas.push(buildVisibleArea(q('.layout-menu-tool')));
+    }
+  }
+
+  resizeWindowVisibleArea(visibleAreas);
+}
+
+function buildVisibleArea(element) {
+  const { top, left, width, height } = element.getBoundingClientRect();
+
+  return {
+    top: Math.round(top),
+    left: Math.round(left),
+    width: Math.round(width),
+    height: Math.round(height),
+  };
+}
+
+async function setDrawerOpenClass() {
+  const workingArea = await workingAreaSizeObs.value;
+  const windowBounds = boundsObs.value;
+
+  // console.log('------------------------------');
+  // console.log(windowBounds);
+  // console.log('tova mi e novata working area:', workingArea);
+  // console.log('------------------------------');
+  // console.log('sumata e slednata:', windowBounds.left + windowBounds.width);
+  // console.log('razmera na prozoreca e sledniq:', workingArea.workingAreaOffsetWidth);
+
+  if (isVertical) {
+    windowBounds.left + windowBounds.width > workingArea.workingAreaOffsetWidth
+      ? document.body.classList.add('open-left')
+      : document.body.classList.remove('open-left');
+  } else {
+    windowBounds.top + windowBounds.height > workingArea.workingAreaOffsetHeight
+      ? document.body.classList.add('open-top')
+      : document.body.classList.remove('open-top');
+  }
+}
+
+async function handleOrientationChange() {
+  isVertical = !!q('.viewport.vertical');
+  q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
+
+  if (getSetting('vertical') === false) {
+    gluePromise.then(() => {
+      q('#toggle').click();
+    });
+  }
+
+  q('#toggle').addEventListener('click', async () => {
+    q('.app').classList.add('switching-orientation');
+    isVertical = !isVertical;
+    updateSetting({ vertical: isVertical });
+    q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
+    q('.viewport').classList.add(isVertical ? 'vertical' : 'horizontal');
+    q('.viewport').classList.remove(isVertical ? 'horizontal' : 'vertical');
+    q('.app').classList.add(isVertical ? 'd-inline-flex' : 'h');
+    q('.app').classList.remove(isVertical ? 'h' : 'd-inline-flex');
+    qa('[column]').forEach((col) => {
+      if (isVertical) {
+        col.classList.add('flex-column');
+      } else {
+        col.classList.remove('flex-column');
+      }
+    });
+
+    if (isVertical) {
+      document.body.classList.remove('open-top');
+    } else {
+      document.body.classList.remove('open-left');
+    }
+
+    setTimeout(() => {
+      q('.app').classList.remove('switching-orientation');
+    });
+  });
+}
+
 export {
   handleClicks,
   handleOrientationChange,
@@ -798,10 +709,8 @@ export {
   handleNotificationClick,
   handleModalClose,
   handleMouseHover,
-  resizeVisibleArea,
-  calculateToolbarHeight,
+  setVisibleArea,
   setToolbarSize,
-  setToolbarPosition,
   focusInputAfterWindowRecover,
   windowMargin,
   startTutorial,

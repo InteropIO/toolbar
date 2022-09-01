@@ -2,8 +2,10 @@ import {
   updatePrefs,
   checkNotificationsConfigure,
   configureNotifications,
+  setWindowMoveArea,
+  trackToolbarLength,
+  trackWorkingAreaSize,
 } from './glue-related.js';
-import { setToolbarSize, setToolbarPosition } from './utils.js';
 
 let settings = {
   showTutorial: true,
@@ -33,6 +35,9 @@ const initialPosition = {
 function init() {
   populateSettings();
   trackSettingsChange();
+  trackToolbarLength();
+  setWindowMoveArea();
+  trackWorkingAreaSize();
 }
 
 async function populateSettings() {
@@ -46,9 +51,6 @@ async function populateSettings() {
   } else {
     q('.settings-notifications').classList.add('d-none');
   }
-
-  setToolbarSize();
-  setToolbarPosition();
 
   for (const setting in settings) {
     if (

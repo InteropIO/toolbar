@@ -42,7 +42,7 @@ html {
   }
 
   .toggle-content {
-    @include transition("width, opacity", 0);
+    @include transition("width", 0);
     height: 100%;
     width: 300px;
     overflow: hidden;

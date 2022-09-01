@@ -1,5 +1,5 @@
 import * as glueModule from './glue-related.js';
-import { resizeVisibleArea } from './utils.js';
+import { setVisibleArea } from './utils.js';
 
 let topMenuVisibleObs = new rxjs.BehaviorSubject(false);
 let layoutDropDownVisibleObs = new rxjs.BehaviorSubject(false);
@@ -14,7 +14,7 @@ function initVisibleArea() {
       e.target.matches('.horizontal .layouts-nav, .horizontal .layouts-nav *')
     ) {
       layoutOpenedTimeout = setTimeout(() => {
-        applyOpenClasses();
+        // applyOpenClasses();
         layoutDropDownVisibleObs.next(true);
       }, 500);
     }
@@ -54,33 +54,35 @@ function initVisibleArea() {
         };
         let currentMonitor = getMonitor(viewPortBounds, monitors);
 
+        // console.log('current monitor', currentMonitor);
+
         if (!currentMonitor) {
           q('.viewport').classList.add('expand');
           q('.app').classList.add('expand-wrapper');
           return;
         }
 
-        if (!q('.viewport').classList.contains('horizontal')) {
-          let shouldOpenLeft =
-            glueModule.boundsObs.value.left + glueModule.boundsObs.value.width >
-            currentMonitor.left + currentMonitor.width;
+        // if (!q('.viewport').classList.contains('horizontal')) {
+        //   let shouldOpenLeft =
+        //     glueModule.boundsObs.value.left + glueModule.boundsObs.value.width >
+        //     currentMonitor.left + currentMonitor.width;
 
-          openLeftObs.next(shouldOpenLeft);
+        //   openLeftObs.next(shouldOpenLeft);
 
-          if (shouldOpenLeft) {
-            openTopObs.next(false);
-          }
-        } else {
-          let shouldOpenTop =
-            glueModule.boundsObs.value.top + glueModule.boundsObs.value.height >
-            currentMonitor.workingAreaTop + currentMonitor.workingAreaHeight;
+        //   if (shouldOpenLeft) {
+        //     openTopObs.next(false);
+        //   }
+        // } else {
+        //   let shouldOpenTop =
+        //     glueModule.boundsObs.value.top + glueModule.boundsObs.value.height >
+        //     currentMonitor.workingAreaTop + currentMonitor.workingAreaHeight;
 
-          openTopObs.next(shouldOpenTop);
+        //   openTopObs.next(shouldOpenTop);
 
-          if (shouldOpenTop) {
-            openLeftObs.next(false);
-          }
-        }
+        //   if (shouldOpenTop) {
+        //     openLeftObs.next(false);
+        //   }
+        // }
       });
     });
 
@@ -89,7 +91,7 @@ function initVisibleArea() {
       rxjs.operators.combineLatest(topMenuVisibleObs, layoutDropDownVisibleObs)
     )
     .subscribe(([appBounds, topMenuVisible, layoutDropDownVisible]) => {
-      resizeVisibleArea(topMenuVisible, layoutDropDownVisible);
+      setVisibleArea(topMenuVisible, layoutDropDownVisible);
     });
 }
 
@@ -97,7 +99,7 @@ function handleDropDownClicks() {
   document.addEventListener('click', (e) => {
     if (e.target.matches('[dropdown-button-id], [dropdown-button-id] *')) {
       //dropdown button click  - toggle dropdown
-      applyOpenClasses();
+      // applyOpenClasses();
 
       let btnElement = e.path.find((e) => e.getAttribute('dropdown-button-id'));
       let menuId = btnElement.getAttribute('dropdown-button-id');
@@ -113,36 +115,36 @@ function handleDropDownClicks() {
   });
 }
 
-function applyOpenClasses() {
-  if (q('.has-drawer')) {
-    return;
-  }
+// function applyOpenClasses() {
+//   if (q('.has-drawer')) {
+//     return;
+//   }
 
-  let openLeft = openLeftObs.value;
-  let openTop = openTopObs.value;
+//   let openLeft = openLeftObs.value;
+//   let openTop = openTopObs.value;
 
-  if (openLeft && !q('.viewport.horizontal')) {
-    document.body.classList.add('open-left');
-  }
+//   if (openLeft && !q('.viewport.horizontal')) {
+//     document.body.classList.add('open-left');
+//   }
 
-  if (openTop && q('.viewport.horizontal')) {
-    document.body.classList.add('open-top');
-  }
+//   if (openTop && q('.viewport.horizontal')) {
+//     document.body.classList.add('open-top');
+//   }
 
-  if (!openLeft) {
-    document.body.classList.remove('open-left');
-  }
+//   if (!openLeft) {
+//     document.body.classList.remove('open-left');
+//   }
 
-  if (!openTop) {
-    document.body.classList.remove('open-top');
-  }
+//   if (!openTop) {
+//     document.body.classList.remove('open-top');
+//   }
 
-  return new Promise((res, rej) => {
-    setTimeout(() => {
-      res();
-    });
-  });
-}
+//   return new Promise((res, rej) => {
+//     setTimeout(() => {
+//       res();
+//     });
+//   });
+// }
 
 function handleWidthChange() {
   const appBoundsObserver = new ResizeObserver((elements) => {
@@ -201,7 +203,7 @@ export {
   initVisibleArea,
   handleWidthChange,
   handleDropDownClicks,
-  applyOpenClasses,
+  // applyOpenClasses,
   getMonitor,
   openTopObs,
 };

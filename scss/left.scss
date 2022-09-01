@@ -1,15 +1,26 @@
 .open-left {
-  overflow: hidden;
-
   .app {
     position: relative;
     left: 0;
-    @include transition("left, width", 0);
     margin-left: 140px;
+    @include transition("left, width", 0);
+
+    &.has-drawer {
+      .viewport {
+        position: relative;
+        left: 0;
+      }
+
+      .toggle.content {
+        position: relative;
+        left: -200px;
+      }
+    }
   }
 
   .app .toggle-content {
     width: 300px;
+    order: -1;
     @include transition("width, left", 0);
 
     > div,
@@ -36,9 +47,5 @@
 
   .app.expand-wrapper.has-drawer {
     left: -440px;
-  }
-
-  .viewport {
-    order: 2;
   }
 }
