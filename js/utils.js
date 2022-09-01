@@ -561,12 +561,11 @@ async function setToolbarSize(appRows) {
   const appLancher = q('.viewport-header');
   const appContentHeader = q('.app-content-header');
   const appRowsNumber = appRows || getSetting('toolbarAppRows');
-  const navItem = q('.nav-item');
+  const navItem = q('.content-items .nav-item');
   const contentItems = q('.content-items');
 
   appLancher.style.height = `${appLancher.offsetHeight}px`;
   appContentHeader.style.height = `${appContentHeader.offsetHeight}px`;
-  navItem.style.height = `${navItem.offsetHeight}px`;
   contentItems.style.height = `${navItem.offsetHeight * appRowsNumber}px`;
 
   if (isVertical) {
@@ -577,7 +576,9 @@ async function setToolbarSize(appRows) {
         appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber,
     });
   } else {
-    // document.body.style.padding = `0 0 0 0`;
+    document.body.style.padding = `${
+      appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
+    }px 0`;
     moveMyWindow({
       width: toolbarWidth.horizontal,
       height:
@@ -587,24 +588,16 @@ async function setToolbarSize(appRows) {
     });
   }
 
-  console.log('-----------------------');
-  console.log(
-    'toolbar width:',
-    toolbarWidth.vertical + toolbarPadding.vertical * 2
-  );
-  console.log(
-    'toolbar height',
-    appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
-  );
-  console.log('-----------------------');
-
   setVisibleArea();
 }
 
 function setVisibleArea(topMenuVisible, layoutDropDownVisible) {
   const visibleAreas = [];
+  const isVertical = getSetting('vertical');
 
-  if (!q('.app.h')) {
+  visibleAreas.push(buildVisibleArea(q('.viewport')));
+
+  if (isVertical) {
     visibleAreas.push(buildVisibleArea(q('.app')));
   } else {
     const toggles = qa('.toggle-content');

@@ -78,9 +78,14 @@ async function setWindowMoveArea() {
       moveAreaThickness: `0, ${Math.round(dragArea.height)}, 0, 0`,
     });
   } else {
+    const toggleContent = q('#app-content').getBoundingClientRect();
+
     win.configure({
-      moveAreaLeftMargin: `0, 0, 0, 0`,
-      moveAreaThickness: `0, 0, 0, 0`,
+      // moveAreaLeftMargin: `0, ${Math.round(
+      //   toggleContent.height
+      // )}, 0, ${Math.round(toggleContent.height)}`,
+      moveAreaLeftMargin: '0, 0, 0, 0',
+      moveAreaThickness: `60, 0, 0, 0`,
     });
   }
 }
