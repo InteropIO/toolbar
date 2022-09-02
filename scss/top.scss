@@ -26,7 +26,15 @@
     }
 
     .viewport {
+      margin-bottom: 0;
       order: 1;
+      @include transition("margin-bottom", 50);
+    }
+
+    &.has-drawer {
+      .viewport {
+        margin-bottom: -48px;
+      }
     }
 
     .toggle-content {

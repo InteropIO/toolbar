@@ -2,12 +2,7 @@ import {
   updatePrefs,
   checkNotificationsConfigure,
   configureNotifications,
-  setWindowMoveArea,
-  trackToolbarLength,
-  trackWorkAreaSize,
 } from './glue-related.js';
-
-import { setInitialOrientation } from './utils.js';
 
 let settings = {
   showTutorial: true,
@@ -34,13 +29,9 @@ const initialPosition = {
   left: 20,
 };
 
-function init() {
-  setInitialOrientation();
+async function init() {
   populateSettings();
   trackSettingsChange();
-  trackToolbarLength();
-  setWindowMoveArea();
-  trackWorkAreaSize();
 }
 
 async function populateSettings() {

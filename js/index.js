@@ -62,6 +62,10 @@ async function init() {
   printNotificationButton();
   printInitialToastState();
 
+  utils.setToolbarSize();
+  utils.setWindowMoveArea();
+  utils.setToolbarOrientation();
+
   handleWidthChange();
   handleAppClick();
   handleSearchChange();
@@ -71,7 +75,7 @@ async function init() {
   handleDropDownClicks();
   handleClientAndInstrumentClicks();
 
-  utils.handleClicks();
+  utils.handleEvents();
   utils.startTutorial();
   glueModule.registerHotkey();
   glueModule.focusWindow(utils.focusInputAfterWindowRecover);

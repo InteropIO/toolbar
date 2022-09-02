@@ -1,12 +1,5 @@
-import {
-  setSettings,
-  updateSettings,
-  getSetting,
-  toolbarPadding,
-  toolbarWidth,
-} from './settings.js';
-import { getMonitor } from './visible-area.js';
-import { setToolbarSize } from './utils.js';
+import { setSettings, updateSettings, getSetting } from './settings.js';
+import { setToolbarOrientation, setToolbarSize } from './utils.js';
 
 console.time('Glue');
 var gluePromise = new Promise(async (res, rej) => {
@@ -53,6 +46,9 @@ const glueInfo = {
 };
 
 gluePromise.then((glue) => {
+  trackToolbarLength();
+  trackWorkAreaSize();
+  trackOrientation();
   trackApplications();
   trackLayouts();
   trackWorkspaces();
@@ -61,34 +57,6 @@ gluePromise.then((glue) => {
   trackConnection();
   trackNotificationCount();
 });
-
-async function setWindowMoveArea() {
-  await gluePromise;
-  const win = glue.windows.my();
-  const isVertical = getSetting('vertical');
-  const dragArea = q('.draggable').getBoundingClientRect();
-
-  if (isVertical) {
-    win.configure({
-      moveAreaTopMargin: `${toolbarPadding.vertical}, 0, ${
-        toolbarWidth.vertical +
-        toolbarPadding.vertical -
-        Math.round(dragArea.width)
-      }, 0`,
-      moveAreaThickness: `0, ${Math.round(dragArea.height)}, 0, 0`,
-    });
-  } else {
-    const toggleContent = q('#app-content').getBoundingClientRect();
-
-    win.configure({
-      // moveAreaLeftMargin: `0, ${Math.round(
-      //   toggleContent.height
-      // )}, 0, ${Math.round(toggleContent.height)}`,
-      moveAreaLeftMargin: '0, 0, 0, 0',
-      moveAreaThickness: `60, 0, 0, 0`,
-    });
-  }
-}
 
 function trackApplications() {
   pushAllApps();
@@ -184,7 +152,6 @@ async function trackThemeChanges() {
 
 async function trackWindowMove() {
   boundsObs.next(glue.windows.my().bounds);
-  trackWorkAreaSize();
 
   glue.windows.my().onBoundsChanged(() => {
     boundsObs.next(glue.windows.my().bounds);
@@ -429,6 +396,12 @@ async function minimize() {
   glue.windows.my().minimize();
 }
 
+async function configureMyWindow(config) {
+  await gluePromise;
+  const win = glue.windows.my();
+  win.configure(config);
+}
+
 // async function isMinimizeAllowed() {
 //   await gluePromise;
 //   return glue.windows.my().settings.allowMinimize;
@@ -523,6 +496,13 @@ async function trackToolbarLength() {
   });
 }
 
+async function trackOrientation() {
+  await gluePromise;
+  glue.prefs.subscribe((prefs) => {
+    setToolbarOrientation(prefs.data.vertical);
+  });
+}
+
 async function updatePrefs(setting) {
   await glue.prefs.update({ ...setting });
 }
@@ -567,7 +547,7 @@ export {
   resizeWindowVisibleArea,
   openWindow,
   moveMyWindow,
-  setWindowMoveArea,
+  configureMyWindow,
   minimize,
   // isMinimizeAllowed,
   raiseNotification,
@@ -582,6 +562,4 @@ export {
   getServerInfo,
   getPrefs,
   updatePrefs,
-  trackToolbarLength,
-  trackWorkAreaSize,
 };
