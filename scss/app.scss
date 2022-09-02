@@ -13,6 +13,14 @@ html {
   .app {
     height: 100%;
 
+    &.vertical {
+      display: inline-flex;
+    }
+
+    &.horizontal {
+      display: block;
+    }
+
     &.switching-orientation * {
       transition: none !important;
 

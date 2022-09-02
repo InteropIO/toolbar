@@ -1,12 +1,14 @@
 .open-top {
-  .app {
-    @include transition("top", 0);
-    display: flex;
-    flex-direction: column-reverse;
-  }
+  @include transition("top", 0);
+  display: flex;
+  flex-direction: column-reverse;
 
-  .h {
-    .horizontal {
+  &.horizontal {
+    .viewport {
+      margin-bottom: 0;
+      order: 1;
+      @include transition("margin-bottom", 50);
+
       .dropdown-menu {
         top: -8.125rem;
         margin-top: 0 !important;
@@ -23,12 +25,6 @@
       .chevron-rotate {
         transform: rotate(90deg);
       }
-    }
-
-    .viewport {
-      margin-bottom: 0;
-      order: 1;
-      @include transition("margin-bottom", 50);
     }
 
     &.has-drawer {

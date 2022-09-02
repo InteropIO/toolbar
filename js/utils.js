@@ -512,6 +512,7 @@ function populateSettingsDropdown(
 
 function handleToolbarAppRowsChange() {
   const numberOfRows = getSetting('toolbarAppRows');
+  const app = q('.app');
   const appSelectOptions = {
     all: [
       { name: '8', displayName: '8 Items' },
@@ -545,7 +546,7 @@ function handleToolbarAppRowsChange() {
         qa('.toggle-content').forEach((toggle) => {
           toggle.classList.add('hide');
         });
-        document.body.classList.remove('open-top');
+        app.classList.remove('open-top');
       }
     }
   });
@@ -644,27 +645,25 @@ function buildVisibleArea(element) {
 async function setDrawerOpenClass() {
   const workArea = workAreaSizeObs.value;
   const windowBounds = await getWindowBounds();
+  const app = q('.app');
 
   if (isVertical) {
     windowBounds.left + windowBounds.width > workArea.offsetWidth
-      ? document.body.classList.add('open-left')
-      : document.body.classList.remove('open-left');
+      ? app.classList.add('open-left')
+      : app.classList.remove('open-left');
   } else {
     windowBounds.top + windowBounds.height > workArea.offsetHeight
-      ? document.body.classList.add('open-top')
-      : document.body.classList.remove('open-top');
+      ? app.classList.add('open-top')
+      : app.classList.remove('open-top');
   }
 }
 
 function setToolbarOrientation(orientation) {
   isVertical = orientation;
 
-  // q('.app').classList.add('switching-orientation');
   q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
-  q('.viewport').classList.add(isVertical ? 'vertical' : 'horizontal');
-  q('.viewport').classList.remove(isVertical ? 'horizontal' : 'vertical');
-  q('.app').classList.add(isVertical ? 'd-inline-flex' : 'h');
-  q('.app').classList.remove(isVertical ? 'h' : 'd-inline-flex');
+  q('.app').classList.add(isVertical ? 'vertical' : 'horizontal');
+  q('.app').classList.remove(isVertical ? 'horizontal' : 'vertical');
   qa('[column]').forEach((col) => {
     if (isVertical) {
       col.classList.add('flex-column');
@@ -672,14 +671,11 @@ function setToolbarOrientation(orientation) {
       col.classList.remove('flex-column');
     }
   });
-
-  // setTimeout(() => {
-  //   q('.app').classList.remove('switching-orientation');
-  // });
 }
 
 async function handleToolbarOrientationChange() {
   q('#toggle').addEventListener('click', () => {
+    const app = q('.app');
     isVertical = !isVertical;
 
     updateSetting({ vertical: isVertical });
@@ -687,13 +683,13 @@ async function handleToolbarOrientationChange() {
     setToolbarSize();
 
     if (isVertical) {
-      document.body.classList.remove('open-top');
+      app.classList.remove('open-top');
       // moveMyWindow({
       //   top: initialPosition.top,
       //   left: initialPosition.left - toolbarPadding.vertical,
       // });
     } else {
-      document.body.classList.remove('open-left');
+      app.classList.remove('open-left');
       // moveMyWindow({
       //   top: initialPosition.top - windowBounds.height,
       //   left: initialPosition.left,

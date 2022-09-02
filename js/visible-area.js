@@ -1,5 +1,4 @@
 import * as glueModule from './glue-related.js';
-import { setVisibleArea } from './utils.js';
 
 let topMenuVisibleObs = new rxjs.BehaviorSubject(false);
 let layoutDropDownVisibleObs = new rxjs.BehaviorSubject(false);
@@ -58,14 +57,6 @@ function initVisibleArea() {
           return;
         }
       });
-    });
-
-  appBoundsObs
-    .pipe(
-      rxjs.operators.combineLatest(topMenuVisibleObs, layoutDropDownVisibleObs)
-    )
-    .subscribe(([appBounds, topMenuVisible, layoutDropDownVisible]) => {
-      setVisibleArea(topMenuVisible, layoutDropDownVisible);
     });
 }
 
