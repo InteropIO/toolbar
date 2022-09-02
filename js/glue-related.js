@@ -462,9 +462,6 @@ function trackConnection() {
 
 async function getMonitorInfo() {
   await gluePromise;
-
-  // console.log(await glue.displays.all());
-
   return (await glue.displays.all()).map((display) => ({
     left: display.bounds.left,
     top: display.bounds.top,

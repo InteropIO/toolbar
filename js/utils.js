@@ -274,8 +274,6 @@ function handleModalClose() {
 }
 
 async function handleMouseHover() {
-  //q('#toggle').click(); // TODO: remove
-
   q('#fav-apps').addEventListener('mousewheel', (e) => {
     // TODO: move
     if (q('.horizontal')) {
@@ -318,6 +316,7 @@ async function handleMouseHover() {
 
     let viewPortBounds = q('.viewport').getBoundingClientRect();
     let outOfMonitor = isOutOfMonitor(viewPortBounds);
+    const isVertical = getSetting('vertical');
 
     if (await outOfMonitor) {
       console.warn('window is positioned outside of monitor. will not shrink');
@@ -646,17 +645,25 @@ function setDrawerOpenClass() {
   }
 }
 
-async function handleOrientationChange() {
-  isVertical = !!q('.viewport.vertical');
+async function setInitialOrientation() {
+  const isVertical = getSetting('vertical');
   q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
 
-  if (getSetting('vertical') === false) {
-    gluePromise.then(() => {
-      q('#toggle').click();
-    });
+  if (!isVertical) {
+    q('#toggle .mode').innerHTML = 'vertical';
+    q('.viewport').classList.add('horizontal');
+    q('.viewport').classList.remove('vertical');
+    q('.app').classList.add('h');
+    q('.app').classList.remove('d-inline-flex');
+    qa('[column]').forEach((col) => col.classList.remove('flex-column'));
   }
+}
 
+async function handleOrientationChange() {
   q('#toggle').addEventListener('click', async () => {
+    let isVertical = getSetting('vertical');
+    const bounds = await getWindowBounds();
+
     q('.app').classList.add('switching-orientation');
     isVertical = !isVertical;
     updateSetting({ vertical: isVertical });
@@ -675,8 +682,16 @@ async function handleOrientationChange() {
 
     if (isVertical) {
       document.body.classList.remove('open-top');
+      moveMyWindow({
+        top: initialPosition.top,
+        left: initialPosition.left - toolbarPadding.vertical,
+      });
     } else {
       document.body.classList.remove('open-left');
+      moveMyWindow({
+        top: initialPosition.top - bounds.height,
+        left: initialPosition.left,
+      });
     }
 
     setTimeout(() => {
@@ -687,7 +702,7 @@ async function handleOrientationChange() {
 
 export {
   handleClicks,
-  handleOrientationChange,
+  setInitialOrientation,
   handleThemeChange,
   handleShutdownClick,
   handleTopMenuClicks,

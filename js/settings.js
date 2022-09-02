@@ -7,6 +7,8 @@ import {
   trackWorkAreaSize,
 } from './glue-related.js';
 
+import { setInitialOrientation } from './utils.js';
+
 let settings = {
   showTutorial: true,
   saveDefaultLayout: false,
@@ -33,6 +35,7 @@ const initialPosition = {
 };
 
 function init() {
+  setInitialOrientation();
   populateSettings();
   trackSettingsChange();
   trackToolbarLength();
