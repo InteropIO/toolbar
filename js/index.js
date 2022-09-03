@@ -50,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function init() {
   await glueModule.getPrefs();
+  await glueModule.trackSettingChange();
 
   initVisibleArea();
 
@@ -61,10 +62,6 @@ async function init() {
   printNotificationCount();
   printNotificationButton();
   printInitialToastState();
-
-  utils.setToolbarSize();
-  utils.setWindowMoveArea();
-  utils.setToolbarOrientation();
 
   handleWidthChange();
   handleAppClick();

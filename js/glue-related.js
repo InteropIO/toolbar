@@ -1,5 +1,9 @@
 import { setSettings, updateSettings, getSetting } from './settings.js';
-import { setToolbarOrientation, setToolbarSize } from './utils.js';
+import {
+  setToolbarOrientation,
+  setToolbarSize,
+  setWindowMoveArea,
+} from './utils.js';
 
 console.time('Glue');
 var gluePromise = new Promise(async (res, rej) => {
@@ -33,6 +37,7 @@ const notificationsCountObs = new rxjs.BehaviorSubject(null);
 const themeObs = new rxjs.BehaviorSubject(null);
 const boundsObs = new rxjs.BehaviorSubject(null);
 const workAreaSizeObs = new rxjs.BehaviorSubject(null);
+const orientationObs = new rxjs.BehaviorSubject(null);
 let notificationEnabledObs = new rxjs.BehaviorSubject(false);
 
 if (!window.glue42gd) {
@@ -46,9 +51,7 @@ const glueInfo = {
 };
 
 gluePromise.then((glue) => {
-  trackToolbarLength();
   trackWorkAreaSize();
-  trackOrientation();
   trackApplications();
   trackLayouts();
   trackWorkspaces();
@@ -489,17 +492,18 @@ async function getPrefs() {
   });
 }
 
-async function trackToolbarLength() {
+async function trackSettingChange() {
   await gluePromise;
-  glue.prefs.subscribe((prefs) => {
-    setToolbarSize(parseInt(prefs.data.toolbarAppRows));
-  });
-}
+  const prefs = await glue.prefs.get();
+  orientationObs.next(prefs.data.vertical);
 
-async function trackOrientation() {
-  await gluePromise;
   glue.prefs.subscribe((prefs) => {
+    orientationObs.next(prefs.data.vertical);
     setToolbarOrientation(prefs.data.vertical);
+    setToolbarSize(parseInt(prefs.data.toolbarAppRows));
+    // TODO: setWindowVisibleArea();
+    // TODO: fixWindowPosition();
+    setWindowMoveArea(prefs.data.vertical);
   });
 }
 
@@ -562,4 +566,6 @@ export {
   getServerInfo,
   getPrefs,
   updatePrefs,
+  orientationObs,
+  trackSettingChange,
 };

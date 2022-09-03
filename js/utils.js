@@ -5,6 +5,7 @@ import {
   getApp,
   getUserProperties,
   themeObs,
+  orientationObs,
   changeTheme,
   refreshApps,
   openNotificationPanel,
@@ -511,6 +512,7 @@ function populateSettingsDropdown(
 }
 
 function handleToolbarAppRowsChange() {
+  isVertical = orientationObs.value;
   const numberOfRows = getSetting('toolbarAppRows');
   const app = q('.app');
   const appSelectOptions = {
@@ -553,6 +555,7 @@ function handleToolbarAppRowsChange() {
 }
 
 function setToolbarSize(appRows) {
+  isVertical = orientationObs.value;
   const appLancher = q('.viewport-header');
   const appContentHeader = q('.app-content-header');
   const appRowsNumber = appRows || getSetting('toolbarAppRows');
@@ -585,6 +588,7 @@ function setToolbarSize(appRows) {
 }
 
 function setVisibleArea(topMenuVisible, layoutDropDownVisible) {
+  isVertical = orientationObs.value;
   const visibleAreas = [];
 
   // visibleAreas.push(buildVisibleArea(q('.viewport')));
@@ -613,6 +617,7 @@ function setVisibleArea(topMenuVisible, layoutDropDownVisible) {
 }
 
 function buildVisibleArea(element) {
+  isVertical = orientationObs.value;
   const { top, left, width, height } = element.getBoundingClientRect();
 
   return {
@@ -643,6 +648,7 @@ function buildVisibleArea(element) {
 // }
 
 async function setDrawerOpenClass() {
+  isVertical = orientationObs.value;
   const workArea = workAreaSizeObs.value;
   const windowBounds = await getWindowBounds();
   const app = q('.app');
@@ -658,9 +664,7 @@ async function setDrawerOpenClass() {
   }
 }
 
-function setToolbarOrientation(orientation) {
-  isVertical = orientation;
-
+function setToolbarOrientation(isVertical) {
   q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
   q('.app').classList.add(isVertical ? 'vertical' : 'horizontal');
   q('.app').classList.remove(isVertical ? 'horizontal' : 'vertical');
@@ -676,11 +680,10 @@ function setToolbarOrientation(orientation) {
 async function handleToolbarOrientationChange() {
   q('#toggle').addEventListener('click', () => {
     const app = q('.app');
+    isVertical = orientationObs.value;
     isVertical = !isVertical;
 
     updateSetting({ vertical: isVertical });
-
-    setToolbarSize();
 
     if (isVertical) {
       app.classList.remove('open-top');
@@ -699,6 +702,7 @@ async function handleToolbarOrientationChange() {
 }
 
 async function checkToolbarPosition(appRows) {
+  isVertical = orientationObs.value;
   const windowBounds = await getWindowBounds();
   const appContentHeader = q('.app-content-header');
   const navItem = q('.nav-item');
@@ -753,7 +757,7 @@ async function checkToolbarPosition(appRows) {
   console.warn('Window left the boundries of the monitor. Repositioning.');
 }
 
-async function setWindowMoveArea() {
+async function setWindowMoveArea(isVertical) {
   const dragArea = q('.draggable').getBoundingClientRect();
 
   if (isVertical) {
