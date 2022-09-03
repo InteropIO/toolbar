@@ -567,16 +567,12 @@ function setToolbarSize(appRows) {
   contentItems.style.height = `${navItem.offsetHeight * appRowsNumber}px`;
 
   if (isVertical) {
-    document.body.style.padding = `0 ${toolbarPadding.vertical}px `;
     moveMyWindow({
       width: toolbarWidth.vertical + toolbarPadding.vertical * 2,
       height:
         appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber,
     });
   } else {
-    document.body.style.padding = `${
-      appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
-    }px 0`;
     moveMyWindow({
       width: toolbarWidth.horizontal,
       height:
@@ -652,11 +648,25 @@ async function setDrawerOpenClass() {
   const workArea = workAreaSizeObs.value;
   const windowBounds = await getWindowBounds();
   const app = q('.app');
+  const toggleContent = qa('.toggle-content');
+  const toolbarOffset = toolbarPadding.vertical + toolbarWidth.vertical;
 
   if (isVertical) {
-    windowBounds.left + windowBounds.width > workArea.offsetWidth
-      ? app.classList.add('open-left')
-      : app.classList.remove('open-left');
+    if (windowBounds.left + windowBounds.width > workArea.offsetWidth) {
+      app.classList.add('open-left');
+      toggleContent.forEach((toggle) => {
+        toggle.style.right = `${toolbarOffset}px`;
+        toggle.style.left = 'auto';
+        toggle.style.transform = `translateX(0)`;
+      });
+    } else {
+      app.classList.remove('open-left');
+      toggleContent.forEach((toggle) => {
+        toggle.style.right = 'auto';
+        toggle.style.left = 0;
+        toggle.style.transform = `translateX(${toolbarOffset}px)`;
+      });
+    }
   } else {
     windowBounds.top + windowBounds.height > workArea.offsetHeight
       ? app.classList.add('open-top')
@@ -665,15 +675,20 @@ async function setDrawerOpenClass() {
 }
 
 function setToolbarOrientation(isVertical) {
+  const app = q('.app');
+  const viewport = q('.viewport');
+
   q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
-  q('.app').classList.add(isVertical ? 'vertical' : 'horizontal');
-  q('.app').classList.remove(isVertical ? 'horizontal' : 'vertical');
+  app.classList.add(isVertical ? 'vertical' : 'horizontal');
+  app.classList.remove(isVertical ? 'horizontal' : 'vertical');
+  viewport.style.transform = isVertical
+    ? `translateX(${toolbarPadding.vertical}px)`
+    : null;
+
   qa('[column]').forEach((col) => {
-    if (isVertical) {
-      col.classList.add('flex-column');
-    } else {
-      col.classList.remove('flex-column');
-    }
+    isVertical
+      ? col.classList.add('flex-column')
+      : col.classList.remove('flex-column');
   });
 }
 
