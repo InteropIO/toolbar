@@ -1,10 +1,19 @@
 import * as glueModule from './glue-related.js';
+import { setWindowVisibleArea } from './utils.js';
 
 let topMenuVisibleObs = new rxjs.BehaviorSubject(false);
 let layoutDropDownVisibleObs = new rxjs.BehaviorSubject(false);
 let layoutOpenedTimeout;
 
 function initVisibleArea() {
+  let appBoundsObs = new rxjs.BehaviorSubject({
+    width: Math.round(q('.app').offsetWidth),
+    height: Math.round(q('.app').offsetHeight),
+    left: 0,
+    top: 0,
+  });
+  window.appBoundsObs = appBoundsObs;
+
   q('.layouts-nav').addEventListener('mouseenter', (e) => {
     if (
       e.target.matches &&
@@ -30,14 +39,6 @@ function initVisibleArea() {
     }
   });
 
-  let appBoundsObs = new rxjs.BehaviorSubject({
-    width: Math.round(q('.app').offsetWidth),
-    height: Math.round(q('.app').offsetHeight),
-    left: 200,
-    top: 50,
-  });
-  window.appBoundsObs = appBoundsObs;
-
   glueModule.boundsObs
     .pipe(rxjs.operators.filter((bounds) => bounds))
     .subscribe((windowBounds) => {
@@ -58,6 +59,16 @@ function initVisibleArea() {
         }
       });
     });
+
+  appBoundsObs
+    .pipe(
+      rxjs.operators.combineLatest(topMenuVisibleObs, layoutDropDownVisibleObs)
+    )
+    .subscribe(([appBounds, topMenuVisible, layoutDropDownVisible]) => {
+      setWindowVisibleArea(topMenuVisible, layoutDropDownVisible);
+    });
+
+  setTimeout(() => setWindowVisibleArea(), 500);
 }
 
 function handleDropDownClicks() {

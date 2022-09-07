@@ -55,6 +55,7 @@ async function init() {
   initVisibleArea();
 
   console.log('window loaded');
+
   printApps();
   printRunningApps();
   printLayouts();

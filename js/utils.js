@@ -600,31 +600,33 @@ function setToolbarSize(appRows) {
   }
 }
 
-function setVisibleArea(topMenuVisible, layoutDropDownVisible) {
+function setWindowVisibleArea(topMenuVisible, layoutDropDownVisible) {
   isVertical = orientationObs.value;
   const visibleAreas = [];
 
-  // visibleAreas.push(buildVisibleArea(q('.viewport')));
+  visibleAreas.push(buildVisibleArea(q('.viewport')));
 
-  // if (isVertical) {
-  //   visibleAreas.push(buildVisibleArea(q('.app')));
-  // } else {
-  //   const toggles = qa('.toggle-content');
+  if (isVertical) {
+    visibleAreas.push(buildVisibleArea(q('.app')));
+  } else {
+    const toggles = qa('.toggle-content');
 
-  //   toggles.forEach((toggle) => {
-  //     if (!toggle.classList.contains('hide')) {
-  //       visibleAreas.push(buildVisibleArea(toggle));
-  //     }
-  //   });
+    toggles.forEach((toggle) => {
+      if (!toggle.classList.contains('hide')) {
+        visibleAreas.push(buildVisibleArea(toggle));
+      }
+    });
 
-  //   if (topMenuVisible) {
-  //     visibleAreas.push(buildVisibleArea(q('#menu-top')));
-  //   }
+    if (topMenuVisible) {
+      visibleAreas.push(buildVisibleArea(q('#menu-top')));
+    }
 
-  //   if (layoutDropDownVisible) {
-  //     visibleAreas.push(buildVisibleArea(q('.layout-menu-tool')));
-  //   }
-  // }
+    if (layoutDropDownVisible) {
+      visibleAreas.push(buildVisibleArea(q('.layout-menu-tool')));
+    }
+  }
+
+  console.log('visibleAreas:', visibleAreas);
 
   resizeWindowVisibleArea(visibleAreas);
 }
@@ -722,6 +724,7 @@ async function handleToolbarOrientationChange() {
 
     updateSetting({ vertical: isVertical });
 
+    // TODO: On orientation switch the toolbar logo should stay at the same position
     if (isVertical) {
       app.classList.remove('open-top');
       // moveMyWindow({
@@ -825,7 +828,7 @@ export {
   handleNotificationClick,
   handleModalClose,
   handleMouseHover,
-  setVisibleArea,
+  setWindowVisibleArea,
   setToolbarSize,
   setWindowMoveArea,
   focusInputAfterWindowRecover,
