@@ -2,7 +2,6 @@
 
 .vertical {
   .viewport {
-    position: absolute;
     height: 100%;
 
     > .flex-column {
@@ -12,10 +11,6 @@
 
   .viewport-header {
     overflow: hidden;
-  }
-
-  .toggle-content {
-    position: absolute;
   }
 
   .fav-app-nav {

@@ -648,8 +648,12 @@ async function setDrawerOpenClass() {
   const workArea = workAreaSizeObs.value;
   const windowBounds = await getWindowBounds();
   const app = q('.app');
+  const appLancher = q('.viewport-header');
   const toggleContent = qa('.toggle-content');
   const toolbarOffset = toolbarPadding.vertical + toolbarWidth.vertical;
+  const appContentHeader = q('.app-content-header');
+  const appRowsNumber = getSetting('toolbarAppRows');
+  const navItem = q('.content-items .nav-item');
 
   if (isVertical) {
     if (windowBounds.left + windowBounds.width > workArea.offsetWidth) {
@@ -668,22 +672,42 @@ async function setDrawerOpenClass() {
       });
     }
   } else {
-    windowBounds.top + windowBounds.height > workArea.offsetHeight
-      ? app.classList.add('open-top')
-      : app.classList.remove('open-top');
+    if (windowBounds.top + windowBounds.height > workArea.offsetHeight) {
+      app.classList.add('open-top');
+      toggleContent.forEach((toggle) => {
+        toggle.style.top = 'auto';
+        toggle.style.bottom = 0;
+        toggle.style.transform = `translateY(0)`;
+      });
+    } else {
+      app.classList.remove('open-top');
+      toggleContent.forEach((toggle) => {
+        toggle.style.top = 0;
+        toggle.style.bottom = 'auto';
+        toggle.style.transform = `translateY(${
+          appLancher.offsetHeight +
+          (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber)
+        }px)`;
+      });
+    }
   }
 }
 
 function setToolbarOrientation(isVertical) {
   const app = q('.app');
   const viewport = q('.viewport');
+  const appContentHeader = q('.app-content-header');
+  const appRowsNumber = getSetting('toolbarAppRows');
+  const navItem = q('.content-items .nav-item');
 
   q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
   app.classList.add(isVertical ? 'vertical' : 'horizontal');
   app.classList.remove(isVertical ? 'horizontal' : 'vertical');
   viewport.style.transform = isVertical
     ? `translateX(${toolbarPadding.vertical}px)`
-    : null;
+    : `translateY(${
+        appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
+      }px)`;
 
   qa('[column]').forEach((col) => {
     isVertical
@@ -716,8 +740,7 @@ async function handleToolbarOrientationChange() {
   });
 }
 
-async function checkToolbarPosition(appRows) {
-  isVertical = orientationObs.value;
+async function fixWindowPosition(isVertical, appRows) {
   const windowBounds = await getWindowBounds();
   const appContentHeader = q('.app-content-header');
   const navItem = q('.nav-item');
@@ -725,6 +748,7 @@ async function checkToolbarPosition(appRows) {
   const monitors = await getMonitorInfo();
 
   monitors.forEach((monitor) => {
+    console.log(monitor);
     if (isVertical) {
       // if toolbar position is outside of top monitor working area
       if (windowBounds.top < monitor.top) {
@@ -815,4 +839,5 @@ export {
   escapeHtml,
   getAppIcon,
   openDrawer,
+  fixWindowPosition,
 };

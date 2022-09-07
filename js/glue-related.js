@@ -3,6 +3,7 @@ import {
   setToolbarOrientation,
   setToolbarSize,
   setWindowMoveArea,
+  fixWindowPosition,
 } from './utils.js';
 
 console.time('Glue');
@@ -502,7 +503,7 @@ async function trackSettingChange() {
     setToolbarOrientation(prefs.data.vertical);
     setToolbarSize(parseInt(prefs.data.toolbarAppRows));
     // TODO: setWindowVisibleArea();
-    // TODO: fixWindowPosition();
+    fixWindowPosition(prefs.data.vertical, parseInt(prefs.data.toolbarAppRows)); // TODO: Check on multiple monitors
     setWindowMoveArea(prefs.data.vertical);
   });
 }
