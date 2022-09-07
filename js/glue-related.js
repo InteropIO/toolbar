@@ -181,7 +181,7 @@ async function trackWorkAreaSize() {
   });
 
   // if monitors are ordered horizontally
-  if (currentMonitor.bounds.left > currentMonitor.workArea.width) {
+  if (currentMonitor.bounds.left >= currentMonitor.workArea.width) {
     currentMonitorOffsetWidth = workAreas.width.reduce(
       (acc, curr) => acc + curr,
       0
@@ -191,7 +191,7 @@ async function trackWorkAreaSize() {
   }
 
   // if monitors are ordered vertically
-  if (currentMonitor.bounds.top > currentMonitor.workArea.height) {
+  if (currentMonitor.bounds.top >= currentMonitor.workArea.height) {
     currentMonitorOffsetHeight = workAreas.height.reduce(
       (acc, curr) => acc + curr,
       0

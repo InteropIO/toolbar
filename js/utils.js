@@ -584,6 +584,7 @@ function setToolbarSize(appRows) {
   contentItems.style.height = `${navItem.offsetHeight * appRowsNumber}px`;
 
   if (isVertical) {
+    // document.body.style.padding = '0 300px';
     moveMyWindow({
       width: toolbarWidth.vertical + toolbarPadding.vertical * 2,
       height:
@@ -626,8 +627,6 @@ function setWindowVisibleArea(topMenuVisible, layoutDropDownVisible) {
     }
   }
 
-  console.log('visibleAreas:', visibleAreas);
-
   resizeWindowVisibleArea(visibleAreas);
 }
 
@@ -658,37 +657,37 @@ async function setDrawerOpenClass() {
   if (isVertical) {
     if (windowBounds.left + windowBounds.width > workArea.offsetWidth) {
       app.classList.add('open-left');
-      toggleContent.forEach((toggle) => {
-        toggle.style.right = `${toolbarOffset}px`;
-        toggle.style.left = 'auto';
-        toggle.style.transform = 'translateX(0)';
-      });
+      // toggleContent.forEach((toggle) => {
+      //   toggle.style.right = `${toolbarOffset}px`;
+      //   toggle.style.left = 'auto';
+      //   toggle.style.transform = 'translateX(0)';
+      // });
     } else {
       app.classList.remove('open-left');
-      toggleContent.forEach((toggle) => {
-        toggle.style.right = 'auto';
-        toggle.style.left = 0;
-        toggle.style.transform = `translateX(${toolbarOffset}px)`;
-      });
+      // toggleContent.forEach((toggle) => {
+      //   toggle.style.right = 'auto';
+      //   toggle.style.left = 0;
+      //   toggle.style.transform = `translateX(${toolbarOffset}px)`;
+      // });
     }
   } else {
     if (windowBounds.top + windowBounds.height > workArea.offsetHeight) {
       app.classList.add('open-top');
-      toggleContent.forEach((toggle) => {
-        toggle.style.top = 'auto';
-        toggle.style.bottom = 0;
-        toggle.style.transform = 'translateY(0)';
-      });
+      // toggleContent.forEach((toggle) => {
+      //   toggle.style.top = 'auto';
+      //   toggle.style.bottom = 0;
+      //   toggle.style.transform = 'translateY(0)';
+      // });
     } else {
       app.classList.remove('open-top');
-      toggleContent.forEach((toggle) => {
-        toggle.style.top = 0;
-        toggle.style.bottom = 'auto';
-        toggle.style.transform = `translateY(${
-          appLancher.offsetHeight +
-          (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber)
-        }px)`;
-      });
+      // toggleContent.forEach((toggle) => {
+      //   toggle.style.top = 0;
+      //   toggle.style.bottom = 'auto';
+      //   toggle.style.transform = `translateY(${
+      //     appLancher.offsetHeight +
+      //     (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber)
+      //   }px)`;
+      // });
     }
   }
 }
@@ -703,11 +702,11 @@ function setToolbarOrientation(isVertical) {
   q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
   app.classList.add(isVertical ? 'vertical' : 'horizontal');
   app.classList.remove(isVertical ? 'horizontal' : 'vertical');
-  viewport.style.transform = isVertical
-    ? `translateX(${toolbarPadding.vertical}px)`
-    : `translateY(${
-        appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
-      }px)`;
+  // viewport.style.transform = isVertical
+  //   ? `translateX(${toolbarPadding.vertical}px)`
+  //   : `translateY(${
+  //       appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
+  //     }px)`;
 
   qa('[column]').forEach((col) => {
     isVertical
@@ -723,6 +722,7 @@ async function handleToolbarOrientationChange() {
     isVertical = !isVertical;
 
     updateSetting({ vertical: isVertical });
+    setTimeout(() => setWindowVisibleArea(), 500);
 
     // TODO: On orientation switch the toolbar logo should stay at the same position
     if (isVertical) {
