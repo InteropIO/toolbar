@@ -2,11 +2,18 @@
 
 .horizontal {
   width: 100%;
+  max-height: 3rem;
+  // .app-content-header + app row * the number of apps that should be visible
+  top: calc(73px + (48px * 8));
+  @include transition("top, max-height", 0);
+
+  &.has-drawer {
+    max-height: calc(50px + 73px + (48px * 8));
+  }
 
   .viewport {
     display: flex;
     width: 100%;
-    height: 3rem;
 
     > .nav {
       flex-wrap: nowrap;

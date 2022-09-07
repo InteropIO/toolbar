@@ -21,7 +21,8 @@ html {
     }
 
     &.horizontal {
-      display: block;
+      display: flex;
+      flex-direction: column;
     }
 
     &.switching-orientation * {
@@ -315,6 +316,7 @@ html {
   }
 
   .viewport {
+    position: relative;
     z-index: 15;
     border: 1px solid rgba(255, 255, 255, 0.075);
     background-color: var(--t42-body);

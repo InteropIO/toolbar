@@ -65,7 +65,7 @@ function initVisibleArea() {
       rxjs.operators.combineLatest(topMenuVisibleObs, layoutDropDownVisibleObs)
     )
     .subscribe(([appBounds, topMenuVisible, layoutDropDownVisible]) => {
-      setWindowVisibleArea(topMenuVisible, layoutDropDownVisible);
+      setWindowVisibleArea(appBounds, topMenuVisible, layoutDropDownVisible);
     });
 
   setTimeout(() => setWindowVisibleArea(), 500);

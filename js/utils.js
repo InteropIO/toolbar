@@ -595,29 +595,22 @@ function setToolbarSize(appRows) {
       width: toolbarWidth.horizontal,
       height:
         appLancher.offsetHeight +
-        (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber) *
-          2,
+        (appContentHeader.offsetHeight + navItem.offsetHeight * 8) * 2,
     });
   }
 }
 
-function setWindowVisibleArea(topMenuVisible, layoutDropDownVisible) {
+function setWindowVisibleArea(
+  appBounds,
+  topMenuVisible,
+  layoutDropDownVisible
+) {
   isVertical = orientationObs.value;
   const visibleAreas = [];
 
-  visibleAreas.push(buildVisibleArea(q('.viewport')));
+  visibleAreas.push(buildVisibleArea(q('.app')));
 
-  if (isVertical) {
-    visibleAreas.push(buildVisibleArea(q('.app')));
-  } else {
-    const toggles = qa('.toggle-content');
-
-    toggles.forEach((toggle) => {
-      if (!toggle.classList.contains('hide')) {
-        visibleAreas.push(buildVisibleArea(toggle));
-      }
-    });
-
+  if (!isVertical) {
     if (topMenuVisible) {
       visibleAreas.push(buildVisibleArea(q('#menu-top')));
     }
@@ -702,11 +695,6 @@ function setToolbarOrientation(isVertical) {
   q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
   app.classList.add(isVertical ? 'vertical' : 'horizontal');
   app.classList.remove(isVertical ? 'horizontal' : 'vertical');
-  // viewport.style.transform = isVertical
-  //   ? `translateX(${toolbarPadding.vertical}px)`
-  //   : `translateY(${
-  //       appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
-  //     }px)`;
 
   qa('[column]').forEach((col) => {
     isVertical
@@ -809,9 +797,7 @@ async function setWindowMoveArea(isVertical) {
   } else {
     configureMyWindow({
       moveAreaLeftMargin: `0, ${Math.round(
-        appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
-      )}, 0, ${Math.round(
-        appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
+        appContentHeader.offsetHeight + navItem.offsetHeight * 8
       )}`,
       moveAreaThickness: `${Math.round(dragArea.width)}, 0, 0, 0`,
     });

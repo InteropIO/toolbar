@@ -3,7 +3,6 @@ import {
   setToolbarOrientation,
   setToolbarSize,
   setWindowMoveArea,
-  setWindowVisibleArea,
   fixWindowPosition,
 } from './utils.js';
 
@@ -503,7 +502,6 @@ async function trackSettingChange() {
     orientationObs.next(prefs.data.vertical);
     setToolbarOrientation(prefs.data.vertical);
     setToolbarSize(parseInt(prefs.data.toolbarAppRows));
-    // setWindowVisibleArea(prefs.data.vertical);
     fixWindowPosition(prefs.data.vertical, parseInt(prefs.data.toolbarAppRows));
     setWindowMoveArea(prefs.data.vertical);
   });
