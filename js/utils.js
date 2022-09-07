@@ -661,7 +661,7 @@ async function setDrawerOpenClass() {
       toggleContent.forEach((toggle) => {
         toggle.style.right = `${toolbarOffset}px`;
         toggle.style.left = 'auto';
-        toggle.style.transform = `translateX(0)`;
+        toggle.style.transform = 'translateX(0)';
       });
     } else {
       app.classList.remove('open-left');
@@ -677,7 +677,7 @@ async function setDrawerOpenClass() {
       toggleContent.forEach((toggle) => {
         toggle.style.top = 'auto';
         toggle.style.bottom = 0;
-        toggle.style.transform = `translateY(0)`;
+        toggle.style.transform = 'translateY(0)';
       });
     } else {
       app.classList.remove('open-top');
@@ -741,57 +741,53 @@ async function handleToolbarOrientationChange() {
 }
 
 async function fixWindowPosition(isVertical, appRows) {
+  const workArea = workAreaSizeObs.value;
   const windowBounds = await getWindowBounds();
   const appContentHeader = q('.app-content-header');
   const navItem = q('.nav-item');
   const appRowsNumber = appRows || getSetting('toolbarAppRows');
-  const monitors = await getMonitorInfo();
 
-  monitors.forEach((monitor) => {
-    console.log(monitor);
-    if (isVertical) {
-      // if toolbar position is outside of top monitor working area
-      if (windowBounds.top < monitor.top) {
-        moveMyWindow({
-          top: initialPosition.top,
-        });
-      }
+  console.log('window bounds:', windowBounds);
+  console.log('work area:', workArea);
 
-      // if toolbar position is outside of left monitor working area
-      if (windowBounds.left + toolbarPadding.vertical < monitor.left) {
-        moveMyWindow({
-          left: initialPosition.left - toolbarPadding.vertical,
-        });
-      }
-    } else {
-      // if toolbar position is outside of top monitor working area
-      if (
-        windowBounds.top +
-          (appContentHeader.offsetHeight +
-            navItem.offsetHeight * appRowsNumber) <
-          monitor.top ||
-        windowBounds.top ===
-          -(
-            appContentHeader.offsetHeight +
-            navItem.offsetHeight * appRowsNumber
-          )
-      ) {
-        moveMyWindow({
-          top:
-            initialPosition.top -
-            (appContentHeader.offsetHeight +
-              navItem.offsetHeight * appRowsNumber),
-        });
-      }
-
-      // if toolbar position is outside of left monitor working area
-      if (windowBounds.left < monitor.left) {
-        moveMyWindow({
-          left: initialPosition.left,
-        });
-      }
+  if (isVertical) {
+    // if toolbar position is outside of top monitor working area
+    if (windowBounds.top < workArea.top) {
+      moveMyWindow({
+        top: initialPosition.top,
+      });
     }
-  });
+
+    // if toolbar position is outside of left monitor working area
+    if (windowBounds.left + toolbarPadding.vertical < workArea.left) {
+      moveMyWindow({
+        left: initialPosition.left - toolbarPadding.vertical,
+      });
+    }
+  } else {
+    // if toolbar position is outside of top monitor working area
+    if (
+      windowBounds.top +
+        (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber) <
+        workArea.top ||
+      windowBounds.top ===
+        -(appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber)
+    ) {
+      moveMyWindow({
+        top:
+          initialPosition.top -
+          (appContentHeader.offsetHeight +
+            navItem.offsetHeight * appRowsNumber),
+      });
+    }
+
+    // if toolbar position is outside of left monitor working area
+    if (windowBounds.left < workArea.left) {
+      moveMyWindow({
+        left: initialPosition.left,
+      });
+    }
+  }
 
   console.warn('Window left the boundries of the monitor. Repositioning.');
 }
@@ -814,7 +810,7 @@ async function setWindowMoveArea(isVertical) {
       //   toggleContent.height
       // )}, 0, ${Math.round(toggleContent.height)}`,
       moveAreaLeftMargin: '0, 0, 0, 0',
-      moveAreaThickness: `60, 0, 0, 0`,
+      moveAreaThickness: `${Math.round(dragArea.width)}, 0, 0, 0`,
     });
   }
 }

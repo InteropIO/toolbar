@@ -503,7 +503,7 @@ async function trackSettingChange() {
     setToolbarOrientation(prefs.data.vertical);
     setToolbarSize(parseInt(prefs.data.toolbarAppRows));
     // TODO: setWindowVisibleArea();
-    fixWindowPosition(prefs.data.vertical, parseInt(prefs.data.toolbarAppRows)); // TODO: Check on multiple monitors
+    fixWindowPosition(prefs.data.vertical, parseInt(prefs.data.toolbarAppRows));
     setWindowMoveArea(prefs.data.vertical);
   });
 }
