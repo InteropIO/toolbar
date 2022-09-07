@@ -511,8 +511,9 @@ function populateSettingsDropdown(
   });
 }
 
-function handleToolbarAppRowsChange() {
+async function handleToolbarAppRowsChange() {
   isVertical = orientationObs.value;
+  const oldWindowBounds = await getWindowBounds();
   const numberOfRows = getSetting('toolbarAppRows');
   const app = q('.app');
   const appSelectOptions = {
@@ -542,6 +543,7 @@ function handleToolbarAppRowsChange() {
     if (e.target.matches('input.select_input[type="radio"]')) {
       const selectedLength = e.target.getAttribute('length-name');
 
+      repositionToolbarOnAppRowsChange(selectedLength, oldWindowBounds);
       updateSetting({ toolbarAppRows: selectedLength });
 
       if (!isVertical) {
@@ -552,6 +554,21 @@ function handleToolbarAppRowsChange() {
       }
     }
   });
+}
+
+function repositionToolbarOnAppRowsChange(appRowsNumber, oldBounds) {
+  isVertical = orientationObs.value;
+  const appContentHeader = q('.app-content-header');
+  const navItem = q('.content-items .nav-item');
+
+  if (!isVertical) {
+    moveMyWindow({
+      top:
+        oldBounds.top -
+        (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber),
+      left: initialPosition.left,
+    });
+  }
 }
 
 function setToolbarSize(appRows) {
