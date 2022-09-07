@@ -641,25 +641,6 @@ function buildVisibleArea(element) {
   };
 }
 
-// async function setToolbarPosition(appRows) {
-//   const windowBounds = await getWindowBounds();
-//   const appContentHeader = q('.app-content-header');
-//   const navItem = q('.nav-item');
-//   const appRowsNumber = appRows || getSetting('toolbarAppRows');
-
-//   console.log('my winodw bounds are:', windowBounds);
-
-//   if (!isVertical) {
-//     console.log('tuk');
-//     moveMyWindow({
-//       top:
-//         windowBounds.top -
-//         (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber),
-//       left: windowBounds.left,
-//     });
-//   }
-// }
-
 async function setDrawerOpenClass() {
   isVertical = orientationObs.value;
   const workArea = workAreaSizeObs.value;
@@ -764,9 +745,6 @@ async function fixWindowPosition(isVertical, appRows) {
   const navItem = q('.nav-item');
   const appRowsNumber = appRows || getSetting('toolbarAppRows');
 
-  console.log('window bounds:', windowBounds);
-  console.log('work area:', workArea);
-
   if (isVertical) {
     // if toolbar position is outside of top monitor working area
     if (windowBounds.top < workArea.top) {
@@ -811,6 +789,10 @@ async function fixWindowPosition(isVertical, appRows) {
 
 async function setWindowMoveArea(isVertical) {
   const dragArea = q('.draggable').getBoundingClientRect();
+  // TODO: Take out into a seperate function and use on all places that need these sizes
+  const appContentHeader = q('.app-content-header');
+  const navItem = q('.nav-item');
+  const appRowsNumber = getSetting('toolbarAppRows');
 
   if (isVertical) {
     configureMyWindow({
@@ -823,10 +805,11 @@ async function setWindowMoveArea(isVertical) {
     });
   } else {
     configureMyWindow({
-      // moveAreaLeftMargin: `0, ${Math.round(
-      //   toggleContent.height
-      // )}, 0, ${Math.round(toggleContent.height)}`,
-      moveAreaLeftMargin: '0, 0, 0, 0',
+      moveAreaLeftMargin: `0, ${Math.round(
+        appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
+      )}, 0, ${Math.round(
+        appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
+      )}`,
       moveAreaThickness: `${Math.round(dragArea.width)}, 0, 0, 0`,
     });
   }
