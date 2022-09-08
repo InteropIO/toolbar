@@ -703,6 +703,7 @@ function setToolbarOrientation(isVertical) {
   });
 }
 
+// TODO Galin: On orientation switch the toolbar logo should stay at the same position
 async function handleToolbarOrientationChange() {
   q('#toggle').addEventListener('click', () => {
     const app = q('.app');
@@ -712,7 +713,6 @@ async function handleToolbarOrientationChange() {
     updateSetting({ vertical: isVertical });
     setTimeout(() => setWindowVisibleArea(), 500);
 
-    // TODO: On orientation switch the toolbar logo should stay at the same position
     if (isVertical) {
       app.classList.remove('open-top');
       // moveMyWindow({
@@ -729,6 +729,7 @@ async function handleToolbarOrientationChange() {
   });
 }
 
+// TODO Galin: No spilling out of monitor boundires should be possible
 async function fixWindowPosition(isVertical, appRows) {
   const workArea = workAreaSizeObs.value;
   const windowBounds = await getWindowBounds();
@@ -797,7 +798,7 @@ async function setWindowMoveArea(isVertical) {
   } else {
     configureMyWindow({
       moveAreaLeftMargin: `0, ${Math.round(
-        appContentHeader.offsetHeight + navItem.offsetHeight * 8
+        appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
       )}`,
       moveAreaThickness: `${Math.round(dragArea.width)}, 0, 0, 0`,
     });
