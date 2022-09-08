@@ -654,6 +654,8 @@ async function setDrawerOpenClass() {
   const navItem = q('.content-items .nav-item');
 
   if (isVertical) {
+    app.style.left = `${toolbarDrawerSize.vertical}px`;
+
     if (windowBounds.left + windowBounds.width > workArea.offsetWidth) {
       app.classList.add('open-left');
       app.classList.contains('has-drawer')
