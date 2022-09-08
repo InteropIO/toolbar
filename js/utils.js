@@ -25,7 +25,7 @@ import {
 } from './glue-related.js';
 import {
   toolbarWidth,
-  toolbarPadding,
+  toolbarDrawerSize,
   initialPosition,
   updateSetting,
   getSetting,
@@ -585,8 +585,10 @@ function setToolbarSize(appRows) {
   contentItems.style.height = `${navItem.offsetHeight * appRowsNumber}px`;
 
   if (isVertical) {
+    app.style.left = `${toolbarDrawerSize.vertical}px`;
+
     moveMyWindow({
-      width: toolbarWidth.vertical + toolbarPadding.vertical * 2,
+      width: toolbarWidth.vertical + toolbarDrawerSize.vertical * 2,
       height:
         appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber,
     });
@@ -647,8 +649,6 @@ async function setDrawerOpenClass() {
   const windowBounds = await getWindowBounds();
   const app = q('.app');
   const appLancher = q('.viewport-header');
-  const toggleContent = qa('.toggle-content');
-  const toolbarOffset = toolbarPadding.vertical + toolbarWidth.vertical;
   const appContentHeader = q('.app-content-header');
   const appRowsNumber = getSetting('toolbarAppRows');
   const navItem = q('.content-items .nav-item');
@@ -656,18 +656,11 @@ async function setDrawerOpenClass() {
   if (isVertical) {
     if (windowBounds.left + windowBounds.width > workArea.offsetWidth) {
       app.classList.add('open-left');
-      // toggleContent.forEach((toggle) => {
-      //   toggle.style.right = `${toolbarOffset}px`;
-      //   toggle.style.left = 'auto';
-      //   toggle.style.transform = 'translateX(0)';
-      // });
+      app.classList.contains('has-drawer')
+        ? (app.style.left = '0')
+        : (app.style.left = `${toolbarDrawerSize.vertical}px`);
     } else {
       app.classList.remove('open-left');
-      // toggleContent.forEach((toggle) => {
-      //   toggle.style.right = 'auto';
-      //   toggle.style.left = 0;
-      //   toggle.style.transform = `translateX(${toolbarOffset}px)`;
-      // });
     }
   } else {
     app.style.top = `${
@@ -722,7 +715,7 @@ async function handleToolbarOrientationChange() {
       app.classList.remove('open-top');
       // moveMyWindow({
       //   top: initialPosition.top,
-      //   left: initialPosition.left - toolbarPadding.vertical,
+      //   left: initialPosition.left - toolbarDrawerSize.vertical,
       // });
     } else {
       app.classList.remove('open-left');
@@ -750,9 +743,9 @@ async function fixWindowPosition(isVertical, appRows) {
     }
 
     // if toolbar position is outside of left monitor working area
-    if (windowBounds.left + toolbarPadding.vertical < workArea.left) {
+    if (windowBounds.left + toolbarDrawerSize.vertical < workArea.left) {
       moveMyWindow({
-        left: initialPosition.left - toolbarPadding.vertical,
+        left: initialPosition.left - toolbarDrawerSize.vertical,
       });
     }
   } else {
@@ -792,9 +785,9 @@ async function setWindowMoveArea(isVertical) {
 
   if (isVertical) {
     configureMyWindow({
-      moveAreaTopMargin: `${toolbarPadding.vertical}, 0, ${
+      moveAreaTopMargin: `${toolbarDrawerSize.vertical}, 0, ${
         toolbarWidth.vertical +
-        toolbarPadding.vertical -
+        toolbarDrawerSize.vertical -
         Math.round(dragArea.width)
       }, 0`,
       moveAreaThickness: `0, ${Math.round(dragArea.height)}, 0, 0`,

@@ -20,7 +20,7 @@ const toolbarWidth = {
   vertical: 200,
   horizontal: 834,
 };
-const toolbarPadding = {
+const toolbarDrawerSize = {
   vertical: 300,
   horizontal: 550,
 };
@@ -106,7 +106,7 @@ function getSettings() {
 
 export {
   toolbarWidth,
-  toolbarPadding,
+  toolbarDrawerSize,
   initialPosition,
   setSettings,
   updateSetting,
