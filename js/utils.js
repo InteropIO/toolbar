@@ -573,6 +573,7 @@ function repositionToolbarOnAppRowsChange(appRowsNumber, oldBounds) {
 
 function setToolbarSize(appRows) {
   isVertical = orientationObs.value;
+  const app = q('.app');
   const appLancher = q('.viewport-header');
   const appContentHeader = q('.app-content-header');
   const appRowsNumber = appRows || getSetting('toolbarAppRows');
@@ -584,18 +585,23 @@ function setToolbarSize(appRows) {
   contentItems.style.height = `${navItem.offsetHeight * appRowsNumber}px`;
 
   if (isVertical) {
-    // document.body.style.padding = '0 300px';
     moveMyWindow({
       width: toolbarWidth.vertical + toolbarPadding.vertical * 2,
       height:
         appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber,
     });
   } else {
+    app.style.top = `${
+      appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
+    }px`;
+    app.style.maxHeight = `${appLancher.offsetHeight}px`;
+
     moveMyWindow({
       width: toolbarWidth.horizontal,
       height:
         appLancher.offsetHeight +
-        (appContentHeader.offsetHeight + navItem.offsetHeight * 8) * 2,
+        (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber) *
+          2,
     });
   }
 }
@@ -664,33 +670,32 @@ async function setDrawerOpenClass() {
       // });
     }
   } else {
+    app.style.top = `${
+      appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
+    }px`;
+    app.classList.contains('has-drawer')
+      ? (app.style.maxHeight = `${
+          appLancher.offsetHeight +
+          appContentHeader.offsetHeight +
+          navItem.offsetHeight * appRowsNumber
+        }px`)
+      : (app.style.maxHeight = `${appLancher.offsetHeight}px`);
+
     if (windowBounds.top + windowBounds.height > workArea.offsetHeight) {
       app.classList.add('open-top');
-      // toggleContent.forEach((toggle) => {
-      //   toggle.style.top = 'auto';
-      //   toggle.style.bottom = 0;
-      //   toggle.style.transform = 'translateY(0)';
-      // });
+      app.classList.contains('has-drawer')
+        ? (app.style.top = '0')
+        : appLancher.offsetHeight +
+          appContentHeader.offsetHeight +
+          navItem.offsetHeight * appRowsNumber;
     } else {
       app.classList.remove('open-top');
-      // toggleContent.forEach((toggle) => {
-      //   toggle.style.top = 0;
-      //   toggle.style.bottom = 'auto';
-      //   toggle.style.transform = `translateY(${
-      //     appLancher.offsetHeight +
-      //     (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber)
-      //   }px)`;
-      // });
     }
   }
 }
 
 function setToolbarOrientation(isVertical) {
   const app = q('.app');
-  const viewport = q('.viewport');
-  const appContentHeader = q('.app-content-header');
-  const appRowsNumber = getSetting('toolbarAppRows');
-  const navItem = q('.content-items .nav-item');
 
   q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
   app.classList.add(isVertical ? 'vertical' : 'horizontal');

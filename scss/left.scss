@@ -1,4 +1,4 @@
-.app {
+.vertical {
   &.open-left {
     @include transition("left, width", 0);
 

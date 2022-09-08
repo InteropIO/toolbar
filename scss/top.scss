@@ -1,11 +1,5 @@
-.open-top {
-  &.horizontal {
-    top: calc(73px + (48px * 8));
-
-    &.has-drawer {
-      top: 0;
-    }
-
+.horizontal {
+  &.open-top {
     .viewport {
       order: 1;
       margin-bottom: 0;
