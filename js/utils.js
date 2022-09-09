@@ -17,7 +17,7 @@ import {
   configureMyWindow,
   resizeWindowVisibleArea,
   minimize,
-  //   isMinimizeAllowed,
+  isMinimizeAllowed,
   checkNotificationsConfigure,
   configureNotifications,
   openFeedbackForm,
@@ -204,9 +204,9 @@ function handleMinimizeClick() {
     }
   });
 
-  //   isMinimizeAllowed().then(
-  //     (allowed) => allowed && q('.minimize').classList.remove('d-none')
-  //   );
+  isMinimizeAllowed().then(
+    (allowed) => allowed && q('.minimize').classList.remove('d-none')
+  );
 }
 
 function toggleTopButtonState(id) {

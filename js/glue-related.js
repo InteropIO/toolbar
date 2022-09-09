@@ -406,10 +406,10 @@ async function configureMyWindow(config) {
   win.configure(config);
 }
 
-// async function isMinimizeAllowed() {
-//   await gluePromise;
-//   return glue.windows.my().settings.allowMinimize;
-// }
+async function isMinimizeAllowed() {
+  await gluePromise;
+  return glue.windows.my().settings.allowMinimize;
+}
 
 async function raiseNotification(options) {
   await gluePromise;
@@ -553,7 +553,7 @@ export {
   moveMyWindow,
   configureMyWindow,
   minimize,
-  // isMinimizeAllowed,
+  isMinimizeAllowed,
   raiseNotification,
   getMonitorInfo,
   getWindowBounds,
