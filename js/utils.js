@@ -513,7 +513,6 @@ function populateSettingsDropdown(
 
 async function handleToolbarAppRowsChange() {
   isVertical = orientationObs.value;
-  const oldWindowBounds = await getWindowBounds();
   const numberOfRows = getSetting('toolbarAppRows');
   const app = q('.app');
   const appSelectOptions = {
@@ -550,9 +549,8 @@ async function handleToolbarAppRowsChange() {
           toggle.classList.add('hide');
         });
         app.classList.remove('open-top');
+        fixWindowPosition();
       }
-
-      fixWindowPosition();
     }
   });
 }
