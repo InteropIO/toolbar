@@ -543,7 +543,6 @@ async function handleToolbarAppRowsChange() {
     if (e.target.matches('input.select_input[type="radio"]')) {
       const selectedLength = e.target.getAttribute('length-name');
 
-      repositionToolbarOnAppRowsChange(selectedLength, oldWindowBounds);
       updateSetting({ toolbarAppRows: selectedLength });
 
       if (!isVertical) {
@@ -552,23 +551,10 @@ async function handleToolbarAppRowsChange() {
         });
         app.classList.remove('open-top');
       }
+
+      fixWindowPosition();
     }
   });
-}
-
-function repositionToolbarOnAppRowsChange(appRowsNumber, oldBounds) {
-  isVertical = orientationObs.value;
-  const appContentHeader = q('.app-content-header');
-  const navItem = q('.content-items .nav-item');
-
-  if (!isVertical) {
-    moveMyWindow({
-      top:
-        oldBounds.top -
-        (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber),
-      left: initialPosition.left,
-    });
-  }
 }
 
 function setToolbarSize(appRows) {
@@ -586,6 +572,10 @@ function setToolbarSize(appRows) {
 
   if (isVertical) {
     app.style.left = `${toolbarDrawerSize.vertical}px`;
+    app.style.top = '0';
+    app.style.maxHeight = `${
+      appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
+    }px`;
 
     moveMyWindow({
       width: toolbarWidth.vertical + toolbarDrawerSize.vertical * 2,
@@ -596,6 +586,7 @@ function setToolbarSize(appRows) {
     app.style.top = `${
       appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
     }px`;
+    app.style.left = '0';
     app.style.maxHeight = `${appLancher.offsetHeight}px`;
 
     moveMyWindow({
@@ -608,11 +599,7 @@ function setToolbarSize(appRows) {
   }
 }
 
-function setWindowVisibleArea(
-  appBounds,
-  topMenuVisible,
-  layoutDropDownVisible
-) {
+function setWindowVisibleArea(topMenuVisible, layoutDropDownVisible) {
   isVertical = orientationObs.value;
   const visibleAreas = [];
 
@@ -668,6 +655,7 @@ async function setDrawerOpenClass() {
     app.style.top = `${
       appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
     }px`;
+
     app.classList.contains('has-drawer')
       ? (app.style.maxHeight = `${
           appLancher.offsetHeight +
@@ -703,8 +691,7 @@ function setToolbarOrientation(isVertical) {
   });
 }
 
-// TODO Galin: On orientation switch the toolbar logo should stay at the same position
-async function handleToolbarOrientationChange() {
+function handleToolbarOrientationChange() {
   q('#toggle').addEventListener('click', () => {
     const app = q('.app');
     isVertical = orientationObs.value;
@@ -715,21 +702,14 @@ async function handleToolbarOrientationChange() {
 
     if (isVertical) {
       app.classList.remove('open-top');
-      // moveMyWindow({
-      //   top: initialPosition.top,
-      //   left: initialPosition.left - toolbarDrawerSize.vertical,
-      // });
     } else {
       app.classList.remove('open-left');
-      // moveMyWindow({
-      //   top: initialPosition.top - windowBounds.height,
-      //   left: initialPosition.left,
-      // });
     }
+
+    fixWindowPosition();
   });
 }
 
-// TODO Galin: No spilling out of monitor boundires should be possible
 async function fixWindowPosition(isVertical, appRows) {
   const workArea = workAreaSizeObs.value;
   const windowBounds = await getWindowBounds();
@@ -738,21 +718,21 @@ async function fixWindowPosition(isVertical, appRows) {
   const appRowsNumber = appRows || getSetting('toolbarAppRows');
 
   if (isVertical) {
-    // if toolbar position is outside of top monitor working area
+    // if toolbar position is outside of monitor working area top
     if (windowBounds.top < workArea.top) {
       moveMyWindow({
-        top: initialPosition.top,
+        top: workArea.top + initialPosition.top,
       });
     }
 
-    // if toolbar position is outside of left monitor working area
+    // if toolbar position is outside of monitor working area left
     if (windowBounds.left + toolbarDrawerSize.vertical < workArea.left) {
       moveMyWindow({
-        left: initialPosition.left - toolbarDrawerSize.vertical,
+        left: workArea.left + initialPosition.left - toolbarDrawerSize.vertical,
       });
     }
   } else {
-    // if toolbar position is outside of top monitor working area
+    // if toolbar position is outside of monitor working area top
     if (
       windowBounds.top +
         (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber) <
@@ -762,21 +742,35 @@ async function fixWindowPosition(isVertical, appRows) {
     ) {
       moveMyWindow({
         top:
+          workArea.top +
           initialPosition.top -
           (appContentHeader.offsetHeight +
             navItem.offsetHeight * appRowsNumber),
       });
     }
 
-    // if toolbar position is outside of left monitor working area
+    // if toolbar position is outside of monitor working area bottom
+    if (
+      windowBounds.top +
+        (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber) >
+      workArea.offsetHeight
+    ) {
+      moveMyWindow({
+        top:
+          workArea.top +
+          initialPosition.top -
+          (appContentHeader.offsetHeight +
+            navItem.offsetHeight * appRowsNumber),
+      });
+    }
+
+    // if toolbar position is outside of monitor working area left
     if (windowBounds.left < workArea.left) {
       moveMyWindow({
-        left: initialPosition.left,
+        left: workArea.left + initialPosition.left,
       });
     }
   }
-
-  console.warn('Window left the boundries of the monitor. Repositioning.');
 }
 
 async function setWindowMoveArea(isVertical) {
@@ -798,6 +792,8 @@ async function setWindowMoveArea(isVertical) {
   } else {
     configureMyWindow({
       moveAreaLeftMargin: `0, ${Math.round(
+        appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
+      )}, 0, ${Math.round(
         appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
       )}`,
       moveAreaThickness: `${Math.round(dragArea.width)}, 0, 0, 0`,
