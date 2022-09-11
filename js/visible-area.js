@@ -1,20 +1,26 @@
 import * as glueModule from './glue-related.js';
-import { resizeVisibleArea } from './utils.js';
+import { setWindowVisibleArea } from './utils.js';
 
 let topMenuVisibleObs = new rxjs.BehaviorSubject(false);
 let layoutDropDownVisibleObs = new rxjs.BehaviorSubject(false);
-let openTopObs = new rxjs.BehaviorSubject(false);
-let openLeftObs = new rxjs.BehaviorSubject(false);
 let layoutOpenedTimeout;
 
 function initVisibleArea() {
+  let appBoundsObs = new rxjs.BehaviorSubject({
+    width: Math.round(q('.app').offsetWidth),
+    height: Math.round(q('.app').offsetHeight),
+    left: 0,
+    top: 0,
+  });
+  window.appBoundsObs = appBoundsObs;
+
   q('.layouts-nav').addEventListener('mouseenter', (e) => {
     if (
       e.target.matches &&
       e.target.matches('.horizontal .layouts-nav, .horizontal .layouts-nav *')
     ) {
       layoutOpenedTimeout = setTimeout(() => {
-        applyOpenClasses();
+        // applyOpenClasses();
         layoutDropDownVisibleObs.next(true);
       }, 500);
     }
@@ -32,14 +38,6 @@ function initVisibleArea() {
       }
     }
   });
-
-  let appBoundsObs = new rxjs.BehaviorSubject({
-    width: Math.round(q('.app').offsetWidth),
-    height: Math.round(q('.app').offsetHeight),
-    left: 200,
-    top: 50,
-  });
-  window.appBoundsObs = appBoundsObs;
 
   glueModule.boundsObs
     .pipe(rxjs.operators.filter((bounds) => bounds))
@@ -59,28 +57,6 @@ function initVisibleArea() {
           q('.app').classList.add('expand-wrapper');
           return;
         }
-
-        if (!q('.viewport').classList.contains('horizontal')) {
-          let shouldOpenLeft =
-            glueModule.boundsObs.value.left + glueModule.boundsObs.value.width >
-            currentMonitor.left + currentMonitor.width;
-
-          openLeftObs.next(shouldOpenLeft);
-
-          if (shouldOpenLeft) {
-            openTopObs.next(false);
-          }
-        } else {
-          let shouldOpenTop =
-            glueModule.boundsObs.value.top + glueModule.boundsObs.value.height >
-            currentMonitor.workingAreaTop + currentMonitor.workingAreaHeight;
-
-          openTopObs.next(shouldOpenTop);
-
-          if (shouldOpenTop) {
-            openLeftObs.next(false);
-          }
-        }
       });
     });
 
@@ -89,15 +65,17 @@ function initVisibleArea() {
       rxjs.operators.combineLatest(topMenuVisibleObs, layoutDropDownVisibleObs)
     )
     .subscribe(([appBounds, topMenuVisible, layoutDropDownVisible]) => {
-      resizeVisibleArea(topMenuVisible, layoutDropDownVisible);
+      setWindowVisibleArea(topMenuVisible, layoutDropDownVisible);
     });
+
+  setTimeout(() => setWindowVisibleArea(), 500);
 }
 
 function handleDropDownClicks() {
   document.addEventListener('click', (e) => {
     if (e.target.matches('[dropdown-button-id], [dropdown-button-id] *')) {
       //dropdown button click  - toggle dropdown
-      applyOpenClasses();
+      // applyOpenClasses();
 
       let btnElement = e.path.find((e) => e.getAttribute('dropdown-button-id'));
       let menuId = btnElement.getAttribute('dropdown-button-id');
@@ -110,37 +88,6 @@ function handleDropDownClicks() {
       qa(`[dropdown-id].show`).forEach((e) => e.classList.remove('show'));
       topMenuVisibleObs.next(false);
     }
-  });
-}
-
-function applyOpenClasses() {
-  if (q('.has-drawer')) {
-    return;
-  }
-
-  let openLeft = openLeftObs.value;
-  let openTop = openTopObs.value;
-
-  if (openLeft && !q('.viewport.horizontal')) {
-    document.body.classList.add('open-left');
-  }
-
-  if (openTop && q('.viewport.horizontal')) {
-    document.body.classList.add('open-top');
-  }
-
-  if (!openLeft) {
-    document.body.classList.remove('open-left');
-  }
-
-  if (!openTop) {
-    document.body.classList.remove('open-top');
-  }
-
-  return new Promise((res, rej) => {
-    setTimeout(() => {
-      res();
-    });
   });
 }
 
@@ -197,11 +144,4 @@ function calculateTotalOverlap(r1, r2) {
   return xOverlap * yOverlap;
 }
 
-export {
-  initVisibleArea,
-  handleWidthChange,
-  handleDropDownClicks,
-  applyOpenClasses,
-  getMonitor,
-  openTopObs,
-};
+export { initVisibleArea, handleWidthChange, handleDropDownClicks, getMonitor };

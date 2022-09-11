@@ -1,12 +1,10 @@
-.open-top {
-  .app {
-    @include transition("top", 0);
-    display: flex;
-    flex-direction: column-reverse;
-  }
+.horizontal {
+  &.open-top {
+    .viewport {
+      order: 1;
+      margin-bottom: 0;
+      @include transition("margin-bottom", 50);
 
-  .h {
-    .horizontal {
       .dropdown-menu {
         top: -8.125rem;
         margin-top: 0 !important;
@@ -25,14 +23,9 @@
       }
     }
 
-    .viewport {
-      order: 1;
-    }
-
     .toggle-content {
       border-top: 1px solid rgba(255, 255, 255, 0.075);
       border-bottom: 0;
-      transform: translateY(-100%);
 
       &.hide {
         border-top: 0;

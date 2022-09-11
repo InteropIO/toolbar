@@ -3,7 +3,6 @@ import {
   checkNotificationsConfigure,
   configureNotifications,
 } from './glue-related.js';
-import { setToolbarSize, setToolbarPosition } from './utils.js';
 
 let settings = {
   showTutorial: true,
@@ -21,7 +20,7 @@ const toolbarWidth = {
   vertical: 200,
   horizontal: 834,
 };
-const toolbarPadding = {
+const toolbarDrawerSize = {
   vertical: 300,
   horizontal: 550,
 };
@@ -30,7 +29,7 @@ const initialPosition = {
   left: 20,
 };
 
-function init() {
+async function init() {
   populateSettings();
   trackSettingsChange();
 }
@@ -46,9 +45,6 @@ async function populateSettings() {
   } else {
     q('.settings-notifications').classList.add('d-none');
   }
-
-  setToolbarSize();
-  setToolbarPosition();
 
   for (const setting in settings) {
     if (
@@ -110,7 +106,7 @@ function getSettings() {
 
 export {
   toolbarWidth,
-  toolbarPadding,
+  toolbarDrawerSize,
   initialPosition,
   setSettings,
   updateSetting,

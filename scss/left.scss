@@ -1,44 +1,31 @@
-.open-left {
-  overflow: hidden;
-
-  .app {
-    position: relative;
-    left: 0;
+.vertical {
+  &.open-left {
     @include transition("left, width", 0);
-    margin-left: 140px;
-  }
 
-  .app .toggle-content {
-    width: 300px;
-    @include transition("width, left", 0);
-
-    > div,
-    > .nav {
-      width: auto;
+    .viewport {
+      order: 1;
     }
 
-    h3 {
-      padding-right: 0;
+    .toggle-content {
+      width: 300px;
+      @include transition("width, left", 0);
+
+      &.hide {
+        width: 0px;
+      }
+
+      > div,
+      > .nav {
+        width: auto;
+      }
+
+      h3 {
+        padding-right: 0;
+      }
+
+      .close-drawer {
+        transform: rotate(-90deg);
+      }
     }
-
-    .close-drawer {
-      transform: rotate(-90deg);
-    }
-  }
-
-  .app .toggle-content.hide {
-    width: 0px;
-  }
-
-  .app.expand-wrapper {
-    left: -140px;
-  }
-
-  .app.expand-wrapper.has-drawer {
-    left: -440px;
-  }
-
-  .viewport {
-    order: 2;
   }
 }

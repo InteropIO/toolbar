@@ -50,10 +50,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function init() {
   await glueModule.getPrefs();
+  await glueModule.trackSettingChange();
 
   initVisibleArea();
 
   console.log('window loaded');
+
   printApps();
   printRunningApps();
   printLayouts();
@@ -71,7 +73,7 @@ async function init() {
   handleDropDownClicks();
   handleClientAndInstrumentClicks();
 
-  utils.handleClicks();
+  utils.handleEvents();
   utils.startTutorial();
   glueModule.registerHotkey();
   glueModule.focusWindow(utils.focusInputAfterWindowRecover);

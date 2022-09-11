@@ -1,10 +1,14 @@
 @import "left";
 
 .vertical {
-  height: 100%;
+  width: auto;
 
-  > .flex-column {
+  .viewport {
     height: 100%;
+
+    > .flex-column {
+      height: 100%;
+    }
   }
 
   .viewport-header {
@@ -16,7 +20,7 @@
     overflow: hidden;
   }
 
-  &.expand {
+  .expand {
     width: 200px;
 
     .viewport-header {

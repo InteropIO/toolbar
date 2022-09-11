@@ -10,17 +10,17 @@
 <body class="">
   <script>
     if (!window.Glue) {
-      console.warn('Glue is not auto imported, will add it as a script');
+      console.warn("Glue is not auto imported, will add it as a script");
 
-      let scriptEl = document.createElement('script');
+      let scriptEl = document.createElement("script");
 
-      scriptEl.setAttribute('src', 'assets/desktop.umd.min.js');
+      scriptEl.setAttribute("src", "assets/desktop.umd.min.js");
       document.body.appendChild(scriptEl);
     }
   </script>
 
-  <div class="app d-inline-flex">
-    <div id="applicationLauncher" class="viewport vertical">
+  <div class="app">
+    <div id="applicationLauncher" class="viewport">
       <ul class="nav nav-tabs flex-column" column>
         <li class="viewport-header">
           <div class="draggable"></div>
@@ -59,12 +59,8 @@
             <span class="text-animation">Layouts</span>
           </a>
           <div class="layout-menu-tool">
-            <div id="load" menu-button-id="layout-load">
-              Load
-            </div>
-            <div id="save" menu-button-id="layout-save">
-              Save
-            </div>
+            <div id="load" menu-button-id="layout-load">Load</div>
+            <div id="save" menu-button-id="layout-save">Save</div>
           </div>
         </li>
         <li class="favorite position-relative">
@@ -72,7 +68,7 @@
           <i class="icon-star-full"></i>
         </li>
         <li class="fav-app-nav">
-          <ul id="fav-apps" class="nav nav-tabs  flex-column accordion" column></ul>
+          <ul id="fav-apps" class="nav nav-tabs flex-column accordion" column></ul>
         </li>
         <li class="nav-item viewport-footer d-none" id="feedback-panel">
           <a class="nav-link" href="#">
@@ -140,12 +136,30 @@
     <div class="toggle-content hide" id="settings-content" menu-id="settings">
       <div class="settings-general p-2 border-bottom border-secondary">
         <h5 class="d-flex justify-content-between">
-          Settings
+          General Settings
           <span class="icon-arrow-up-down close-drawer"></span>
         </h5>
         <form>
-          <hr class="mt-2 mb-2" />
-          <h5>Select Theme</h5>
+          <div class="form-check show-tutorial-check ml-2">
+            <input class="form-check-input show-tutorial" type="checkbox" value="1" id="show-tutorial"
+              setting="showTutorial" />
+            <label class="form-check-label" for="show-tutorial">
+              Show Tutorial on Startup
+            </label>
+          </div>
+          <div class="form-check save-default-layout-check ml-2"
+            title="If this option is turned on, you won't be able to specify default layouts">
+            <input class="form-check-input save-default-layout" type="checkbox" value="1" id="save-default-layout"
+              setting="saveDefaultLayout" />
+            <label class="form-check-label" for="save-default-layout">
+              Save Layout on Exit
+            </label>
+          </div>
+        </form>
+      </div>
+      <div class="settings-theme p-2 pb-0 border-bottom border-secondary">
+        <h5 class="d-flex justify-content-between">Select Theme</h5>
+        <form>
           <ul class="select theme-select">
             <li class="select_items">
               <input class="select_expand" type="radio" name="theme" id="theme-opener" />
@@ -154,9 +168,12 @@
               <label class="select_expandLabel" for="theme-opener"></label>
             </li>
           </ul>
-          <hr class="mt-2 mb-2" />
-          <h5>Select Toolbar length</h5>
-          <ul class="select length-select mb-1">
+        </form>
+      </div>
+      <div class="settings-length p-2 pb-0 border-bottom border-secondary">
+        <h5 class="d-flex justify-content-between">Select Toolbar Length</h5>
+        <form>
+          <ul class="select length-select mb-2">
             <li class="select_items">
               <input class="select_expand" type="radio" name="length" id="length-opener" />
               <label class="select_closeLabel" for="closeLength"></label>
@@ -164,50 +181,32 @@
               <label class="select_expandLabel" for="length-opener"></label>
             </li>
           </ul>
-          <p class="fs-6 fst-italic mb-2">*How many menu items will be shown at a time.</p>
-          <hr class="mt-2 mb-2" />
-          <div class="form-check show-tutorial-check ml-2">
-            <input class="form-check-input show-tutorial" type="checkbox" value="1" id="show-tutorial"
-              setting="showTutorial" />
-            <label class="form-check-label" for="show-tutorial">
-              Show tutorial on startup
-            </label>
-          </div>
-          <div class="form-check save-default-layout-check ml-2"
-            title="If this option is turned on, you won't be able to specify default layouts">
-            <input class="form-check-input save-default-layout" type="checkbox" value="1" id="save-default-layout"
-              setting="saveDefaultLayout" />
-            <label class="form-check-label" for="save-default-layout">
-              Save layout on exit
-            </label>
-          </div>
+          <p class="fs-6 fst-italic mb-2">
+            *How many menu items will be shown at a time.
+          </p>
         </form>
       </div>
       <div class="settings-search p-2 border-bottom border-secondary">
-        <h5 class="d-flex justify-content-between">
-          Search
-        </h5>
+        <h5 class="d-flex justify-content-between">Search</h5>
         <form>
           <div class="form-check ml-2">
             <input class="form-check-input search-clients" type="checkbox" value="1" id="search-clients"
               setting="searchClients" />
             <label class="form-check-label" for="search-clients">
-              Search clients
+              Search Clients
             </label>
           </div>
           <div class="form-check ml-2">
             <input class="form-check-input search-instruments" type="checkbox" value="1" id="search-instruments"
               setting="searchInstruments" />
             <label class="form-check-label" for="search-instruments">
-              Search instruments
+              Search Instruments
             </label>
           </div>
         </form>
       </div>
-      <div class="settings-notifications p-2 border-bottom border-secondary">
-        <h5 class="d-flex justify-content-between">
-          Notifications
-        </h5>
+      <div class="settings-notifications p-2">
+        <h5 class="d-flex justify-content-between">Notifications</h5>
         <form>
           <div class="form-check ml-2">
             <input class="form-check-input enable-notifications" type="checkbox" value="1" id="enable-notifications"
@@ -258,13 +257,13 @@
           <tr>
             <td class="text-right">Status:</td>
             <td class="pl-3 status-connected d-none">
-              <span class="icon-size-12 ">
+              <span class="icon-size-12">
                 <i class="icon-record position-relative text-success"></i>
               </span>
               <span>Connected</span>
             </td>
             <td class="pl-3 status-disconnected">
-              <span class="icon-size-12 ">
+              <span class="icon-size-12">
                 <i class="icon-record position-relative text-danger"></i>
               </span>
               <span>Disconnected</span>
@@ -321,11 +320,11 @@
       </div>
       <div class="p-2">
         <h5 class="d-flex justify-content-between">Actions</h5>
-        <div class="d-flex justify-content-between">
+        <div class="d-flex justify-content-start">
           <button type="button" class="btn btn-secondary" id="Profile_Restart">
             Restart
           </button>
-          <button type="button" class="btn btn-secondary" id="Profile_Shutdown">
+          <button type="button" class="btn btn-secondary mx-1" id="Profile_Shutdown">
             Shutdown
           </button>
           <button type="button" class="btn btn-secondary" id="Profile_Feedback">
@@ -342,8 +341,8 @@
   </script>
   <script>
     if (window.glue42gd && glue42gd.theme) {
-      const allThemes = ['dark', 'light'];
-      const html = q('html');
+      const allThemes = ["dark", "light"];
+      const html = q("html");
 
       html.classList.remove(...allThemes);
       html.classList.add(glue42gd.theme);

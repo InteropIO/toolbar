@@ -1,241 +1,233 @@
 @import "top";
 
 .horizontal {
-  position: relative;
-  display: flex;
   width: 100%;
-  height: 3rem;
+  @include transition("top, max-height", 0);
 
-  > .nav {
-    flex-wrap: nowrap;
-    width: calc(100% - 40px);
-  }
+  .viewport {
+    display: flex;
+    width: 100%;
 
-  .draggable {
-    width: 3.75rem;
-  }
-
-  .accordion {
-    overflow-x: hidden;
-    overflow-y: auto;
-  }
-
-  &.viewport .viewport-header {
-    .logo {
-      min-width: initial;
-      overflow: hidden;
+    > .nav {
+      flex-wrap: nowrap;
+      width: calc(100% - 40px);
     }
 
-    .dropdown-menu {
-      right: -0.188rem;
-      margin-top: 0.5rem;
-    }
-  }
-
-  .app-active {
-    &::before {
-      @include transition("width, left, right", 0);
-      width: 23px;
-      height: 3px;
-      top: unset;
-      right: 30%;
-      bottom: 0;
-      left: 30%;
+    .accordion {
+      overflow-x: hidden;
+      overflow-y: auto;
     }
 
-    &:hover {
-      &::before {
-        top: unset;
-        width: 100%;
-        left: 0;
+    .viewport-header {
+      position: static;
+
+      .logo {
+        min-width: initial;
+        overflow: hidden;
       }
-    }
-  }
 
-  .nav {
-    .applications-nav::before,
-    .favorite::after,
-    .viewport-footer:before {
-      @include horizontal-divider;
-    }
-
-    .favorite::after {
-      left: 0.563rem;
-    }
-
-    .favorite {
-      height: 3rem;
-
-      i {
-        padding: 0.25rem 0;
-        top: 1rem;
-      }
-    }
-
-    .icon-angle-right {
-      transform: rotate(90deg);
-    }
-
-    .chevron-rotate {
-      transform: rotate(-90deg);
-    }
-
-    .show-actions {
-      overflow: hidden;
-
-      &:hover,
-      &.active {
-        overflow: visible;
-
-        i,
-        .text-animation,
-        .action-menu-tool,
-        span {
-          opacity: 1;
-          visibility: visible;
-        }
-
-        .layout-menu-tool div {
-          &:first-of-type {
-            animation: none;
-            border-right: 0;
-          }
-
-          &:last-of-type {
-            animation: none;
-          }
-        }
-      }
-    }
-  }
-
-  .fav-app-nav {
-    flex-wrap: nowrap;
-  }
-
-  .viewport-header {
-    position: static;
-
-    .menu {
-      position: absolute;
-      top: 0.875rem;
-      right: 0.125rem;
-      z-index: 11;
-      display: flex;
-    }
-  }
-
-  .nav-tabs {
-    height: 100%;
-
-    li {
-      flex-basis: 59px;
-      width: 60px;
-
-      &.fav-app-nav {
-        flex-grow: 1;
+      .menu {
+        position: absolute;
+        top: 0.875rem;
+        right: 0.125rem;
+        z-index: 11;
         display: flex;
-        align-items: center;
+      }
 
-        &::-webkit-scrollbar {
-          height: 1px;
-        }
+      .dropdown-menu {
+        right: -0.188rem;
+        margin-top: 0.5rem;
+      }
+    }
 
-        .nav {
-          flex-wrap: nowrap;
+    .app-active {
+      &::before {
+        @include transition("width, left, right", 0);
+        width: 23px;
+        height: 3px;
+        top: unset;
+        right: 30%;
+        bottom: 0;
+        left: 30%;
+      }
+
+      &:hover {
+        &::before {
+          top: unset;
           width: 100%;
+          left: 0;
+        }
+      }
+    }
+
+    .nav {
+      .applications-nav::before,
+      .favorite::after,
+      .viewport-footer:before {
+        @include horizontal-divider;
+      }
+
+      .favorite::after {
+        left: 0.563rem;
+      }
+
+      .favorite {
+        height: 3rem;
+
+        i {
+          padding: 0.25rem 0;
+          top: 1rem;
+        }
+      }
+
+      .icon-angle-right {
+        transform: rotate(90deg);
+      }
+
+      .chevron-rotate {
+        transform: rotate(-90deg);
+      }
+
+      .show-actions {
+        overflow: hidden;
+
+        &:hover,
+        &.active {
+          overflow: visible;
+
+          i,
+          .text-animation,
+          .action-menu-tool,
+          span {
+            opacity: 1;
+            visibility: visible;
+          }
+
+          .layout-menu-tool div {
+            &:first-of-type {
+              animation: none;
+              border-right: 0;
+            }
+
+            &:last-of-type {
+              animation: none;
+            }
+          }
+        }
+      }
+    }
+
+    .fav-app-nav {
+      flex-wrap: nowrap;
+    }
+
+    .nav-tabs {
+      height: 100%;
+
+      li {
+        flex-basis: 59px;
+        width: 60px;
+
+        &.fav-app-nav {
+          flex-grow: 1;
+          display: flex;
+          align-items: center;
 
           &::-webkit-scrollbar {
-            width: 0;
             height: 1px;
           }
 
-          &::-webkit-scrollbar-button {
-            display: none;
-          }
+          .nav {
+            flex-wrap: nowrap;
+            width: 100%;
 
-          &::-webkit-scrollbar-thumb {
-            background-color: rgba(255, 255, 255, 0.3);
-          }
-
-          &:hover {
-            overflow-x: auto;
-            overflow-y: scroll;
-
-            .app-active::before {
-              height: 2px;
+            &::-webkit-scrollbar {
+              width: 0;
+              height: 1px;
             }
-          }
 
-          .nav-item {
-            flex-basis: 59px;
-            overflow: hidden;
-
-            .text-animation,
-            .text-animation:hover {
+            &::-webkit-scrollbar-button {
               display: none;
             }
+
+            &::-webkit-scrollbar-thumb {
+              background-color: rgba(255, 255, 255, 0.3);
+            }
+
+            &:hover {
+              overflow-x: auto;
+              overflow-y: scroll;
+
+              .app-active::before {
+                height: 2px;
+              }
+            }
+
+            .nav-item {
+              flex-basis: 59px;
+              overflow: hidden;
+
+              .text-animation,
+              .text-animation:hover {
+                display: none;
+              }
+            }
           }
         }
       }
-    }
 
-    .nav-item {
-      @include transition("flex-basis", 0);
+      .nav-item {
+        @include transition("flex-basis", 0);
 
-      &:hover {
-        flex-basis: 11rem;
+        &:hover {
+          flex-basis: 11rem;
 
-        .nav-link {
-          .text-animation {
-            @include text-animation("on", "", 100);
-          }
-        }
-      }
-
-      .nav-link {
-        &.active {
-          &::before {
-            bottom: 0;
-          }
-
-          .text-animation {
-            @include text-animation("off", "", 100);
-          }
-
-          &:hover {
+          .nav-link {
             .text-animation {
               @include text-animation("on", "", 100);
             }
           }
         }
+
+        .nav-link {
+          &.active {
+            &::before {
+              bottom: 0;
+            }
+
+            .text-animation {
+              @include text-animation("off", "", 100);
+            }
+
+            &:hover {
+              .text-animation {
+                @include text-animation("on", "", 100);
+              }
+            }
+          }
+        }
       }
-    }
 
-    .layout-menu-tool {
-      top: calc(3rem - 2px);
-      z-index: 21;
-      flex-direction: column;
-      height: 6rem;
-    }
-
-    &.expand {
-      .menu {
-        display: flex;
+      .layout-menu-tool {
+        top: calc(3rem - 2px);
+        z-index: 21;
+        flex-direction: column;
+        height: 6rem;
       }
-    }
 
-    .viewport-footer {
-      margin-top: initial;
-      margin-left: auto;
-      overflow-x: clip;
+      &.expand {
+        .menu {
+          display: flex;
+        }
+      }
+
+      .viewport-footer {
+        margin-top: initial;
+        margin-left: auto;
+        overflow-x: clip;
+      }
     }
   }
-}
-
-.h {
-  width: 100%;
-  height: auto;
 
   .toggle-content {
     width: 100%;
