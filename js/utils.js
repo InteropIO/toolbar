@@ -569,7 +569,10 @@ function setToolbarSize(appRows) {
   contentItems.style.height = `${navItem.offsetHeight * appRowsNumber}px`;
 
   if (isVertical) {
-    app.style.left = `${toolbarDrawerSize.vertical}px`;
+    app.classList.contains('open-left')
+      ? (app.style.left = '0')
+      : (app.style.left = `${toolbarDrawerSize.vertical}px`);
+
     app.style.top = '0';
     app.style.maxHeight = `${
       appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
