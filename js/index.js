@@ -52,8 +52,6 @@ async function init() {
   await glueModule.getPrefs();
   await glueModule.trackSettingChange();
 
-  utils.fixWindowPosition();
-
   initVisibleArea();
 
   console.log('window loaded');
