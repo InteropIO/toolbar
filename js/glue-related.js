@@ -106,9 +106,7 @@ function handleWindowZoom() {
 
 function handleWindowZoomWithTimeout() {
   setTimeout(() => {
-    console.log('timeout...');
     handleWindowZoom();
-    console.log('----------------');
   }, 1000);
 }
 
