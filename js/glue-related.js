@@ -1,4 +1,4 @@
-import { setSettings, updateSettings, getSetting } from './settings.js';
+import { setSettings, updateSettings, getSetting, getSettings } from './settings.js';
 import {
   setToolbarOrientation,
   setToolbarSize,
@@ -215,7 +215,7 @@ async function startApp(appName, context) {
   if (glueApp) {
     glueApp
       .start(context)
-      .then(() => {})
+      .then(() => { })
       .catch((e) => {
         console.warn('Failed to start app');
         console.warn(e);
@@ -366,8 +366,8 @@ async function resizeWindowVisibleArea(visibleAreas) {
         areas: visibleAreas,
       },
     })
-    .then(() => {})
-    .catch(() => {}); // TODO
+    .then(() => { })
+    .catch(() => { }); // TODO
 }
 
 async function changeTheme(themeName) {
@@ -487,7 +487,12 @@ async function getUserProperties() {
 async function getPrefs() {
   await gluePromise;
   const prefs = await glue.prefs.get();
-  setSettings(prefs.data);
+  // if we don't have any prefs, get the default ones and update them
+  if (Object.keys(prefs).length === 0) {
+    await glue.prefs.update(getSettings());
+  } else {
+    setSettings(prefs.data);
+  }
   glue.prefs.subscribe((prefs) => {
     updateSettings(prefs.data);
   });
