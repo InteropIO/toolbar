@@ -60,7 +60,40 @@ gluePromise.then((glue) => {
   trackWindowMove();
   trackConnection();
   trackNotificationCount();
+  trackWindowZoom();
 });
+
+function trackWindowZoom() {
+  trackPixelRatio();
+
+  glue.windows.my().onBoundsChanged(() => {
+    trackPixelRatio();
+  });
+}
+
+function trackPixelRatio() {
+  const pixelRatio = parseFloat(window.devicePixelRatio).toFixed(2);
+
+  matchMedia(`(resolution: ${pixelRatio}dppx)`).addEventListener(
+    'change',
+    trackPixelRatio,
+    { once: true }
+  );
+
+  window.addEventListener('resize', () => {
+    updateWindowZoom();
+  });
+
+  updateWindowZoom();
+}
+
+function updateWindowZoom() {
+  const glueWindowHeight = glue.windows.my().bounds.height;
+  const windowHeight = window.innerHeight;
+  const zoomRatio = parseFloat(windowHeight / glueWindowHeight).toFixed(2);
+
+  document.body.style.zoom = zoomRatio;
+}
 
 function trackApplications() {
   pushAllApps();
@@ -164,7 +197,6 @@ async function trackWindowMove() {
 }
 
 async function trackWorkAreaSize() {
-  await gluePromise;
   let currentMonitorOffsetWidth;
   let currentMonitorOffsetHeight;
   const currentMonitor = await glue.windows.my().getDisplay();
