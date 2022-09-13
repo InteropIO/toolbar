@@ -1,4 +1,9 @@
-import { setSettings, updateSettings, getSetting, getSettings } from './settings.js';
+import {
+  setSettings,
+  updateSettings,
+  getSetting,
+  getSettings,
+} from './settings.js';
 import {
   setToolbarOrientation,
   setToolbarSize,
@@ -64,35 +69,47 @@ gluePromise.then((glue) => {
 });
 
 function trackWindowZoom() {
-  trackPixelRatio();
+  handlePixelRatioChange();
+  handleWindowResize();
 
   glue.windows.my().onBoundsChanged(() => {
-    trackPixelRatio();
+    handleWindowZoom();
+    handleWindowZoomWithTimeout();
   });
 }
 
-function trackPixelRatio() {
+function handlePixelRatioChange() {
   const pixelRatio = parseFloat(window.devicePixelRatio).toFixed(2);
 
   matchMedia(`(resolution: ${pixelRatio}dppx)`).addEventListener(
     'change',
-    trackPixelRatio,
+    handlePixelRatioChange,
     { once: true }
   );
 
-  window.addEventListener('resize', () => {
-    updateWindowZoom();
-  });
-
-  updateWindowZoom();
+  handleWindowZoom();
 }
 
-function updateWindowZoom() {
+function handleWindowResize() {
+  window.addEventListener('resize', () => {
+    handleWindowZoom();
+  });
+}
+
+function handleWindowZoom() {
   const glueWindowHeight = glue.windows.my().bounds.height;
   const windowHeight = window.innerHeight;
   const zoomRatio = parseFloat(windowHeight / glueWindowHeight).toFixed(2);
 
   document.body.style.zoom = zoomRatio;
+}
+
+function handleWindowZoomWithTimeout() {
+  setTimeout(() => {
+    console.log('timeout...');
+    handleWindowZoom();
+    console.log('----------------');
+  }, 1000);
 }
 
 function trackApplications() {
@@ -247,7 +264,7 @@ async function startApp(appName, context) {
   if (glueApp) {
     glueApp
       .start(context)
-      .then(() => { })
+      .then(() => {})
       .catch((e) => {
         console.warn('Failed to start app');
         console.warn(e);
@@ -398,8 +415,8 @@ async function resizeWindowVisibleArea(visibleAreas) {
         areas: visibleAreas,
       },
     })
-    .then(() => { })
-    .catch(() => { }); // TODO
+    .then(() => {})
+    .catch(() => {}); // TODO
 }
 
 async function changeTheme(themeName) {
