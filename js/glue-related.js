@@ -69,45 +69,33 @@ gluePromise.then((glue) => {
 });
 
 function trackWindowZoom() {
-  handlePixelRatioChange();
-  handleWindowResize();
+  applyWindowZoom();
+  trackWindowResize();
 
   glue.windows.my().onBoundsChanged(() => {
-    handleWindowZoom();
-    handleWindowZoomWithDelay();
+    applyWindowZoom();
   });
 }
 
-function handlePixelRatioChange() {
-  const pixelRatio = parseFloat(window.devicePixelRatio).toFixed(2);
-
-  matchMedia(`(resolution: ${pixelRatio}dppx)`).addEventListener(
-    'change',
-    handlePixelRatioChange,
-    { once: true }
-  );
-
-  handleWindowZoom();
-}
-
-function handleWindowResize() {
-  window.addEventListener('resize', () => {
-    handleWindowZoom();
-  });
-}
-
-function handleWindowZoom() {
+function applyWindowZoom() {
   const glueWindowHeight = glue.windows.my().bounds.height;
   const windowHeight = window.innerHeight;
   const zoomRatio = parseFloat(windowHeight / glueWindowHeight).toFixed(2);
 
-  document.body.style.zoom = zoomRatio;
+  document.documentElement.style.zoom = zoomRatio;
 }
 
-function handleWindowZoomWithDelay() {
+function applyWindowZoomWithDelay() {
   setTimeout(() => {
-    handleWindowZoom();
+    applyWindowZoom();
   }, 1000);
+}
+
+function trackWindowResize() {
+  window.addEventListener('resize', () => {
+    applyWindowZoom();
+    applyWindowZoomWithDelay();
+  });
 }
 
 function trackApplications() {
