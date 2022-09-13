@@ -74,7 +74,7 @@ function trackWindowZoom() {
 
   glue.windows.my().onBoundsChanged(() => {
     handleWindowZoom();
-    handleWindowZoomWithTimeout();
+    handleWindowZoomWithDelay();
   });
 }
 
@@ -104,7 +104,7 @@ function handleWindowZoom() {
   document.body.style.zoom = zoomRatio;
 }
 
-function handleWindowZoomWithTimeout() {
+function handleWindowZoomWithDelay() {
   setTimeout(() => {
     handleWindowZoom();
   }, 1000);
