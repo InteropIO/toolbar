@@ -80,7 +80,7 @@ function trackWindowZoom() {
 function applyWindowZoom() {
   const glueWindowHeight = glue.windows.my().bounds.height;
   const windowHeight = window.innerHeight;
-  const zoomRatio = parseFloat(windowHeight / glueWindowHeight).toFixed(2);
+  const zoomRatio = windowHeight / glueWindowHeight;
 
   document.documentElement.style.zoom = zoomRatio;
 }
