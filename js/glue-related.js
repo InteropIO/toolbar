@@ -1,4 +1,9 @@
-import { setSettings, updateSettings, getSetting, getSettings } from './settings.js';
+import {
+  setSettings,
+  updateSettings,
+  getSetting,
+  getSettings,
+} from './settings.js';
 import {
   setToolbarOrientation,
   setToolbarSize,
@@ -60,7 +65,38 @@ gluePromise.then((glue) => {
   trackWindowMove();
   trackConnection();
   trackNotificationCount();
+  trackWindowZoom();
 });
+
+function trackWindowZoom() {
+  applyWindowZoom();
+  trackWindowResize();
+
+  glue.windows.my().onBoundsChanged(() => {
+    applyWindowZoom();
+  });
+}
+
+function applyWindowZoom() {
+  const glueWindowHeight = glue.windows.my().bounds.height;
+  const windowHeight = window.innerHeight;
+  const zoomRatio = windowHeight / glueWindowHeight;
+
+  document.documentElement.style.zoom = zoomRatio;
+}
+
+function applyWindowZoomWithDelay() {
+  setTimeout(() => {
+    applyWindowZoom();
+  }, 1000);
+}
+
+function trackWindowResize() {
+  window.addEventListener('resize', () => {
+    applyWindowZoom();
+    applyWindowZoomWithDelay();
+  });
+}
 
 function trackApplications() {
   pushAllApps();
@@ -164,7 +200,6 @@ async function trackWindowMove() {
 }
 
 async function trackWorkAreaSize() {
-  await gluePromise;
   let currentMonitorOffsetWidth;
   let currentMonitorOffsetHeight;
   const currentMonitor = await glue.windows.my().getDisplay();
@@ -215,7 +250,7 @@ async function startApp(appName, context) {
   if (glueApp) {
     glueApp
       .start(context)
-      .then(() => { })
+      .then(() => {})
       .catch((e) => {
         console.warn('Failed to start app');
         console.warn(e);
@@ -366,8 +401,8 @@ async function resizeWindowVisibleArea(visibleAreas) {
         areas: visibleAreas,
       },
     })
-    .then(() => { })
-    .catch(() => { }); // TODO
+    .then(() => {})
+    .catch(() => {}); // TODO
 }
 
 async function changeTheme(themeName) {
