@@ -50,7 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function init() {
   await glueModule.getPrefs();
-  await glueModule.trackSettingChange();
 
   initVisibleArea();
 
