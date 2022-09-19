@@ -116,6 +116,7 @@ function pushAllApps() {
         instances: a.instances.map((i) => i.id),
         hidden: a.hidden,
         icon: a.icon,
+        keywords: a.keywords || [],
       };
     })
   );

@@ -88,12 +88,31 @@ function printApps() {
     .pipe(
       rxMap(([searchInput, apps]) => {
         let search = searchInput.toLowerCase().trim();
+        const searchResults = [];
+
+        apps.forEach((app) => {
+          if ((app.title || app.name).toLowerCase().indexOf(search) >= 0) {
+            searchResults.push(app);
+          }
+
+          if (app.keywords.length > 0) {
+            app.keywords.forEach((keyword) => {
+              if (keyword.toLowerCase().indexOf(search) >= 0) {
+                searchResults.push(app);
+              }
+            });
+          }
+        });
+
+        // Avoid duplicates if multiple keywords match on a single app
+        const appNames = searchResults.map((app) => app.name);
+        const filteredApps = searchResults.filter(
+          ({ name }, index) => !appNames.includes(name, index + 1)
+        );
 
         return {
           search,
-          filteredApps: apps.filter(
-            (app) => (app.title || app.name).toLowerCase().indexOf(search) >= 0
-          ),
+          filteredApps,
         };
       })
     )
