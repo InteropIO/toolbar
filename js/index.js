@@ -96,11 +96,13 @@ function printApps() {
             searchResults.push(app);
           }
 
-          app.keywords.forEach((keyword) => {
-            if (keyword.toLowerCase().indexOf(search) >= 0) {
-              searchResults.push(app);
-            }
-          });
+          if (app.keywords.length > 0) {
+            app.keywords.forEach((keyword) => {
+              if (keyword.toLowerCase().indexOf(search) >= 0) {
+                searchResults.push(app);
+              }
+            });
+          }
         });
 
         // Avoid duplicates if multiple keywords match on a single app
