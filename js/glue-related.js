@@ -524,8 +524,8 @@ async function getPrefs() {
   const prefs = await glue.prefs.get();
 
   // if we don't have any prefs, get the default ones and update them
-  if (Object.keys(prefs).length === 0) {
-    await glue.prefs.update(getSettings());
+  if (Object.keys(prefs.data).length === 0) {
+    await glue.prefs.update({ ...getSettings() });
   } else {
     setSettings(prefs.data);
   }
