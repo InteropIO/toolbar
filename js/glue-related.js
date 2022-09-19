@@ -43,7 +43,6 @@ const notificationsCountObs = new rxjs.BehaviorSubject(null);
 const themeObs = new rxjs.BehaviorSubject(null);
 const boundsObs = new rxjs.BehaviorSubject(null);
 const workAreaSizeObs = new rxjs.BehaviorSubject(null);
-const orientationObs = new rxjs.BehaviorSubject(null);
 let notificationEnabledObs = new rxjs.BehaviorSubject(false);
 
 if (!window.glue42gd) {
@@ -523,28 +522,20 @@ async function getUserProperties() {
 async function getPrefs() {
   await gluePromise;
   const prefs = await glue.prefs.get();
+
   // if we don't have any prefs, get the default ones and update them
-  if (Object.keys(prefs).length === 0) {
-    await glue.prefs.update(getSettings());
+  if (Object.keys(prefs.data).length === 0) {
+    await glue.prefs.update({ ...getSettings() });
   } else {
     setSettings(prefs.data);
   }
+
   glue.prefs.subscribe((prefs) => {
     updateSettings(prefs.data);
-  });
-}
-
-async function trackSettingChange() {
-  await gluePromise;
-  const prefs = await glue.prefs.get();
-  orientationObs.next(prefs.data.vertical);
-
-  glue.prefs.subscribe((prefs) => {
-    orientationObs.next(prefs.data.vertical);
-    setToolbarOrientation(prefs.data.vertical);
-    setToolbarSize(parseInt(prefs.data.toolbarAppRows));
-    fixWindowPosition(prefs.data.vertical, parseInt(prefs.data.toolbarAppRows));
-    setWindowMoveArea(prefs.data.vertical);
+    setToolbarOrientation();
+    setToolbarSize();
+    fixWindowPosition();
+    setWindowMoveArea();
   });
 }
 
@@ -607,6 +598,4 @@ export {
   getServerInfo,
   getPrefs,
   updatePrefs,
-  orientationObs,
-  trackSettingChange,
 };

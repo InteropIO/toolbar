@@ -14,7 +14,6 @@ let settings = {
   toolbarAppRows: '10',
   showHiddenApps: false,
   vertical: true,
-  openDrawerDirection: 'right',
 };
 const toolbarWidth = {
   vertical: 200,
