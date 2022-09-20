@@ -7,6 +7,7 @@ import {
 import {
   setToolbarOrientation,
   setToolbarSize,
+  setWindowVisibleArea,
   setWindowMoveArea,
   fixWindowPosition,
 } from './utils.js';
@@ -66,6 +67,17 @@ gluePromise.then((glue) => {
   trackNotificationCount();
   trackWindowZoom();
 });
+
+async function showLoader() {
+  await gluePromise;
+  glue.windows.my().showLoader();
+}
+
+async function hideLoader() {
+  await gluePromise;
+  glue.windows.my().hideLoader();
+  document.body.classList.add('loaded');
+}
 
 function trackWindowZoom() {
   applyWindowZoom();
@@ -524,7 +536,10 @@ async function getPrefs() {
   const prefs = await glue.prefs.get();
 
   // if we don't have any prefs, get the default ones and update them
-  if (Object.keys(prefs.data).length === 0) {
+  if (
+    typeof prefs.data === 'undefined' ||
+    Object.keys(prefs.data).length === 0
+  ) {
     await glue.prefs.update({ ...getSettings() });
   } else {
     setSettings(prefs.data);
@@ -535,6 +550,7 @@ async function getPrefs() {
     setToolbarOrientation();
     setToolbarSize();
     fixWindowPosition();
+    setWindowVisibleArea();
     setWindowMoveArea();
   });
 }
@@ -553,6 +569,8 @@ export {
   glueVersion,
   glueInfo,
   glueAppsObs,
+  showLoader,
+  hideLoader,
   layoutsObs,
   boundsObs,
   workAreaSizeObs,
