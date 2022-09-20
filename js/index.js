@@ -44,12 +44,15 @@ let {
 
 let refreshAppsObs = new rxjs.BehaviorSubject(true);
 
+glueModule.showLoader();
+
 document.addEventListener('DOMContentLoaded', () => {
   init();
 });
 
 async function init() {
   await glueModule.getPrefs();
+  glueModule.hideLoader();
 
   initVisibleArea();
 
