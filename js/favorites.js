@@ -35,7 +35,7 @@ function updateFavoriteApps() {
 }
 
 function addFavoriteApp(appName) {
-  console.log('adding app to favorite ', appName);
+  console.log(`adding ${appName} to favorites`);
 
   let newApps = favoriteApps.value.slice();
 

@@ -37,23 +37,35 @@ import {
   profile_handleFeedbackClick,
 } from './profile.js';
 
+import { allApplicationsObs } from './applications.js';
+import { favoriteApps } from './favorites.js';
+
 const windowMargin = 50;
 
-let arrowKeysObs = rxjs
+let pressedKey;
+let keyObs = rxjs
   .fromEvent(document, 'keydown')
   .pipe(
-    rxjs.operators.filter((e) => {
-      return e.key === 'ArrowUp' || e.key === 'ArrowDown';
-    })
+    rxjs.operators.filter(
+      (e) =>
+        e.key === 'ArrowUp' ||
+        e.key === 'ArrowRight' ||
+        e.key === 'ArrowDown' ||
+        e.key === 'ArrowLeft' ||
+        e.key === 'Enter' ||
+        e.key === 'Escape' ||
+        e.key === 'Backspace' ||
+        e.key === 'Tab'
+    )
   )
-  .pipe(rxjs.operators.map((e) => e.key.slice(5)))
-  .subscribe(console.warn);
+  .subscribe((key) => (pressedKey = key));
 
 function handleEvents() {
   handleNotificationClick();
   handleEnableNotifications();
   handleFeedbackClick();
   handleThemeChange();
+  handleKeyboardNavigation();
   handleToolbarOrientationChange();
   handleToolbarAppRowsChange();
   populateAboutPage();
@@ -132,7 +144,7 @@ function handleTopMenuClicks() {
     }
 
     if (e.target.matches('[menu-button-id], [menu-button-id] *')) {
-      //open selected drawer (apps, layouts)
+      // Open selected drawer (apps, layouts)
       let topElement = e.path.find((e) => e.getAttribute('menu-button-id'));
       let menuId = topElement.getAttribute('menu-button-id');
 
@@ -800,6 +812,131 @@ async function setWindowMoveArea() {
       moveAreaThickness: `${Math.round(dragArea.width)}, 0, 0, 0`,
     });
   }
+}
+
+// Keyboard Navigation
+function handleKeyboardNavigation() {
+  let keyboardMode = false;
+  let currentItem = getFirstElement();
+
+  function startKeyboardNavigation() {
+    currentItem = getFirstElement();
+    // window.currentItem = currentItem;
+    currentItem.classList.add('hover');
+  }
+
+  function getFirstElement() {
+    const navItems = qa('.viewport .nav-tabs .nav-item:not(.d-none)');
+
+    return navItems[0];
+  }
+
+  function getLastElement() {
+    const navItems = qa('.viewport .nav-tabs .nav-item:not(.d-none)');
+
+    return navItems[navItems.length - 1];
+  }
+
+  function getNextElement(item) {
+    if (!item) {
+      return;
+    }
+
+    let nextItem = item.nextElementSibling;
+
+    if (!nextItem) {
+      while (
+        item.parentElement &&
+        item.parentElement.matches('.nav-item:not(.d-none)')
+      ) {
+        nextItem = nextItem.parentElement;
+      }
+      nextItem = item.parentElement.parentElement.nextElementSibling;
+    }
+
+    if (nextItem && nextItem.matches('.nav-item:not(.d-none)')) {
+      return nextItem;
+    }
+
+    const nestedItems = nextItem.querySelectorAll('.nav-item:not(.d-none)');
+
+    console.log('my nested items:', nestedItems);
+
+    if (nestedItems.length > 0) {
+      return getNextElement(nestedItems[0].previousSibling);
+    } else {
+      return getNextElement(nextItem);
+    }
+  }
+
+  function addRemoveFavouriteApp() {
+    const itemHasAddRemove = currentItem.querySelector('.add-favorite');
+
+    if (itemHasAddRemove) {
+      itemHasAddRemove.click();
+    }
+  }
+
+  function hover(direction) {
+    // currentItem.classList.remove('hover');
+
+    // if (direction) {
+    //   currentItem = getNextElement();
+
+    //   if (!currentItem) {
+    //     currentItem = getFirstElement();
+    //   }
+
+    //   currentItem.classList.add('hover');
+    // } else {
+    //   currentItem = getPreviousElement();
+
+    //   if (!currentItem) {
+    //     currentItem = getLastElement();
+    //   }
+
+    //   currentItem.classList.add('hover');
+    // }
+
+    currentItem.classList.remove('hover');
+    currentItem = getNextElement(currentItem);
+
+    if (currentItem) {
+      currentItem.classList.add('hover');
+      console.log(`adding hover`, currentItem);
+    }
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (!keyboardMode && e.key === pressedKey.key) {
+      keyboardMode = true;
+      startKeyboardNavigation();
+      q('.app').classList.add('expand-wrapper');
+      q('.viewport').classList.add('expand');
+    } else if (e.key === pressedKey.key && keyboardMode) {
+      switch (e.key) {
+        case 'Tab':
+          break;
+        case 'Escape':
+          break;
+        case 'Enter':
+          break;
+        case 'ArrowUp':
+          hover(false);
+          break;
+        case 'ArrowRight':
+          break;
+        case 'ArrowDown':
+          hover(true);
+          break;
+        case 'ArrowLeft':
+          break;
+
+        default:
+          break;
+      }
+    }
+  });
 }
 
 export {

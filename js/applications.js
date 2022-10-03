@@ -141,8 +141,12 @@ function handleAppClick() {
 }
 
 function handleSearchChange() {
+  const letterNumber = /^[0-9a-zA-Z]+$/;
+
   q('#app-search').addEventListener('keyup', (event) => {
-    searchInputObs.next(event.target.value);
+    if (event.target.value.match(letterNumber)) {
+      searchInputObs.next(event.target.value);
+    }
   });
 }
 
@@ -203,7 +207,7 @@ function applicationHTMLTemplate(app, options = {}) {
     `
     <li class="nav-item ${
       app.instances.length > 0 ? 'app-active' : ''
-    }"" app-name="${app.name}" tabindex="${1}">
+    }" app-name="${app.name}" tabindex="${1}">
       <div class="nav-link action-menu">
         ${getAppIcon(app)}
         ${
