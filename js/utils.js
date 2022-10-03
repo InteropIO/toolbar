@@ -506,13 +506,13 @@ function populateSettingsDropdown(
                     ${elementName}-name="${element.name}"
                     ${
                       element.name === selectOptionsObj.selected.name
-                        ? 'checked'
-                        : ''
-                    }
+          ? 'checked'
+          : ''
+        }
                 />
                 <label class="select_label" for="${elementName}-${
         element.name + i
-      }">${element.displayName}</label>
+        }">${element.displayName}</label>
             </li>
             `;
     });
@@ -586,7 +586,7 @@ function setToolbarSize() {
     app.style.top = '0';
     app.style.maxHeight = `${
       appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
-    }px`;
+      }px`;
 
     moveMyWindow({
       width: toolbarWidth.vertical + toolbarDrawerSize.vertical * 2,
@@ -596,7 +596,7 @@ function setToolbarSize() {
   } else {
     app.style.top = `${
       appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
-    }px`;
+      }px`;
     app.style.left = '0';
     app.style.maxHeight = `${appLancher.offsetHeight}px`;
 
@@ -605,7 +605,7 @@ function setToolbarSize() {
       height:
         appLancher.offsetHeight +
         (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber) *
-          2,
+        2,
     });
   }
 }
@@ -664,13 +664,13 @@ async function setDrawerOpenClass() {
   } else {
     app.style.top = `${
       appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
-    }px`;
+      }px`;
 
     app.classList.contains('has-drawer')
       ? (app.style.maxHeight = `${
           appLancher.offsetHeight +
-          appContentHeader.offsetHeight +
-          navItem.offsetHeight * appRowsNumber
+        appContentHeader.offsetHeight +
+        navItem.offsetHeight * appRowsNumber
         }px`)
       : (app.style.maxHeight = `${appLancher.offsetHeight}px`);
 
@@ -679,8 +679,8 @@ async function setDrawerOpenClass() {
       app.classList.contains('has-drawer')
         ? (app.style.top = '0')
         : appLancher.offsetHeight +
-          appContentHeader.offsetHeight +
-          navItem.offsetHeight * appRowsNumber;
+        appContentHeader.offsetHeight +
+        navItem.offsetHeight * appRowsNumber;
     } else {
       app.classList.remove('open-top');
     }
@@ -747,10 +747,10 @@ async function fixWindowPosition() {
     // if toolbar position is outside of monitor working area top
     if (
       windowBounds.top +
-        (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber) <
-        workArea.top ||
+      (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber) <
+      workArea.top ||
       windowBounds.top ===
-        -(appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber)
+      -(appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber)
     ) {
       moveMyWindow({
         top:
@@ -764,7 +764,7 @@ async function fixWindowPosition() {
     // if toolbar position is outside of monitor working area bottom
     if (
       windowBounds.top +
-        (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber) >
+      (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber) >
       workArea.offsetHeight
     ) {
       moveMyWindow({
@@ -799,7 +799,7 @@ async function setWindowMoveArea() {
         toolbarWidth.vertical +
         toolbarDrawerSize.vertical -
         Math.round(dragArea.width)
-      }, 0`,
+        }, 0`,
       moveAreaThickness: `0, ${Math.round(dragArea.height)}, 0, 0`,
     });
   } else {
@@ -817,11 +817,24 @@ async function setWindowMoveArea() {
 // Keyboard Navigation
 function handleKeyboardNavigation() {
   let keyboardMode = false;
-  let currentItem = getFirstElement();
+  let currentItem;
+  let mainList;
+
+  function reset() {
+    currentItem.classList.remove('hover');
+    currentItem = undefined;
+    mainList = undefined;
+    document.removeEventListener("click", reset);
+  }
+
+  function listenBodyClicks() {
+    document.addEventListener("click", reset);
+  }
 
   function startKeyboardNavigation() {
+    listenBodyClicks();
     currentItem = getFirstElement();
-    // window.currentItem = currentItem;
+    mainList = currentItem.parentElement;
     currentItem.classList.add('hover');
   }
 
@@ -837,7 +850,7 @@ function handleKeyboardNavigation() {
     return navItems[navItems.length - 1];
   }
 
-  function getNextElement(item) {
+  function getNextElement(item, ul) {
     if (!item) {
       return;
     }
@@ -847,14 +860,19 @@ function handleKeyboardNavigation() {
     if (!nextItem) {
       while (
         item.parentElement &&
-        item.parentElement.matches('.nav-item:not(.d-none)')
+        item.parentElement.matches('.nav-item:not(.d-none)' &&
+          !item.parentElement.matches('.d-none'))
       ) {
         nextItem = nextItem.parentElement;
       }
       nextItem = item.parentElement.parentElement.nextElementSibling;
     }
 
-    if (nextItem && nextItem.matches('.nav-item:not(.d-none)')) {
+    if (nextItem && nextItem.matches('.nav-item') && !nextItem.matches('.d-none')) {
+      // make sure that the found element is part of the main ul
+      if (!ul.contains(nextItem)) {
+        return;
+      }
       return nextItem;
     }
 
@@ -863,9 +881,9 @@ function handleKeyboardNavigation() {
     console.log('my nested items:', nestedItems);
 
     if (nestedItems.length > 0) {
-      return getNextElement(nestedItems[0].previousSibling);
+      return getNextElement(nestedItems[0].previousSibling, ul);
     } else {
-      return getNextElement(nextItem);
+      return getNextElement(nextItem, ul);
     }
   }
 
@@ -898,12 +916,18 @@ function handleKeyboardNavigation() {
     //   currentItem.classList.add('hover');
     // }
 
-    currentItem.classList.remove('hover');
-    currentItem = getNextElement(currentItem);
+    if (!currentItem) {
+      startKeyboardNavigation();
+    } else {
+      currentItem.classList.remove('hover');
+      currentItem = getNextElement(currentItem, mainList);
 
-    if (currentItem) {
-      currentItem.classList.add('hover');
-      console.log(`adding hover`, currentItem);
+      if (currentItem) {
+        currentItem.classList.add('hover');
+        console.log(`adding hover`, currentItem);
+      } else {
+        startKeyboardNavigation();
+      }
     }
   }
 
