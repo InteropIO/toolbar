@@ -820,6 +820,14 @@ function handleKeyboardNavigation() {
   let currentItem;
   let mainList;
 
+  function isFolderElement(e) {
+    return e.matches("nav-item.folder")
+  }
+
+  function isAppElement(e) {
+    return !!e.getAttribute("app-name");
+  }
+
   function getActiveNodeFolderName(node) {
     const folderName = node.getAttribute("folder-name");
     return qa(`.nav-item[folder-name="${folderName}"]`)[0];
@@ -827,23 +835,29 @@ function handleKeyboardNavigation() {
 
   function action() {
     if (currentItem) {
-      currentItem.click();
-      if (currentItem.matches(".folder.folder-open")) {
-        currentItem = getActiveNodeFolderName(currentItem);
-        currentItem.classList.remove("hover")
-        currentItem = getPrevElement(currentItem, mainList);
-        mainList = currentItem.parentElement;
-        currentItem.classList.add('hover');
-      } else {
-        if (currentItem.matches(".folder")) {
-          mainList = currentItem.children[1];
-        } else if (qa('.toggle-content:not(.hide)').length > 0) {
-          mainList = qa('.toggle-content:not(.hide)')[0].children[1];
+      const shouldClick = isAppElement(currentItem) || isFolderElement(currentItem);
+      if (true) {
+        currentItem.click();
+        if (currentItem.matches(".folder.folder-open")) {
+          currentItem = getActiveNodeFolderName(currentItem);
+          currentItem.classList.remove("hover")
+          currentItem = currentItem;
+          mainList = currentItem.parentElement;
+          currentItem.classList.add('hover');
+        } else if (isAppElement(currentItem)) {
+          // nothing
+          console.log(`app ignore`)
+        } else {
+          if (currentItem.matches(".folder")) {
+            mainList = currentItem.children[1];
+          } else if (qa('.toggle-content:not(.hide)').length > 0) {
+            mainList = qa('.toggle-content:not(.hide)')[0].children[1];
+          }
+          currentItem.classList.remove("hover")
+          currentItem = getNextElement(undefined, mainList);
+          mainList = currentItem.parentElement;
+          currentItem.classList.add('hover');
         }
-        currentItem.classList.remove("hover")
-        currentItem = getNextElement(undefined, mainList);
-        mainList = currentItem.parentElement;
-        currentItem.classList.add('hover');
       }
     }
   }
@@ -889,12 +903,31 @@ function handleKeyboardNavigation() {
     currentItem.classList.add('hover');
   }
 
+  function getConnectedNode(item) {
+    if (item.id !== "") {
+      return document.getElementById(item.id)
+    }
+    const attributes = [...item.attributes].filter((a) => a.name !== "class").map((a) => `[${a.name}="${a.value}"]`).join("")
+    const classList = [...item.classList].join(".")
+    const classAsString = classList.length > 0 ? `.${classList}` : ""
+    const found = qa(`${item.nodeName}${classAsString}${attributes ?? ""}`)[0];
+    if (!found) {
+      debugger;
+    }
+    return found;
+  }
+
   function getNextElement(item, ul) {
+
     // if we don't have item, get the first one
     let nextItem;
     if (!item) {
       nextItem = ul.children[0];
     } else {
+      if (!item.isConnected) {
+        item = getConnectedNode(item);
+        ul = item.parentElement;
+      }
       nextItem = item.nextElementSibling;
       if (!nextItem) {
         // go out from the fav and continue
@@ -1059,11 +1092,15 @@ function handleKeyboardNavigation() {
         })
         if (mainNavigation) {
           // go to the drawer navigation
-          mainList = qa('.toggle-content:not(.hide)')[0].children[1];
-          currentItem.classList.remove("hover")
-          currentItem = getNextElement(undefined, mainList);
-          mainList = currentItem.parentElement;
-          currentItem.classList.add('hover');
+          const content = qa('.toggle-content:not(.hide)');
+          if (content.length > 0) {
+            mainList = qa('.toggle-content:not(.hide)')[0].children[1];
+            currentItem.classList.remove("hover")
+            currentItem = getNextElement(undefined, mainList);
+            mainList = currentItem.parentElement
+            currentItem.scrollIntoViewIfNeeded();;
+            currentItem.classList.add('hover');
+          }
         }
       }
     } else {
@@ -1077,7 +1114,9 @@ function handleKeyboardNavigation() {
           currentItem.classList.remove('hover');
           currentItem = getNextElement(undefined, mainList);
           currentItem.classList.add('hover');
+          currentItem.scrollIntoViewIfNeeded();
           mainList = currentItem.parentElement;
+
         }
       }
     }
