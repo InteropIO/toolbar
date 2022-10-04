@@ -820,6 +820,56 @@ function handleKeyboardNavigation() {
   let currentItem;
   let mainList;
 
+  function getActiveNodeFolderName(node) {
+    const folderName = node.getAttribute("folder-name");
+    return qa(`.nav-item[folder-name="${folderName}"]`)[0];
+  }
+
+  function action() {
+    if (currentItem) {
+      currentItem.click();
+      if (currentItem.matches(".folder.folder-open")) {
+        currentItem = getActiveNodeFolderName(currentItem);
+        currentItem.classList.remove("hover")
+        currentItem = getPrevElement(currentItem, mainList);
+        mainList = currentItem.parentElement;
+        currentItem.classList.add('hover');
+      } else {
+        if (currentItem.matches(".folder")) {
+          mainList = currentItem.children[1];
+        } else if (qa('.toggle-content:not(.hide)').length > 0) {
+          mainList = qa('.toggle-content:not(.hide)')[0].children[1];
+        }
+        currentItem.classList.remove("hover")
+        currentItem = getNextElement(undefined, mainList);
+        mainList = currentItem.parentElement;
+        currentItem.classList.add('hover');
+      }
+    }
+  }
+
+  function upTo(el, tagName,) {
+    tagName = tagName.toLowerCase();
+
+    while (el && el.parentNode) {
+      el = el.parentNode;
+      if (el.tagName && el.tagName.toLowerCase() == tagName) {
+        return el;
+      }
+    }
+    return null;
+  }
+
+  function upTo2(el, func) {
+    while (el && el.parentNode) {
+      el = el.parentNode;
+      if (func(el)) {
+        return el;
+      }
+    }
+    return null;
+  }
+
   function reset() {
     currentItem.classList.remove('hover');
     currentItem = undefined;
@@ -832,40 +882,96 @@ function handleKeyboardNavigation() {
   }
 
   function startKeyboardNavigation() {
-    listenBodyClicks();
-    currentItem = getFirstElement();
+    // listenBodyClicks();
+    mainList = qa('.viewport .nav-tabs')[0];
+    currentItem = getNextElement(currentItem, mainList);
     mainList = currentItem.parentElement;
     currentItem.classList.add('hover');
   }
 
-  function getFirstElement() {
-    const navItems = qa('.viewport .nav-tabs .nav-item:not(.d-none)');
-
-    return navItems[0];
-  }
-
-  function getLastElement() {
-    const navItems = qa('.viewport .nav-tabs .nav-item:not(.d-none)');
-
-    return navItems[navItems.length - 1];
-  }
-
   function getNextElement(item, ul) {
+    // if we don't have item, get the first one
+    let nextItem;
     if (!item) {
-      return;
+      nextItem = ul.children[0];
+    } else {
+      nextItem = item.nextElementSibling;
+      if (!nextItem) {
+        // go out from the fav and continue
+        if (!item.isConnected) {
+          if (ul.matches(".folder-content")) {
+            const currentFolderElement = ul.parentElement;
+            const activeNode = getActiveNodeFolderName(currentFolderElement)
+            return getNextElement(activeNode, activeNode.parentElement);
+          }
+        }
+        // get parent UL
+        const parentUL = upTo(item.parentElement, "UL");
+        const element = parentUL ? item.parentElement.parentElement : undefined;
+        return getNextElement(element, parentUL ?? ul);
+      } else {
+        if (nextItem.matches(".folder.folder-open")) {
+          const ulNode = [...nextItem.children].find((child) => child.nodeName === "UL");
+          if (ulNode) {
+            return getNextElement(undefined, ulNode)
+          }
+        }
+      }
     }
 
-    let nextItem = item.nextElementSibling;
-
-    if (!nextItem) {
-      while (
-        item.parentElement &&
-        item.parentElement.matches('.nav-item:not(.d-none)' &&
-          !item.parentElement.matches('.d-none'))
-      ) {
-        nextItem = nextItem.parentElement;
+    if (nextItem && nextItem.matches('.nav-item') && !nextItem.matches('.d-none')) {
+      // make sure that the found element is part of the main ul
+      if (!ul.contains(nextItem)) {
+        return;
       }
-      nextItem = item.parentElement.parentElement.nextElementSibling;
+      if (!nextItem.isConnected) {
+        if (ul.matches(".folder-content")) {
+          const appName = nextItem.getAttribute("app-name");
+          nextItem = qa(`.nav-item[app-name="${appName}"]`)[0];
+        }
+      }
+      return nextItem;
+    }
+
+    // if we have nested ul
+    if (nextItem && nextItem.children[0] && nextItem.children[0].nodeName === "UL") {
+      return getNextElement(undefined, nextItem.children[0])
+    }
+
+    return getNextElement(nextItem, ul);
+  }
+
+  function getPrevElement(item, ul) {
+    // if we don't have item, get the first one
+    let nextItem;
+    if (!item) {
+      nextItem = ul.children[ul.children.length - 1];
+    } else {
+      nextItem = item.previousElementSibling;
+      if (!nextItem) {
+        // go out from the fav and continue
+        if (!item.isConnected) {
+          if (ul.matches(".folder-content")) {
+            const currentFolderElement = ul.parentElement;
+            const activeNode = getActiveNodeFolderName(currentFolderElement)
+            return getPrevElement(activeNode, activeNode.parentElement);
+          }
+        }
+
+        const parentUL = upTo(item.parentElement, "UL");
+        const element = parentUL ? item.parentElement.parentElement : undefined;
+        if (element && element.matches(".folder.folder-open")) {
+          return element;
+        }
+        return getPrevElement(element, parentUL ?? ul);
+      } else {
+        if (nextItem.matches(".folder.folder-open")) {
+          const ulNode = [...nextItem.children].find((child) => child.nodeName === "UL");
+          if (ulNode) {
+            return getPrevElement(undefined, ulNode)
+          }
+        }
+      }
     }
 
     if (nextItem && nextItem.matches('.nav-item') && !nextItem.matches('.d-none')) {
@@ -876,15 +982,12 @@ function handleKeyboardNavigation() {
       return nextItem;
     }
 
-    const nestedItems = nextItem.querySelectorAll('.nav-item:not(.d-none)');
-
-    console.log('my nested items:', nestedItems);
-
-    if (nestedItems.length > 0) {
-      return getNextElement(nestedItems[0].previousSibling, ul);
-    } else {
-      return getNextElement(nextItem, ul);
+    // if we have nested ul
+    if (nextItem && nextItem.children[nextItem.children.length - 1] && nextItem.children[nextItem.children.length - 1].nodeName === "UL") {
+      return getPrevElement(undefined, nextItem.children[nextItem.children.length - 1])
     }
+
+    return getPrevElement(nextItem, ul);
   }
 
   function addRemoveFavouriteApp() {
@@ -895,71 +998,123 @@ function handleKeyboardNavigation() {
     }
   }
 
+  function getStartingUl() {
+    return qa('.viewport .nav-tabs')[0];
+  }
+
+
   function hover(direction) {
-    // currentItem.classList.remove('hover');
-
-    // if (direction) {
-    //   currentItem = getNextElement();
-
-    //   if (!currentItem) {
-    //     currentItem = getFirstElement();
-    //   }
-
-    //   currentItem.classList.add('hover');
-    // } else {
-    //   currentItem = getPreviousElement();
-
-    //   if (!currentItem) {
-    //     currentItem = getLastElement();
-    //   }
-
-    //   currentItem.classList.add('hover');
-    // }
-
-    if (!currentItem) {
-      startKeyboardNavigation();
-    } else {
-      currentItem.classList.remove('hover');
-      currentItem = getNextElement(currentItem, mainList);
-
-      if (currentItem) {
+    if (direction) {
+      if (!currentItem) {
+        mainList = getStartingUl();
+        currentItem = getNextElement(currentItem, mainList);
         currentItem.classList.add('hover');
-        console.log(`adding hover`, currentItem);
+        mainList = currentItem.parentElement;
       } else {
-        startKeyboardNavigation();
+        currentItem.classList.remove('hover');
+        currentItem = getNextElement(currentItem, mainList);
+
+        if (currentItem) {
+          mainList = currentItem.parentElement;
+          currentItem.classList.add('hover');
+        } else {
+          mainList = getStartingUl();
+          currentItem = getNextElement(currentItem, mainList);
+          mainList = currentItem.parentElement;
+        }
+      }
+    } else {
+      if (!currentItem) {
+        mainList = getStartingUl();
+        currentItem = getPrevElement(currentItem, mainList);
+        currentItem.classList.add('hover');
+        mainList = currentItem.parentElement;
+      } else {
+        currentItem.classList.remove('hover');
+        currentItem = getPrevElement(currentItem, mainList);
+
+        if (currentItem) {
+          mainList = currentItem.parentElement;
+          currentItem.classList.add('hover');
+        } else {
+          mainList = getStartingUl();
+          currentItem = getPrevElement(currentItem, mainList);
+          currentItem.classList.add('hover');
+          mainList = currentItem.parentElement;
+        }
+      }
+    }
+
+    if (currentItem) {
+      currentItem.scrollIntoViewIfNeeded();
+    }
+  }
+
+  function leftRightArrowClicked(direction) {
+    // right
+    if (direction) {
+      if (currentItem) {
+        const mainNavigation = upTo2(currentItem, (el) => {
+          return el.id === "applicationLauncher"
+        })
+        if (mainNavigation) {
+          // go to the drawer navigation
+          mainList = qa('.toggle-content:not(.hide)')[0].children[1];
+          currentItem.classList.remove("hover")
+          currentItem = getNextElement(undefined, mainList);
+          mainList = currentItem.parentElement;
+          currentItem.classList.add('hover');
+        }
+      }
+    } else {
+      if (currentItem) {
+        const inAppContent = upTo2(currentItem, (el) => {
+          return el.id === "app-content"
+        })
+        if (inAppContent) {
+          // go to the main navigation
+          mainList = getStartingUl();
+          currentItem.classList.remove('hover');
+          currentItem = getNextElement(undefined, mainList);
+          currentItem.classList.add('hover');
+          mainList = currentItem.parentElement;
+        }
       }
     }
   }
 
   document.addEventListener('keydown', (e) => {
-    if (!keyboardMode && e.key === pressedKey.key) {
-      keyboardMode = true;
-      startKeyboardNavigation();
-      q('.app').classList.add('expand-wrapper');
-      q('.viewport').classList.add('expand');
-    } else if (e.key === pressedKey.key && keyboardMode) {
-      switch (e.key) {
-        case 'Tab':
-          break;
-        case 'Escape':
-          break;
-        case 'Enter':
-          break;
-        case 'ArrowUp':
-          hover(false);
-          break;
-        case 'ArrowRight':
-          break;
-        case 'ArrowDown':
-          hover(true);
-          break;
-        case 'ArrowLeft':
-          break;
+    // if (!keyboardMode && e.key === pressedKey.key) {
+    keyboardMode = true;
+    // startKeyboardNavigation();
+    q('.app').classList.add('expand-wrapper');
+    q('.viewport').classList.add('expand');
+    // } else if (e.key === pressedKey.key && keyboardMode) {
+    switch (e.key) {
+      case 'Tab':
+        break;
+      case 'Escape':
+        break;
+      case 'Enter':
+        action();
+        break;
+      case 'ArrowUp':
+        hover(false);
+        break;
+      case 'ArrowRight':
+        leftRightArrowClicked(true)
+        break;
+      case 'ArrowDown':
+        hover(true);
+        break;
+      case 'ArrowLeft':
+        leftRightArrowClicked(false)
+        break;
 
-        default:
-          break;
-      }
+      default:
+        break;
     }
+    // }
   });
 }
 
