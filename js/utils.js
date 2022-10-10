@@ -654,7 +654,13 @@ async function setDrawerOpenClass() {
   if (isVertical) {
     app.style.left = `${toolbarDrawerSize.vertical}px`;
 
-    if (windowBounds.left + windowBounds.width > workArea.offsetWidth) {
+    if (
+      Math.abs(workArea.left) -
+        Math.abs(windowBounds.left) +
+        windowBounds.width >
+        workArea.offsetWidth ||
+      windowBounds.left + windowBounds.width > workArea.offsetWidth
+    ) {
       app.classList.add('open-left');
       app.classList.contains('has-drawer')
         ? (app.style.left = '0')
@@ -675,7 +681,13 @@ async function setDrawerOpenClass() {
         }px`)
       : (app.style.maxHeight = `${appLancher.offsetHeight}px`);
 
-    if (windowBounds.top + windowBounds.height > workArea.offsetHeight) {
+    if (
+      Math.abs(workArea.top) -
+        Math.abs(windowBounds.top) +
+        windowBounds.height >
+        workArea.offsetHeight ||
+      windowBounds.top + windowBounds.height > workArea.offsetHeight
+    ) {
       app.classList.add('open-top');
       app.classList.contains('has-drawer')
         ? (app.style.top = '0')
