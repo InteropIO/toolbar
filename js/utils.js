@@ -556,6 +556,7 @@ async function handleToolbarAppRowsChange() {
       updateSetting({ toolbarAppRows: selectedLength });
 
       if (!isVertical) {
+        setInitialHorizontalPosition();
         qa('.toggle-content').forEach((toggle) => {
           toggle.classList.add('hide');
         });
@@ -648,7 +649,7 @@ async function setDrawerOpenClass() {
   const appLancher = q('.viewport-header');
   const appContentHeader = q('.app-content-header');
   const appRowsNumber = getSetting('toolbarAppRows');
-  const navItem = q('.content-items .nav-item');
+  const navItem = q('.applications-nav');
 
   if (isVertical) {
     app.style.left = `${toolbarDrawerSize.vertical}px`;
@@ -722,8 +723,9 @@ async function fixWindowPosition() {
   const isVertical = getSetting('vertical');
   const workArea = workAreaSizeObs.value;
   const windowBounds = await getWindowBounds();
+  const app = q('.app');
   const appContentHeader = q('.app-content-header');
-  const navItem = q('.nav-item');
+  const navItem = q('.applications-nav');
   const appRowsNumber = getSetting('toolbarAppRows');
 
   if (isVertical) {
@@ -761,7 +763,9 @@ async function fixWindowPosition() {
     // if toolbar position is outside of monitor working area bottom
     if (
       windowBounds.top +
-        (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber) >
+        (app.offsetHeight +
+          appContentHeader.offsetHeight +
+          navItem.offsetHeight * appRowsNumber) >
       workArea.offsetHeight
     ) {
       moveMyWindow({
@@ -782,13 +786,31 @@ async function fixWindowPosition() {
   }
 }
 
+function setInitialHorizontalPosition() {
+  const isVertical = getSetting('vertical');
+  const workArea = workAreaSizeObs.value;
+  const appContentHeader = q('.app-content-header');
+  const navItem = q('.applications-nav');
+  const appRowsNumber = getSetting('toolbarAppRows');
+
+  if (!isVertical) {
+    moveMyWindow({
+      top:
+        workArea.top +
+        initialPosition.top -
+        (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber),
+      left: initialPosition.left,
+    });
+  }
+}
+
 async function setWindowMoveArea() {
   const isVertical = getSetting('vertical');
   const appRowsNumber = getSetting('toolbarAppRows');
   const dragArea = q('.draggable').getBoundingClientRect();
   // TODO: Take out into a seperate function and use on all places that need these sizes
   const appContentHeader = q('.app-content-header');
-  const navItem = q('.nav-item');
+  const navItem = q('.applications-nav');
 
   if (isVertical) {
     configureMyWindow({
