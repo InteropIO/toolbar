@@ -140,6 +140,7 @@ function handleTopMenuClicks() {
       e.stopImmediatePropagation();
       updateSetting({ showHiddenApps: !getSetting('showHiddenApps') });
       refreshApps();
+
       return;
     }
 
@@ -559,7 +560,6 @@ async function handleToolbarAppRowsChange() {
           toggle.classList.add('hide');
         });
         app.classList.remove('open-top');
-        fixWindowPosition();
       }
     }
   });
@@ -709,15 +709,12 @@ function handleToolbarOrientationChange() {
     isVertical = !isVertical;
 
     updateSetting({ vertical: isVertical });
-    setTimeout(() => setWindowVisibleArea(), 500);
 
     if (isVertical) {
       app.classList.remove('open-top');
     } else {
       app.classList.remove('open-left');
     }
-
-    fixWindowPosition();
   });
 }
 
