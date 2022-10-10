@@ -535,7 +535,7 @@ async function getPrefs() {
   await gluePromise;
   const prefs = await glue.prefs.get();
 
-  // if we don't have any prefs, get the default ones and update them
+  // if we don't have any prefs, get the default settings and update prefs
   if (
     typeof prefs.data === 'undefined' ||
     Object.keys(prefs.data).length === 0
@@ -549,9 +549,9 @@ async function getPrefs() {
     updateSettings(prefs.data);
     setToolbarOrientation();
     setToolbarSize();
-    fixWindowPosition();
-    setWindowVisibleArea();
     setWindowMoveArea();
+    setWindowVisibleArea();
+    fixWindowPosition();
   });
 }
 

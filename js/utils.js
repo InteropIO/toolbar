@@ -45,7 +45,7 @@ let arrowKeysObs = rxjs
     rxjs.operators.filter((e) => {
       return e.key === 'ArrowUp' || e.key === 'ArrowDown';
     })
-  )
+    )
   .pipe(rxjs.operators.map((e) => e.key.slice(5)))
   .subscribe(console.warn);
 
@@ -132,7 +132,7 @@ function handleTopMenuClicks() {
     }
 
     if (e.target.matches('[menu-button-id], [menu-button-id] *')) {
-      //open selected drawer (apps, layouts)
+      // Open selected drawer (apps, layouts)
       let topElement = e.path.find((e) => e.getAttribute('menu-button-id'));
       let menuId = topElement.getAttribute('menu-button-id');
 
@@ -492,15 +492,13 @@ function populateSettingsDropdown(
                     name="${elementName}"
                     id="${elementName}-${element.name + i}"
                     ${elementName}-name="${element.name}"
-                    ${
-                      element.name === selectOptionsObj.selected.name
-                        ? 'checked'
-                        : ''
-                    }
+                    ${element.name === selectOptionsObj.selected.name
+          ? 'checked'
+          : ''
+        }
                 />
-                <label class="select_label" for="${elementName}-${
-        element.name + i
-      }">${element.displayName}</label>
+                <label class="select_label" for="${elementName}-${element.name + i
+        }">${element.displayName}</label>
             </li>
             `;
     });
@@ -543,11 +541,11 @@ async function handleToolbarAppRowsChange() {
       updateSetting({ toolbarAppRows: selectedLength });
 
       if (!isVertical) {
+        setInitialHorizontalPosition();
         qa('.toggle-content').forEach((toggle) => {
           toggle.classList.add('hide');
         });
         app.classList.remove('open-top');
-        fixWindowPosition();
       }
     }
   });
@@ -559,7 +557,7 @@ function setToolbarSize() {
   const appLancher = q('.viewport-header');
   const appContentHeader = q('.app-content-header');
   const appRowsNumber = getSetting('toolbarAppRows');
-  const navItem = q('.content-items .nav-item');
+  const navItem = q('.applications-nav');
   const contentItems = q('.content-items');
 
   appLancher.style.height = `${appLancher.offsetHeight}px`;
@@ -572,9 +570,8 @@ function setToolbarSize() {
       : (app.style.left = `${toolbarDrawerSize.vertical}px`);
 
     app.style.top = '0';
-    app.style.maxHeight = `${
-      appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
-    }px`;
+    app.style.maxHeight = `${appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
+      }px`;
 
     moveMyWindow({
       width: toolbarWidth.vertical + toolbarDrawerSize.vertical * 2,
@@ -582,9 +579,8 @@ function setToolbarSize() {
         appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber,
     });
   } else {
-    app.style.top = `${
-      appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
-    }px`;
+    app.style.top = `${appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
+      }px`;
     app.style.left = '0';
     app.style.maxHeight = `${appLancher.offsetHeight}px`;
 
@@ -593,7 +589,7 @@ function setToolbarSize() {
       height:
         appLancher.offsetHeight +
         (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber) *
-          2,
+        2,
     });
   }
 }
@@ -636,12 +632,18 @@ async function setDrawerOpenClass() {
   const appLancher = q('.viewport-header');
   const appContentHeader = q('.app-content-header');
   const appRowsNumber = getSetting('toolbarAppRows');
-  const navItem = q('.content-items .nav-item');
+  const navItem = q('.applications-nav');
 
   if (isVertical) {
     app.style.left = `${toolbarDrawerSize.vertical}px`;
 
-    if (windowBounds.left + windowBounds.width > workArea.offsetWidth) {
+    if (
+      Math.abs(workArea.left) -
+      Math.abs(windowBounds.left) +
+      windowBounds.width >
+      workArea.offsetWidth ||
+      windowBounds.left + windowBounds.width > workArea.offsetWidth
+    ) {
       app.classList.add('open-left');
       app.classList.contains('has-drawer')
         ? (app.style.left = '0')
@@ -650,25 +652,29 @@ async function setDrawerOpenClass() {
       app.classList.remove('open-left');
     }
   } else {
-    app.style.top = `${
-      appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
-    }px`;
+    app.style.top = `${appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
+      }px`;
 
     app.classList.contains('has-drawer')
-      ? (app.style.maxHeight = `${
-          appLancher.offsetHeight +
-          appContentHeader.offsetHeight +
-          navItem.offsetHeight * appRowsNumber
+      ? (app.style.maxHeight = `${appLancher.offsetHeight +
+        appContentHeader.offsetHeight +
+        navItem.offsetHeight * appRowsNumber
         }px`)
       : (app.style.maxHeight = `${appLancher.offsetHeight}px`);
 
-    if (windowBounds.top + windowBounds.height > workArea.offsetHeight) {
+    if (
+      Math.abs(workArea.top) -
+      Math.abs(windowBounds.top) +
+      windowBounds.height >
+      workArea.offsetHeight ||
+      windowBounds.top + windowBounds.height > workArea.offsetHeight
+    ) {
       app.classList.add('open-top');
       app.classList.contains('has-drawer')
         ? (app.style.top = '0')
         : appLancher.offsetHeight +
-          appContentHeader.offsetHeight +
-          navItem.offsetHeight * appRowsNumber;
+        appContentHeader.offsetHeight +
+        navItem.offsetHeight * appRowsNumber;
     } else {
       app.classList.remove('open-top');
     }
@@ -697,15 +703,12 @@ function handleToolbarOrientationChange() {
     isVertical = !isVertical;
 
     updateSetting({ vertical: isVertical });
-    setTimeout(() => setWindowVisibleArea(), 500);
 
     if (isVertical) {
       app.classList.remove('open-top');
     } else {
       app.classList.remove('open-left');
     }
-
-    fixWindowPosition();
   });
 }
 
@@ -713,8 +716,9 @@ async function fixWindowPosition() {
   const isVertical = getSetting('vertical');
   const workArea = workAreaSizeObs.value;
   const windowBounds = await getWindowBounds();
+  const app = q('.app');
   const appContentHeader = q('.app-content-header');
-  const navItem = q('.nav-item');
+  const navItem = q('.applications-nav');
   const appRowsNumber = getSetting('toolbarAppRows');
 
   if (isVertical) {
@@ -735,10 +739,10 @@ async function fixWindowPosition() {
     // if toolbar position is outside of monitor working area top
     if (
       windowBounds.top +
-        (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber) <
-        workArea.top ||
+      (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber) <
+      workArea.top ||
       windowBounds.top ===
-        -(appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber)
+      -(appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber)
     ) {
       moveMyWindow({
         top:
@@ -752,7 +756,9 @@ async function fixWindowPosition() {
     // if toolbar position is outside of monitor working area bottom
     if (
       windowBounds.top +
-        (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber) >
+      (app.offsetHeight +
+        appContentHeader.offsetHeight +
+        navItem.offsetHeight * appRowsNumber) >
       workArea.offsetHeight
     ) {
       moveMyWindow({
@@ -773,21 +779,38 @@ async function fixWindowPosition() {
   }
 }
 
+function setInitialHorizontalPosition() {
+  const isVertical = getSetting('vertical');
+  const workArea = workAreaSizeObs.value;
+  const appContentHeader = q('.app-content-header');
+  const navItem = q('.applications-nav');
+  const appRowsNumber = getSetting('toolbarAppRows');
+
+  if (!isVertical) {
+    moveMyWindow({
+      top:
+        workArea.top +
+        initialPosition.top -
+        (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber),
+      left: initialPosition.left,
+    });
+  }
+}
+
 async function setWindowMoveArea() {
   const isVertical = getSetting('vertical');
   const appRowsNumber = getSetting('toolbarAppRows');
   const dragArea = q('.draggable').getBoundingClientRect();
   // TODO: Take out into a seperate function and use on all places that need these sizes
   const appContentHeader = q('.app-content-header');
-  const navItem = q('.nav-item');
+  const navItem = q('.applications-nav');
 
   if (isVertical) {
     configureMyWindow({
-      moveAreaTopMargin: `${toolbarDrawerSize.vertical}, 0, ${
-        toolbarWidth.vertical +
+      moveAreaTopMargin: `${toolbarDrawerSize.vertical}, 0, ${toolbarWidth.vertical +
         toolbarDrawerSize.vertical -
         Math.round(dragArea.width)
-      }, 0`,
+        }, 0`,
       moveAreaThickness: `0, ${Math.round(dragArea.height)}, 0, 0`,
     });
   } else {

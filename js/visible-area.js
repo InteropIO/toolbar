@@ -67,8 +67,6 @@ function initVisibleArea() {
     .subscribe(([appBounds, topMenuVisible, layoutDropDownVisible]) => {
       setWindowVisibleArea(topMenuVisible, layoutDropDownVisible);
     });
-
-  setTimeout(() => setWindowVisibleArea(), 500);
 }
 
 function handleDropDownClicks() {

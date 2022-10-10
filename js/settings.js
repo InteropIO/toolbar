@@ -87,6 +87,7 @@ function setSettings(prefs) {
 }
 
 function updateSetting(setting) {
+  settings[Object.keys(setting)[0]] = Object.values(setting)[0];
   updatePrefs(setting);
 }
 
