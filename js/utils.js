@@ -506,13 +506,13 @@ function populateSettingsDropdown(
                     ${elementName}-name="${element.name}"
                     ${
                       element.name === selectOptionsObj.selected.name
-          ? 'checked'
-          : ''
-        }
+                        ? 'checked'
+                        : ''
+                    }
                 />
                 <label class="select_label" for="${elementName}-${
         element.name + i
-        }">${element.displayName}</label>
+      }">${element.displayName}</label>
             </li>
             `;
     });
@@ -571,7 +571,7 @@ function setToolbarSize() {
   const appLancher = q('.viewport-header');
   const appContentHeader = q('.app-content-header');
   const appRowsNumber = getSetting('toolbarAppRows');
-  const navItem = q('.content-items .nav-item');
+  const navItem = q('.applications-nav');
   const contentItems = q('.content-items');
 
   appLancher.style.height = `${appLancher.offsetHeight}px`;
@@ -586,7 +586,7 @@ function setToolbarSize() {
     app.style.top = '0';
     app.style.maxHeight = `${
       appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
-      }px`;
+    }px`;
 
     moveMyWindow({
       width: toolbarWidth.vertical + toolbarDrawerSize.vertical * 2,
@@ -596,7 +596,7 @@ function setToolbarSize() {
   } else {
     app.style.top = `${
       appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
-      }px`;
+    }px`;
     app.style.left = '0';
     app.style.maxHeight = `${appLancher.offsetHeight}px`;
 
@@ -605,7 +605,7 @@ function setToolbarSize() {
       height:
         appLancher.offsetHeight +
         (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber) *
-        2,
+          2,
     });
   }
 }
@@ -664,13 +664,13 @@ async function setDrawerOpenClass() {
   } else {
     app.style.top = `${
       appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
-      }px`;
+    }px`;
 
     app.classList.contains('has-drawer')
       ? (app.style.maxHeight = `${
           appLancher.offsetHeight +
-        appContentHeader.offsetHeight +
-        navItem.offsetHeight * appRowsNumber
+          appContentHeader.offsetHeight +
+          navItem.offsetHeight * appRowsNumber
         }px`)
       : (app.style.maxHeight = `${appLancher.offsetHeight}px`);
 
@@ -679,8 +679,8 @@ async function setDrawerOpenClass() {
       app.classList.contains('has-drawer')
         ? (app.style.top = '0')
         : appLancher.offsetHeight +
-        appContentHeader.offsetHeight +
-        navItem.offsetHeight * appRowsNumber;
+          appContentHeader.offsetHeight +
+          navItem.offsetHeight * appRowsNumber;
     } else {
       app.classList.remove('open-top');
     }
@@ -747,10 +747,10 @@ async function fixWindowPosition() {
     // if toolbar position is outside of monitor working area top
     if (
       windowBounds.top +
-      (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber) <
-      workArea.top ||
+        (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber) <
+        workArea.top ||
       windowBounds.top ===
-      -(appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber)
+        -(appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber)
     ) {
       moveMyWindow({
         top:
@@ -764,7 +764,7 @@ async function fixWindowPosition() {
     // if toolbar position is outside of monitor working area bottom
     if (
       windowBounds.top +
-      (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber) >
+        (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber) >
       workArea.offsetHeight
     ) {
       moveMyWindow({
@@ -799,7 +799,7 @@ async function setWindowMoveArea() {
         toolbarWidth.vertical +
         toolbarDrawerSize.vertical -
         Math.round(dragArea.width)
-        }, 0`,
+      }, 0`,
       moveAreaThickness: `0, ${Math.round(dragArea.height)}, 0, 0`,
     });
   } else {
@@ -821,39 +821,40 @@ function handleKeyboardNavigation() {
   let mainList;
 
   function isFolderElement(e) {
-    return e.matches("nav-item.folder")
+    return e.matches('nav-item.folder');
   }
 
   function isAppElement(e) {
-    return !!e.getAttribute("app-name");
+    return !!e.getAttribute('app-name');
   }
 
   function getActiveNodeFolderName(node) {
-    const folderName = node.getAttribute("folder-name");
+    const folderName = node.getAttribute('folder-name');
     return qa(`.nav-item[folder-name="${folderName}"]`)[0];
   }
 
   function action() {
     if (currentItem) {
-      const shouldClick = isAppElement(currentItem) || isFolderElement(currentItem);
+      const shouldClick =
+        isAppElement(currentItem) || isFolderElement(currentItem);
       if (true) {
         currentItem.click();
-        if (currentItem.matches(".folder.folder-open")) {
+        if (currentItem.matches('.folder.folder-open')) {
           currentItem = getActiveNodeFolderName(currentItem);
-          currentItem.classList.remove("hover")
+          currentItem.classList.remove('hover');
           currentItem = currentItem;
           mainList = currentItem.parentElement;
           currentItem.classList.add('hover');
         } else if (isAppElement(currentItem)) {
           // nothing
-          console.log(`app ignore`)
+          console.log(`app ignore`);
         } else {
-          if (currentItem.matches(".folder")) {
+          if (currentItem.matches('.folder')) {
             mainList = currentItem.children[1];
           } else if (qa('.toggle-content:not(.hide)').length > 0) {
             mainList = qa('.toggle-content:not(.hide)')[0].children[1];
           }
-          currentItem.classList.remove("hover")
+          currentItem.classList.remove('hover');
           currentItem = getNextElement(undefined, mainList);
           mainList = currentItem.parentElement;
           currentItem.classList.add('hover');
@@ -862,7 +863,7 @@ function handleKeyboardNavigation() {
     }
   }
 
-  function upTo(el, tagName,) {
+  function upTo(el, tagName) {
     tagName = tagName.toLowerCase();
 
     while (el && el.parentNode) {
@@ -888,11 +889,11 @@ function handleKeyboardNavigation() {
     currentItem.classList.remove('hover');
     currentItem = undefined;
     mainList = undefined;
-    document.removeEventListener("click", reset);
+    document.removeEventListener('click', reset);
   }
 
   function listenBodyClicks() {
-    document.addEventListener("click", reset);
+    document.addEventListener('click', reset);
   }
 
   function startKeyboardNavigation() {
@@ -904,13 +905,16 @@ function handleKeyboardNavigation() {
   }
 
   function getConnectedNode(item) {
-    if (item.id !== "") {
-      return document.getElementById(item.id)
+    if (item.id !== '') {
+      return document.getElementById(item.id);
     }
-    const attributes = [...item.attributes].filter((a) => a.name !== "class").map((a) => `[${a.name}="${a.value}"]`).join("")
-    const classList = [...item.classList].join(".")
-    const classAsString = classList.length > 0 ? `.${classList}` : ""
-    const found = qa(`${item.nodeName}${classAsString}${attributes ?? ""}`)[0];
+    const attributes = [...item.attributes]
+      .filter((a) => a.name !== 'class')
+      .map((a) => `[${a.name}="${a.value}"]`)
+      .join('');
+    const classList = [...item.classList].join('.');
+    const classAsString = classList.length > 0 ? `.${classList}` : '';
+    const found = qa(`${item.nodeName}${classAsString}${attributes ?? ''}`)[0];
     if (!found) {
       debugger;
     }
@@ -918,7 +922,6 @@ function handleKeyboardNavigation() {
   }
 
   function getNextElement(item, ul) {
-
     // if we don't have item, get the first one
     let nextItem;
     if (!item) {
@@ -932,34 +935,40 @@ function handleKeyboardNavigation() {
       if (!nextItem) {
         // go out from the fav and continue
         if (!item.isConnected) {
-          if (ul.matches(".folder-content")) {
+          if (ul.matches('.folder-content')) {
             const currentFolderElement = ul.parentElement;
-            const activeNode = getActiveNodeFolderName(currentFolderElement)
+            const activeNode = getActiveNodeFolderName(currentFolderElement);
             return getNextElement(activeNode, activeNode.parentElement);
           }
         }
         // get parent UL
-        const parentUL = upTo(item.parentElement, "UL");
+        const parentUL = upTo(item.parentElement, 'UL');
         const element = parentUL ? item.parentElement.parentElement : undefined;
         return getNextElement(element, parentUL ?? ul);
       } else {
-        if (nextItem.matches(".folder.folder-open")) {
-          const ulNode = [...nextItem.children].find((child) => child.nodeName === "UL");
+        if (nextItem.matches('.folder.folder-open')) {
+          const ulNode = [...nextItem.children].find(
+            (child) => child.nodeName === 'UL'
+          );
           if (ulNode) {
-            return getNextElement(undefined, ulNode)
+            return getNextElement(undefined, ulNode);
           }
         }
       }
     }
 
-    if (nextItem && nextItem.matches('.nav-item') && !nextItem.matches('.d-none')) {
+    if (
+      nextItem &&
+      nextItem.matches('.nav-item') &&
+      !nextItem.matches('.d-none')
+    ) {
       // make sure that the found element is part of the main ul
       if (!ul.contains(nextItem)) {
         return;
       }
       if (!nextItem.isConnected) {
-        if (ul.matches(".folder-content")) {
-          const appName = nextItem.getAttribute("app-name");
+        if (ul.matches('.folder-content')) {
+          const appName = nextItem.getAttribute('app-name');
           nextItem = qa(`.nav-item[app-name="${appName}"]`)[0];
         }
       }
@@ -967,8 +976,12 @@ function handleKeyboardNavigation() {
     }
 
     // if we have nested ul
-    if (nextItem && nextItem.children[0] && nextItem.children[0].nodeName === "UL") {
-      return getNextElement(undefined, nextItem.children[0])
+    if (
+      nextItem &&
+      nextItem.children[0] &&
+      nextItem.children[0].nodeName === 'UL'
+    ) {
+      return getNextElement(undefined, nextItem.children[0]);
     }
 
     return getNextElement(nextItem, ul);
@@ -984,30 +997,36 @@ function handleKeyboardNavigation() {
       if (!nextItem) {
         // go out from the fav and continue
         if (!item.isConnected) {
-          if (ul.matches(".folder-content")) {
+          if (ul.matches('.folder-content')) {
             const currentFolderElement = ul.parentElement;
-            const activeNode = getActiveNodeFolderName(currentFolderElement)
+            const activeNode = getActiveNodeFolderName(currentFolderElement);
             return getPrevElement(activeNode, activeNode.parentElement);
           }
         }
 
-        const parentUL = upTo(item.parentElement, "UL");
+        const parentUL = upTo(item.parentElement, 'UL');
         const element = parentUL ? item.parentElement.parentElement : undefined;
-        if (element && element.matches(".folder.folder-open")) {
+        if (element && element.matches('.folder.folder-open')) {
           return element;
         }
         return getPrevElement(element, parentUL ?? ul);
       } else {
-        if (nextItem.matches(".folder.folder-open")) {
-          const ulNode = [...nextItem.children].find((child) => child.nodeName === "UL");
+        if (nextItem.matches('.folder.folder-open')) {
+          const ulNode = [...nextItem.children].find(
+            (child) => child.nodeName === 'UL'
+          );
           if (ulNode) {
-            return getPrevElement(undefined, ulNode)
+            return getPrevElement(undefined, ulNode);
           }
         }
       }
     }
 
-    if (nextItem && nextItem.matches('.nav-item') && !nextItem.matches('.d-none')) {
+    if (
+      nextItem &&
+      nextItem.matches('.nav-item') &&
+      !nextItem.matches('.d-none')
+    ) {
       // make sure that the found element is part of the main ul
       if (!ul.contains(nextItem)) {
         return;
@@ -1016,8 +1035,15 @@ function handleKeyboardNavigation() {
     }
 
     // if we have nested ul
-    if (nextItem && nextItem.children[nextItem.children.length - 1] && nextItem.children[nextItem.children.length - 1].nodeName === "UL") {
-      return getPrevElement(undefined, nextItem.children[nextItem.children.length - 1])
+    if (
+      nextItem &&
+      nextItem.children[nextItem.children.length - 1] &&
+      nextItem.children[nextItem.children.length - 1].nodeName === 'UL'
+    ) {
+      return getPrevElement(
+        undefined,
+        nextItem.children[nextItem.children.length - 1]
+      );
     }
 
     return getPrevElement(nextItem, ul);
@@ -1034,7 +1060,6 @@ function handleKeyboardNavigation() {
   function getStartingUl() {
     return qa('.viewport .nav-tabs')[0];
   }
-
 
   function hover(direction) {
     if (direction) {
@@ -1088,17 +1113,17 @@ function handleKeyboardNavigation() {
     if (direction) {
       if (currentItem) {
         const mainNavigation = upTo2(currentItem, (el) => {
-          return el.id === "applicationLauncher"
-        })
+          return el.id === 'applicationLauncher';
+        });
         if (mainNavigation) {
           // go to the drawer navigation
           const content = qa('.toggle-content:not(.hide)');
           if (content.length > 0) {
             mainList = qa('.toggle-content:not(.hide)')[0].children[1];
-            currentItem.classList.remove("hover")
+            currentItem.classList.remove('hover');
             currentItem = getNextElement(undefined, mainList);
-            mainList = currentItem.parentElement
-            currentItem.scrollIntoViewIfNeeded();;
+            mainList = currentItem.parentElement;
+            currentItem.scrollIntoViewIfNeeded();
             currentItem.classList.add('hover');
           }
         }
@@ -1106,8 +1131,8 @@ function handleKeyboardNavigation() {
     } else {
       if (currentItem) {
         const inAppContent = upTo2(currentItem, (el) => {
-          return el.id === "app-content"
-        })
+          return el.id === 'app-content';
+        });
         if (inAppContent) {
           // go to the main navigation
           mainList = getStartingUl();
@@ -1116,7 +1141,6 @@ function handleKeyboardNavigation() {
           currentItem.classList.add('hover');
           currentItem.scrollIntoViewIfNeeded();
           mainList = currentItem.parentElement;
-
         }
       }
     }
@@ -1141,13 +1165,13 @@ function handleKeyboardNavigation() {
         hover(false);
         break;
       case 'ArrowRight':
-        leftRightArrowClicked(true)
+        leftRightArrowClicked(true);
         break;
       case 'ArrowDown':
         hover(true);
         break;
       case 'ArrowLeft':
-        leftRightArrowClicked(false)
+        leftRightArrowClicked(false);
         break;
 
       default:
