@@ -1,16 +1,5 @@
-import {
-  setSettings,
-  updateSettings,
-  getSetting,
-  getSettings,
-} from './settings.js';
-import {
-  setToolbarOrientation,
-  setToolbarSize,
-  setWindowVisibleArea,
-  setWindowMoveArea,
-  fixWindowPosition,
-} from './utils.js';
+import { setSettings, getSetting, getSettings } from './settings.js';
+import { setToolbarOrientation, setWindowParams } from './utils.js';
 
 console.time('Glue');
 var gluePromise = new Promise(async (res, rej) => {
@@ -541,17 +530,16 @@ async function getPrefs() {
     Object.keys(prefs.data).length === 0
   ) {
     await glue.prefs.update({ ...getSettings() });
+    setSettings();
   } else {
     setSettings(prefs.data);
   }
 
+  setToolbarOrientation();
+  setWindowParams();
+
   glue.prefs.subscribe((prefs) => {
-    updateSettings(prefs.data);
     setToolbarOrientation();
-    setToolbarSize();
-    setWindowMoveArea();
-    setWindowVisibleArea();
-    fixWindowPosition();
   });
 }
 

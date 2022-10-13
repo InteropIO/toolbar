@@ -26,7 +26,7 @@ import {
   toolbarWidth,
   toolbarDrawerSize,
   initialPosition,
-  updateSetting,
+  setSetting,
   getSetting,
 } from './settings.js';
 // import { searchInputObs } from './applications.js';
@@ -45,7 +45,7 @@ let arrowKeysObs = rxjs
     rxjs.operators.filter((e) => {
       return e.key === 'ArrowUp' || e.key === 'ArrowDown';
     })
-    )
+  )
   .pipe(rxjs.operators.map((e) => e.key.slice(5)))
   .subscribe(console.warn);
 
@@ -126,7 +126,7 @@ function handleTopMenuClicks() {
       e.preventDefault();
       e.stopPropagation();
       e.stopImmediatePropagation();
-      updateSetting({ showHiddenApps: !getSetting('showHiddenApps') });
+      setSetting({ showHiddenApps: !getSetting('showHiddenApps') });
       refreshApps();
       return;
     }
@@ -136,20 +136,17 @@ function handleTopMenuClicks() {
       let topElement = e.path.find((e) => e.getAttribute('menu-button-id'));
       let menuId = topElement.getAttribute('menu-button-id');
 
+      qa(`[menu-button-id]:not([menu-button-id="${menuId}"])`).forEach(
+        (menu) => {
+          menu.classList.remove('is-active');
+        }
+      );
       qa(`[menu-id]:not([menu-id="${menuId}"])`).forEach((menu) => {
         menu.classList.add('hide');
       });
-      qa(`[menu-id]:not([menu-button-id="${menuId}"]) .chevron`).forEach(
-        (menuBtnChevron) => {
-          menuBtnChevron.classList.remove('chevron-rotate');
-        }
-      );
+      topElement.classList.toggle('is-active');
 
       let menuToToggle = q(`[menu-id="${menuId}"]`);
-
-      // if (menuToToggle.classList.contains('hide')) {
-      //   await applyOpenClasses();
-      // }
 
       menuToToggle.addEventListener(
         'transitionend',
@@ -157,8 +154,6 @@ function handleTopMenuClicks() {
       );
       menuToToggle.classList.toggle('hide');
       setDrawerOpenClass();
-
-      toggleTopButtonState(menuId);
 
       let hasVisibleDrawers = q('.toggle-content:not(.hide)');
 
@@ -204,21 +199,6 @@ function handleMinimizeClick() {
 
   isMinimizeAllowed().then(
     (allowed) => allowed && q('.minimize').classList.remove('d-none')
-  );
-}
-
-function toggleTopButtonState(id) {
-  qa(`[menu-button-id="${id}"] .chevron`).forEach((chevron) =>
-    chevron.classList.toggle('chevron-rotate')
-  );
-  qa(`[menu-button-id="${id}"] > a`).forEach((chevron) =>
-    chevron.classList.toggle('active')
-  );
-  qa(`[menu-button-id]:not([menu-button-id="${id}"]) .chevron`).forEach(
-    (chevron) => chevron.classList.remove('chevron-rotate')
-  );
-  qa(`[menu-button-id]:not([menu-button-id="${id}"]) > a`).forEach((chevron) =>
-    chevron.classList.remove('active')
   );
 }
 
@@ -400,7 +380,7 @@ async function startTutorial() {
   const hideTutorialOnStartup = userProperties.hideTutorialOnStartup;
   const tutorialApp = await getApp('getting-started');
   if (!tutorialApp || hideTutorialOnStartup) {
-    updateSetting({ showTutorial: false });
+    setSetting({ showTutorial: false });
     q('.show-tutorial-check').classList.add('d-none');
   } else {
     const showTutorial = getSetting('showTutorial');
@@ -492,13 +472,15 @@ function populateSettingsDropdown(
                     name="${elementName}"
                     id="${elementName}-${element.name + i}"
                     ${elementName}-name="${element.name}"
-                    ${element.name === selectOptionsObj.selected.name
-          ? 'checked'
-          : ''
-        }
+                    ${
+                      element.name === selectOptionsObj.selected.name
+                        ? 'checked'
+                        : ''
+                    }
                 />
-                <label class="select_label" for="${elementName}-${element.name + i
-        }">${element.displayName}</label>
+                <label class="select_label" for="${elementName}-${
+        element.name + i
+      }">${element.displayName}</label>
             </li>
             `;
     });
@@ -538,7 +520,7 @@ async function handleToolbarAppRowsChange() {
     if (e.target.matches('input.select_input[type="radio"]')) {
       const selectedLength = e.target.getAttribute('length-name');
 
-      updateSetting({ toolbarAppRows: selectedLength });
+      setSetting({ toolbarAppRows: selectedLength });
 
       if (!isVertical) {
         setInitialHorizontalPosition();
@@ -547,11 +529,13 @@ async function handleToolbarAppRowsChange() {
         });
         app.classList.remove('open-top');
       }
+
+      setWindowParams();
     }
   });
 }
 
-function setToolbarSize() {
+function setWindowSize() {
   const isVertical = getSetting('vertical');
   const app = q('.app');
   const appLancher = q('.viewport-header');
@@ -568,10 +552,10 @@ function setToolbarSize() {
     app.classList.contains('open-left')
       ? (app.style.left = '0')
       : (app.style.left = `${toolbarDrawerSize.vertical}px`);
-
     app.style.top = '0';
-    app.style.maxHeight = `${appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
-      }px`;
+    app.style.maxHeight = `${
+      appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
+    }px`;
 
     moveMyWindow({
       width: toolbarWidth.vertical + toolbarDrawerSize.vertical * 2,
@@ -579,8 +563,9 @@ function setToolbarSize() {
         appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber,
     });
   } else {
-    app.style.top = `${appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
-      }px`;
+    app.style.top = `${
+      appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
+    }px`;
     app.style.left = '0';
     app.style.maxHeight = `${appLancher.offsetHeight}px`;
 
@@ -589,7 +574,7 @@ function setToolbarSize() {
       height:
         appLancher.offsetHeight +
         (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber) *
-        2,
+          2,
     });
   }
 }
@@ -639,9 +624,9 @@ async function setDrawerOpenClass() {
 
     if (
       Math.abs(workArea.left) -
-      Math.abs(windowBounds.left) +
-      windowBounds.width >
-      workArea.offsetWidth ||
+        Math.abs(windowBounds.left) +
+        windowBounds.width >
+        workArea.offsetWidth ||
       windowBounds.left + windowBounds.width > workArea.offsetWidth
     ) {
       app.classList.add('open-left');
@@ -652,33 +637,42 @@ async function setDrawerOpenClass() {
       app.classList.remove('open-left');
     }
   } else {
-    app.style.top = `${appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
-      }px`;
+    app.style.top = `${
+      appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
+    }px`;
 
     app.classList.contains('has-drawer')
-      ? (app.style.maxHeight = `${appLancher.offsetHeight +
-        appContentHeader.offsetHeight +
-        navItem.offsetHeight * appRowsNumber
+      ? (app.style.maxHeight = `${
+          appLancher.offsetHeight +
+          appContentHeader.offsetHeight +
+          navItem.offsetHeight * appRowsNumber
         }px`)
       : (app.style.maxHeight = `${appLancher.offsetHeight}px`);
 
     if (
       Math.abs(workArea.top) -
-      Math.abs(windowBounds.top) +
-      windowBounds.height >
-      workArea.offsetHeight ||
+        Math.abs(windowBounds.top) +
+        windowBounds.height >
+        workArea.offsetHeight ||
       windowBounds.top + windowBounds.height > workArea.offsetHeight
     ) {
       app.classList.add('open-top');
       app.classList.contains('has-drawer')
         ? (app.style.top = '0')
         : appLancher.offsetHeight +
-        appContentHeader.offsetHeight +
-        navItem.offsetHeight * appRowsNumber;
+          appContentHeader.offsetHeight +
+          navItem.offsetHeight * appRowsNumber;
     } else {
       app.classList.remove('open-top');
     }
   }
+}
+
+function setWindowParams() {
+  setWindowSize();
+  setWindowVisibleArea();
+  setWindowMoveArea();
+  setWindowPosition();
 }
 
 function setToolbarOrientation() {
@@ -702,17 +696,28 @@ function handleToolbarOrientationChange() {
     const app = q('.app');
     isVertical = !isVertical;
 
-    updateSetting({ vertical: isVertical });
+    setSetting({ vertical: isVertical });
 
     if (isVertical) {
       app.classList.remove('open-top');
     } else {
       app.classList.remove('open-left');
     }
+
+    setWindowParams();
+    closeAllMenus();
   });
 }
 
-async function fixWindowPosition() {
+function closeAllMenus() {
+  const openedMenus = qa('.toggle-content:not(.hide)');
+  const activeButtons = qa('.nav-item.is-active');
+
+  openedMenus.forEach((el) => el.classList.add('hide'));
+  activeButtons.forEach((el) => el.classList.remove('is-active'));
+}
+
+async function setWindowPosition() {
   const isVertical = getSetting('vertical');
   const workArea = workAreaSizeObs.value;
   const windowBounds = await getWindowBounds();
@@ -739,10 +744,10 @@ async function fixWindowPosition() {
     // if toolbar position is outside of monitor working area top
     if (
       windowBounds.top +
-      (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber) <
-      workArea.top ||
+        (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber) <
+        workArea.top ||
       windowBounds.top ===
-      -(appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber)
+        -(appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber)
     ) {
       moveMyWindow({
         top:
@@ -756,9 +761,9 @@ async function fixWindowPosition() {
     // if toolbar position is outside of monitor working area bottom
     if (
       windowBounds.top +
-      (app.offsetHeight +
-        appContentHeader.offsetHeight +
-        navItem.offsetHeight * appRowsNumber) >
+        (app.offsetHeight +
+          appContentHeader.offsetHeight +
+          navItem.offsetHeight * appRowsNumber) >
       workArea.offsetHeight
     ) {
       moveMyWindow({
@@ -801,16 +806,16 @@ async function setWindowMoveArea() {
   const isVertical = getSetting('vertical');
   const appRowsNumber = getSetting('toolbarAppRows');
   const dragArea = q('.draggable').getBoundingClientRect();
-  // TODO: Take out into a seperate function and use on all places that need these sizes
   const appContentHeader = q('.app-content-header');
   const navItem = q('.applications-nav');
 
   if (isVertical) {
     configureMyWindow({
-      moveAreaTopMargin: `${toolbarDrawerSize.vertical}, 0, ${toolbarWidth.vertical +
+      moveAreaTopMargin: `${toolbarDrawerSize.vertical}, 0, ${
+        toolbarWidth.vertical +
         toolbarDrawerSize.vertical -
         Math.round(dragArea.width)
-        }, 0`,
+      }, 0`,
       moveAreaThickness: `0, ${Math.round(dragArea.height)}, 0, 0`,
     });
   } else {
@@ -836,8 +841,7 @@ export {
   handleModalClose,
   handleMouseHover,
   setWindowVisibleArea,
-  setToolbarSize,
-  setWindowMoveArea,
+  setWindowParams,
   focusInputAfterWindowRecover,
   windowMargin,
   startTutorial,
@@ -845,5 +849,4 @@ export {
   escapeHtml,
   getAppIcon,
   openDrawer,
-  fixWindowPosition,
 };

@@ -61,6 +61,18 @@
     }
 
     .nav {
+      &-item {
+        .chevron {
+          transform: rotate(90deg);
+        }
+
+        &.is-active {
+          .chevron {
+            transform: rotate(-90deg);
+          }
+        }
+      }
+
       .applications-nav::before,
       .favorite::after,
       .viewport-footer:before {
@@ -78,14 +90,6 @@
           padding: 0.25rem 0;
           top: 1rem;
         }
-      }
-
-      .icon-angle-right {
-        transform: rotate(90deg);
-      }
-
-      .chevron-rotate {
-        transform: rotate(-90deg);
       }
 
       .show-actions {

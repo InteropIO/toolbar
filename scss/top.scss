@@ -16,12 +16,16 @@
         }
       }
 
-      .icon-angle-right {
-        transform: rotate(-90deg);
-      }
+      .nav-item {
+        .chevron {
+          transform: rotate(-90deg);
+        }
 
-      .chevron-rotate {
-        transform: rotate(90deg);
+        &.is-active {
+          .chevron {
+            transform: rotate(90deg);
+          }
+        }
       }
     }
 
