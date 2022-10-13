@@ -24,6 +24,7 @@ var gluePromise = new Promise(async (res, rej) => {
   });
 });
 
+const workAreaSizeObs = {};
 const glueAppsObs = new rxjs.BehaviorSubject([]);
 const allWorkspacesObs = new rxjs.BehaviorSubject([]);
 const layoutsObs = new rxjs.BehaviorSubject([]);
@@ -32,7 +33,6 @@ const activeLayout = new rxjs.BehaviorSubject({});
 const notificationsCountObs = new rxjs.BehaviorSubject(null);
 const themeObs = new rxjs.BehaviorSubject(null);
 const boundsObs = new rxjs.BehaviorSubject(null);
-const workAreaSizeObs = new rxjs.BehaviorSubject(null);
 let notificationEnabledObs = new rxjs.BehaviorSubject(false);
 
 if (!window.glue42gd) {
@@ -201,48 +201,22 @@ async function trackWindowMove() {
 }
 
 async function trackWorkAreaSize() {
-  let currentMonitorOffsetWidth;
-  let currentMonitorOffsetHeight;
+  let scaleFactor = 1;
   const currentMonitor = await glue.windows.my().getDisplay();
   const monitors = await getMonitorInfo();
-  const workAreas = {
-    width: [],
-    height: [],
-  };
 
   monitors.forEach((monitor) => {
-    workAreas.width.push(monitor.workingAreaWidth);
-    workAreas.height.push(monitor.workingAreaHeight);
+    monitor.isPrimary ? (scaleFactor = monitor.scaleFactor) : scaleFactor;
   });
 
-  // if monitors are ordered horizontally
-  if (currentMonitor.bounds.left >= currentMonitor.workArea.width) {
-    currentMonitorOffsetWidth = workAreas.width.reduce(
-      (acc, curr) => acc + curr,
-      0
-    );
-  } else {
-    currentMonitorOffsetWidth = currentMonitor.workArea.width;
-  }
-
-  // if monitors are ordered vertically
-  if (currentMonitor.bounds.top >= currentMonitor.workArea.height) {
-    currentMonitorOffsetHeight = workAreas.height.reduce(
-      (acc, curr) => acc + curr,
-      0
-    );
-  } else {
-    currentMonitorOffsetHeight = currentMonitor.workArea.height;
-  }
-
-  workAreaSizeObs.next({
+  const workArea = {
     left: currentMonitor.workArea.left,
     top: currentMonitor.workArea.top,
     width: currentMonitor.workArea.width,
     height: currentMonitor.workArea.height,
-    offsetWidth: currentMonitorOffsetWidth,
-    offsetHeight: currentMonitorOffsetHeight,
-  });
+  };
+
+  Object.assign(workAreaSizeObs, workArea);
 }
 
 async function startApp(appName, context) {
@@ -480,6 +454,8 @@ async function getMonitorInfo() {
     top: display.bounds.top,
     width: display.bounds.width,
     height: display.bounds.height,
+    isPrimary: display.isPrimary,
+    scaleFactor: display.scaleFactor,
     workingAreaWidth: display.workArea.width,
     workingAreaHeight: display.workArea.height,
     workingAreaLeft: display.workArea.left,

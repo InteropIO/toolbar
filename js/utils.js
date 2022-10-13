@@ -523,7 +523,6 @@ async function handleToolbarAppRowsChange() {
       setSetting({ toolbarAppRows: selectedLength });
 
       if (!isVertical) {
-        setInitialHorizontalPosition();
         qa('.toggle-content').forEach((toggle) => {
           toggle.classList.add('hide');
         });
@@ -611,7 +610,7 @@ function buildVisibleArea(element) {
 
 async function setDrawerOpenClass() {
   const isVertical = getSetting('vertical');
-  const workArea = workAreaSizeObs.value;
+  const workArea = workAreaSizeObs;
   const windowBounds = await getWindowBounds();
   const app = q('.app');
   const appLancher = q('.viewport-header');
@@ -623,11 +622,8 @@ async function setDrawerOpenClass() {
     app.style.left = `${toolbarDrawerSize.vertical}px`;
 
     if (
-      Math.abs(workArea.left) -
-        Math.abs(windowBounds.left) +
-        windowBounds.width >
-        workArea.offsetWidth ||
-      windowBounds.left + windowBounds.width > workArea.offsetWidth
+      windowBounds.left + windowBounds.width >
+      workArea.left + workArea.width
     ) {
       app.classList.add('open-left');
       app.classList.contains('has-drawer')
@@ -650,11 +646,8 @@ async function setDrawerOpenClass() {
       : (app.style.maxHeight = `${appLancher.offsetHeight}px`);
 
     if (
-      Math.abs(workArea.top) -
-        Math.abs(windowBounds.top) +
-        windowBounds.height >
-        workArea.offsetHeight ||
-      windowBounds.top + windowBounds.height > workArea.offsetHeight
+      windowBounds.top + windowBounds.height >
+      workArea.top + workArea.height
     ) {
       app.classList.add('open-top');
       app.classList.contains('has-drawer')
@@ -719,7 +712,7 @@ function closeAllMenus() {
 
 async function setWindowPosition() {
   const isVertical = getSetting('vertical');
-  const workArea = workAreaSizeObs.value;
+  const workArea = workAreaSizeObs;
   const windowBounds = await getWindowBounds();
   const app = q('.app');
   const appContentHeader = q('.app-content-header');
@@ -781,24 +774,6 @@ async function setWindowPosition() {
         left: workArea.left + initialPosition.left,
       });
     }
-  }
-}
-
-function setInitialHorizontalPosition() {
-  const isVertical = getSetting('vertical');
-  const workArea = workAreaSizeObs.value;
-  const appContentHeader = q('.app-content-header');
-  const navItem = q('.applications-nav');
-  const appRowsNumber = getSetting('toolbarAppRows');
-
-  if (!isVertical) {
-    moveMyWindow({
-      top:
-        workArea.top +
-        initialPosition.top -
-        (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber),
-      left: initialPosition.left,
-    });
   }
 }
 
