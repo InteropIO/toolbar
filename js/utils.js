@@ -495,8 +495,8 @@ async function handleToolbarAppRowsChange() {
   const app = q('.app');
   const appSelectOptions = {
     all: [
-      { name: '8', displayName: '8 Items' },
-      { name: '10', displayName: '10 Items (Default)' },
+      { name: '8', displayName: '8 Items (Default)' },
+      { name: '10', displayName: '10 Items' },
       { name: '12', displayName: '12 Items' },
       { name: '14', displayName: '14 Items' },
       { name: '16', displayName: '16 Items' },
@@ -720,50 +720,61 @@ async function setWindowPosition() {
   const navItem = q('.applications-nav');
   const appRowsNumber = getSetting('toolbarAppRows');
 
-  if (isVertical) {
-    // if toolbar position is outside of monitor working area top
-    if (windowBounds.top < workArea.top) {
-      await moveMyWindow({
-        top: workArea.top + initialPosition.top,
-      });
+  const workAreaRect = {
+    lx: workArea.left,
+    ly: workArea.top,
+    rx: workArea.left + workArea.width,
+    ry: workArea.top + workArea.height,
+  };
+
+  const visibleAreaRect = {
+    lx: windowBounds.left + appCoords.left,
+    ly: windowBounds.top + appCoords.top,
+    rx: windowBounds.left + appCoords.left + appCoords.width,
+    ry: windowBounds.top + appCoords.top + appCoords.height,
+  };
+
+  // Returns true if rect1 and rect2 overlap
+  async function overlap(rect1, rect2) {
+    // if rect has area 0, no overlap
+    if (
+      rect1.lx === rect1.rx ||
+      rect1.ly === rect1.ry ||
+      rect2.rx === rect2.lx ||
+      rect2.ly === rect2.ry
+    ) {
+      return false;
     }
 
-    // if toolbar position is outside of monitor working area left
-    if (windowBounds.left + toolbarDrawerSize.vertical < workArea.left) {
-      await moveMyWindow({
-        left: workArea.left + initialPosition.left - toolbarDrawerSize.vertical,
-      });
-    }
-  } else {
-    // if toolbar position is outside of monitor working area top
-    if (windowBounds.top + appCoords.top < workArea.top) {
-      await moveMyWindow({
-        top:
-          workArea.top +
-          initialPosition.top -
-          (appContentHeader.offsetHeight +
-            navItem.offsetHeight * appRowsNumber),
-      });
-    }
-
-    // if toolbar position is outside of monitor working area bottom
-    if (windowBounds.top + appCoords.top > workArea.height) {
-      await moveMyWindow({
-        top:
-          workArea.top +
-          initialPosition.top -
-          (appContentHeader.offsetHeight +
-            navItem.offsetHeight * appRowsNumber),
-      });
+    // if rect2 moves beyound boundries of rect1
+    if (
+      rect2.lx < rect1.lx ||
+      rect2.ly < rect1.ly ||
+      rect2.rx > rect1.rx ||
+      rect2.ry > rect1.ry
+    ) {
+      if (isVertical) {
+        await moveMyWindow({
+          top: workArea.top + initialPosition.top,
+          left:
+            workArea.left + initialPosition.left - toolbarDrawerSize.vertical,
+        });
+      } else {
+        await moveMyWindow({
+          top:
+            workArea.top +
+            initialPosition.top -
+            (appContentHeader.offsetHeight +
+              navItem.offsetHeight * appRowsNumber),
+          left: workArea.left + initialPosition.left,
+        });
+      }
     }
 
-    // if toolbar position is outside of monitor working area left
-    if (windowBounds.left < workArea.left) {
-      await moveMyWindow({
-        left: workArea.left + initialPosition.left,
-      });
-    }
+    return true;
   }
+
+  overlap(workAreaRect, visibleAreaRect);
 }
 
 async function setWindowMoveArea() {

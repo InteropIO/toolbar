@@ -11,7 +11,7 @@ let settings = {
   searchInstruments: true,
   enableNotifications: true,
   enableToasts: true,
-  toolbarAppRows: '10',
+  toolbarAppRows: '8',
   showHiddenApps: false,
   vertical: true,
 };

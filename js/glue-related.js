@@ -198,7 +198,6 @@ async function trackWindowMove() {
 
   glue.windows.my().onBoundsChanged(() => {
     boundsObs.next(glue.windows.my().bounds);
-    setWindowPosition();
   });
 }
 
