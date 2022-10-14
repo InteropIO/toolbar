@@ -20,7 +20,7 @@ import {
   checkNotificationsConfigure,
   configureNotifications,
   openFeedbackForm,
-  workAreaSizeObs,
+  getWindowWorkArea,
 } from './glue-related.js';
 import {
   toolbarWidth,
@@ -534,7 +534,7 @@ async function handleToolbarAppRowsChange() {
   });
 }
 
-function setWindowSize() {
+async function setWindowSize() {
   const isVertical = getSetting('vertical');
   const app = q('.app');
   const appLancher = q('.viewport-header');
@@ -556,7 +556,7 @@ function setWindowSize() {
       appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
     }px`;
 
-    moveMyWindow({
+    await moveMyWindow({
       width: toolbarWidth.vertical + toolbarDrawerSize.vertical * 2,
       height:
         appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber,
@@ -568,7 +568,7 @@ function setWindowSize() {
     app.style.left = '0';
     app.style.maxHeight = `${appLancher.offsetHeight}px`;
 
-    moveMyWindow({
+    await moveMyWindow({
       width: toolbarWidth.horizontal,
       height:
         appLancher.offsetHeight +
@@ -594,7 +594,7 @@ function setWindowVisibleArea(topMenuVisible, layoutDropDownVisible) {
     }
   }
 
-  resizeWindowVisibleArea(visibleAreas);
+  return resizeWindowVisibleArea(visibleAreas);
 }
 
 function buildVisibleArea(element) {
@@ -610,7 +610,7 @@ function buildVisibleArea(element) {
 
 async function setDrawerOpenClass() {
   const isVertical = getSetting('vertical');
-  const workArea = workAreaSizeObs;
+  const workArea = await getWindowWorkArea();
   const windowBounds = await getWindowBounds();
   const app = q('.app');
   const appLancher = q('.viewport-header');
@@ -661,11 +661,11 @@ async function setDrawerOpenClass() {
   }
 }
 
-function setWindowParams() {
-  setWindowSize();
-  setWindowVisibleArea();
-  setWindowMoveArea();
-  setWindowPosition();
+async function setWindowParams() {
+  await setWindowSize();
+  await setWindowVisibleArea();
+  await setWindowMoveArea();
+  await setWindowPosition();
 }
 
 function setToolbarOrientation() {
@@ -712,7 +712,7 @@ function closeAllMenus() {
 
 async function setWindowPosition() {
   const isVertical = getSetting('vertical');
-  const workArea = workAreaSizeObs;
+  const workArea = await getWindowWorkArea();
   const windowBounds = await getWindowBounds();
   const app = q('.app');
   const appCoords = app.getBoundingClientRect();
@@ -723,23 +723,21 @@ async function setWindowPosition() {
   if (isVertical) {
     // if toolbar position is outside of monitor working area top
     if (windowBounds.top < workArea.top) {
-      moveMyWindow({
+      await moveMyWindow({
         top: workArea.top + initialPosition.top,
       });
     }
 
     // if toolbar position is outside of monitor working area left
     if (windowBounds.left + toolbarDrawerSize.vertical < workArea.left) {
-      moveMyWindow({
+      await moveMyWindow({
         left: workArea.left + initialPosition.left - toolbarDrawerSize.vertical,
       });
     }
   } else {
-    console.log(workArea);
     // if toolbar position is outside of monitor working area top
     if (windowBounds.top + appCoords.top < workArea.top) {
-      console.log('bqga mi otgore');
-      moveMyWindow({
+      await moveMyWindow({
         top:
           workArea.top +
           initialPosition.top -
@@ -750,7 +748,7 @@ async function setWindowPosition() {
 
     // if toolbar position is outside of monitor working area bottom
     if (windowBounds.top + appCoords.top > workArea.height) {
-      moveMyWindow({
+      await moveMyWindow({
         top:
           workArea.top +
           initialPosition.top -
@@ -761,7 +759,7 @@ async function setWindowPosition() {
 
     // if toolbar position is outside of monitor working area left
     if (windowBounds.left < workArea.left) {
-      moveMyWindow({
+      await moveMyWindow({
         left: workArea.left + initialPosition.left,
       });
     }
@@ -776,7 +774,7 @@ async function setWindowMoveArea() {
   const navItem = q('.applications-nav');
 
   if (isVertical) {
-    configureMyWindow({
+    await configureMyWindow({
       moveAreaTopMargin: `${toolbarDrawerSize.vertical}, 0, ${
         toolbarWidth.vertical +
         toolbarDrawerSize.vertical -
@@ -785,7 +783,7 @@ async function setWindowMoveArea() {
       moveAreaThickness: `0, ${Math.round(dragArea.height)}, 0, 0`,
     });
   } else {
-    configureMyWindow({
+    await configureMyWindow({
       moveAreaLeftMargin: `0, ${Math.round(
         appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
       )}, 0, ${Math.round(
@@ -799,6 +797,7 @@ async function setWindowMoveArea() {
 export {
   handleEvents,
   setToolbarOrientation,
+  setWindowPosition,
   handleThemeChange,
   handleShutdownClick,
   handleTopMenuClicks,

@@ -1,5 +1,9 @@
 import { setSettings, getSetting, getSettings } from './settings.js';
-import { setToolbarOrientation, setWindowParams } from './utils.js';
+import {
+  setToolbarOrientation,
+  setWindowParams,
+  setWindowPosition,
+} from './utils.js';
 
 console.time('Glue');
 var gluePromise = new Promise(async (res, rej) => {
@@ -24,7 +28,6 @@ var gluePromise = new Promise(async (res, rej) => {
   });
 });
 
-const workAreaSizeObs = {};
 const glueAppsObs = new rxjs.BehaviorSubject([]);
 const allWorkspacesObs = new rxjs.BehaviorSubject([]);
 const layoutsObs = new rxjs.BehaviorSubject([]);
@@ -46,7 +49,6 @@ const glueInfo = {
 };
 
 gluePromise.then((glue) => {
-  trackWorkAreaSize();
   trackApplications();
   trackLayouts();
   trackWorkspaces();
@@ -196,11 +198,11 @@ async function trackWindowMove() {
 
   glue.windows.my().onBoundsChanged(() => {
     boundsObs.next(glue.windows.my().bounds);
-    trackWorkAreaSize();
+    setWindowPosition();
   });
 }
 
-async function trackWorkAreaSize() {
+async function getWindowWorkArea() {
   let scaleFactor = 1;
   const currentMonitor = await glue.windows.my().getDisplay();
   const monitors = await getMonitorInfo();
@@ -209,14 +211,12 @@ async function trackWorkAreaSize() {
     monitor.isPrimary ? (scaleFactor = monitor.scaleFactor) : scaleFactor;
   });
 
-  const workArea = {
+  return {
     left: currentMonitor.workArea.left,
     top: currentMonitor.workArea.top,
     width: currentMonitor.workArea.width,
     height: currentMonitor.workArea.height,
   };
-
-  Object.assign(workAreaSizeObs, workArea);
 }
 
 async function startApp(appName, context) {
@@ -368,7 +368,7 @@ async function shutdown() {
 async function resizeWindowVisibleArea(visibleAreas) {
   await gluePromise;
 
-  window.glue.agm
+  return window.glue.agm
     .invoke('T42.Wnd.Execute', {
       command: 'updateVisibleAreas',
       windowId: glue.windows.my().id,
@@ -413,7 +413,7 @@ async function minimize() {
 async function configureMyWindow(config) {
   await gluePromise;
   const win = glue.windows.my();
-  win.configure(config);
+  await win.configure(config);
 }
 
 async function isMinimizeAllowed() {
@@ -512,7 +512,7 @@ async function getPrefs() {
   }
 
   setToolbarOrientation();
-  setWindowParams();
+  await setWindowParams();
 
   glue.prefs.subscribe((prefs) => {
     setToolbarOrientation();
@@ -537,7 +537,6 @@ export {
   hideLoader,
   layoutsObs,
   boundsObs,
-  workAreaSizeObs,
   startApp,
   focusApp,
   focusWindow,
@@ -580,4 +579,5 @@ export {
   getServerInfo,
   getPrefs,
   updatePrefs,
+  getWindowWorkArea,
 };
