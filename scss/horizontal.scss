@@ -2,6 +2,7 @@
 
 .horizontal {
   width: 100%;
+  justify-content: flex-start;
   @include transition("top, max-height", 0);
 
   .viewport {
@@ -244,6 +245,10 @@
     > .nav,
     > div {
       width: 100%;
+    }
+
+    &:not(#app-content) {
+      height: auto;
     }
 
     &.hide {

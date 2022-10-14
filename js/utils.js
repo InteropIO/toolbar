@@ -715,6 +715,7 @@ async function setWindowPosition() {
   const workArea = workAreaSizeObs;
   const windowBounds = await getWindowBounds();
   const app = q('.app');
+  const appCoords = app.getBoundingClientRect();
   const appContentHeader = q('.app-content-header');
   const navItem = q('.applications-nav');
   const appRowsNumber = getSetting('toolbarAppRows');
@@ -734,14 +735,10 @@ async function setWindowPosition() {
       });
     }
   } else {
+    console.log(workArea);
     // if toolbar position is outside of monitor working area top
-    if (
-      windowBounds.top +
-        (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber) <
-        workArea.top ||
-      windowBounds.top ===
-        -(appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber)
-    ) {
+    if (windowBounds.top + appCoords.top < workArea.top) {
+      console.log('bqga mi otgore');
       moveMyWindow({
         top:
           workArea.top +
@@ -752,13 +749,7 @@ async function setWindowPosition() {
     }
 
     // if toolbar position is outside of monitor working area bottom
-    if (
-      windowBounds.top +
-        (app.offsetHeight +
-          appContentHeader.offsetHeight +
-          navItem.offsetHeight * appRowsNumber) >
-      workArea.offsetHeight
-    ) {
+    if (windowBounds.top + appCoords.top > workArea.height) {
       moveMyWindow({
         top:
           workArea.top +

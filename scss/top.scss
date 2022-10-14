@@ -1,5 +1,7 @@
 .horizontal {
   &.open-top {
+    justify-content: flex-end;
+
     .viewport {
       order: 1;
       margin-bottom: 0;
@@ -12,7 +14,7 @@
 
       .layouts-nav {
         .layout-menu-tool {
-          top: -6rem;
+          top: calc(-6rem + 2px);
         }
       }
 
