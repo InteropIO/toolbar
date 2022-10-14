@@ -11,7 +11,7 @@ let settings = {
   searchInstruments: true,
   enableNotifications: true,
   enableToasts: true,
-  toolbarAppRows: '10',
+  toolbarAppRows: '8',
   showHiddenApps: false,
   vertical: true,
 };
@@ -69,39 +69,35 @@ function trackSettingsChange() {
       const setting = {};
 
       setting[settingElement.getAttribute('setting')] = e.srcElement.checked;
-      updateSetting(setting);
+      setSetting(setting);
 
       if (
         e.target.getAttribute('setting') === 'enableNotifications' &&
         e.srcElement.checked === false
       ) {
-        updateSetting({ enableNotifications: false, enableToasts: false });
+        setSetting({ enableNotifications: false, enableToasts: false });
       }
     }
   });
 }
 
+function getSettings() {
+  return settings;
+}
+
 function setSettings(prefs) {
-  updateSettings(prefs);
-  init();
-}
-
-function updateSetting(setting) {
-  settings[Object.keys(setting)[0]] = Object.values(setting)[0];
-  updatePrefs(setting);
-}
-
-function updateSettings(prefs) {
   settings = { ...settings, ...prefs };
   populateSettings();
+  init();
 }
 
 function getSetting(setting) {
   return settings[setting];
 }
 
-function getSettings() {
-  return settings;
+function setSetting(setting) {
+  Object.assign(settings, setting);
+  updatePrefs(setting);
 }
 
 export {
@@ -109,8 +105,7 @@ export {
   toolbarDrawerSize,
   initialPosition,
   setSettings,
-  updateSetting,
-  updateSettings,
+  setSetting,
   getSetting,
   getSettings,
 };
