@@ -146,6 +146,12 @@ html {
         position: relative;
         display: flex;
         flex-direction: column;
+
+        &.is-active {
+          .chevron {
+            transform: rotate(180deg);
+          }
+        }
       }
 
       .nav-link {
@@ -227,10 +233,6 @@ html {
     ul.nav .nav-item .nav-link:hover::before {
       width: 0;
       height: 0;
-    }
-
-    .chevron-rotate {
-      transform: rotate(180deg);
     }
 
     .action-menu-tool {

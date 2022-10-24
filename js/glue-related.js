@@ -1,15 +1,8 @@
-import {
-  setSettings,
-  updateSettings,
-  getSetting,
-  getSettings,
-} from './settings.js';
+import { setSettings, getSetting, getSettings } from './settings.js';
 import {
   setToolbarOrientation,
-  setToolbarSize,
-  setWindowVisibleArea,
-  setWindowMoveArea,
-  fixWindowPosition,
+  setWindowParams,
+  setWindowPosition,
 } from './utils.js';
 
 console.time('Glue');
@@ -43,7 +36,6 @@ const activeLayout = new rxjs.BehaviorSubject({});
 const notificationsCountObs = new rxjs.BehaviorSubject(null);
 const themeObs = new rxjs.BehaviorSubject(null);
 const boundsObs = new rxjs.BehaviorSubject(null);
-const workAreaSizeObs = new rxjs.BehaviorSubject(null);
 let notificationEnabledObs = new rxjs.BehaviorSubject(false);
 
 if (!window.glue42gd) {
@@ -57,7 +49,6 @@ const glueInfo = {
 };
 
 gluePromise.then((glue) => {
-  trackWorkAreaSize();
   trackApplications();
   trackLayouts();
   trackWorkspaces();
@@ -207,53 +198,39 @@ async function trackWindowMove() {
 
   glue.windows.my().onBoundsChanged(() => {
     boundsObs.next(glue.windows.my().bounds);
-    trackWorkAreaSize();
+    setWindowPosition();
   });
 }
 
-async function trackWorkAreaSize() {
-  let currentMonitorOffsetWidth;
-  let currentMonitorOffsetHeight;
-  const currentMonitor = await glue.windows.my().getDisplay();
+async function getPrimaryScaleFactor() {
+  let scaleFactor = 1;
   const monitors = await getMonitorInfo();
-  const workAreas = {
-    width: [],
-    height: [],
-  };
 
   monitors.forEach((monitor) => {
-    workAreas.width.push(monitor.workingAreaWidth);
-    workAreas.height.push(monitor.workingAreaHeight);
+    monitor.isPrimary ? (scaleFactor = monitor.scaleFactor) : scaleFactor;
   });
 
-  // if monitors are ordered horizontally
-  if (currentMonitor.bounds.left >= currentMonitor.workArea.width) {
-    currentMonitorOffsetWidth = workAreas.width.reduce(
-      (acc, curr) => acc + curr,
-      0
-    );
-  } else {
-    currentMonitorOffsetWidth = currentMonitor.workArea.width;
-  }
+  return scaleFactor;
+}
 
-  // if monitors are ordered vertically
-  if (currentMonitor.bounds.top >= currentMonitor.workArea.height) {
-    currentMonitorOffsetHeight = workAreas.height.reduce(
-      (acc, curr) => acc + curr,
-      0
-    );
-  } else {
-    currentMonitorOffsetHeight = currentMonitor.workArea.height;
-  }
+async function getScaleFactor() {
+  const currentMonitor = await glue.windows.my().getDisplay();
+  const scaleFactor = currentMonitor.scaleFactor;
 
-  workAreaSizeObs.next({
-    left: currentMonitor.workArea.left,
-    top: currentMonitor.workArea.top,
-    width: currentMonitor.workArea.width,
-    height: currentMonitor.workArea.height,
-    offsetWidth: currentMonitorOffsetWidth,
-    offsetHeight: currentMonitorOffsetHeight,
-  });
+  return scaleFactor;
+}
+
+async function getWindowWorkArea() {
+  const currentMonitor = await glue.windows.my().getDisplay();
+  const primaryScaleFactor = await getPrimaryScaleFactor();
+  const scaleFactor = await getScaleFactor();
+
+  return {
+    top: currentMonitor.workArea.top / primaryScaleFactor,
+    left: currentMonitor.workArea.left / primaryScaleFactor,
+    width: currentMonitor.workArea.width / scaleFactor,
+    height: currentMonitor.workArea.height / scaleFactor,
+  };
 }
 
 async function startApp(appName, context) {
@@ -405,7 +382,7 @@ async function shutdown() {
 async function resizeWindowVisibleArea(visibleAreas) {
   await gluePromise;
 
-  window.glue.agm
+  return window.glue.agm
     .invoke('T42.Wnd.Execute', {
       command: 'updateVisibleAreas',
       windowId: glue.windows.my().id,
@@ -434,7 +411,16 @@ async function openWindow(name, url, options) {
 
 async function getWindowBounds() {
   await gluePromise;
-  return glue.windows.my().bounds;
+  const bounds = glue.windows.my().bounds;
+  const primaryScaleFactor = await getPrimaryScaleFactor();
+  const scaleFactor = await getScaleFactor();
+
+  return {
+    top: bounds.top / primaryScaleFactor,
+    left: bounds.left / primaryScaleFactor,
+    width: bounds.width / scaleFactor,
+    height: bounds.height / scaleFactor,
+  };
 }
 
 async function moveMyWindow(bounds) {
@@ -450,7 +436,7 @@ async function minimize() {
 async function configureMyWindow(config) {
   await gluePromise;
   const win = glue.windows.my();
-  win.configure(config);
+  await win.configure(config);
 }
 
 async function isMinimizeAllowed() {
@@ -491,6 +477,8 @@ async function getMonitorInfo() {
     top: display.bounds.top,
     width: display.bounds.width,
     height: display.bounds.height,
+    isPrimary: display.isPrimary,
+    scaleFactor: display.scaleFactor,
     workingAreaWidth: display.workArea.width,
     workingAreaHeight: display.workArea.height,
     workingAreaLeft: display.workArea.left,
@@ -541,17 +529,16 @@ async function getPrefs() {
     Object.keys(prefs.data).length === 0
   ) {
     await glue.prefs.update({ ...getSettings() });
+    setSettings();
   } else {
     setSettings(prefs.data);
   }
 
+  setToolbarOrientation();
+  await setWindowParams();
+
   glue.prefs.subscribe((prefs) => {
-    updateSettings(prefs.data);
     setToolbarOrientation();
-    setToolbarSize();
-    setWindowMoveArea();
-    setWindowVisibleArea();
-    fixWindowPosition();
   });
 }
 
@@ -573,7 +560,6 @@ export {
   hideLoader,
   layoutsObs,
   boundsObs,
-  workAreaSizeObs,
   startApp,
   focusApp,
   focusWindow,
@@ -616,4 +602,5 @@ export {
   getServerInfo,
   getPrefs,
   updatePrefs,
+  getWindowWorkArea,
 };

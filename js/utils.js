@@ -20,13 +20,13 @@ import {
   checkNotificationsConfigure,
   configureNotifications,
   openFeedbackForm,
-  workAreaSizeObs,
+  getWindowWorkArea,
 } from './glue-related.js';
 import {
   toolbarWidth,
   toolbarDrawerSize,
   initialPosition,
-  updateSetting,
+  setSetting,
   getSetting,
 } from './settings.js';
 // import { searchInputObs } from './applications.js';
@@ -138,7 +138,7 @@ function handleTopMenuClicks() {
       e.preventDefault();
       e.stopPropagation();
       e.stopImmediatePropagation();
-      updateSetting({ showHiddenApps: !getSetting('showHiddenApps') });
+      setSetting({ showHiddenApps: !getSetting('showHiddenApps') });
       refreshApps();
 
       return;
@@ -149,20 +149,17 @@ function handleTopMenuClicks() {
       let topElement = e.path.find((e) => e.getAttribute('menu-button-id'));
       let menuId = topElement.getAttribute('menu-button-id');
 
+      qa(`[menu-button-id]:not([menu-button-id="${menuId}"])`).forEach(
+        (menu) => {
+          menu.classList.remove('is-active');
+        }
+      );
       qa(`[menu-id]:not([menu-id="${menuId}"])`).forEach((menu) => {
         menu.classList.add('hide');
       });
-      qa(`[menu-id]:not([menu-button-id="${menuId}"]) .chevron`).forEach(
-        (menuBtnChevron) => {
-          menuBtnChevron.classList.remove('chevron-rotate');
-        }
-      );
+      topElement.classList.toggle('is-active');
 
       let menuToToggle = q(`[menu-id="${menuId}"]`);
-
-      // if (menuToToggle.classList.contains('hide')) {
-      //   await applyOpenClasses();
-      // }
 
       menuToToggle.addEventListener(
         'transitionend',
@@ -170,8 +167,6 @@ function handleTopMenuClicks() {
       );
       menuToToggle.classList.toggle('hide');
       setDrawerOpenClass();
-
-      toggleTopButtonState(menuId);
 
       let hasVisibleDrawers = q('.toggle-content:not(.hide)');
 
@@ -217,21 +212,6 @@ function handleMinimizeClick() {
 
   isMinimizeAllowed().then(
     (allowed) => allowed && q('.minimize').classList.remove('d-none')
-  );
-}
-
-function toggleTopButtonState(id) {
-  qa(`[menu-button-id="${id}"] .chevron`).forEach((chevron) =>
-    chevron.classList.toggle('chevron-rotate')
-  );
-  qa(`[menu-button-id="${id}"] > a`).forEach((chevron) =>
-    chevron.classList.toggle('active')
-  );
-  qa(`[menu-button-id]:not([menu-button-id="${id}"]) .chevron`).forEach(
-    (chevron) => chevron.classList.remove('chevron-rotate')
-  );
-  qa(`[menu-button-id]:not([menu-button-id="${id}"]) > a`).forEach((chevron) =>
-    chevron.classList.remove('active')
   );
 }
 
@@ -413,7 +393,7 @@ async function startTutorial() {
   const hideTutorialOnStartup = userProperties.hideTutorialOnStartup;
   const tutorialApp = await getApp('getting-started');
   if (!tutorialApp || hideTutorialOnStartup) {
-    updateSetting({ showTutorial: false });
+    setSetting({ showTutorial: false });
     q('.show-tutorial-check').classList.add('d-none');
   } else {
     const showTutorial = getSetting('showTutorial');
@@ -477,16 +457,16 @@ async function isOutOfMonitor(viewportBounds) {
   return visibleAreaLeft < leftMostPoint || visibleAreaRight > rightMostPoint;
 }
 
-function openDrawer(drawerId) {
-  let menuButton = q(`[menu-button-id=${drawerId}]`);
-  let hoverEvent = new MouseEvent('mouseenter', {
-    view: window,
-    bubbles: true,
-  });
+// function openDrawer(drawerId) {
+//   let menuButton = q(`[menu-button-id=${drawerId}]`);
+//   let hoverEvent = new MouseEvent('mouseenter', {
+//     view: window,
+//     bubbles: true,
+//   });
 
-  menuButton.dispatchEvent(hoverEvent);
-  menuButton.click();
-}
+//   menuButton.dispatchEvent(hoverEvent);
+//   menuButton.click();
+// }
 
 function populateSettingsDropdown(
   selectElement,
@@ -505,13 +485,15 @@ function populateSettingsDropdown(
                     name="${elementName}"
                     id="${elementName}-${element.name + i}"
                     ${elementName}-name="${element.name}"
-                    ${element.name === selectOptionsObj.selected.name
-          ? 'checked'
-          : ''
-        }
+                    ${
+                      element.name === selectOptionsObj.selected.name
+                        ? 'checked'
+                        : ''
+                    }
                 />
-                <label class="select_label" for="${elementName}-${element.name + i
-        }">${element.displayName}</label>
+                <label class="select_label" for="${elementName}-${
+        element.name + i
+      }">${element.displayName}</label>
             </li>
             `;
     });
@@ -520,14 +502,21 @@ function populateSettingsDropdown(
   });
 }
 
+function getHorizontalToolbarHeight(length) {
+  const appContentHeader = q('.app-content-header');
+  const navItem = q('.applications-nav');
+  const numberOfRows = length ?? getSetting('toolbarAppRows');
+
+  return appContentHeader.offsetHeight + navItem.offsetHeight * numberOfRows;
+}
+
 async function handleToolbarAppRowsChange() {
-  const isVertical = getSetting('vertical');
   const numberOfRows = getSetting('toolbarAppRows');
   const app = q('.app');
   const appSelectOptions = {
     all: [
-      { name: '8', displayName: '8 Items' },
-      { name: '10', displayName: '10 Items (Default)' },
+      { name: '8', displayName: '8 Items (Default)' },
+      { name: '10', displayName: '10 Items' },
       { name: '12', displayName: '12 Items' },
       { name: '14', displayName: '14 Items' },
       { name: '16', displayName: '16 Items' },
@@ -547,24 +536,36 @@ async function handleToolbarAppRowsChange() {
     'length'
   );
 
-  q('.length-select .select_options').addEventListener('click', (e) => {
+  const currentToolbarHeight = getHorizontalToolbarHeight();
+
+  q('.length-select .select_options').addEventListener('click', async (e) => {
+    const isVertical = getSetting('vertical');
+
     if (e.target.matches('input.select_input[type="radio"]')) {
       const selectedLength = e.target.getAttribute('length-name');
+      const newToolbarHeight = getHorizontalToolbarHeight(selectedLength);
 
-      updateSetting({ toolbarAppRows: selectedLength });
+      setSetting({ toolbarAppRows: selectedLength });
 
       if (!isVertical) {
-        setInitialHorizontalPosition();
         qa('.toggle-content').forEach((toggle) => {
           toggle.classList.add('hide');
         });
         app.classList.remove('open-top');
+
+        await moveMyWindow({
+          top: currentToolbarHeight - newToolbarHeight,
+        });
       }
+
+      await setWindowSize();
+      setWindowVisibleArea();
+      await setWindowMoveArea();
     }
   });
 }
 
-function setToolbarSize() {
+async function setWindowSize() {
   const isVertical = getSetting('vertical');
   const app = q('.app');
   const appLancher = q('.viewport-header');
@@ -572,6 +573,7 @@ function setToolbarSize() {
   const appRowsNumber = getSetting('toolbarAppRows');
   const navItem = q('.applications-nav');
   const contentItems = q('.content-items');
+  const horizontalHeight = getHorizontalToolbarHeight();
 
   appLancher.style.height = `${appLancher.offsetHeight}px`;
   appContentHeader.style.height = `${appContentHeader.offsetHeight}px`;
@@ -581,28 +583,21 @@ function setToolbarSize() {
     app.classList.contains('open-left')
       ? (app.style.left = '0')
       : (app.style.left = `${toolbarDrawerSize.vertical}px`);
-
     app.style.top = '0';
-    app.style.maxHeight = `${appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
-      }px`;
+    app.style.maxHeight = `${horizontalHeight}px`;
 
-    moveMyWindow({
+    await moveMyWindow({
       width: toolbarWidth.vertical + toolbarDrawerSize.vertical * 2,
-      height:
-        appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber,
+      height: horizontalHeight,
     });
   } else {
-    app.style.top = `${appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
-      }px`;
+    app.style.top = `${horizontalHeight}px`;
     app.style.left = '0';
     app.style.maxHeight = `${appLancher.offsetHeight}px`;
 
-    moveMyWindow({
+    await moveMyWindow({
       width: toolbarWidth.horizontal,
-      height:
-        appLancher.offsetHeight +
-        (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber) *
-        2,
+      height: appLancher.offsetHeight + horizontalHeight * 2,
     });
   }
 }
@@ -623,7 +618,7 @@ function setWindowVisibleArea(topMenuVisible, layoutDropDownVisible) {
     }
   }
 
-  resizeWindowVisibleArea(visibleAreas);
+  return resizeWindowVisibleArea(visibleAreas);
 }
 
 function buildVisibleArea(element) {
@@ -639,23 +634,21 @@ function buildVisibleArea(element) {
 
 async function setDrawerOpenClass() {
   const isVertical = getSetting('vertical');
-  const workArea = workAreaSizeObs.value;
+  const workArea = await getWindowWorkArea();
   const windowBounds = await getWindowBounds();
   const app = q('.app');
   const appLancher = q('.viewport-header');
   const appContentHeader = q('.app-content-header');
   const appRowsNumber = getSetting('toolbarAppRows');
   const navItem = q('.applications-nav');
+  const horizontalHeight = getHorizontalToolbarHeight();
 
   if (isVertical) {
     app.style.left = `${toolbarDrawerSize.vertical}px`;
 
     if (
-      Math.abs(workArea.left) -
-      Math.abs(windowBounds.left) +
-      windowBounds.width >
-      workArea.offsetWidth ||
-      windowBounds.left + windowBounds.width > workArea.offsetWidth
+      windowBounds.left + windowBounds.width >
+      workArea.left + workArea.width
     ) {
       app.classList.add('open-left');
       app.classList.contains('has-drawer')
@@ -665,33 +658,37 @@ async function setDrawerOpenClass() {
       app.classList.remove('open-left');
     }
   } else {
-    app.style.top = `${appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
-      }px`;
+    app.style.top = `${horizontalHeight}px`;
 
     app.classList.contains('has-drawer')
-      ? (app.style.maxHeight = `${appLancher.offsetHeight +
-        appContentHeader.offsetHeight +
-        navItem.offsetHeight * appRowsNumber
+      ? (app.style.maxHeight = `${
+          appLancher.offsetHeight +
+          appContentHeader.offsetHeight +
+          navItem.offsetHeight * appRowsNumber
         }px`)
       : (app.style.maxHeight = `${appLancher.offsetHeight}px`);
 
     if (
-      Math.abs(workArea.top) -
-      Math.abs(windowBounds.top) +
-      windowBounds.height >
-      workArea.offsetHeight ||
-      windowBounds.top + windowBounds.height > workArea.offsetHeight
+      windowBounds.top + windowBounds.height >
+      workArea.top + workArea.height
     ) {
       app.classList.add('open-top');
       app.classList.contains('has-drawer')
         ? (app.style.top = '0')
         : appLancher.offsetHeight +
-        appContentHeader.offsetHeight +
-        navItem.offsetHeight * appRowsNumber;
+          appContentHeader.offsetHeight +
+          navItem.offsetHeight * appRowsNumber;
     } else {
       app.classList.remove('open-top');
     }
   }
+}
+
+async function setWindowParams() {
+  await setWindowSize();
+  setWindowVisibleArea();
+  await setWindowMoveArea();
+  await setWindowPosition();
 }
 
 function setToolbarOrientation() {
@@ -715,123 +712,180 @@ function handleToolbarOrientationChange() {
     const app = q('.app');
     isVertical = !isVertical;
 
-    updateSetting({ vertical: isVertical });
+    setSetting({ vertical: isVertical });
 
     if (isVertical) {
       app.classList.remove('open-top');
     } else {
       app.classList.remove('open-left');
     }
+
+    setWindowParams();
+    closeAllMenus();
   });
 }
 
-async function fixWindowPosition() {
-  const isVertical = getSetting('vertical');
-  const workArea = workAreaSizeObs.value;
+function closeAllMenus() {
+  const openedMenus = qa('.toggle-content:not(.hide)');
+  const activeButtons = qa('.nav-item.is-active');
+
+  openedMenus.forEach((el) => el.classList.add('hide'));
+  activeButtons.forEach((el) => el.classList.remove('is-active'));
+}
+
+async function getWindowVisibleArea() {
+  const workArea = await getWindowWorkArea();
   const windowBounds = await getWindowBounds();
   const app = q('.app');
-  const appContentHeader = q('.app-content-header');
-  const navItem = q('.applications-nav');
-  const appRowsNumber = getSetting('toolbarAppRows');
+  const appCoords = app.getBoundingClientRect();
 
-  if (isVertical) {
-    // if toolbar position is outside of monitor working area top
-    if (windowBounds.top < workArea.top) {
-      moveMyWindow({
-        top: workArea.top + initialPosition.top,
-      });
+  return {
+    top: workArea.top + windowBounds.top + appCoords.top,
+    left: workArea.left + windowBounds.left + appCoords.left,
+    width: appCoords.width,
+    height: appCoords.height,
+  };
+}
+
+async function checkWindowPosition() {
+  const workArea = await getWindowWorkArea();
+  const windowBounds = await getWindowBounds();
+  const app = q('.draggable');
+  const appCoords = app.getBoundingClientRect();
+
+  const workAreaRect = {
+    lx: workArea.left,
+    ly: workArea.top,
+    rx: workArea.left + workArea.width,
+    ry: workArea.top + workArea.height,
+  };
+
+  const visibleAreaRect = {
+    lx: windowBounds.left + appCoords.left,
+    ly: windowBounds.top + appCoords.top,
+    rx: windowBounds.left + appCoords.left + appCoords.width,
+    ry: windowBounds.top + appCoords.top + appCoords.height,
+  };
+
+  async function overlap(rect1, rect2) {
+    // if rect2 moves beyond left boundaries of rect1
+    if (rect2.lx < rect1.lx) {
+      return {
+        left: rect2.lx - rect1.lx,
+      };
     }
 
-    // if toolbar position is outside of monitor working area left
-    if (windowBounds.left + toolbarDrawerSize.vertical < workArea.left) {
-      moveMyWindow({
+    // if rect2 moves beyond top boundaries of rect1
+    if (rect2.ly < rect1.ly) {
+      return {
+        top: rect2.ly - rect1.ly,
+      };
+    }
+
+    // if rect2 moves beyond right boundaries of rect1
+    if (rect2.rx > rect1.rx) {
+      return {
+        right: rect2.rx - rect1.rx,
+      };
+    }
+
+    // if rect2 moves beyond bottom boundaries of rect1
+    if (rect2.ry > rect1.ry) {
+      return {
+        bottom: rect2.ry - rect1.ry,
+      };
+    }
+
+    return true;
+  }
+
+  return overlap(workAreaRect, visibleAreaRect);
+}
+
+async function setWindowPosition() {
+  const isVertical = getSetting('vertical');
+  const workArea = await getWindowWorkArea();
+  const offBounds = await checkWindowPosition();
+  const offBoundsDirection = Object.keys(offBounds)[0];
+  const winodwVisibleArea = await getWindowVisibleArea();
+
+  if (isVertical) {
+    if (offBoundsDirection === 'top') {
+      await moveMyWindow({
+        top: workArea.top + initialPosition.top,
+      });
+    } else if (offBoundsDirection === 'right') {
+      await moveMyWindow({
+        left:
+          workArea.left +
+          workArea.width -
+          toolbarDrawerSize.vertical -
+          toolbarWidth.vertical -
+          initialPosition.left,
+      });
+    } else if (offBoundsDirection === 'bottom') {
+      await moveMyWindow({
+        top:
+          workArea.top +
+          workArea.height -
+          winodwVisibleArea.height -
+          initialPosition.top,
+      });
+    } else if (offBoundsDirection === 'left') {
+      await moveMyWindow({
         left: workArea.left + initialPosition.left - toolbarDrawerSize.vertical,
       });
     }
   } else {
-    // if toolbar position is outside of monitor working area top
-    if (
-      windowBounds.top +
-      (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber) <
-      workArea.top ||
-      windowBounds.top ===
-      -(appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber)
-    ) {
-      moveMyWindow({
+    const horizontalHeight = getHorizontalToolbarHeight();
+
+    if (offBoundsDirection === 'top') {
+      await moveMyWindow({
+        top: workArea.top + initialPosition.top - horizontalHeight,
+      });
+    } else if (offBoundsDirection === 'right') {
+      await moveMyWindow({
+        left:
+          workArea.left +
+          workArea.width -
+          toolbarWidth.horizontal -
+          initialPosition.left,
+      });
+    } else if (offBoundsDirection === 'bottom') {
+      await moveMyWindow({
         top:
           workArea.top +
-          initialPosition.top -
-          (appContentHeader.offsetHeight +
-            navItem.offsetHeight * appRowsNumber),
+          workArea.height -
+          winodwVisibleArea.height -
+          horizontalHeight -
+          initialPosition.top,
       });
-    }
-
-    // if toolbar position is outside of monitor working area bottom
-    if (
-      windowBounds.top +
-      (app.offsetHeight +
-        appContentHeader.offsetHeight +
-        navItem.offsetHeight * appRowsNumber) >
-      workArea.offsetHeight
-    ) {
-      moveMyWindow({
-        top:
-          workArea.top +
-          initialPosition.top -
-          (appContentHeader.offsetHeight +
-            navItem.offsetHeight * appRowsNumber),
-      });
-    }
-
-    // if toolbar position is outside of monitor working area left
-    if (windowBounds.left < workArea.left) {
-      moveMyWindow({
+    } else if (offBoundsDirection === 'left') {
+      await moveMyWindow({
         left: workArea.left + initialPosition.left,
       });
     }
   }
 }
 
-function setInitialHorizontalPosition() {
-  const isVertical = getSetting('vertical');
-  const workArea = workAreaSizeObs.value;
-  const appContentHeader = q('.app-content-header');
-  const navItem = q('.applications-nav');
-  const appRowsNumber = getSetting('toolbarAppRows');
-
-  if (!isVertical) {
-    moveMyWindow({
-      top:
-        workArea.top +
-        initialPosition.top -
-        (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber),
-      left: initialPosition.left,
-    });
-  }
-}
-
 async function setWindowMoveArea() {
   const isVertical = getSetting('vertical');
-  const appRowsNumber = getSetting('toolbarAppRows');
   const dragArea = q('.draggable').getBoundingClientRect();
-  // TODO: Take out into a seperate function and use on all places that need these sizes
-  const appContentHeader = q('.app-content-header');
-  const navItem = q('.applications-nav');
+  const horizontalHeight = getHorizontalToolbarHeight();
 
   if (isVertical) {
-    configureMyWindow({
-      moveAreaTopMargin: `${toolbarDrawerSize.vertical}, 0, ${toolbarWidth.vertical +
+    await configureMyWindow({
+      moveAreaTopMargin: `${toolbarDrawerSize.vertical}, 0, ${
+        toolbarWidth.vertical +
         toolbarDrawerSize.vertical -
         Math.round(dragArea.width)
-        }, 0`,
+      }, 0`,
       moveAreaThickness: `0, ${Math.round(dragArea.height)}, 0, 0`,
     });
   } else {
-    configureMyWindow({
-      moveAreaLeftMargin: `0, ${Math.round(
-        appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
-      )}, 0, ${Math.round(
-        appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
+    await configureMyWindow({
+      moveAreaLeftMargin: `0, ${Math.round(horizontalHeight)}, 0, ${Math.round(
+        horizontalHeight
       )}`,
       moveAreaThickness: `${Math.round(dragArea.width)}, 0, 0, 0`,
     });
@@ -852,9 +906,8 @@ function handleKeyboardNavigation() {
   }
 
   function isLayoutElement(e) {
-    return e.id === "layout-menu-tool";
+    return e.id === 'layout-menu-tool';
   }
-
 
   function getActiveNodeFolderName(node) {
     const folderName = node.getAttribute('folder-name');
@@ -867,9 +920,11 @@ function handleKeyboardNavigation() {
         isAppElement(currentItem) || isFolderElement(currentItem);
       if (true) {
         if (isLayoutElement(currentItem)) {
-          currentItem.dispatchEvent(new MouseEvent('mouseover', {
-            bubbles: true,
-          }))
+          currentItem.dispatchEvent(
+            new MouseEvent('mouseover', {
+              bubbles: true,
+            })
+          );
           return;
           // currentItem.click();
         } else {
@@ -888,7 +943,9 @@ function handleKeyboardNavigation() {
               mainList = currentItem.children[1];
             } else if (qa('.toggle-content:not(.hide)').length > 0) {
               const children = qa('.toggle-content:not(.hide)')[0].children; //.children[1];
-              const firstUL = [...children].find((el) => el.tagName && el.tagName.toLowerCase() == "ul")
+              const firstUL = [...children].find(
+                (el) => el.tagName && el.tagName.toLowerCase() == 'ul'
+              );
               if (firstUL) {
                 mainList = firstUL;
               } else {
@@ -1162,7 +1219,9 @@ function handleKeyboardNavigation() {
           const content = qa('.toggle-content:not(.hide)');
           if (content.length > 0) {
             const children = qa('.toggle-content:not(.hide)')[0].children; //.children[1];
-            const firstUL = [...children].find((el) => el.tagName && el.tagName.toLowerCase() == "ul");
+            const firstUL = [...children].find(
+              (el) => el.tagName && el.tagName.toLowerCase() == 'ul'
+            );
             if (firstUL) {
               mainList = firstUL;
             } else {
@@ -1236,14 +1295,13 @@ export {
   handleModalClose,
   handleMouseHover,
   setWindowVisibleArea,
-  setToolbarSize,
-  setWindowMoveArea,
+  setWindowParams,
   focusInputAfterWindowRecover,
   windowMargin,
   startTutorial,
   // clearSearch,
   escapeHtml,
   getAppIcon,
-  openDrawer,
-  fixWindowPosition,
+  // openDrawer,
+  setWindowPosition,
 };
