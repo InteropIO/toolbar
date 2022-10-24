@@ -444,16 +444,16 @@ async function isOutOfMonitor(viewportBounds) {
   return visibleAreaLeft < leftMostPoint || visibleAreaRight > rightMostPoint;
 }
 
-function openDrawer(drawerId) {
-  let menuButton = q(`[menu-button-id=${drawerId}]`);
-  let hoverEvent = new MouseEvent('mouseenter', {
-    view: window,
-    bubbles: true,
-  });
+// function openDrawer(drawerId) {
+//   let menuButton = q(`[menu-button-id=${drawerId}]`);
+//   let hoverEvent = new MouseEvent('mouseenter', {
+//     view: window,
+//     bubbles: true,
+//   });
 
-  menuButton.dispatchEvent(hoverEvent);
-  menuButton.click();
-}
+//   menuButton.dispatchEvent(hoverEvent);
+//   menuButton.click();
+// }
 
 function populateSettingsDropdown(
   selectElement,
@@ -489,8 +489,15 @@ function populateSettingsDropdown(
   });
 }
 
+function getHorizontalToolbarHeight(length) {
+  const appContentHeader = q('.app-content-header');
+  const navItem = q('.applications-nav');
+  const numberOfRows = length ?? getSetting('toolbarAppRows');
+
+  return appContentHeader.offsetHeight + navItem.offsetHeight * numberOfRows;
+}
+
 async function handleToolbarAppRowsChange() {
-  const isVertical = getSetting('vertical');
   const numberOfRows = getSetting('toolbarAppRows');
   const app = q('.app');
   const appSelectOptions = {
@@ -516,9 +523,14 @@ async function handleToolbarAppRowsChange() {
     'length'
   );
 
-  q('.length-select .select_options').addEventListener('click', (e) => {
+  const currentToolbarHeight = getHorizontalToolbarHeight();
+
+  q('.length-select .select_options').addEventListener('click', async (e) => {
+    const isVertical = getSetting('vertical');
+
     if (e.target.matches('input.select_input[type="radio"]')) {
       const selectedLength = e.target.getAttribute('length-name');
+      const newToolbarHeight = getHorizontalToolbarHeight(selectedLength);
 
       setSetting({ toolbarAppRows: selectedLength });
 
@@ -527,9 +539,15 @@ async function handleToolbarAppRowsChange() {
           toggle.classList.add('hide');
         });
         app.classList.remove('open-top');
+
+        await moveMyWindow({
+          top: currentToolbarHeight - newToolbarHeight,
+        });
       }
 
-      setWindowParams();
+      await setWindowSize();
+      setWindowVisibleArea();
+      await setWindowMoveArea();
     }
   });
 }
@@ -542,6 +560,7 @@ async function setWindowSize() {
   const appRowsNumber = getSetting('toolbarAppRows');
   const navItem = q('.applications-nav');
   const contentItems = q('.content-items');
+  const horizontalHeight = getHorizontalToolbarHeight();
 
   appLancher.style.height = `${appLancher.offsetHeight}px`;
   appContentHeader.style.height = `${appContentHeader.offsetHeight}px`;
@@ -552,28 +571,20 @@ async function setWindowSize() {
       ? (app.style.left = '0')
       : (app.style.left = `${toolbarDrawerSize.vertical}px`);
     app.style.top = '0';
-    app.style.maxHeight = `${
-      appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
-    }px`;
+    app.style.maxHeight = `${horizontalHeight}px`;
 
     await moveMyWindow({
       width: toolbarWidth.vertical + toolbarDrawerSize.vertical * 2,
-      height:
-        appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber,
+      height: horizontalHeight,
     });
   } else {
-    app.style.top = `${
-      appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
-    }px`;
+    app.style.top = `${horizontalHeight}px`;
     app.style.left = '0';
     app.style.maxHeight = `${appLancher.offsetHeight}px`;
 
     await moveMyWindow({
       width: toolbarWidth.horizontal,
-      height:
-        appLancher.offsetHeight +
-        (appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber) *
-          2,
+      height: appLancher.offsetHeight + horizontalHeight * 2,
     });
   }
 }
@@ -617,6 +628,7 @@ async function setDrawerOpenClass() {
   const appContentHeader = q('.app-content-header');
   const appRowsNumber = getSetting('toolbarAppRows');
   const navItem = q('.applications-nav');
+  const horizontalHeight = getHorizontalToolbarHeight();
 
   if (isVertical) {
     app.style.left = `${toolbarDrawerSize.vertical}px`;
@@ -633,9 +645,7 @@ async function setDrawerOpenClass() {
       app.classList.remove('open-left');
     }
   } else {
-    app.style.top = `${
-      appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
-    }px`;
+    app.style.top = `${horizontalHeight}px`;
 
     app.classList.contains('has-drawer')
       ? (app.style.maxHeight = `${
@@ -663,7 +673,7 @@ async function setDrawerOpenClass() {
 
 async function setWindowParams() {
   await setWindowSize();
-  await setWindowVisibleArea();
+  setWindowVisibleArea();
   await setWindowMoveArea();
   await setWindowPosition();
 }
@@ -710,15 +720,25 @@ function closeAllMenus() {
   activeButtons.forEach((el) => el.classList.remove('is-active'));
 }
 
-async function setWindowPosition() {
-  const isVertical = getSetting('vertical');
+async function getWindowVisibleArea() {
   const workArea = await getWindowWorkArea();
   const windowBounds = await getWindowBounds();
   const app = q('.app');
   const appCoords = app.getBoundingClientRect();
-  const appContentHeader = q('.app-content-header');
-  const navItem = q('.applications-nav');
-  const appRowsNumber = getSetting('toolbarAppRows');
+
+  return {
+    top: workArea.top + windowBounds.top + appCoords.top,
+    left: workArea.left + windowBounds.left + appCoords.left,
+    width: appCoords.width,
+    height: appCoords.height,
+  };
+}
+
+async function checkWindowPosition() {
+  const workArea = await getWindowWorkArea();
+  const windowBounds = await getWindowBounds();
+  const app = q('.draggable');
+  const appCoords = app.getBoundingClientRect();
 
   const workAreaRect = {
     lx: workArea.left,
@@ -734,55 +754,111 @@ async function setWindowPosition() {
     ry: windowBounds.top + appCoords.top + appCoords.height,
   };
 
-  // Returns true if rect1 and rect2 overlap
   async function overlap(rect1, rect2) {
-    // if rect has area 0, no overlap
-    if (
-      rect1.lx === rect1.rx ||
-      rect1.ly === rect1.ry ||
-      rect2.rx === rect2.lx ||
-      rect2.ly === rect2.ry
-    ) {
-      return false;
+    // if rect2 moves beyond left boundaries of rect1
+    if (rect2.lx < rect1.lx) {
+      return {
+        left: rect2.lx - rect1.lx,
+      };
     }
 
-    // if rect2 moves beyound boundries of rect1
-    if (
-      rect2.lx < rect1.lx ||
-      rect2.ly < rect1.ly ||
-      rect2.rx > rect1.rx ||
-      rect2.ry > rect1.ry
-    ) {
-      if (isVertical) {
-        await moveMyWindow({
-          top: workArea.top + initialPosition.top,
-          left:
-            workArea.left + initialPosition.left - toolbarDrawerSize.vertical,
-        });
-      } else {
-        await moveMyWindow({
-          top:
-            workArea.top +
-            initialPosition.top -
-            (appContentHeader.offsetHeight +
-              navItem.offsetHeight * appRowsNumber),
-          left: workArea.left + initialPosition.left,
-        });
-      }
+    // if rect2 moves beyond top boundaries of rect1
+    if (rect2.ly < rect1.ly) {
+      return {
+        top: rect2.ly - rect1.ly,
+      };
+    }
+
+    // if rect2 moves beyond right boundaries of rect1
+    if (rect2.rx > rect1.rx) {
+      return {
+        right: rect2.rx - rect1.rx,
+      };
+    }
+
+    // if rect2 moves beyond bottom boundaries of rect1
+    if (rect2.ry > rect1.ry) {
+      return {
+        bottom: rect2.ry - rect1.ry,
+      };
     }
 
     return true;
   }
 
-  overlap(workAreaRect, visibleAreaRect);
+  return overlap(workAreaRect, visibleAreaRect);
+}
+
+async function setWindowPosition() {
+  const isVertical = getSetting('vertical');
+  const workArea = await getWindowWorkArea();
+  const offBounds = await checkWindowPosition();
+  const offBoundsDirection = Object.keys(offBounds)[0];
+  const winodwVisibleArea = await getWindowVisibleArea();
+
+  if (isVertical) {
+    if (offBoundsDirection === 'top') {
+      await moveMyWindow({
+        top: workArea.top + initialPosition.top,
+      });
+    } else if (offBoundsDirection === 'right') {
+      await moveMyWindow({
+        left:
+          workArea.left +
+          workArea.width -
+          toolbarDrawerSize.vertical -
+          toolbarWidth.vertical -
+          initialPosition.left,
+      });
+    } else if (offBoundsDirection === 'bottom') {
+      await moveMyWindow({
+        top:
+          workArea.top +
+          workArea.height -
+          winodwVisibleArea.height -
+          initialPosition.top,
+      });
+    } else if (offBoundsDirection === 'left') {
+      await moveMyWindow({
+        left: workArea.left + initialPosition.left - toolbarDrawerSize.vertical,
+      });
+    }
+  } else {
+    const horizontalHeight = getHorizontalToolbarHeight();
+
+    if (offBoundsDirection === 'top') {
+      await moveMyWindow({
+        top: workArea.top + initialPosition.top - horizontalHeight,
+      });
+    } else if (offBoundsDirection === 'right') {
+      await moveMyWindow({
+        left:
+          workArea.left +
+          workArea.width -
+          toolbarWidth.horizontal -
+          initialPosition.left,
+      });
+    } else if (offBoundsDirection === 'bottom') {
+      await moveMyWindow({
+        top:
+          workArea.top +
+          workArea.height -
+          winodwVisibleArea.height -
+          horizontalHeight -
+          initialPosition.top,
+      });
+    } else if (offBoundsDirection === 'left') {
+      await moveMyWindow({
+        left: workArea.left + initialPosition.left,
+      });
+    }
+  }
 }
 
 async function setWindowMoveArea() {
   const isVertical = getSetting('vertical');
-  const appRowsNumber = getSetting('toolbarAppRows');
   const dragArea = q('.draggable').getBoundingClientRect();
-  const appContentHeader = q('.app-content-header');
-  const navItem = q('.applications-nav');
+  const horizontalHeight = getHorizontalToolbarHeight();
 
   if (isVertical) {
     await configureMyWindow({
@@ -795,10 +871,8 @@ async function setWindowMoveArea() {
     });
   } else {
     await configureMyWindow({
-      moveAreaLeftMargin: `0, ${Math.round(
-        appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
-      )}, 0, ${Math.round(
-        appContentHeader.offsetHeight + navItem.offsetHeight * appRowsNumber
+      moveAreaLeftMargin: `0, ${Math.round(horizontalHeight)}, 0, ${Math.round(
+        horizontalHeight
       )}`,
       moveAreaThickness: `${Math.round(dragArea.width)}, 0, 0, 0`,
     });
@@ -808,7 +882,6 @@ async function setWindowMoveArea() {
 export {
   handleEvents,
   setToolbarOrientation,
-  setWindowPosition,
   handleThemeChange,
   handleShutdownClick,
   handleTopMenuClicks,
@@ -824,5 +897,6 @@ export {
   // clearSearch,
   escapeHtml,
   getAppIcon,
-  openDrawer,
+  // openDrawer,
+  setWindowPosition,
 };

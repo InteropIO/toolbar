@@ -198,23 +198,38 @@ async function trackWindowMove() {
 
   glue.windows.my().onBoundsChanged(() => {
     boundsObs.next(glue.windows.my().bounds);
+    setWindowPosition();
   });
 }
 
-async function getWindowWorkArea() {
+async function getPrimaryScaleFactor() {
   let scaleFactor = 1;
-  const currentMonitor = await glue.windows.my().getDisplay();
   const monitors = await getMonitorInfo();
 
   monitors.forEach((monitor) => {
     monitor.isPrimary ? (scaleFactor = monitor.scaleFactor) : scaleFactor;
   });
 
+  return scaleFactor;
+}
+
+async function getScaleFactor() {
+  const currentMonitor = await glue.windows.my().getDisplay();
+  const scaleFactor = currentMonitor.scaleFactor;
+
+  return scaleFactor;
+}
+
+async function getWindowWorkArea() {
+  const currentMonitor = await glue.windows.my().getDisplay();
+  const primaryScaleFactor = await getPrimaryScaleFactor();
+  const scaleFactor = await getScaleFactor();
+
   return {
-    left: currentMonitor.workArea.left,
-    top: currentMonitor.workArea.top,
-    width: currentMonitor.workArea.width,
-    height: currentMonitor.workArea.height,
+    top: currentMonitor.workArea.top / primaryScaleFactor,
+    left: currentMonitor.workArea.left / primaryScaleFactor,
+    width: currentMonitor.workArea.width / scaleFactor,
+    height: currentMonitor.workArea.height / scaleFactor,
   };
 }
 
@@ -396,7 +411,16 @@ async function openWindow(name, url, options) {
 
 async function getWindowBounds() {
   await gluePromise;
-  return glue.windows.my().bounds;
+  const bounds = glue.windows.my().bounds;
+  const primaryScaleFactor = await getPrimaryScaleFactor();
+  const scaleFactor = await getScaleFactor();
+
+  return {
+    top: bounds.top / primaryScaleFactor,
+    left: bounds.left / primaryScaleFactor,
+    width: bounds.width / scaleFactor,
+    height: bounds.height / scaleFactor,
+  };
 }
 
 async function moveMyWindow(bounds) {
