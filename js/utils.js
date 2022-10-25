@@ -970,7 +970,7 @@ function handleKeyboardNavigation() {
     }
   }
 
-  function upTo(el, tagName) {
+  function upToElement(el, tagName) {
     tagName = tagName.toLowerCase();
 
     while (el && el.parentNode) {
@@ -982,7 +982,7 @@ function handleKeyboardNavigation() {
     return null;
   }
 
-  function upTo2(el, func) {
+  function upTo(el, func) {
     if (func(el)) {
       return el;
     }
@@ -1052,7 +1052,7 @@ function handleKeyboardNavigation() {
           }
         }
         // get parent UL
-        const parentUL = upTo(item.parentElement, 'UL');
+        const parentUL = upToElement(item.parentElement, 'UL');
         const element = parentUL ? item.parentElement.parentElement : undefined;
         return getNextElement(element, parentUL ?? ul);
       } else {
@@ -1113,7 +1113,7 @@ function handleKeyboardNavigation() {
           }
         }
 
-        const parentUL = upTo(item.parentElement, 'UL');
+        const parentUL = upToElement(item.parentElement, 'UL');
         const element = parentUL ? item.parentElement.parentElement : undefined;
         if (element && element.matches('.folder.folder-open')) {
           return element;
@@ -1219,7 +1219,7 @@ function handleKeyboardNavigation() {
 
   function leftRightArrowClicked(direction) {
     const inLayouts = () =>
-      upTo2(currentItem, (el) => {
+      upTo(currentItem, (el) => {
         return el.id === "layout-menu-tool"
       });
     // right
@@ -1237,7 +1237,7 @@ function handleKeyboardNavigation() {
           currentItem.classList.add('hover');
         }
 
-        const mainNavigation = upTo2(currentItem, (el) => {
+        const mainNavigation = upTo(currentItem, (el) => {
           return el.id === 'applicationLauncher';
         });
         if (mainNavigation) {
@@ -1274,7 +1274,7 @@ function handleKeyboardNavigation() {
           mainList = currentItem.parentElement;
           currentItem.classList.add('hover');
         }
-        const inAppContent = upTo2(currentItem, (el) => {
+        const inAppContent = upTo(currentItem, (el) => {
           return el.id === 'app-content';
         });
         if (inAppContent) {
