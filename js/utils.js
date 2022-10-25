@@ -487,13 +487,13 @@ function populateSettingsDropdown(
                     ${elementName}-name="${element.name}"
                     ${
                       element.name === selectOptionsObj.selected.name
-                        ? 'checked'
-                        : ''
-                    }
+          ? 'checked'
+          : ''
+        }
                 />
                 <label class="select_label" for="${elementName}-${
         element.name + i
-      }">${element.displayName}</label>
+        }">${element.displayName}</label>
             </li>
             `;
     });
@@ -663,8 +663,8 @@ async function setDrawerOpenClass() {
     app.classList.contains('has-drawer')
       ? (app.style.maxHeight = `${
           appLancher.offsetHeight +
-          appContentHeader.offsetHeight +
-          navItem.offsetHeight * appRowsNumber
+        appContentHeader.offsetHeight +
+        navItem.offsetHeight * appRowsNumber
         }px`)
       : (app.style.maxHeight = `${appLancher.offsetHeight}px`);
 
@@ -676,8 +676,8 @@ async function setDrawerOpenClass() {
       app.classList.contains('has-drawer')
         ? (app.style.top = '0')
         : appLancher.offsetHeight +
-          appContentHeader.offsetHeight +
-          navItem.offsetHeight * appRowsNumber;
+        appContentHeader.offsetHeight +
+        navItem.offsetHeight * appRowsNumber;
     } else {
       app.classList.remove('open-top');
     }
@@ -891,7 +891,7 @@ async function setWindowMoveArea() {
         toolbarWidth.vertical +
         toolbarDrawerSize.vertical -
         Math.round(dragArea.width)
-      }, 0`,
+        }, 0`,
       moveAreaThickness: `0, ${Math.round(dragArea.height)}, 0, 0`,
     });
   } else {
@@ -983,6 +983,9 @@ function handleKeyboardNavigation() {
   }
 
   function upTo2(el, func) {
+    if (func(el)) {
+      return el;
+    }
     while (el && el.parentNode) {
       el = el.parentNode;
       if (func(el)) {
@@ -1215,16 +1218,20 @@ function handleKeyboardNavigation() {
   }
 
   function leftRightArrowClicked(direction) {
+    const inLayouts = () =>
+      upTo2(currentItem, (el) => {
+        return el.id === "layout-menu-tool"
+      });
     // right
     if (direction) {
       if (currentItem) {
-        const inLayouts = () =>
-          upTo2(currentItem, (el) => {
-            return el.classList.contains('layout-menu-tool');
-          });
-        if (currentItem.matches('.layouts-nav') || inLayouts()) {
-          // debugger;
-          mainList = currentItem.querySelector('.layout-menu-tool');
+        if (inLayouts()) {
+          let layoutUL = currentItem.querySelector('.layout-menu-tool');
+          if (layoutUL) {
+            mainList = layoutUL;
+          } else {
+            currentItem.classList.remove('hover');
+          }
           currentItem = getNextElement(undefined, mainList);
           mainList = currentItem.parentElement;
           currentItem.classList.add('hover');
@@ -1256,14 +1263,13 @@ function handleKeyboardNavigation() {
       }
     } else {
       if (currentItem) {
-        const inLayouts = () =>
-          upTo2(currentItem, (el) => {
-            console.log(el, el.classList);
-            return el.classList.contains('layout-menu-tool');
-          });
-        if (currentItem.matches('.layouts-nav') || inLayouts()) {
-          // debugger;
-          mainList = currentItem.querySelector('.layout-menu-tool');
+        if (inLayouts()) {
+          let layoutUL = currentItem.querySelector('.layout-menu-tool');
+          if (layoutUL) {
+            mainList = layoutUL;
+          } else {
+            currentItem.classList.remove('hover');
+          }
           currentItem = getPrevElement(undefined, mainList);
           mainList = currentItem.parentElement;
           currentItem.classList.add('hover');
