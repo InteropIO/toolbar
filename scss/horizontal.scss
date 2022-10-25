@@ -97,6 +97,7 @@
         overflow: hidden;
 
         &:hover,
+        &.hover,
         &.active {
           overflow: visible;
 
@@ -108,7 +109,14 @@
             visibility: visible;
           }
 
-          .layout-menu-tool div {
+          .layouts-nav {
+            .icon-size-16 {
+              opacity: 1;
+              visibility: visible;
+            }
+          }
+
+          .layout-menu-tool li {
             &:first-of-type {
               animation: none;
               border-right: 0;
@@ -218,6 +226,17 @@
         z-index: 21;
         flex-direction: column;
         height: 6rem;
+
+        li {
+          width: 100%;
+          flex: 0 1 auto;
+
+          &:hover,
+          &.hover,
+          &.active {
+            flex: 0 1 auto;
+          }
+        }
       }
 
       &.expand {
