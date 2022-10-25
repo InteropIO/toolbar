@@ -753,6 +753,8 @@ async function checkWindowPosition() {
   const app = q('.draggable');
   const appCoords = app.getBoundingClientRect();
 
+  console.log(appCoords);
+
   const workAreaRect = {
     lx: workArea.left,
     ly: workArea.top,
@@ -767,9 +769,16 @@ async function checkWindowPosition() {
     ry: windowBounds.top + appCoords.top + appCoords.height,
   };
 
+  const objArr = [];
+
+  objArr.push(workAreaRect, visibleAreaRect);
+
+  console.table(objArr);
+
   async function overlap(rect1, rect2) {
     // if rect2 moves beyond left boundaries of rect1
     if (rect2.lx < rect1.lx) {
+      console.log('left bounds');
       return {
         left: rect2.lx - rect1.lx,
       };
@@ -777,6 +786,7 @@ async function checkWindowPosition() {
 
     // if rect2 moves beyond top boundaries of rect1
     if (rect2.ly < rect1.ly) {
+      console.log('top bounds');
       return {
         top: rect2.ly - rect1.ly,
       };
@@ -784,6 +794,7 @@ async function checkWindowPosition() {
 
     // if rect2 moves beyond right boundaries of rect1
     if (rect2.rx > rect1.rx) {
+      console.log('right bounds');
       return {
         right: rect2.rx - rect1.rx,
       };
@@ -791,6 +802,7 @@ async function checkWindowPosition() {
 
     // if rect2 moves beyond bottom boundaries of rect1
     if (rect2.ry > rect1.ry) {
+      console.log('bottom bounds');
       return {
         bottom: rect2.ry - rect1.ry,
       };
@@ -920,11 +932,7 @@ function handleKeyboardNavigation() {
         isAppElement(currentItem) || isFolderElement(currentItem);
       if (true) {
         if (isLayoutElement(currentItem)) {
-          currentItem.dispatchEvent(
-            new MouseEvent('mouseover', {
-              bubbles: true,
-            })
-          );
+          debugger;
           return;
           // currentItem.click();
         } else {
@@ -1067,8 +1075,7 @@ function handleKeyboardNavigation() {
       }
       if (!nextItem.isConnected) {
         if (ul.matches('.folder-content')) {
-          const appName = nextItem.getAttribute('app-name');
-          nextItem = qa(`.nav-item[app-name="${appName}"]`)[0];
+          nextItem = getConnectedNode(nextItem);
         }
       }
       return nextItem;
@@ -1211,6 +1218,18 @@ function handleKeyboardNavigation() {
     // right
     if (direction) {
       if (currentItem) {
+        const inLayouts = () =>
+          upTo2(currentItem, (el) => {
+            return el.classList.contains('layout-menu-tool');
+          });
+        if (currentItem.matches('.layouts-nav') || inLayouts()) {
+          // debugger;
+          mainList = currentItem.querySelector('.layout-menu-tool');
+          currentItem = getNextElement(undefined, mainList);
+          mainList = currentItem.parentElement;
+          currentItem.classList.add('hover');
+        }
+
         const mainNavigation = upTo2(currentItem, (el) => {
           return el.id === 'applicationLauncher';
         });
@@ -1237,6 +1256,18 @@ function handleKeyboardNavigation() {
       }
     } else {
       if (currentItem) {
+        const inLayouts = () =>
+          upTo2(currentItem, (el) => {
+            console.log(el, el.classList);
+            return el.classList.contains('layout-menu-tool');
+          });
+        if (currentItem.matches('.layouts-nav') || inLayouts()) {
+          // debugger;
+          mainList = currentItem.querySelector('.layout-menu-tool');
+          currentItem = getPrevElement(undefined, mainList);
+          mainList = currentItem.parentElement;
+          currentItem.classList.add('hover');
+        }
         const inAppContent = upTo2(currentItem, (el) => {
           return el.id === 'app-content';
         });
