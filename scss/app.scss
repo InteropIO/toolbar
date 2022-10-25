@@ -303,6 +303,7 @@ html {
       flex-shrink: 0;
 
       &:hover,
+      &.hover,
       &.active {
         i,
         .text-animation,
