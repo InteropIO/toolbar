@@ -738,20 +738,22 @@ function closeAllMenus() {
 // Helper function to get a chosen HTML elements' visible area in the window bounds
 async function getVisibleArea(element) {
   const windowBounds = await getWindowBounds();
+  const visibleArea = element.getBoundingClientRect();
   const scaleFactor = await getScaleFactor();
-  const coords = element.getBoundingClientRect();
 
   return {
-    top: windowBounds.top + coords.top / scaleFactor,
-    left: windowBounds.left + coords.left / scaleFactor,
+    top: windowBounds.top + visibleArea.top / scaleFactor,
+    left: windowBounds.left + visibleArea.left / scaleFactor,
     right:
       windowBounds.left +
-      coords.left / scaleFactor +
-      coords.width / scaleFactor,
+      visibleArea.left / scaleFactor +
+      visibleArea.width / scaleFactor,
     bottom:
-      windowBounds.top + coords.top / scaleFactor + coords.height / scaleFactor,
-    width: coords.width / scaleFactor,
-    height: coords.height / scaleFactor,
+      windowBounds.top +
+      visibleArea.top / scaleFactor +
+      visibleArea.height / scaleFactor,
+    width: visibleArea.width / scaleFactor,
+    height: visibleArea.height / scaleFactor,
   };
 }
 
@@ -760,16 +762,19 @@ async function checkWindowPosition() {
   const windowBounds = await getWindowBounds();
   const visibleArea = await getVisibleArea(q('.draggable'));
 
-  const workAreaRect = {
-    top: workArea.top,
-    left: workArea.left,
-    right: workArea.left + workArea.width,
-    bottom: workArea.top + workArea.height,
-  };
+  // Check Windows
+  function Coords(obj1, obj2, obj3) {
+    (this.workArea = obj1),
+      (this.visibleArea = obj2),
+      (this.windowBounds = obj3);
+  }
+  const objArr = new Coords(workArea, visibleArea, windowBounds);
+  console.table(objArr);
 
   async function overlap(rect1, rect2) {
     // if rect2 moves beyond left boundaries of rect1
     if (rect2.left < rect1.left) {
+      console.log('off left bounds');
       return {
         left: rect2.left - rect1.left,
       };
@@ -777,6 +782,7 @@ async function checkWindowPosition() {
 
     // if rect2 moves beyond top boundaries of rect1
     if (rect2.top < rect1.top) {
+      console.log('off top bounds');
       return {
         top: rect2.top - rect1.top,
       };
@@ -784,6 +790,7 @@ async function checkWindowPosition() {
 
     // if rect2 moves beyond right boundaries of rect1
     if (rect2.right > rect1.right) {
+      console.log('off right bounds');
       return {
         right: rect2.right - rect1.right,
       };
@@ -791,6 +798,7 @@ async function checkWindowPosition() {
 
     // if rect2 moves beyond bottom boundaries of rect1
     if (rect2.bottom > rect1.bottom) {
+      console.log('off bottom bounds');
       return {
         bottom: rect2.bottom - rect1.bottom,
       };
@@ -799,7 +807,7 @@ async function checkWindowPosition() {
     return true;
   }
 
-  return overlap(workAreaRect, visibleArea);
+  return overlap(workArea, visibleArea);
 }
 
 async function setWindowPosition() {
@@ -814,69 +822,84 @@ async function setWindowPosition() {
   if (isVertical) {
     if (offBoundsDirection === 'top') {
       await moveMyWindow({
-        top: workArea.top + initialPosition.top / primaryScaleFactor,
+        top:
+          (workArea.top + initialPosition.top / scaleFactor) *
+          primaryScaleFactor,
       });
     }
 
     if (offBoundsDirection === 'right') {
       await moveMyWindow({
         left:
-          workArea.left +
-          workArea.width -
-          toolbarDrawerSize.vertical -
-          visibleArea.width -
-          initialPosition.left / primaryScaleFactor,
+          (workArea.left +
+            workArea.width -
+            visibleArea.width -
+            toolbarDrawerSize.vertical / scaleFactor -
+            initialPosition.left / scaleFactor) *
+          primaryScaleFactor,
       });
     }
 
     if (offBoundsDirection === 'bottom') {
       await moveMyWindow({
         top:
-          workArea.top +
-          workArea.height -
-          visibleArea.height -
-          initialPosition.top / primaryScaleFactor,
+          (workArea.top +
+            workArea.height -
+            visibleArea.height -
+            initialPosition.top / scaleFactor) *
+          primaryScaleFactor,
       });
     }
 
     if (offBoundsDirection === 'left') {
       await moveMyWindow({
         left:
-          workArea.left +
-          initialPosition.left / primaryScaleFactor -
-          toolbarDrawerSize.vertical,
+          (workArea.left +
+            initialPosition.left / scaleFactor -
+            toolbarDrawerSize.vertical / scaleFactor) *
+          primaryScaleFactor,
       });
     }
   } else {
     const horizontalHeight = getHorizontalToolbarHeight();
-
     if (offBoundsDirection === 'top') {
       await moveMyWindow({
         top:
-          workArea.top +
-          initialPosition.top / primaryScaleFactor -
-          horizontalHeight / scaleFactor,
+          (workArea.top +
+            initialPosition.top / scaleFactor -
+            horizontalHeight / scaleFactor) *
+          primaryScaleFactor,
       });
-    } else if (offBoundsDirection === 'right') {
+    }
+
+    if (offBoundsDirection === 'right') {
       await moveMyWindow({
         left:
-          workArea.left +
-          workArea.width -
-          visibleArea.width -
-          initialPosition.left / primaryScaleFactor,
+          (workArea.left +
+            workArea.width -
+            visibleArea.width -
+            initialPosition.left / scaleFactor) *
+          primaryScaleFactor,
       });
-    } else if (offBoundsDirection === 'bottom') {
+    }
+
+    if (offBoundsDirection === 'bottom') {
       await moveMyWindow({
         top:
-          workArea.top +
-          workArea.height -
-          horizontalHeight / scaleFactor -
-          visibleArea.height -
-          initialPosition.top / primaryScaleFactor,
+          (workArea.top +
+            workArea.height -
+            visibleArea.height -
+            horizontalHeight / scaleFactor -
+            initialPosition.top / scaleFactor) *
+          primaryScaleFactor,
       });
-    } else if (offBoundsDirection === 'left') {
+    }
+
+    if (offBoundsDirection === 'left') {
       await moveMyWindow({
-        left: workArea.left + initialPosition.left / primaryScaleFactor,
+        left:
+          (workArea.left + initialPosition.left / scaleFactor) *
+          primaryScaleFactor,
       });
     }
   }

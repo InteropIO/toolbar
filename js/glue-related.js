@@ -391,20 +391,25 @@ async function getPrimaryScaleFactor() {
 
 async function getScaleFactor() {
   const currentMonitor = await glue.windows.my().getDisplay();
-  const scaleFactor = currentMonitor.scaleFactor;
 
-  return scaleFactor;
+  return currentMonitor.scaleFactor;
 }
 
 async function getWindowWorkArea() {
   await gluePromise;
   const currentMonitor = await glue.windows.my().getDisplay();
   const primaryScaleFactor = await getPrimaryScaleFactor();
-  const scaleFactor = await getScaleFactor();
+  const scaleFactor = currentMonitor.scaleFactor;
 
   return {
     top: currentMonitor.workArea.top / primaryScaleFactor,
     left: currentMonitor.workArea.left / primaryScaleFactor,
+    bottom:
+      currentMonitor.workArea.top / primaryScaleFactor +
+      currentMonitor.workArea.height / scaleFactor,
+    right:
+      currentMonitor.workArea.left / primaryScaleFactor +
+      currentMonitor.workArea.width / scaleFactor,
     width: currentMonitor.workArea.width / scaleFactor,
     height: currentMonitor.workArea.height / scaleFactor,
   };
@@ -419,6 +424,8 @@ async function getWindowBounds() {
   return {
     top: bounds.top / primaryScaleFactor,
     left: bounds.left / primaryScaleFactor,
+    bottom: bounds.top / primaryScaleFactor + bounds.height / scaleFactor,
+    right: bounds.left / primaryScaleFactor + bounds.width / scaleFactor,
     width: bounds.width / scaleFactor,
     height: bounds.height / scaleFactor,
   };
