@@ -21,6 +21,8 @@ import {
   configureNotifications,
   openFeedbackForm,
   getWindowWorkArea,
+  getScaleFactor,
+  getPrimaryScaleFactor,
 } from './glue-related.js';
 import {
   toolbarWidth,
@@ -487,13 +489,13 @@ function populateSettingsDropdown(
                     ${elementName}-name="${element.name}"
                     ${
                       element.name === selectOptionsObj.selected.name
-          ? 'checked'
-          : ''
-        }
+                        ? 'checked'
+                        : ''
+                    }
                 />
                 <label class="select_label" for="${elementName}-${
         element.name + i
-        }">${element.displayName}</label>
+      }">${element.displayName}</label>
             </li>
             `;
     });
@@ -663,8 +665,8 @@ async function setDrawerOpenClass() {
     app.classList.contains('has-drawer')
       ? (app.style.maxHeight = `${
           appLancher.offsetHeight +
-        appContentHeader.offsetHeight +
-        navItem.offsetHeight * appRowsNumber
+          appContentHeader.offsetHeight +
+          navItem.offsetHeight * appRowsNumber
         }px`)
       : (app.style.maxHeight = `${appLancher.offsetHeight}px`);
 
@@ -676,8 +678,8 @@ async function setDrawerOpenClass() {
       app.classList.contains('has-drawer')
         ? (app.style.top = '0')
         : appLancher.offsetHeight +
-        appContentHeader.offsetHeight +
-        navItem.offsetHeight * appRowsNumber;
+          appContentHeader.offsetHeight +
+          navItem.offsetHeight * appRowsNumber;
     } else {
       app.classList.remove('open-top');
     }
@@ -733,119 +735,116 @@ function closeAllMenus() {
   activeButtons.forEach((el) => el.classList.remove('is-active'));
 }
 
-async function getWindowVisibleArea() {
-  const workArea = await getWindowWorkArea();
+// Helper function to get a chosen HTML elements' visible area in the window bounds
+async function getVisibleArea(element) {
   const windowBounds = await getWindowBounds();
-  const app = q('.app');
-  const appCoords = app.getBoundingClientRect();
+  const scaleFactor = await getScaleFactor();
+  const coords = element.getBoundingClientRect();
 
   return {
-    top: workArea.top + windowBounds.top + appCoords.top,
-    left: workArea.left + windowBounds.left + appCoords.left,
-    width: appCoords.width,
-    height: appCoords.height,
+    top: windowBounds.top + coords.top / scaleFactor,
+    left: windowBounds.left + coords.left / scaleFactor,
+    right:
+      windowBounds.left +
+      coords.left / scaleFactor +
+      coords.width / scaleFactor,
+    bottom:
+      windowBounds.top + coords.top / scaleFactor + coords.height / scaleFactor,
+    width: coords.width / scaleFactor,
+    height: coords.height / scaleFactor,
   };
 }
 
 async function checkWindowPosition() {
   const workArea = await getWindowWorkArea();
   const windowBounds = await getWindowBounds();
-  const app = q('.draggable');
-  const appCoords = app.getBoundingClientRect();
-
-  console.log(appCoords);
+  const visibleArea = await getVisibleArea(q('.draggable'));
 
   const workAreaRect = {
-    lx: workArea.left,
-    ly: workArea.top,
-    rx: workArea.left + workArea.width,
-    ry: workArea.top + workArea.height,
+    top: workArea.top,
+    left: workArea.left,
+    right: workArea.left + workArea.width,
+    bottom: workArea.top + workArea.height,
   };
-
-  const visibleAreaRect = {
-    lx: windowBounds.left + appCoords.left,
-    ly: windowBounds.top + appCoords.top,
-    rx: windowBounds.left + appCoords.left + appCoords.width,
-    ry: windowBounds.top + appCoords.top + appCoords.height,
-  };
-
-  const objArr = [];
-
-  objArr.push(workAreaRect, visibleAreaRect);
-
-  console.table(objArr);
 
   async function overlap(rect1, rect2) {
     // if rect2 moves beyond left boundaries of rect1
-    if (rect2.lx < rect1.lx) {
-      console.log('left bounds');
+    if (rect2.left < rect1.left) {
       return {
-        left: rect2.lx - rect1.lx,
+        left: rect2.left - rect1.left,
       };
     }
 
     // if rect2 moves beyond top boundaries of rect1
-    if (rect2.ly < rect1.ly) {
-      console.log('top bounds');
+    if (rect2.top < rect1.top) {
       return {
-        top: rect2.ly - rect1.ly,
+        top: rect2.top - rect1.top,
       };
     }
 
     // if rect2 moves beyond right boundaries of rect1
-    if (rect2.rx > rect1.rx) {
-      console.log('right bounds');
+    if (rect2.right > rect1.right) {
       return {
-        right: rect2.rx - rect1.rx,
+        right: rect2.right - rect1.right,
       };
     }
 
     // if rect2 moves beyond bottom boundaries of rect1
-    if (rect2.ry > rect1.ry) {
-      console.log('bottom bounds');
+    if (rect2.bottom > rect1.bottom) {
       return {
-        bottom: rect2.ry - rect1.ry,
+        bottom: rect2.bottom - rect1.bottom,
       };
     }
 
     return true;
   }
 
-  return overlap(workAreaRect, visibleAreaRect);
+  return overlap(workAreaRect, visibleArea);
 }
 
 async function setWindowPosition() {
   const isVertical = getSetting('vertical');
   const workArea = await getWindowWorkArea();
+  const visibleArea = await getVisibleArea(q('.draggable'));
   const offBounds = await checkWindowPosition();
   const offBoundsDirection = Object.keys(offBounds)[0];
-  const winodwVisibleArea = await getWindowVisibleArea();
+  const primaryScaleFactor = await getPrimaryScaleFactor();
+  const scaleFactor = await getScaleFactor();
 
   if (isVertical) {
     if (offBoundsDirection === 'top') {
       await moveMyWindow({
-        top: workArea.top + initialPosition.top,
+        top: workArea.top + initialPosition.top / primaryScaleFactor,
       });
-    } else if (offBoundsDirection === 'right') {
+    }
+
+    if (offBoundsDirection === 'right') {
       await moveMyWindow({
         left:
           workArea.left +
           workArea.width -
           toolbarDrawerSize.vertical -
-          toolbarWidth.vertical -
-          initialPosition.left,
+          visibleArea.width -
+          initialPosition.left / primaryScaleFactor,
       });
-    } else if (offBoundsDirection === 'bottom') {
+    }
+
+    if (offBoundsDirection === 'bottom') {
       await moveMyWindow({
         top:
           workArea.top +
           workArea.height -
-          winodwVisibleArea.height -
-          initialPosition.top,
+          visibleArea.height -
+          initialPosition.top / primaryScaleFactor,
       });
-    } else if (offBoundsDirection === 'left') {
+    }
+
+    if (offBoundsDirection === 'left') {
       await moveMyWindow({
-        left: workArea.left + initialPosition.left - toolbarDrawerSize.vertical,
+        left:
+          workArea.left +
+          initialPosition.left / primaryScaleFactor -
+          toolbarDrawerSize.vertical,
       });
     }
   } else {
@@ -853,28 +852,31 @@ async function setWindowPosition() {
 
     if (offBoundsDirection === 'top') {
       await moveMyWindow({
-        top: workArea.top + initialPosition.top - horizontalHeight,
+        top:
+          workArea.top +
+          initialPosition.top / primaryScaleFactor -
+          horizontalHeight / scaleFactor,
       });
     } else if (offBoundsDirection === 'right') {
       await moveMyWindow({
         left:
           workArea.left +
           workArea.width -
-          toolbarWidth.horizontal -
-          initialPosition.left,
+          visibleArea.width -
+          initialPosition.left / primaryScaleFactor,
       });
     } else if (offBoundsDirection === 'bottom') {
       await moveMyWindow({
         top:
           workArea.top +
           workArea.height -
-          winodwVisibleArea.height -
-          horizontalHeight -
-          initialPosition.top,
+          horizontalHeight / scaleFactor -
+          visibleArea.height -
+          initialPosition.top / primaryScaleFactor,
       });
     } else if (offBoundsDirection === 'left') {
       await moveMyWindow({
-        left: workArea.left + initialPosition.left,
+        left: workArea.left + initialPosition.left / primaryScaleFactor,
       });
     }
   }
@@ -888,18 +890,14 @@ async function setWindowMoveArea() {
   if (isVertical) {
     await configureMyWindow({
       moveAreaTopMargin: `${toolbarDrawerSize.vertical}, 0, ${
-        toolbarWidth.vertical +
-        toolbarDrawerSize.vertical -
-        Math.round(dragArea.width)
-        }, 0`,
-      moveAreaThickness: `0, ${Math.round(dragArea.height)}, 0, 0`,
+        toolbarWidth.vertical + toolbarDrawerSize.vertical - dragArea.width
+      }, 0`,
+      moveAreaThickness: `0, ${dragArea.height}, 0, 0`,
     });
   } else {
     await configureMyWindow({
-      moveAreaLeftMargin: `0, ${Math.round(horizontalHeight)}, 0, ${Math.round(
-        horizontalHeight
-      )}`,
-      moveAreaThickness: `${Math.round(dragArea.width)}, 0, 0, 0`,
+      moveAreaLeftMargin: `0, ${horizontalHeight}, 0, ${horizontalHeight}`,
+      moveAreaThickness: `${dragArea.width}, 0, 0, 0`,
     });
   }
 }
@@ -1220,7 +1218,7 @@ function handleKeyboardNavigation() {
   function leftRightArrowClicked(direction) {
     const inLayouts = () =>
       upTo(currentItem, (el) => {
-        return el.id === "layout-menu-tool"
+        return el.id === 'layout-menu-tool';
       });
     // right
     if (direction) {

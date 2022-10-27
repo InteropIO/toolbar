@@ -202,37 +202,6 @@ async function trackWindowMove() {
   });
 }
 
-async function getPrimaryScaleFactor() {
-  let scaleFactor = 1;
-  const monitors = await getMonitorInfo();
-
-  monitors.forEach((monitor) => {
-    monitor.isPrimary ? (scaleFactor = monitor.scaleFactor) : scaleFactor;
-  });
-
-  return scaleFactor;
-}
-
-async function getScaleFactor() {
-  const currentMonitor = await glue.windows.my().getDisplay();
-  const scaleFactor = currentMonitor.scaleFactor;
-
-  return scaleFactor;
-}
-
-async function getWindowWorkArea() {
-  const currentMonitor = await glue.windows.my().getDisplay();
-  const primaryScaleFactor = await getPrimaryScaleFactor();
-  const scaleFactor = await getScaleFactor();
-
-  return {
-    top: currentMonitor.workArea.top / primaryScaleFactor,
-    left: currentMonitor.workArea.left / primaryScaleFactor,
-    width: currentMonitor.workArea.width / scaleFactor,
-    height: currentMonitor.workArea.height / scaleFactor,
-  };
-}
-
 async function startApp(appName, context) {
   await gluePromise;
   let glueApp = glue.appManager.application(appName);
@@ -407,6 +376,38 @@ async function openWindow(name, url, options) {
     left: myBounds.left + 100,
   };
   window.glue.windows.open(name, url, options);
+}
+
+async function getPrimaryScaleFactor() {
+  let scaleFactor = 1;
+  const monitors = await getMonitorInfo();
+
+  monitors.forEach((monitor) => {
+    monitor.isPrimary ? (scaleFactor = monitor.scaleFactor) : scaleFactor;
+  });
+
+  return scaleFactor;
+}
+
+async function getScaleFactor() {
+  const currentMonitor = await glue.windows.my().getDisplay();
+  const scaleFactor = currentMonitor.scaleFactor;
+
+  return scaleFactor;
+}
+
+async function getWindowWorkArea() {
+  await gluePromise;
+  const currentMonitor = await glue.windows.my().getDisplay();
+  const primaryScaleFactor = await getPrimaryScaleFactor();
+  const scaleFactor = await getScaleFactor();
+
+  return {
+    top: currentMonitor.workArea.top / primaryScaleFactor,
+    left: currentMonitor.workArea.left / primaryScaleFactor,
+    width: currentMonitor.workArea.width / scaleFactor,
+    height: currentMonitor.workArea.height / scaleFactor,
+  };
 }
 
 async function getWindowBounds() {
@@ -603,4 +604,6 @@ export {
   getPrefs,
   updatePrefs,
   getWindowWorkArea,
+  getPrimaryScaleFactor,
+  getScaleFactor,
 };
