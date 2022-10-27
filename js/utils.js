@@ -823,8 +823,7 @@ async function setWindowPosition() {
     if (offBoundsDirection === 'top') {
       await moveMyWindow({
         top:
-          (workArea.top + initialPosition.top / scaleFactor) *
-          primaryScaleFactor,
+          (workArea.top + initialPosition / scaleFactor) * primaryScaleFactor,
       });
     }
 
@@ -835,7 +834,7 @@ async function setWindowPosition() {
             workArea.width -
             visibleArea.width -
             toolbarDrawerSize.vertical / scaleFactor -
-            initialPosition.left / scaleFactor) *
+            initialPosition / scaleFactor) *
           primaryScaleFactor,
       });
     }
@@ -846,7 +845,7 @@ async function setWindowPosition() {
           (workArea.top +
             workArea.height -
             visibleArea.height -
-            initialPosition.top / scaleFactor) *
+            initialPosition / scaleFactor) *
           primaryScaleFactor,
       });
     }
@@ -855,7 +854,7 @@ async function setWindowPosition() {
       await moveMyWindow({
         left:
           (workArea.left +
-            initialPosition.left / scaleFactor -
+            initialPosition / scaleFactor -
             toolbarDrawerSize.vertical / scaleFactor) *
           primaryScaleFactor,
       });
@@ -866,7 +865,7 @@ async function setWindowPosition() {
       await moveMyWindow({
         top:
           (workArea.top +
-            initialPosition.top / scaleFactor -
+            initialPosition / scaleFactor -
             horizontalHeight / scaleFactor) *
           primaryScaleFactor,
       });
@@ -878,7 +877,7 @@ async function setWindowPosition() {
           (workArea.left +
             workArea.width -
             visibleArea.width -
-            initialPosition.left / scaleFactor) *
+            initialPosition / scaleFactor) *
           primaryScaleFactor,
       });
     }
@@ -890,7 +889,7 @@ async function setWindowPosition() {
             workArea.height -
             visibleArea.height -
             horizontalHeight / scaleFactor -
-            initialPosition.top / scaleFactor) *
+            initialPosition / scaleFactor) *
           primaryScaleFactor,
       });
     }
@@ -898,8 +897,7 @@ async function setWindowPosition() {
     if (offBoundsDirection === 'left') {
       await moveMyWindow({
         left:
-          (workArea.left + initialPosition.left / scaleFactor) *
-          primaryScaleFactor,
+          (workArea.left + initialPosition / scaleFactor) * primaryScaleFactor,
       });
     }
   }

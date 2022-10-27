@@ -54,6 +54,7 @@ gluePromise.then((glue) => {
   trackWorkspaces();
   trackThemeChanges();
   trackWindowMove();
+  trackDisplayChange();
   trackConnection();
   trackNotificationCount();
   trackWindowZoom();
@@ -198,6 +199,12 @@ async function trackWindowMove() {
 
   glue.windows.my().onBoundsChanged(() => {
     boundsObs.next(glue.windows.my().bounds);
+    setWindowPosition();
+  });
+}
+
+async function trackDisplayChange() {
+  glue.displays.onDisplayChanged(() => {
     setWindowPosition();
   });
 }

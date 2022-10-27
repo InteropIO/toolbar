@@ -23,10 +23,7 @@ const toolbarDrawerSize = {
   vertical: 300,
   horizontal: 550,
 };
-const initialPosition = {
-  top: 20,
-  left: 20,
-};
+const initialPosition = 20;
 
 async function init() {
   populateSettings();
