@@ -906,6 +906,7 @@ async function setWindowMoveArea() {
 function handleKeyboardNavigation() {
   let currentItem;
   let mainList;
+  let clickedItem;
 
   function isFolderElement(e) {
     return e.matches('nav-item.folder');
@@ -915,10 +916,6 @@ function handleKeyboardNavigation() {
     return !!e.getAttribute('app-name');
   }
 
-  function isLayoutElement(e) {
-    return e.id === 'layout-menu-tool';
-  }
-
   function getActiveNodeFolderName(node) {
     const folderName = node.getAttribute('folder-name');
     return qa(`.nav-item[folder-name="${folderName}"]`)[0];
@@ -926,44 +923,38 @@ function handleKeyboardNavigation() {
 
   function action() {
     if (currentItem) {
-      const shouldClick =
-        isAppElement(currentItem) || isFolderElement(currentItem);
-      if (true) {
-        if (isLayoutElement(currentItem)) {
-          debugger;
-          return;
-          // currentItem.click();
-        } else {
-          currentItem.click();
-          if (currentItem.matches('.folder.folder-open')) {
-            currentItem = getActiveNodeFolderName(currentItem);
-            currentItem.classList.remove('hover');
-            currentItem = currentItem;
-            mainList = currentItem.parentElement;
-            currentItem.classList.add('hover');
-          } else if (isAppElement(currentItem)) {
-            // nothing
-            console.log(`app ignore`);
+      currentItem.click();
+      clickedItem = currentItem;
+      if (currentItem.matches('.folder.folder-open')) {
+        currentItem = getActiveNodeFolderName(currentItem);
+        currentItem.classList.remove('hover');
+        currentItem = currentItem;
+        mainList = currentItem.parentElement;
+        currentItem.classList.add('hover');
+      } else if (isAppElement(currentItem)) {
+        // nothing
+        console.log(`app ignore`);
+      } else {
+        if (currentItem.matches('.folder')) {
+          mainList = currentItem.children[1];
+        } else if (qa('.toggle-content:not(.hide)').length > 0) {
+          const children = qa('.toggle-content:not(.hide)')[0].children; //.children[1];
+          const firstUL = [...children].find(
+            (el) => el.tagName && el.tagName.toLowerCase() == 'ul'
+          );
+          if (firstUL) {
+            mainList = firstUL;
           } else {
-            if (currentItem.matches('.folder')) {
-              mainList = currentItem.children[1];
-            } else if (qa('.toggle-content:not(.hide)').length > 0) {
-              const children = qa('.toggle-content:not(.hide)')[0].children; //.children[1];
-              const firstUL = [...children].find(
-                (el) => el.tagName && el.tagName.toLowerCase() == 'ul'
-              );
-              if (firstUL) {
-                mainList = firstUL;
-              } else {
-                mainList = getStartingUL();
-              }
-            }
-            currentItem.classList.remove('hover');
-            currentItem = getNextElement(undefined, mainList);
-            mainList = currentItem.parentElement;
-            currentItem.classList.add('hover');
+            mainList = getStartingUL();
           }
         }
+        if (isInLayouts(currentItem)) {
+          currentItem.parentElement.parentElement.classList.remove('hover');
+        }
+        currentItem.classList.remove('hover');
+        currentItem = getNextElement(undefined, mainList);
+        mainList = currentItem.parentElement;
+        currentItem.classList.add('hover');
       }
     }
   }
@@ -993,25 +984,6 @@ function handleKeyboardNavigation() {
     return null;
   }
 
-  function reset() {
-    currentItem.classList.remove('hover');
-    currentItem = undefined;
-    mainList = undefined;
-    document.removeEventListener('click', reset);
-  }
-
-  function listenBodyClicks() {
-    document.addEventListener('click', reset);
-  }
-
-  function startKeyboardNavigation() {
-    // listenBodyClicks();
-    mainList = qa('.viewport .nav-tabs')[0];
-    currentItem = getNextElement(currentItem, mainList);
-    mainList = currentItem.parentElement;
-    currentItem.classList.add('hover');
-  }
-
   function getConnectedNode(item) {
     if (item.id !== '') {
       return document.getElementById(item.id);
@@ -1029,7 +1001,7 @@ function handleKeyboardNavigation() {
     return found;
   }
 
-  function getNextElement(item, ul) {
+  function getNextElement(item, ul, loop = false) {
     // if we don't have item, get the first one
     let nextItem;
     if (!item) {
@@ -1049,10 +1021,16 @@ function handleKeyboardNavigation() {
             return getNextElement(activeNode, activeNode.parentElement);
           }
         }
-        // get parent UL
-        const parentUL = upToElement(item.parentElement, 'UL');
-        const element = parentUL ? item.parentElement.parentElement : undefined;
-        return getNextElement(element, parentUL ?? ul);
+        if (loop) {
+          return getNextElement(undefined, ul);
+        } else {
+          // get parent UL
+          const parentUL = upToElement(item.parentElement, 'UL');
+          const element = parentUL
+            ? item.parentElement.parentElement
+            : undefined;
+          return getNextElement(element, parentUL ?? ul);
+        }
       } else {
         if (nextItem.matches('.folder.folder-open')) {
           const ulNode = [...nextItem.children].find(
@@ -1094,7 +1072,7 @@ function handleKeyboardNavigation() {
     return getNextElement(nextItem, ul);
   }
 
-  function getPrevElement(item, ul) {
+  function getPrevElement(item, ul, loop = false) {
     // if we don't have item, get the first one
     let nextItem;
     if (!item) {
@@ -1110,13 +1088,18 @@ function handleKeyboardNavigation() {
             return getPrevElement(activeNode, activeNode.parentElement);
           }
         }
-
-        const parentUL = upToElement(item.parentElement, 'UL');
-        const element = parentUL ? item.parentElement.parentElement : undefined;
-        if (element && element.matches('.folder.folder-open')) {
-          return element;
+        if (loop) {
+          return getPrevElement(undefined, ul);
+        } else {
+          const parentUL = upToElement(item.parentElement, 'UL');
+          const element = parentUL
+            ? item.parentElement.parentElement
+            : undefined;
+          if (element && element.matches('.folder.folder-open')) {
+            return element;
+          }
+          return getPrevElement(element, parentUL ?? ul);
         }
-        return getPrevElement(element, parentUL ?? ul);
       } else {
         if (nextItem.matches('.folder.folder-open')) {
           const ulNode = [...nextItem.children].find(
@@ -1168,6 +1151,16 @@ function handleKeyboardNavigation() {
     return qa('.viewport .nav-tabs')[0];
   }
 
+  const isInLayouts = () =>
+    upTo(currentItem, (el) => {
+      return el.id === 'layout-menu-tool';
+    });
+
+  const isInToggleView = () =>
+    upTo(currentItem, (el) => {
+      return el.classList && el.classList.contains('toggle-content');
+    });
+
   function move(direction) {
     if (direction) {
       if (!currentItem) {
@@ -1176,6 +1169,11 @@ function handleKeyboardNavigation() {
         currentItem.classList.add('hover');
         mainList = currentItem.parentElement;
       } else {
+        if (currentItem.id !== 'layout-menu-tool' && isInLayouts(currentItem)) {
+          currentItem.classList.remove('hover');
+          currentItem = currentItem.parentElement.parentElement;
+          mainList = currentItem.parentElement;
+        }
         currentItem.classList.remove('hover');
         currentItem = getNextElement(currentItem, mainList);
 
@@ -1195,6 +1193,11 @@ function handleKeyboardNavigation() {
         currentItem.classList.add('hover');
         mainList = currentItem.parentElement;
       } else {
+        if (currentItem.id !== 'layout-menu-tool' && isInLayouts(currentItem)) {
+          currentItem.classList.remove('hover');
+          currentItem = currentItem.parentElement.parentElement;
+          mainList = currentItem.parentElement;
+        }
         currentItem.classList.remove('hover');
         currentItem = getPrevElement(currentItem, mainList);
 
@@ -1223,66 +1226,90 @@ function handleKeyboardNavigation() {
     // right
     if (direction) {
       if (currentItem) {
-        if (inLayouts()) {
+        if (isInLayouts()) {
           let layoutUL = currentItem.querySelector('.layout-menu-tool');
           if (layoutUL) {
             mainList = layoutUL;
+            currentItem = getNextElement(undefined, mainList);
           } else {
             currentItem.classList.remove('hover');
+            currentItem = getNextElement(currentItem, mainList, true);
           }
-          currentItem = getNextElement(undefined, mainList);
           mainList = currentItem.parentElement;
           currentItem.classList.add('hover');
-        }
-
-        const mainNavigation = upTo(currentItem, (el) => {
-          return el.id === 'applicationLauncher';
-        });
-        if (mainNavigation) {
-          // go to the drawer navigation
-          const content = qa('.toggle-content:not(.hide)');
-          if (content.length > 0) {
-            const children = qa('.toggle-content:not(.hide)')[0].children; //.children[1];
-            const firstUL = [...children].find(
-              (el) => el.tagName && el.tagName.toLowerCase() == 'ul'
-            );
-            if (firstUL) {
-              mainList = firstUL;
-            } else {
-              mainList = getStartingUL();
-            }
+        } else {
+          if (isInToggleView()) {
             currentItem.classList.remove('hover');
-            currentItem = getNextElement(undefined, mainList);
-            mainList = currentItem.parentElement;
-            currentItem.scrollIntoViewIfNeeded();
+            currentItem = clickedItem;
+            if (isInLayouts()) {
+              currentItem.parentElement.parentElement.classList.add('hover');
+            }
             currentItem.classList.add('hover');
+            mainList = currentItem.parentElement;
           }
+          // const mainNavigation = upTo(currentItem, (el) => {
+          //   return el.id === 'applicationLauncher';
+          // });
+          // if (mainNavigation) {
+          //   debugger;
+          //   // go to the drawer navigation
+          //   const content = qa('.toggle-content:not(.hide)');
+          //   if (content.length > 0) {
+          //     const children = qa('.toggle-content:not(.hide)')[0].children; //.children[1];
+          //     const firstUL = [...children].find(
+          //       (el) => el.tagName && el.tagName.toLowerCase() == 'ul'
+          //     );
+          //     if (firstUL) {
+          //       mainList = firstUL;
+          //     } else {
+          //       mainList = getStartingUL();
+          //     }
+          //     currentItem.classList.remove('hover');
+          //     currentItem = getNextElement(undefined, mainList);
+          //     mainList = currentItem.parentElement;
+          //     currentItem.scrollIntoViewIfNeeded();
+          //     currentItem.classList.add('hover');
+          //   }
+          // }
         }
       }
     } else {
       if (currentItem) {
-        if (inLayouts()) {
+        if (isInLayouts()) {
           let layoutUL = currentItem.querySelector('.layout-menu-tool');
           if (layoutUL) {
             mainList = layoutUL;
+            currentItem = getPrevElement(undefined, mainList);
           } else {
             currentItem.classList.remove('hover');
+            currentItem = getPrevElement(currentItem, mainList, true);
           }
-          currentItem = getPrevElement(undefined, mainList);
           mainList = currentItem.parentElement;
           currentItem.classList.add('hover');
-        }
-        const inAppContent = upTo(currentItem, (el) => {
-          return el.id === 'app-content';
-        });
-        if (inAppContent) {
-          // go to the main navigation
-          mainList = getStartingUL();
-          currentItem.classList.remove('hover');
-          currentItem = getNextElement(undefined, mainList);
-          currentItem.classList.add('hover');
-          currentItem.scrollIntoViewIfNeeded();
-          mainList = currentItem.parentElement;
+        } else {
+          if (isInToggleView()) {
+            currentItem.classList.remove('hover');
+            currentItem = clickedItem;
+            if (isInLayouts()) {
+              currentItem.parentElement.parentElement.classList.add('hover');
+            }
+            currentItem.classList.add('hover');
+            mainList = currentItem.parentElement;
+          }
+
+          // const isInMainNavigation = () => upTo(currentItem, (el) => {
+          //   return el.id === 'app-content';
+          // });
+          // if (isInMainNavigation()) {
+          //   debugger;
+          //   // go to the main navigation
+          //   mainList = getStartingUL();
+          //   currentItem.classList.remove('hover');
+          //   currentItem = getNextElement(undefined, mainList);
+          //   currentItem.classList.add('hover');
+          //   currentItem.scrollIntoViewIfNeeded();
+          //   mainList = currentItem.parentElement;
+          // }
         }
       }
     }
