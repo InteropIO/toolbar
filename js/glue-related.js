@@ -3,6 +3,7 @@ import {
   setToolbarOrientation,
   setWindowParams,
   setWindowPosition,
+  setWindowMoveArea,
 } from './utils.js';
 
 console.time('Glue');
@@ -197,15 +198,16 @@ async function trackThemeChanges() {
 async function trackWindowMove() {
   boundsObs.next(glue.windows.my().bounds);
 
-  glue.windows.my().onBoundsChanged(() => {
+  glue.windows.my().onBoundsChanged(async () => {
     boundsObs.next(glue.windows.my().bounds);
-    setWindowPosition();
+    await setWindowPosition();
   });
 }
 
 async function trackDisplayChange() {
-  glue.displays.onDisplayChanged(() => {
-    setWindowPosition();
+  glue.displays.onDisplayChanged(async () => {
+    await setWindowPosition();
+    await setWindowMoveArea();
   });
 }
 
@@ -409,14 +411,14 @@ async function getWindowWorkArea() {
   const scaleFactor = currentMonitor.scaleFactor;
 
   return {
-    top: currentMonitor.workArea.top / primaryScaleFactor,
     left: currentMonitor.workArea.left / primaryScaleFactor,
-    bottom:
-      currentMonitor.workArea.top / primaryScaleFactor +
-      currentMonitor.workArea.height / scaleFactor,
+    top: currentMonitor.workArea.top / primaryScaleFactor,
     right:
       currentMonitor.workArea.left / primaryScaleFactor +
       currentMonitor.workArea.width / scaleFactor,
+    bottom:
+      currentMonitor.workArea.top / primaryScaleFactor +
+      currentMonitor.workArea.height / scaleFactor,
     width: currentMonitor.workArea.width / scaleFactor,
     height: currentMonitor.workArea.height / scaleFactor,
   };
@@ -429,10 +431,10 @@ async function getWindowBounds() {
   const scaleFactor = await getScaleFactor();
 
   return {
-    top: bounds.top / primaryScaleFactor,
     left: bounds.left / primaryScaleFactor,
-    bottom: bounds.top / primaryScaleFactor + bounds.height / scaleFactor,
+    top: bounds.top / primaryScaleFactor,
     right: bounds.left / primaryScaleFactor + bounds.width / scaleFactor,
+    bottom: bounds.top / primaryScaleFactor + bounds.height / scaleFactor,
     width: bounds.width / scaleFactor,
     height: bounds.height / scaleFactor,
   };
