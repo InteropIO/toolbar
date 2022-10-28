@@ -484,13 +484,15 @@ function populateSettingsDropdown(
                     name="${elementName}"
                     id="${elementName}-${element.name + i}"
                     ${elementName}-name="${element.name}"
-                    ${element.name === selectOptionsObj.selected.name
-          ? 'checked'
-          : ''
-        }
+                    ${
+                      element.name === selectOptionsObj.selected.name
+                        ? 'checked'
+                        : ''
+                    }
                 />
-                <label class="select_label" for="${elementName}-${element.name + i
-        }">${element.displayName}</label>
+                <label class="select_label" for="${elementName}-${
+        element.name + i
+      }">${element.displayName}</label>
             </li>
             `;
     });
@@ -658,9 +660,10 @@ async function setDrawerOpenClass() {
     app.style.top = `${horizontalHeight}px`;
 
     app.classList.contains('has-drawer')
-      ? (app.style.maxHeight = `${appLancher.offsetHeight +
-        appContentHeader.offsetHeight +
-        navItem.offsetHeight * appRowsNumber
+      ? (app.style.maxHeight = `${
+          appLancher.offsetHeight +
+          appContentHeader.offsetHeight +
+          navItem.offsetHeight * appRowsNumber
         }px`)
       : (app.style.maxHeight = `${appLancher.offsetHeight}px`);
 
@@ -672,8 +675,8 @@ async function setDrawerOpenClass() {
       app.classList.contains('has-drawer')
         ? (app.style.top = '0')
         : appLancher.offsetHeight +
-        appContentHeader.offsetHeight +
-        navItem.offsetHeight * appRowsNumber;
+          appContentHeader.offsetHeight +
+          navItem.offsetHeight * appRowsNumber;
     } else {
       app.classList.remove('open-top');
     }
@@ -957,7 +960,9 @@ function handleKeyboardNavigation() {
   }
 
   function getInput() {
-    return q('.toggle-content:not(.hide)')?.querySelector('.form-control.input-control');
+    return q('.toggle-content:not(.hide)')?.querySelector(
+      '.form-control.input-control'
+    );
   }
 
   function isAppElement(e) {
@@ -965,7 +970,7 @@ function handleKeyboardNavigation() {
   }
 
   function isFolderElement(e) {
-    return e?.matches('.folder')
+    return e?.matches('.folder');
   }
 
   function isInput(e) {
@@ -973,28 +978,39 @@ function handleKeyboardNavigation() {
   }
 
   function isFolderOpenedElement(e) {
-    return e?.matches('.folder.folder-open')
+    return e?.matches('.folder.folder-open');
   }
 
-  const isLayoutItem = () => upTo(currentItem, (el) => {
-    return el?.id === "layout-menu-tool"
-  });
+  const isLayoutItem = () =>
+    upTo(currentItem, (el) => {
+      return el?.id === 'layout-menu-tool';
+    });
 
-  const isInToggleView = () => upTo(currentItem, (el) => {
-    return el?.classList && el.classList?.contains("toggle-content");
-  });
+  const isDrawerOpenDirectionDifferent = () => {
+    return q('.app')
+      .className.split(' ')
+      .some((cn) => /open-.*/.test(cn));
+  };
 
-  const isItemInFolder = (e) => upTo(e, (el) => {
-    return el?.classList && el.classList?.contains("folder");
-  });
+  const isInToggleView = () =>
+    upTo(currentItem, (el) => {
+      return el?.classList && el.classList?.contains('toggle-content');
+    });
 
-  const isItemAppFavorite = (e) => upTo(e, (el) => {
-    return el?.id === "fav-apps";
-  });
+  const isItemInFolder = (e) =>
+    upTo(e, (el) => {
+      return el?.classList && el.classList?.contains('folder');
+    });
 
-  const isItemFromMainMenu = (e) => upTo(e, (el) => {
-    return el?.id === "applicationLauncher";
-  });
+  const isItemAppFavorite = (e) =>
+    upTo(e, (el) => {
+      return el?.id === 'fav-apps';
+    });
+
+  const isItemFromMainMenu = (e) =>
+    upTo(e, (el) => {
+      return el?.id === 'applicationLauncher';
+    });
 
   function reset(e) {
     if (e.isTrusted) {
@@ -1012,7 +1028,7 @@ function handleKeyboardNavigation() {
     if (!currentItem) {
       return;
     }
-    if (currentItem.id === "layout-menu-tool") {
+    if (currentItem.id === 'layout-menu-tool') {
       return;
     }
     currentItem.click();
@@ -1035,6 +1051,8 @@ function handleKeyboardNavigation() {
 
   function upToElement(el, tagName) {
     tagName = tagName.toLowerCase();
+
+    isDrawerOpenDirectionDifferent();
 
     while (el && el.parentNode) {
       el = el.parentNode;
@@ -1088,14 +1106,14 @@ function handleKeyboardNavigation() {
 
   function removeHover() {
     if (isLayoutItem(currentItem)) {
-      currentItem.parentElement.parentElement.classList.remove('hover')
+      currentItem.parentElement.parentElement.classList.remove('hover');
     }
     currentItem?.classList?.remove('hover');
   }
 
   function addHover() {
     if (isLayoutItem(currentItem)) {
-      currentItem.parentElement.parentElement.classList.add('hover')
+      currentItem.parentElement.parentElement.classList.add('hover');
     }
     if (isInput(currentItem)) {
       currentItem.focus();
@@ -1111,20 +1129,18 @@ function handleKeyboardNavigation() {
   }
 
   function getFirstList(item) {
-    const ulNode = [...item.children].find(
-      (child) => child.nodeName === 'UL'
-    );
+    const ulNode = [...item.children].find((child) => child.nodeName === 'UL');
     return ulNode;
   }
 
-  function go(direction = "up") {
+  function go(direction = 'up') {
     makeSureNodeIsConnected();
     removeHover();
     const nextItem = next(currentItem, direction);
     currentItem = nextItem;
     mainList = nextItem.parentElement;
     addHover();
-    currentItem.scrollIntoViewIfNeeded()
+    currentItem.scrollIntoViewIfNeeded();
   }
 
   function next(item, direction) {
@@ -1132,7 +1148,10 @@ function handleKeyboardNavigation() {
       setup();
       return currentItem;
     }
-    const isNavItem = () => item && item.classList.contains('nav-item') && !item.classList.contains('d-none');
+    const isNavItem = () =>
+      item &&
+      item.classList.contains('nav-item') &&
+      !item.classList.contains('d-none');
     do {
       let items = [];
       if (isNavItem(item)) {
@@ -1152,41 +1171,51 @@ function handleKeyboardNavigation() {
         }
       }
       items = items.filter((i) => {
-        const parentUL = upToElement(i, "li");
-        if (parentUL && isFolderElement(parentUL) && !isFolderOpenedElement(parentUL)) {
+        const parentUL = upToElement(i, 'li');
+        if (
+          parentUL &&
+          isFolderElement(parentUL) &&
+          !isFolderOpenedElement(parentUL)
+        ) {
           return false;
         }
         return true;
-      })
+      });
       const index = items.findIndex((i) => {
-        return i === item
+        return i === item;
       });
       let temp = items[index - 1];
-      if (direction === "down") {
+      if (direction === 'down') {
         temp = items[index + 1];
       }
 
       if (!temp) {
         if (isInput(item)) {
-          if (direction === "up") {
+          if (direction === 'up') {
             item = items[items.length - 1];
           } else {
             item = items[0];
           }
         } else if (isItemInFolder(item)) {
-          if (direction === "up") { // TODO check it
+          if (direction === 'up') {
+            // TODO check it
             item = item.parentElement.parentElement.nextElementSibling;
           } else {
             item = item.parentElement.parentElement.previousElementSibling;
           }
         } else if (isItemFromMainMenu(item)) {
-          const mainList = upTo(item, (el) => el.tagName?.toLowerCase() == "div" && el?.id === "applicationLauncher").firstElementChild;
+          const mainList = upTo(
+            item,
+            (el) =>
+              el.tagName?.toLowerCase() == 'div' &&
+              el?.id === 'applicationLauncher'
+          ).firstElementChild;
           items = [...mainList.querySelectorAll('.nav-item')];
           const index = items.findIndex((i) => {
             return i === item;
           });
 
-          if (direction === "down") {
+          if (direction === 'down') {
             if (index + 1 >= items.length) {
               item = items[0];
             } else {
@@ -1203,8 +1232,7 @@ function handleKeyboardNavigation() {
       } else {
         item = temp;
       }
-
-    } while (!isNavItem() && !isInput(item))
+    } while (!isNavItem() && !isInput(item));
     return item;
   }
 
@@ -1296,10 +1324,10 @@ function handleKeyboardNavigation() {
     switch (e.key) {
       case 'Tab':
         e.preventDefault();
-        if (e.target.tagName === "INPUT") {
-          e.target.blur()
+        if (e.target.tagName === 'INPUT') {
+          e.target.blur();
         }
-        go("down");
+        go('down');
         break;
       case 'Escape':
         break;
@@ -1307,19 +1335,19 @@ function handleKeyboardNavigation() {
         onEnterClicked();
         break;
       case 'ArrowUp':
-        if (e.target.tagName === "INPUT") {
-          e.target.blur()
+        if (e.target.tagName === 'INPUT') {
+          e.target.blur();
         }
-        go("up");
+        go('up');
         break;
       case 'ArrowRight':
         // leftRightArrowClicked(true);
         break;
       case 'ArrowDown':
-        if (e.target.tagName === "INPUT") {
-          e.target.blur()
+        if (e.target.tagName === 'INPUT') {
+          e.target.blur();
         }
-        go("down");
+        go('down');
         break;
       case 'ArrowLeft':
         // leftRightArrowClicked(false);
