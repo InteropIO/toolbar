@@ -484,15 +484,13 @@ function populateSettingsDropdown(
                     name="${elementName}"
                     id="${elementName}-${element.name + i}"
                     ${elementName}-name="${element.name}"
-                    ${
-                      element.name === selectOptionsObj.selected.name
-                        ? 'checked'
-                        : ''
-                    }
+                    ${element.name === selectOptionsObj.selected.name
+          ? 'checked'
+          : ''
+        }
                 />
-                <label class="select_label" for="${elementName}-${
-        element.name + i
-      }">${element.displayName}</label>
+                <label class="select_label" for="${elementName}-${element.name + i
+        }">${element.displayName}</label>
             </li>
             `;
     });
@@ -660,10 +658,9 @@ async function setDrawerOpenClass() {
     app.style.top = `${horizontalHeight}px`;
 
     app.classList.contains('has-drawer')
-      ? (app.style.maxHeight = `${
-          appLancher.offsetHeight +
-          appContentHeader.offsetHeight +
-          navItem.offsetHeight * appRowsNumber
+      ? (app.style.maxHeight = `${appLancher.offsetHeight +
+        appContentHeader.offsetHeight +
+        navItem.offsetHeight * appRowsNumber
         }px`)
       : (app.style.maxHeight = `${appLancher.offsetHeight}px`);
 
@@ -675,8 +672,8 @@ async function setDrawerOpenClass() {
       app.classList.contains('has-drawer')
         ? (app.style.top = '0')
         : appLancher.offsetHeight +
-          appContentHeader.offsetHeight +
-          navItem.offsetHeight * appRowsNumber;
+        appContentHeader.offsetHeight +
+        navItem.offsetHeight * appRowsNumber;
     } else {
       app.classList.remove('open-top');
     }
@@ -935,59 +932,105 @@ async function setWindowMoveArea() {
 
 // Keyboard Navigation
 function handleKeyboardNavigation() {
-  let currentItem;
+  listenBodyClicks();
   let mainList;
+  let currentItem;
   let clickedItem;
-
-  function isFolderElement(e) {
-    return e.matches('nav-item.folder');
-  }
-
-  function isAppElement(e) {
-    return !!e.getAttribute('app-name');
-  }
 
   function getActiveNodeFolderName(node) {
     const folderName = node.getAttribute('folder-name');
     return qa(`.nav-item[folder-name="${folderName}"]`)[0];
   }
 
-  function action() {
-    if (currentItem) {
-      currentItem.click();
-      clickedItem = currentItem;
-      if (currentItem.matches('.folder.folder-open')) {
-        currentItem = getActiveNodeFolderName(currentItem);
-        currentItem.classList.remove('hover');
-        currentItem = currentItem;
-        mainList = currentItem.parentElement;
-        currentItem.classList.add('hover');
-      } else if (isAppElement(currentItem)) {
-        // nothing
-        console.log(`app ignore`);
-      } else {
-        if (currentItem.matches('.folder')) {
-          mainList = currentItem.children[1];
-        } else if (qa('.toggle-content:not(.hide)').length > 0) {
-          const children = qa('.toggle-content:not(.hide)')[0].children; //.children[1];
-          const firstUL = [...children].find(
-            (el) => el.tagName && el.tagName.toLowerCase() == 'ul'
-          );
-          if (firstUL) {
-            mainList = firstUL;
-          } else {
-            mainList = getStartingUL();
-          }
-        }
-        if (isInLayouts(currentItem)) {
-          currentItem.parentElement.parentElement.classList.remove('hover');
-        }
-        currentItem.classList.remove('hover');
-        currentItem = getNextElement(undefined, mainList);
-        mainList = currentItem.parentElement;
-        currentItem.classList.add('hover');
-      }
+  function getStartingList() {
+    return getStartingUlInToggleView() || q('.viewport .nav-tabs');
+  }
+
+  function getStartingUlInToggleView() {
+    const visibleContent = q('.toggle-content:not(.hide)');
+    if (visibleContent) {
+      const children = visibleContent.children;
+      return [...children].find(
+        (el) => el.tagName && el.tagName.toLowerCase() == 'ul'
+      );
     }
+  }
+
+  function getInput() {
+    return q('.toggle-content:not(.hide)')?.querySelector('.form-control.input-control');
+  }
+
+  function isAppElement(e) {
+    return !!e?.getAttribute('app-name');
+  }
+
+  function isFolderElement(e) {
+    return e?.matches('.folder')
+  }
+
+  function isInput(e) {
+    return e?.matches('.form-control.input-control');
+  }
+
+  function isFolderOpenedElement(e) {
+    return e?.matches('.folder.folder-open')
+  }
+
+  const isLayoutItem = () => upTo(currentItem, (el) => {
+    return el?.id === "layout-menu-tool"
+  });
+
+  const isInToggleView = () => upTo(currentItem, (el) => {
+    return el?.classList && el.classList?.contains("toggle-content");
+  });
+
+  const isItemInFolder = (e) => upTo(e, (el) => {
+    return el?.classList && el.classList?.contains("folder");
+  });
+
+  const isItemAppFavorite = (e) => upTo(e, (el) => {
+    return el?.id === "fav-apps";
+  });
+
+  const isItemFromMainMenu = (e) => upTo(e, (el) => {
+    return el?.id === "applicationLauncher";
+  });
+
+  function reset(e) {
+    if (e.isTrusted) {
+      currentItem?.classList.remove('hover');
+      currentItem = undefined;
+      mainList = undefined;
+    }
+  }
+
+  function listenBodyClicks() {
+    // document.addEventListener('click', reset);
+  }
+
+  function onEnterClicked() {
+    if (!currentItem) {
+      return;
+    }
+    if (currentItem.id === "layout-menu-tool") {
+      return;
+    }
+    currentItem.click();
+    removeHover();
+
+    if (isAppElement(currentItem)) {
+      // nothing
+    } else if (isFolderElement(currentItem)) {
+      currentItem = getActiveNodeFolderName(currentItem);
+      // currentItem = next(currentItem, "down");
+    } else if (q('.toggle-content:not(.hide)')) {
+      clickedItem = currentItem;
+      currentItem = getInput();
+    }
+    if (isLayoutItem(currentItem)) {
+      currentItem.parentElement.parentElement.classList.remove('hover');
+    }
+    addHover();
   }
 
   function upToElement(el, tagName) {
@@ -1026,148 +1069,7 @@ function handleKeyboardNavigation() {
     const classList = [...item.classList].join('.');
     const classAsString = classList.length > 0 ? `.${classList}` : '';
     const found = qa(`${item.nodeName}${classAsString}${attributes ?? ''}`)[0];
-    if (!found) {
-      debugger;
-    }
     return found;
-  }
-
-  function getNextElement(item, ul, loop = false) {
-    // if we don't have item, get the first one
-    let nextItem;
-    if (!item) {
-      nextItem = ul.children[0];
-    } else {
-      if (!item.isConnected) {
-        item = getConnectedNode(item);
-        ul = item.parentElement;
-      }
-      nextItem = item.nextElementSibling;
-      if (!nextItem) {
-        // go out from the fav and continue
-        if (!item.isConnected) {
-          if (ul.matches('.folder-content')) {
-            const currentFolderElement = ul.parentElement;
-            const activeNode = getActiveNodeFolderName(currentFolderElement);
-            return getNextElement(activeNode, activeNode.parentElement);
-          }
-        }
-        if (loop) {
-          return getNextElement(undefined, ul);
-        } else {
-          // get parent UL
-          const parentUL = upToElement(item.parentElement, 'UL');
-          const element = parentUL
-            ? item.parentElement.parentElement
-            : undefined;
-          return getNextElement(element, parentUL ?? ul);
-        }
-      } else {
-        if (nextItem.matches('.folder.folder-open')) {
-          const ulNode = [...nextItem.children].find(
-            (child) => child.nodeName === 'UL'
-          );
-          if (ulNode) {
-            return getNextElement(undefined, ulNode);
-          }
-        }
-      }
-    }
-
-    if (
-      nextItem &&
-      nextItem.matches('.nav-item') &&
-      !nextItem.matches('.d-none')
-    ) {
-      // make sure that the found element is part of the main ul
-      if (!ul.contains(nextItem)) {
-        return;
-      }
-      if (!nextItem.isConnected) {
-        if (ul.matches('.folder-content')) {
-          nextItem = getConnectedNode(nextItem);
-        }
-      }
-      return nextItem;
-    }
-
-    // if we have nested ul
-    if (
-      nextItem &&
-      nextItem.children[0] &&
-      nextItem.children[0].nodeName === 'UL'
-    ) {
-      return getNextElement(undefined, nextItem.children[0]);
-    }
-
-    return getNextElement(nextItem, ul);
-  }
-
-  function getPrevElement(item, ul, loop = false) {
-    // if we don't have item, get the first one
-    let nextItem;
-    if (!item) {
-      nextItem = ul.children[ul.children.length - 1];
-    } else {
-      nextItem = item.previousElementSibling;
-      if (!nextItem) {
-        // go out from the fav and continue
-        if (!item.isConnected) {
-          if (ul.matches('.folder-content')) {
-            const currentFolderElement = ul.parentElement;
-            const activeNode = getActiveNodeFolderName(currentFolderElement);
-            return getPrevElement(activeNode, activeNode.parentElement);
-          }
-        }
-        if (loop) {
-          return getPrevElement(undefined, ul);
-        } else {
-          const parentUL = upToElement(item.parentElement, 'UL');
-          const element = parentUL
-            ? item.parentElement.parentElement
-            : undefined;
-          if (element && element.matches('.folder.folder-open')) {
-            return element;
-          }
-          return getPrevElement(element, parentUL ?? ul);
-        }
-      } else {
-        if (nextItem.matches('.folder.folder-open')) {
-          const ulNode = [...nextItem.children].find(
-            (child) => child.nodeName === 'UL'
-          );
-          if (ulNode) {
-            return getPrevElement(undefined, ulNode);
-          }
-        }
-      }
-    }
-
-    if (
-      nextItem &&
-      nextItem.matches('.nav-item') &&
-      !nextItem.matches('.d-none')
-    ) {
-      // make sure that the found element is part of the main ul
-      if (!ul.contains(nextItem)) {
-        return;
-      }
-      return nextItem;
-    }
-
-    // if we have nested ul
-    if (
-      nextItem &&
-      nextItem.children[nextItem.children.length - 1] &&
-      nextItem.children[nextItem.children.length - 1].nodeName === 'UL'
-    ) {
-      return getPrevElement(
-        undefined,
-        nextItem.children[nextItem.children.length - 1]
-      );
-    }
-
-    return getPrevElement(nextItem, ul);
   }
 
   function addRemoveFavouriteApp() {
@@ -1178,86 +1080,139 @@ function handleKeyboardNavigation() {
     }
   }
 
-  function getStartingUL() {
-    return qa('.viewport .nav-tabs')[0];
+  function makeSureNodeIsConnected() {
+    if (currentItem && !currentItem.isConnected) {
+      currentItem = getConnectedNode(currentItem);
+    }
   }
 
-  const isInLayouts = () =>
-    upTo(currentItem, (el) => {
-      return el.id === 'layout-menu-tool';
-    });
+  function removeHover() {
+    if (isLayoutItem(currentItem)) {
+      currentItem.parentElement.parentElement.classList.remove('hover')
+    }
+    currentItem?.classList?.remove('hover');
+  }
 
-  const isInToggleView = () =>
-    upTo(currentItem, (el) => {
-      return el.classList && el.classList.contains('toggle-content');
-    });
+  function addHover() {
+    if (isLayoutItem(currentItem)) {
+      currentItem.parentElement.parentElement.classList.add('hover')
+    }
+    if (isInput(currentItem)) {
+      currentItem.focus();
+    }
+    currentItem?.classList?.add('hover');
+  }
 
-  function move(direction) {
-    if (direction) {
-      if (!currentItem) {
-        mainList = getStartingUL();
-        currentItem = getNextElement(currentItem, mainList);
-        currentItem.classList.add('hover');
-        mainList = currentItem.parentElement;
-      } else {
-        if (currentItem.id !== 'layout-menu-tool' && isInLayouts(currentItem)) {
-          currentItem.classList.remove('hover');
-          currentItem = currentItem.parentElement.parentElement;
-          mainList = currentItem.parentElement;
+  function setup() {
+    if (!currentItem) {
+      mainList = q('.viewport .nav-tabs');
+      currentItem = mainList.querySelector('.nav-item');
+    }
+  }
+
+  function getFirstList(item) {
+    const ulNode = [...item.children].find(
+      (child) => child.nodeName === 'UL'
+    );
+    return ulNode;
+  }
+
+  function go(direction = "up") {
+    makeSureNodeIsConnected();
+    removeHover();
+    const nextItem = next(currentItem, direction);
+    currentItem = nextItem;
+    mainList = nextItem.parentElement;
+    addHover();
+    currentItem.scrollIntoViewIfNeeded()
+  }
+
+  function next(item, direction) {
+    if (!item) {
+      setup();
+      return currentItem;
+    }
+    const isNavItem = () => item && item.classList.contains('nav-item') && !item.classList.contains('d-none');
+    do {
+      let items = [];
+      if (isNavItem(item)) {
+        items = [...item.parentElement.querySelectorAll('.nav-item')];
+        if (isFolderOpenedElement(item.parentElement?.parentElement)) {
+          items.unshift(item.parentElement?.parentElement);
         }
-        currentItem.classList.remove('hover');
-        currentItem = getNextElement(currentItem, mainList);
+      } else if (isInput(item)) {
+        const ul = getFirstList(item.parentElement.parentElement);
+        items = [...ul.querySelectorAll('.nav-item')];
+      }
 
-        if (currentItem) {
-          mainList = currentItem.parentElement;
-          currentItem.classList.add('hover');
-        } else {
-          mainList = getStartingUL();
-          currentItem = getNextElement(currentItem, mainList);
-          mainList = currentItem.parentElement;
+      if (isInToggleView(item)) {
+        const input = getInput();
+        if (input) {
+          items.unshift(input);
         }
       }
-    } else {
-      if (!currentItem) {
-        mainList = getStartingUL();
-        currentItem = getPrevElement(currentItem, mainList);
-        currentItem.classList.add('hover');
-        mainList = currentItem.parentElement;
-      } else {
-        if (currentItem.id !== 'layout-menu-tool' && isInLayouts(currentItem)) {
-          currentItem.classList.remove('hover');
-          currentItem = currentItem.parentElement.parentElement;
-          mainList = currentItem.parentElement;
+      items = items.filter((i) => {
+        const parentUL = upToElement(i, "li");
+        if (parentUL && isFolderElement(parentUL) && !isFolderOpenedElement(parentUL)) {
+          return false;
         }
-        currentItem.classList.remove('hover');
-        currentItem = getPrevElement(currentItem, mainList);
-
-        if (currentItem) {
-          mainList = currentItem.parentElement;
-          currentItem.classList.add('hover');
-        } else {
-          mainList = getStartingUL();
-          currentItem = getPrevElement(currentItem, mainList);
-          currentItem.classList.add('hover');
-          mainList = currentItem.parentElement;
-        }
+        return true;
+      })
+      const index = items.findIndex((i) => {
+        return i === item
+      });
+      let temp = items[index - 1];
+      if (direction === "down") {
+        temp = items[index + 1];
       }
-    }
 
-    if (currentItem) {
-      currentItem.scrollIntoViewIfNeeded();
-    }
+      if (!temp) {
+        if (isInput(item)) {
+          if (direction === "up") {
+            item = items[items.length - 1];
+          } else {
+            item = items[0];
+          }
+        } else if (isItemInFolder(item)) {
+          if (direction === "up") { // TODO check it
+            item = item.parentElement.parentElement.nextElementSibling;
+          } else {
+            item = item.parentElement.parentElement.previousElementSibling;
+          }
+        } else if (isItemFromMainMenu(item)) {
+          const mainList = upTo(item, (el) => el.tagName?.toLowerCase() == "div" && el?.id === "applicationLauncher").firstElementChild;
+          items = [...mainList.querySelectorAll('.nav-item')];
+          const index = items.findIndex((i) => {
+            return i === item;
+          });
+
+          if (direction === "down") {
+            if (index + 1 >= items.length) {
+              item = items[0];
+            } else {
+              item = items[index + 1];
+            }
+          } else {
+            if (index - 1 < 0) {
+              item = items[items.length - 1];
+            } else {
+              item = items[index - 1];
+            }
+          }
+        }
+      } else {
+        item = temp;
+      }
+
+    } while (!isNavItem() && !isInput(item))
+    return item;
   }
 
   function leftRightArrowClicked(direction) {
-    const inLayouts = () =>
-      upTo(currentItem, (el) => {
-        return el.id === 'layout-menu-tool';
-      });
     // right
     if (direction) {
       if (currentItem) {
-        if (isInLayouts()) {
+        if (isLayoutItem()) {
           let layoutUL = currentItem.querySelector('.layout-menu-tool');
           if (layoutUL) {
             mainList = layoutUL;
@@ -1272,41 +1227,36 @@ function handleKeyboardNavigation() {
           if (isInToggleView()) {
             currentItem.classList.remove('hover');
             currentItem = clickedItem;
-            if (isInLayouts()) {
+            if (isLayoutItem()) {
               currentItem.parentElement.parentElement.classList.add('hover');
             }
             currentItem.classList.add('hover');
             mainList = currentItem.parentElement;
+          } else {
+            // go to the drawer navigation
+            const content = qa('.toggle-content:not(.hide)');
+            if (content.length > 0) {
+              const children = qa('.toggle-content:not(.hide)')[0].children; //.children[1];
+              const firstUL = [...children].find(
+                (el) => el.tagName && el.tagName.toLowerCase() == 'ul'
+              );
+              if (firstUL) {
+                mainList = firstUL;
+              } else {
+                mainList = getStartingList();
+              }
+              currentItem.classList.remove('hover');
+              currentItem = getNextElement(undefined, mainList);
+              mainList = currentItem.parentElement;
+              currentItem.scrollIntoViewIfNeeded();
+              currentItem.classList.add('hover');
+            }
           }
-          // const mainNavigation = upTo(currentItem, (el) => {
-          //   return el.id === 'applicationLauncher';
-          // });
-          // if (mainNavigation) {
-          //   debugger;
-          //   // go to the drawer navigation
-          //   const content = qa('.toggle-content:not(.hide)');
-          //   if (content.length > 0) {
-          //     const children = qa('.toggle-content:not(.hide)')[0].children; //.children[1];
-          //     const firstUL = [...children].find(
-          //       (el) => el.tagName && el.tagName.toLowerCase() == 'ul'
-          //     );
-          //     if (firstUL) {
-          //       mainList = firstUL;
-          //     } else {
-          //       mainList = getStartingUL();
-          //     }
-          //     currentItem.classList.remove('hover');
-          //     currentItem = getNextElement(undefined, mainList);
-          //     mainList = currentItem.parentElement;
-          //     currentItem.scrollIntoViewIfNeeded();
-          //     currentItem.classList.add('hover');
-          //   }
-          // }
         }
       }
     } else {
       if (currentItem) {
-        if (isInLayouts()) {
+        if (isLayoutItem()) {
           let layoutUL = currentItem.querySelector('.layout-menu-tool');
           if (layoutUL) {
             mainList = layoutUL;
@@ -1321,26 +1271,20 @@ function handleKeyboardNavigation() {
           if (isInToggleView()) {
             currentItem.classList.remove('hover');
             currentItem = clickedItem;
-            if (isInLayouts()) {
+            if (isLayoutItem()) {
               currentItem.parentElement.parentElement.classList.add('hover');
             }
             currentItem.classList.add('hover');
             mainList = currentItem.parentElement;
+          } else {
+            // go to the main navigation
+            mainList = getStartingList();
+            currentItem.classList.remove('hover');
+            currentItem = getNextElement(undefined, mainList);
+            currentItem.classList.add('hover');
+            currentItem.scrollIntoViewIfNeeded();
+            mainList = currentItem.parentElement;
           }
-
-          // const isInMainNavigation = () => upTo(currentItem, (el) => {
-          //   return el.id === 'app-content';
-          // });
-          // if (isInMainNavigation()) {
-          //   debugger;
-          //   // go to the main navigation
-          //   mainList = getStartingUL();
-          //   currentItem.classList.remove('hover');
-          //   currentItem = getNextElement(undefined, mainList);
-          //   currentItem.classList.add('hover');
-          //   currentItem.scrollIntoViewIfNeeded();
-          //   mainList = currentItem.parentElement;
-          // }
         }
       }
     }
@@ -1351,23 +1295,34 @@ function handleKeyboardNavigation() {
     q('.viewport').classList.add('expand');
     switch (e.key) {
       case 'Tab':
+        e.preventDefault();
+        if (e.target.tagName === "INPUT") {
+          e.target.blur()
+        }
+        go("down");
         break;
       case 'Escape':
         break;
       case 'Enter':
-        action();
+        onEnterClicked();
         break;
       case 'ArrowUp':
-        move(false);
+        if (e.target.tagName === "INPUT") {
+          e.target.blur()
+        }
+        go("up");
         break;
       case 'ArrowRight':
-        leftRightArrowClicked(true);
+        // leftRightArrowClicked(true);
         break;
       case 'ArrowDown':
-        move(true);
+        if (e.target.tagName === "INPUT") {
+          e.target.blur()
+        }
+        go("down");
         break;
       case 'ArrowLeft':
-        leftRightArrowClicked(false);
+        // leftRightArrowClicked(false);
         break;
 
       default:
