@@ -484,15 +484,13 @@ function populateSettingsDropdown(
                     name="${elementName}"
                     id="${elementName}-${element.name + i}"
                     ${elementName}-name="${element.name}"
-                    ${
-                      element.name === selectOptionsObj.selected.name
-                        ? 'checked'
-                        : ''
-                    }
+                    ${element.name === selectOptionsObj.selected.name
+          ? 'checked'
+          : ''
+        }
                 />
-                <label class="select_label" for="${elementName}-${
-        element.name + i
-      }">${element.displayName}</label>
+                <label class="select_label" for="${elementName}-${element.name + i
+        }">${element.displayName}</label>
             </li>
             `;
     });
@@ -660,10 +658,9 @@ async function setDrawerOpenClass() {
     app.style.top = `${horizontalHeight}px`;
 
     app.classList.contains('has-drawer')
-      ? (app.style.maxHeight = `${
-          appLancher.offsetHeight +
-          appContentHeader.offsetHeight +
-          navItem.offsetHeight * appRowsNumber
+      ? (app.style.maxHeight = `${appLancher.offsetHeight +
+        appContentHeader.offsetHeight +
+        navItem.offsetHeight * appRowsNumber
         }px`)
       : (app.style.maxHeight = `${appLancher.offsetHeight}px`);
 
@@ -675,8 +672,8 @@ async function setDrawerOpenClass() {
       app.classList.contains('has-drawer')
         ? (app.style.top = '0')
         : appLancher.offsetHeight +
-          appContentHeader.offsetHeight +
-          navItem.offsetHeight * appRowsNumber;
+        appContentHeader.offsetHeight +
+        navItem.offsetHeight * appRowsNumber;
     } else {
       app.classList.remove('open-top');
     }
@@ -936,7 +933,6 @@ async function setWindowMoveArea() {
 // Keyboard Navigation
 function handleKeyboardNavigation() {
   listenBodyClicks();
-  let mainList;
   let currentItem;
   let clickedItem;
 
@@ -945,8 +941,8 @@ function handleKeyboardNavigation() {
     return qa(`.nav-item[folder-name="${folderName}"]`)[0];
   }
 
-  function getStartingList() {
-    return getStartingUlInToggleView() || q('.viewport .nav-tabs');
+  function getStartingListInMainMenu() {
+    return q('.viewport .nav-tabs');
   }
 
   function getStartingUlInToggleView() {
@@ -1016,12 +1012,11 @@ function handleKeyboardNavigation() {
     if (e.isTrusted) {
       currentItem?.classList.remove('hover');
       currentItem = undefined;
-      mainList = undefined;
     }
   }
 
   function listenBodyClicks() {
-    // document.addEventListener('click', reset);
+    document.addEventListener('click', reset);
   }
 
   function onEnterClicked() {
@@ -1038,7 +1033,6 @@ function handleKeyboardNavigation() {
       // nothing
     } else if (isFolderElement(currentItem)) {
       currentItem = getActiveNodeFolderName(currentItem);
-      // currentItem = next(currentItem, "down");
     } else if (q('.toggle-content:not(.hide)')) {
       clickedItem = currentItem;
       currentItem = getInput();
@@ -1051,8 +1045,6 @@ function handleKeyboardNavigation() {
 
   function upToElement(el, tagName) {
     tagName = tagName.toLowerCase();
-
-    isDrawerOpenDirectionDifferent();
 
     while (el && el.parentNode) {
       el = el.parentNode;
@@ -1123,8 +1115,7 @@ function handleKeyboardNavigation() {
 
   function setup() {
     if (!currentItem) {
-      mainList = q('.viewport .nav-tabs');
-      currentItem = mainList.querySelector('.nav-item');
+      currentItem = q('.viewport .nav-tabs')?.querySelector('.nav-item');
     }
   }
 
@@ -1135,12 +1126,49 @@ function handleKeyboardNavigation() {
 
   function go(direction = 'up') {
     makeSureNodeIsConnected();
+
+    let nextItem;
+    const isVertical = getSetting('vertical');
+    if (!isVertical) {
+      if (direction === 'right') {
+        direction = 'down';
+      } else if (direction === 'left') {
+        direction = 'up';
+      }
+    }
+    if (direction === 'left' || direction === 'right') {
+      if (isDrawerOpenDirectionDifferent()) {
+        if (direction === 'left') {
+          direction = 'right';
+        } else if (direction === 'right') {
+          direction = 'left';
+        }
+      }
+      if (isItemFromMainMenu(currentItem)) {
+        const mainList = getStartingUlInToggleView();
+        if (!mainList) {
+          return;
+        }
+        nextItem = mainList.querySelector('.nav-item')
+      } else if (isInToggleView()) {
+        const mainList = getStartingListInMainMenu();
+        nextItem = mainList.querySelector('.nav-item')
+      } else {
+        // do nothing;
+        return;
+      }
+    }
+    else if (direction === "up" || direction === "down") {
+      if (isVertical) {
+        nextItem = next(currentItem, direction);
+      } else {
+        nextItem = next(currentItem, direction);
+      }
+    }
     removeHover();
-    const nextItem = next(currentItem, direction);
     currentItem = nextItem;
-    mainList = nextItem.parentElement;
     addHover();
-    currentItem.scrollIntoViewIfNeeded();
+    currentItem?.scrollIntoViewIfNeeded()
   }
 
   function next(item, direction) {
@@ -1181,7 +1209,7 @@ function handleKeyboardNavigation() {
         }
         return true;
       });
-      const index = items.findIndex((i) => {
+      let index = items.findIndex((i) => {
         return i === item;
       });
       let temp = items[index - 1];
@@ -1190,19 +1218,13 @@ function handleKeyboardNavigation() {
       }
 
       if (!temp) {
-        if (isInput(item)) {
-          if (direction === 'up') {
-            item = items[items.length - 1];
-          } else {
-            item = items[0];
-          }
-        } else if (isItemInFolder(item)) {
-          if (direction === 'up') {
-            // TODO check it
-            item = item.parentElement.parentElement.nextElementSibling;
-          } else {
-            item = item.parentElement.parentElement.previousElementSibling;
-          }
+        if (isItemInFolder(item)) {
+          const mainList = upTo(item, (el) => el.tagName?.toLowerCase() == "ul" && el?.classList?.contains("nav-tabs"))
+          items = [...mainList.querySelectorAll('.nav-item')];
+          index = items.findIndex((i) => {
+            return i === item;
+          });
+          // TODO check it
         } else if (isItemFromMainMenu(item)) {
           const mainList = upTo(
             item,
@@ -1211,22 +1233,21 @@ function handleKeyboardNavigation() {
               el?.id === 'applicationLauncher'
           ).firstElementChild;
           items = [...mainList.querySelectorAll('.nav-item')];
-          const index = items.findIndex((i) => {
+          index = items.findIndex((i) => {
             return i === item;
           });
-
-          if (direction === 'down') {
-            if (index + 1 >= items.length) {
-              item = items[0];
-            } else {
-              item = items[index + 1];
-            }
+        }
+        if (direction === "down") {
+          if (index + 1 >= items.length) {
+            item = items[0];
           } else {
-            if (index - 1 < 0) {
-              item = items[items.length - 1];
-            } else {
-              item = items[index - 1];
-            }
+            item = items[index + 1];
+          }
+        } else {
+          if (index - 1 < 0) {
+            item = items[items.length - 1];
+          } else {
+            item = items[index - 1];
           }
         }
       } else {
@@ -1234,88 +1255,6 @@ function handleKeyboardNavigation() {
       }
     } while (!isNavItem() && !isInput(item));
     return item;
-  }
-
-  function leftRightArrowClicked(direction) {
-    // right
-    if (direction) {
-      if (currentItem) {
-        if (isLayoutItem()) {
-          let layoutUL = currentItem.querySelector('.layout-menu-tool');
-          if (layoutUL) {
-            mainList = layoutUL;
-            currentItem = getNextElement(undefined, mainList);
-          } else {
-            currentItem.classList.remove('hover');
-            currentItem = getNextElement(currentItem, mainList, true);
-          }
-          mainList = currentItem.parentElement;
-          currentItem.classList.add('hover');
-        } else {
-          if (isInToggleView()) {
-            currentItem.classList.remove('hover');
-            currentItem = clickedItem;
-            if (isLayoutItem()) {
-              currentItem.parentElement.parentElement.classList.add('hover');
-            }
-            currentItem.classList.add('hover');
-            mainList = currentItem.parentElement;
-          } else {
-            // go to the drawer navigation
-            const content = qa('.toggle-content:not(.hide)');
-            if (content.length > 0) {
-              const children = qa('.toggle-content:not(.hide)')[0].children; //.children[1];
-              const firstUL = [...children].find(
-                (el) => el.tagName && el.tagName.toLowerCase() == 'ul'
-              );
-              if (firstUL) {
-                mainList = firstUL;
-              } else {
-                mainList = getStartingList();
-              }
-              currentItem.classList.remove('hover');
-              currentItem = getNextElement(undefined, mainList);
-              mainList = currentItem.parentElement;
-              currentItem.scrollIntoViewIfNeeded();
-              currentItem.classList.add('hover');
-            }
-          }
-        }
-      }
-    } else {
-      if (currentItem) {
-        if (isLayoutItem()) {
-          let layoutUL = currentItem.querySelector('.layout-menu-tool');
-          if (layoutUL) {
-            mainList = layoutUL;
-            currentItem = getPrevElement(undefined, mainList);
-          } else {
-            currentItem.classList.remove('hover');
-            currentItem = getPrevElement(currentItem, mainList, true);
-          }
-          mainList = currentItem.parentElement;
-          currentItem.classList.add('hover');
-        } else {
-          if (isInToggleView()) {
-            currentItem.classList.remove('hover');
-            currentItem = clickedItem;
-            if (isLayoutItem()) {
-              currentItem.parentElement.parentElement.classList.add('hover');
-            }
-            currentItem.classList.add('hover');
-            mainList = currentItem.parentElement;
-          } else {
-            // go to the main navigation
-            mainList = getStartingList();
-            currentItem.classList.remove('hover');
-            currentItem = getNextElement(undefined, mainList);
-            currentItem.classList.add('hover');
-            currentItem.scrollIntoViewIfNeeded();
-            mainList = currentItem.parentElement;
-          }
-        }
-      }
-    }
   }
 
   document.addEventListener('keydown', (e) => {
@@ -1330,6 +1269,15 @@ function handleKeyboardNavigation() {
         go('down');
         break;
       case 'Escape':
+        let hasVisibleDrawers = q('.toggle-content:not(.hide)');
+        if (hasVisibleDrawers) {
+          hasVisibleDrawers.classList.add("hide");
+          if (isItemFromMainMenu(currentItem)) {
+            return;
+          }
+          removeHover();
+          currentItem = undefined;
+        }
         break;
       case 'Enter':
         onEnterClicked();
@@ -1341,7 +1289,10 @@ function handleKeyboardNavigation() {
         go('up');
         break;
       case 'ArrowRight':
-        // leftRightArrowClicked(true);
+        if (e.target.tagName === "INPUT") {
+          e.target.blur()
+        }
+        go("right");
         break;
       case 'ArrowDown':
         if (e.target.tagName === 'INPUT') {
@@ -1350,13 +1301,15 @@ function handleKeyboardNavigation() {
         go('down');
         break;
       case 'ArrowLeft':
-        // leftRightArrowClicked(false);
+        if (e.target.tagName === "INPUT") {
+          e.target.blur()
+        }
+        go("left");
         break;
 
       default:
         break;
     }
-    // }
   });
 }
 
