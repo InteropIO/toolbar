@@ -486,13 +486,13 @@ function populateSettingsDropdown(
                     ${elementName}-name="${element.name}"
                     ${
                       element.name === selectOptionsObj.selected.name
-                        ? 'checked'
-                        : ''
-                    }
+          ? 'checked'
+          : ''
+        }
                 />
                 <label class="select_label" for="${elementName}-${
         element.name + i
-      }">${element.displayName}</label>
+        }">${element.displayName}</label>
             </li>
             `;
     });
@@ -662,8 +662,8 @@ async function setDrawerOpenClass() {
     app.classList.contains('has-drawer')
       ? (app.style.maxHeight = `${
           appLancher.offsetHeight +
-          appContentHeader.offsetHeight +
-          navItem.offsetHeight * appRowsNumber
+        appContentHeader.offsetHeight +
+        navItem.offsetHeight * appRowsNumber
         }px`)
       : (app.style.maxHeight = `${appLancher.offsetHeight}px`);
 
@@ -675,8 +675,8 @@ async function setDrawerOpenClass() {
       app.classList.contains('has-drawer')
         ? (app.style.top = '0')
         : appLancher.offsetHeight +
-          appContentHeader.offsetHeight +
-          navItem.offsetHeight * appRowsNumber;
+        appContentHeader.offsetHeight +
+        navItem.offsetHeight * appRowsNumber;
     } else {
       app.classList.remove('open-top');
     }
@@ -976,6 +976,10 @@ function handleKeyboardNavigation() {
     return e?.matches('.form-control.input-control');
   }
 
+  function isSaveInput(e) {
+    return e?.id === 'layout-save-name';
+  }
+
   function isFolderOpenedElement(e) {
     return e?.matches('.folder.folder-open');
   }
@@ -1199,7 +1203,10 @@ function handleKeyboardNavigation() {
           items.unshift(item.parentElement?.parentElement);
         }
       } else if (isInput(item)) {
-        const ul = getFirstList(item.parentElement.parentElement);
+        let ul = getFirstList(item.parentElement.parentElement);
+        if (isSaveInput(item)) {
+          ul = getFirstList(item.parentElement.parentElement.parentElement);
+        }
         items = [...ul.querySelectorAll('.nav-item')];
       }
 
