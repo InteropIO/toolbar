@@ -133,10 +133,10 @@ function layoutHTMLTemplate(layout) {
         </button>
       </div>
     </div>
-    <div class="layout-menu-tool">
-      <div class="delete">Delete</div>
-      <div class="cancel">Cancel</div>
-    </div>
+    <ul class="layout-menu-tool">
+      <li class="nav-item delete">Delete</li>
+      <li class="nav-item cancel">Cancel</li>
+    </ul>
   </li>
   `
   );
