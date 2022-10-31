@@ -484,13 +484,15 @@ function populateSettingsDropdown(
                     name="${elementName}"
                     id="${elementName}-${element.name + i}"
                     ${elementName}-name="${element.name}"
-                    ${element.name === selectOptionsObj.selected.name
-          ? 'checked'
-          : ''
-        }
+                    ${
+                      element.name === selectOptionsObj.selected.name
+                        ? 'checked'
+                        : ''
+                    }
                 />
-                <label class="select_label" for="${elementName}-${element.name + i
-        }">${element.displayName}</label>
+                <label class="select_label" for="${elementName}-${
+        element.name + i
+      }">${element.displayName}</label>
             </li>
             `;
     });
@@ -658,9 +660,10 @@ async function setDrawerOpenClass() {
     app.style.top = `${horizontalHeight}px`;
 
     app.classList.contains('has-drawer')
-      ? (app.style.maxHeight = `${appLancher.offsetHeight +
-        appContentHeader.offsetHeight +
-        navItem.offsetHeight * appRowsNumber
+      ? (app.style.maxHeight = `${
+          appLancher.offsetHeight +
+          appContentHeader.offsetHeight +
+          navItem.offsetHeight * appRowsNumber
         }px`)
       : (app.style.maxHeight = `${appLancher.offsetHeight}px`);
 
@@ -672,8 +675,8 @@ async function setDrawerOpenClass() {
       app.classList.contains('has-drawer')
         ? (app.style.top = '0')
         : appLancher.offsetHeight +
-        appContentHeader.offsetHeight +
-        navItem.offsetHeight * appRowsNumber;
+          appContentHeader.offsetHeight +
+          navItem.offsetHeight * appRowsNumber;
     } else {
       app.classList.remove('open-top');
     }
@@ -1012,7 +1015,7 @@ function handleKeyboardNavigation() {
     if (e.isTrusted) {
       currentItem?.classList.remove('hover');
       currentItem = undefined;
-	  clickedItem = undefined;
+      clickedItem = undefined;
     }
   }
 
@@ -1162,13 +1165,11 @@ function handleKeyboardNavigation() {
           const mainList = getStartingListInMainMenu();
           nextItem = mainList.querySelector('.nav-item');
         }
-
       } else {
         // do nothing;
         return;
       }
-    }
-    else if (direction === "up" || direction === "down") {
+    } else if (direction === 'up' || direction === 'down') {
       if (isVertical) {
         nextItem = next(currentItem, direction);
       } else {
@@ -1178,7 +1179,7 @@ function handleKeyboardNavigation() {
     removeHover();
     currentItem = nextItem;
     addHover();
-    currentItem?.scrollIntoViewIfNeeded()
+    currentItem?.scrollIntoViewIfNeeded();
   }
 
   function next(item, direction) {
@@ -1229,7 +1230,12 @@ function handleKeyboardNavigation() {
 
       if (!temp) {
         if (isItemInFolder(item)) {
-          const mainList = upTo(item, (el) => el.tagName?.toLowerCase() == "ul" && el?.classList?.contains("nav-tabs"))
+          const mainList = upTo(
+            item,
+            (el) =>
+              el.tagName?.toLowerCase() == 'ul' &&
+              el?.classList?.contains('nav-tabs')
+          );
           items = [...mainList.querySelectorAll('.nav-item')];
           index = items.findIndex((i) => {
             return i === item;
@@ -1247,7 +1253,7 @@ function handleKeyboardNavigation() {
             return i === item;
           });
         }
-        if (direction === "down") {
+        if (direction === 'down') {
           if (index + 1 >= items.length) {
             item = items[0];
           } else {
@@ -1281,7 +1287,7 @@ function handleKeyboardNavigation() {
       case 'Escape':
         let hasVisibleDrawers = q('.toggle-content:not(.hide)');
         if (hasVisibleDrawers) {
-          hasVisibleDrawers.classList.add("hide");
+          hasVisibleDrawers.classList.add('hide');
           if (isItemFromMainMenu(currentItem)) {
             return;
           }
@@ -1299,10 +1305,10 @@ function handleKeyboardNavigation() {
         go('up');
         break;
       case 'ArrowRight':
-        if (e.target.tagName === "INPUT") {
-          e.target.blur()
+        if (e.target.tagName === 'INPUT') {
+          e.target.blur();
         }
-        go("right");
+        go('right');
         break;
       case 'ArrowDown':
         if (e.target.tagName === 'INPUT') {
@@ -1311,10 +1317,10 @@ function handleKeyboardNavigation() {
         go('down');
         break;
       case 'ArrowLeft':
-        if (e.target.tagName === "INPUT") {
-          e.target.blur()
+        if (e.target.tagName === 'INPUT') {
+          e.target.blur();
         }
-        go("left");
+        go('left');
         break;
 
       default:

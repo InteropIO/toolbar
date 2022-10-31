@@ -98,7 +98,7 @@ function handleLayoutClick() {
 function handleLayoutSave() {
   q('#layout-save-btn').addEventListener('click', saveCurrentLayout);
   q('#layout-save-name').addEventListener('keyup', (e) =>
-    (e.key === 'Enter' && e.target.value.length > 0) ? saveCurrentLayout() : null
+    e.key === 'Enter' && e.target.value.length > 0 ? saveCurrentLayout() : null
   );
 }
 
@@ -124,7 +124,7 @@ function layoutHTMLTemplate(layout) {
     (layout.type === 'Global' && !getSetting('saveDefaultLayout')
       ? `<button class="btn btn-icon secondary set-default ${
           layout.isDefault ? 'text-primary' : ''
-      }" id="menu-tool-4">
+        }" id="menu-tool-4">
           <i class="icon-asterisk"></i>
         </button>`
       : '') +
