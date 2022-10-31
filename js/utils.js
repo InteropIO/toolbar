@@ -1303,13 +1303,19 @@ function handleKeyboardNavigation() {
         break;
       case 'Escape':
         let hasVisibleDrawers = q('.toggle-content:not(.hide)');
+        const appLancher = q('.viewport-header');
+        const app = q('.app');
+        const horizontalHeight = getHorizontalToolbarHeight();
         if (hasVisibleDrawers) {
           hasVisibleDrawers.classList.add('hide');
           if (isItemFromMainMenu(currentItem)) {
             return;
           }
           removeHover();
+          app.classList.remove('has-drawer');
           currentItem = undefined;
+          app.style.maxHeight = `${appLancher.offsetHeight}px`;
+          app.style.top = `${horizontalHeight}px`;
         }
         break;
       case 'Enter':
