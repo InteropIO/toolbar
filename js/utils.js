@@ -39,6 +39,8 @@ import {
   profile_handleFeedbackClick,
 } from './profile.js';
 
+import { layoutDropDownVisibleObs } from './visible-area.js';
+
 const windowMargin = 50;
 
 let pressedKey;
@@ -986,7 +988,15 @@ function handleKeyboardNavigation() {
 
   const isLayoutItem = () =>
     upTo(currentItem, (el) => {
-      return el?.id === 'layout-menu-tool';
+      if (el?.id === 'layout-menu-tool') {
+        const isVertical = getSetting('vertical');
+        if (!isVertical) {
+          layoutDropDownVisibleObs.next(true);
+        }
+        return el?.id === 'layout-menu-tool';
+      } else {
+        layoutDropDownVisibleObs.next(false);
+      }
     });
 
   const isDrawerOpenDirectionDifferent = () => {
