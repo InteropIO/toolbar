@@ -1012,6 +1012,7 @@ function handleKeyboardNavigation() {
     if (e.isTrusted) {
       currentItem?.classList.remove('hover');
       currentItem = undefined;
+	  clickedItem = undefined;
     }
   }
 
@@ -1149,10 +1150,19 @@ function handleKeyboardNavigation() {
         if (!mainList) {
           return;
         }
-        nextItem = mainList.querySelector('.nav-item')
+        if (clickedItem) {
+          nextItem = clickedItem;
+        } else {
+          nextItem = mainList.querySelector('.nav-item');
+        }
       } else if (isInToggleView()) {
-        const mainList = getStartingListInMainMenu();
-        nextItem = mainList.querySelector('.nav-item')
+        if (clickedItem) {
+          nextItem = clickedItem;
+        } else {
+          const mainList = getStartingListInMainMenu();
+          nextItem = mainList.querySelector('.nav-item');
+        }
+
       } else {
         // do nothing;
         return;
