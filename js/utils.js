@@ -488,13 +488,13 @@ function populateSettingsDropdown(
                     ${elementName}-name="${element.name}"
                     ${
                       element.name === selectOptionsObj.selected.name
-                        ? 'checked'
-                        : ''
-                    }
+          ? 'checked'
+          : ''
+        }
                 />
                 <label class="select_label" for="${elementName}-${
         element.name + i
-      }">${element.displayName}</label>
+        }">${element.displayName}</label>
             </li>
             `;
     });
@@ -664,8 +664,8 @@ async function setDrawerOpenClass() {
     app.classList.contains('has-drawer')
       ? (app.style.maxHeight = `${
           appLancher.offsetHeight +
-          appContentHeader.offsetHeight +
-          navItem.offsetHeight * appRowsNumber
+        appContentHeader.offsetHeight +
+        navItem.offsetHeight * appRowsNumber
         }px`)
       : (app.style.maxHeight = `${appLancher.offsetHeight}px`);
 
@@ -677,8 +677,8 @@ async function setDrawerOpenClass() {
       app.classList.contains('has-drawer')
         ? (app.style.top = '0')
         : appLancher.offsetHeight +
-          appContentHeader.offsetHeight +
-          navItem.offsetHeight * appRowsNumber;
+        appContentHeader.offsetHeight +
+        navItem.offsetHeight * appRowsNumber;
     } else {
       app.classList.remove('open-top');
     }
@@ -986,6 +986,18 @@ function handleKeyboardNavigation() {
     return e?.matches('.folder.folder-open');
   }
 
+  function isLayoutDeleteButton(e) {
+    return e?.matches('.delete-layout');
+  }
+
+  function isLayoutDeleteOrCancel(e) {
+    return e?.matches('.delete') || e?.matches('.cancel');
+  }
+
+  function isLayoutActionMenu(e) {
+    return e?.matches('.show-actions');
+  }
+
   const isLayoutItem = () =>
     upTo(currentItem, (el) => {
       if (el?.id === 'layout-menu-tool') {
@@ -1027,7 +1039,7 @@ function handleKeyboardNavigation() {
 
   function reset(e) {
     if (e.isTrusted) {
-      currentItem?.classList.remove('hover');
+      removeHover(false);
       currentItem = undefined;
       clickedItem = undefined;
     }
@@ -1037,7 +1049,7 @@ function handleKeyboardNavigation() {
     document.addEventListener('click', reset);
   }
 
-  function onEnterClicked() {
+  function itemClicked() {
     if (!currentItem) {
       return;
     }
@@ -1051,6 +1063,9 @@ function handleKeyboardNavigation() {
       // nothing
     } else if (isFolderElement(currentItem)) {
       currentItem = getActiveNodeFolderName(currentItem);
+    } else if (isLayoutDeleteButton(currentItem)) {
+      const li = upToElement(currentItem, "li");
+      currentItem = getFirstList(li)?.firstElementChild;
     } else if (q('.toggle-content:not(.hide)')) {
       clickedItem = currentItem;
       currentItem = getInput();
@@ -1101,8 +1116,7 @@ function handleKeyboardNavigation() {
   }
 
   function addRemoveFavouriteApp() {
-    const itemHasAddRemove = currentItem.querySelector('.add-favorite');
-
+    const itemHasAddRemove = currentItem?.querySelector('.add-favorite');
     if (itemHasAddRemove) {
       itemHasAddRemove.click();
     }
@@ -1114,15 +1128,21 @@ function handleKeyboardNavigation() {
     }
   }
 
-  function removeHover() {
-    if (isLayoutItem(currentItem)) {
+  function removeHover(input = true) {
+    if (input) {
+      const input = getInput();
+      if (input?.id && document.activeElement.id) {
+        input.blur();
+      }
+    }
+    if (isLayoutItem(currentItem) || isLayoutDeleteOrCancel(currentItem)) {
       currentItem.parentElement.parentElement.classList.remove('hover');
     }
     currentItem?.classList?.remove('hover');
   }
 
   function addHover() {
-    if (isLayoutItem(currentItem)) {
+    if (isLayoutItem(currentItem) || isLayoutDeleteOrCancel(currentItem)) {
       currentItem.parentElement.parentElement.classList.add('hover');
     }
     if (isInput(currentItem)) {
@@ -1131,9 +1151,19 @@ function handleKeyboardNavigation() {
     currentItem?.classList?.add('hover');
   }
 
-  function setup() {
+  function start() {
     if (!currentItem) {
-      currentItem = q('.viewport .nav-tabs')?.querySelector('.nav-item');
+      const input = getInput();
+      if (input?.id && document.activeElement.id) {
+        let ul = getFirstList(input.parentElement.parentElement);
+        if (isSaveInput(input)) {
+          ul = getFirstList(input.parentElement.parentElement.parentElement);
+        }
+        removeHover();
+        currentItem = ul.querySelector('.nav-item');
+      } else {
+        currentItem = q('.viewport .nav-tabs')?.querySelector('.nav-item');
+      }
     }
   }
 
@@ -1167,7 +1197,7 @@ function handleKeyboardNavigation() {
         if (!mainList) {
           return;
         }
-        if (clickedItem) {
+        if (clickedItem && !isItemFromMainMenu(clickedItem)) {
           nextItem = clickedItem;
         } else {
           nextItem = mainList.querySelector('.nav-item');
@@ -1198,7 +1228,7 @@ function handleKeyboardNavigation() {
 
   function next(item, direction) {
     if (!item) {
-      setup();
+      start();
       return currentItem;
     }
     const isNavItem = () =>
@@ -1208,7 +1238,11 @@ function handleKeyboardNavigation() {
     do {
       let items = [];
       if (isNavItem(item)) {
-        items = [...item.parentElement.querySelectorAll('.nav-item')];
+        if (isLayoutDeleteOrCancel(item)) {
+          items = [...item.parentElement.querySelectorAll('.nav-item')];
+        } else {
+          items = [...item.parentElement.querySelectorAll('.nav-item:not(.delete):not(.cancel)')];
+        }
         if (isFolderOpenedElement(item.parentElement?.parentElement)) {
           items.unshift(item.parentElement?.parentElement);
         }
@@ -1257,7 +1291,6 @@ function handleKeyboardNavigation() {
           index = items.findIndex((i) => {
             return i === item;
           });
-          // TODO check it
         } else if (isItemFromMainMenu(item)) {
           const mainList = upTo(
             item,
@@ -1294,11 +1327,19 @@ function handleKeyboardNavigation() {
     q('.app').classList.add('expand-wrapper');
     q('.viewport').classList.add('expand');
     switch (e.key) {
+      case 'Space':
+      case ' ':
+        addRemoveFavouriteApp()
+        break;
+      case 'Delete':
+        const deleteButton = currentItem.querySelector(".delete-layout");
+        if (deleteButton) {
+          currentItem = deleteButton;
+          itemClicked();
+        }
+        break;
       case 'Tab':
         e.preventDefault();
-        if (e.target.tagName === 'INPUT') {
-          e.target.blur();
-        }
         go('down');
         break;
       case 'Escape':
@@ -1319,33 +1360,20 @@ function handleKeyboardNavigation() {
         }
         break;
       case 'Enter':
-        onEnterClicked();
+        itemClicked();
         break;
       case 'ArrowUp':
-        if (e.target.tagName === 'INPUT') {
-          e.target.blur();
-        }
         go('up');
         break;
       case 'ArrowRight':
-        if (e.target.tagName === 'INPUT') {
-          e.target.blur();
-        }
         go('right');
         break;
       case 'ArrowDown':
-        if (e.target.tagName === 'INPUT') {
-          e.target.blur();
-        }
         go('down');
         break;
       case 'ArrowLeft':
-        if (e.target.tagName === 'INPUT') {
-          e.target.blur();
-        }
         go('left');
         break;
-
       default:
         break;
     }
