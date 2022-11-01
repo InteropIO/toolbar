@@ -966,6 +966,15 @@ function handleKeyboardNavigation() {
     );
   }
 
+  function getActionsMenuItems(item) {
+    if (item?.id === "layout-menu-tool") {
+      return [...item.querySelectorAll(".nav-item")];
+    }
+    if (item?.parentElement?.classList?.contains("layout-menu-tool")) {
+      return [...item.parentElement.querySelectorAll(".nav-item")];
+    }
+  }
+
   function isAppElement(e) {
     return !!e?.getAttribute('app-name');
   }
@@ -992,10 +1001,6 @@ function handleKeyboardNavigation() {
 
   function isLayoutDeleteOrCancel(e) {
     return e?.matches('.delete') || e?.matches('.cancel');
-  }
-
-  function isLayoutActionMenu(e) {
-    return e?.matches('.show-actions');
   }
 
   const isLayoutItem = () =>
@@ -1037,6 +1042,11 @@ function handleKeyboardNavigation() {
       return el?.id === 'applicationLauncher';
     });
 
+  const isItemFromActionsMenu = (item) =>
+    upTo(item, (el) => {
+      return el?.id === 'layout-menu-tool' || el?.classList?.contains('layout-menu-tool');
+    });
+
   function reset(e) {
     if (e.isTrusted) {
       removeHover(false);
@@ -1066,6 +1076,13 @@ function handleKeyboardNavigation() {
     } else if (isLayoutDeleteButton(currentItem)) {
       const li = upToElement(currentItem, "li");
       currentItem = getFirstList(li)?.firstElementChild;
+    } else if (isLayoutDeleteOrCancel(currentItem)) {
+      if (currentItem.matches('.delete')) {
+        const ul = upToElement(currentItem.parentElement, "ul");
+        currentItem = ul?.firstElementChild;
+      } else {
+        currentItem = upToElement(currentItem, "li");
+      }
     } else if (q('.toggle-content:not(.hide)')) {
       clickedItem = currentItem;
       currentItem = getInput();
@@ -1184,7 +1201,7 @@ function handleKeyboardNavigation() {
         direction = 'up';
       }
     }
-    if (direction === 'left' || direction === 'right') {
+    if ((!isItemFromActionsMenu(currentItem)) && (direction === 'left' || direction === 'right')) {
       if (isDrawerOpenDirectionDifferent()) {
         if (direction === 'left') {
           direction = 'right';
@@ -1213,7 +1230,7 @@ function handleKeyboardNavigation() {
         // do nothing;
         return;
       }
-    } else if (direction === 'up' || direction === 'down') {
+    } else if (isItemFromActionsMenu(currentItem) || direction === 'up' || direction === 'down') {
       if (isVertical) {
         nextItem = next(currentItem, direction);
       } else {
@@ -1238,7 +1255,14 @@ function handleKeyboardNavigation() {
     do {
       let items = [];
       if (isNavItem(item)) {
-        if (isLayoutDeleteOrCancel(item)) {
+        if (isItemFromActionsMenu(item)) {
+          if (direction === "left" || direction === "right") {
+            items = getActionsMenuItems(item)
+          } else {
+            items = [...item.parentElement.querySelectorAll('.nav-item')];
+            items = items.filter((i) => upToElement(i, "li")?.id !== 'layout-menu-tool')
+          }
+        } else if (isLayoutDeleteOrCancel(item)) {
           items = [...item.parentElement.querySelectorAll('.nav-item')];
         } else {
           items = [...item.parentElement.querySelectorAll('.nav-item:not(.delete):not(.cancel)')];
@@ -1254,7 +1278,7 @@ function handleKeyboardNavigation() {
         items = [...ul.querySelectorAll('.nav-item')];
       }
 
-      if (isItemInToggleView(item)) {
+      if (isItemInToggleView(item) && !isItemFromActionsMenu(item)) {
         const input = getInput();
         if (input) {
           items.unshift(input);
@@ -1291,7 +1315,18 @@ function handleKeyboardNavigation() {
           index = items.findIndex((i) => {
             return i === item;
           });
-        } else if (isItemFromMainMenu(item)) {
+        } else if (isItemFromActionsMenu(item)) {
+          if (direction === "up" || direction === "down") {
+            const li = getActionsMenuItems(item)[0];
+            item = li.parentElement.parentElement;
+            items = [...li.parentElement.parentElement.parentElement.querySelectorAll('.nav-item')];
+            items = items.filter((i) => upToElement(i, "li")?.id !== 'layout-menu-tool');
+            index = items.findIndex((i) => {
+              return i === item;
+            });
+          }
+        }
+        else if (isItemFromMainMenu(item)) {
           const mainList = upTo(
             item,
             (el) =>
@@ -1299,9 +1334,13 @@ function handleKeyboardNavigation() {
               el?.id === 'applicationLauncher'
           ).firstElementChild;
           items = [...mainList.querySelectorAll('.nav-item')];
+          items = items.filter((i) => upToElement(i, "li")?.id !== 'layout-menu-tool')
           index = items.findIndex((i) => {
             return i === item;
           });
+        }
+        if (items.length === 0) {
+          break;
         }
         if (direction === 'down') {
           if (index + 1 >= items.length) {
@@ -1319,6 +1358,7 @@ function handleKeyboardNavigation() {
       } else {
         item = temp;
       }
+
     } while (!isNavItem() && !isInput(item));
     return item;
   }
