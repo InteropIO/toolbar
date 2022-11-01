@@ -144,7 +144,7 @@ function handleSearchChange() {
   const letterNumber = /^[0-9a-zA-Z]+$/;
 
   q('#app-search').addEventListener('keyup', (event) => {
-    if (event.target.value.match(letterNumber)) {
+    if (event.target.value.match(letterNumber) || event.target.value === '') {
       searchInputObs.next(event.target.value);
     }
   });
