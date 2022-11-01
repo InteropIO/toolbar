@@ -1017,8 +1017,8 @@ function handleKeyboardNavigation() {
       .some((cn) => /open-.*/.test(cn));
   };
 
-  const isInToggleView = () =>
-    upTo(currentItem, (el) => {
+  const isItemInToggleView = (e) =>
+    upTo(e, (el) => {
       return el?.classList && el.classList?.contains('toggle-content');
     });
 
@@ -1197,13 +1197,13 @@ function handleKeyboardNavigation() {
         if (!mainList) {
           return;
         }
-        if (clickedItem && !isItemFromMainMenu(clickedItem)) {
+        if (clickedItem && !isItemFromMainMenu(clickedItem) && isItemInToggleView(clickedItem)) {
           nextItem = clickedItem;
         } else {
           nextItem = mainList.querySelector('.nav-item');
         }
-      } else if (isInToggleView()) {
-        if (clickedItem) {
+      } else if (isItemInToggleView(currentItem)) {
+        if (clickedItem && !isItemInToggleView(clickedItem) && isItemFromMainMenu(clickedItem)) {
           nextItem = clickedItem;
         } else {
           const mainList = getStartingListInMainMenu();
@@ -1254,7 +1254,7 @@ function handleKeyboardNavigation() {
         items = [...ul.querySelectorAll('.nav-item')];
       }
 
-      if (isInToggleView(item)) {
+      if (isItemInToggleView(item)) {
         const input = getInput();
         if (input) {
           items.unshift(input);
