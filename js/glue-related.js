@@ -5,6 +5,7 @@ import {
   setWindowPosition,
   setWindowMoveArea,
   setDrawerOpenClasses,
+  setWindowVisibleArea,
 } from './utils.js';
 
 console.time('Glue');
@@ -211,8 +212,17 @@ async function trackWindowMove() {
 async function trackDisplayChange() {
   glue.displays.onDisplayChanged(async () => {
     await setWindowPosition();
-    await setWindowMoveArea();
+    setWindowMoveArea();
+    setWindowVisibleArea();
   });
+}
+
+function windowCenter() {
+  glue.windows.my().center();
+}
+
+function windowRefresh() {
+  glue.windows.my().refresh();
 }
 
 async function startApp(appName, context) {
@@ -626,4 +636,6 @@ export {
   getWindowWorkArea,
   getPrimaryScaleFactor,
   getScaleFactor,
+  windowCenter,
+  windowRefresh,
 };

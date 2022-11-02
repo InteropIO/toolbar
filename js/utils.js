@@ -23,6 +23,8 @@ import {
   getWindowWorkArea,
   getScaleFactor,
   getPrimaryScaleFactor,
+  windowCenter,
+  windowRefresh,
 } from './glue-related.js';
 import {
   toolbarWidth,
@@ -268,16 +270,17 @@ function handleModalClose() {
 async function handleJumpListAction() {
   try {
     const jumpList = glue.windows.my().jumpList;
-    const category = await jumpList.categories.find("Tasks");
+    const category = await jumpList.categories.find('Tasks');
     const action = {
-      singleInstanceTitle: "Adjust",
-      multiInstanceTitle: "Adjust",
-      callback: () => resetWindow()
+      singleInstanceTitle: 'Adjust',
+      multiInstanceTitle: 'Adjust',
+      callback: () => resetWindow(),
     };
+
     if (category) {
       category.actions.create([action]);
     } else {
-      jumpList.categories.create("Tasks", [action]);
+      jumpList.categories.create('Tasks', [action]);
     }
   } catch (error) {
     console.error(error);
@@ -508,13 +511,13 @@ function populateSettingsDropdown(
                     ${elementName}-name="${element.name}"
                     ${
                       element.name === selectOptionsObj.selected.name
-          ? 'checked'
-          : ''
-        }
+                        ? 'checked'
+                        : ''
+                    }
                 />
                 <label class="select_label" for="${elementName}-${
         element.name + i
-        }">${element.displayName}</label>
+      }">${element.displayName}</label>
             </li>
             `;
     });
@@ -581,7 +584,7 @@ async function handleToolbarAppRowsChange() {
 
       await setWindowSize();
       setWindowVisibleArea();
-      await setWindowMoveArea();
+      setWindowMoveArea();
       closeAllMenus();
     }
   });
@@ -689,10 +692,10 @@ async function setDrawerOpenClasses() {
 }
 
 async function setWindowParams() {
-  await setWindowPosition();
   await setWindowSize();
-  await setWindowMoveArea();
+  await setWindowPosition();
   setWindowVisibleArea();
+  setWindowMoveArea();
 }
 
 function setToolbarOrientation() {
@@ -894,64 +897,26 @@ async function setWindowPosition() {
 async function resetWindow() {
   setSetting({ vertical: true });
   setToolbarOrientation();
-  glue.windows.my().center();
-  glue.windows.my().refresh();
+  windowCenter();
+  windowRefresh();
 }
 
-async function configureWindowMoveArea(margin, thickness) {
-  await configureMyWindow({
-    moveAreaTopMargin: `${Math.round(margin.left)}, ${Math.round(
-      margin.top
-    )}, ${Math.round(margin.right)}, ${Math.round(margin.bottom)}`,
-    moveAreaThickness: `${Math.round(thickness.left)}, ${Math.round(
-      thickness.top
-    )}, ${Math.round(thickness.right)}, ${Math.round(thickness.bottom)}`,
-  });
-}
+function setWindowMoveArea() {
+  setTimeout(async () => {
+    const dragAreaRect = q('.draggable').getBoundingClientRect();
+    const windowBounds = await getWindowBounds();
 
-async function setWindowMoveArea() {
-  const isVertical = getSetting('vertical');
-  const dragAreaRect = q('.draggable').getBoundingClientRect();
-  const horizontalHeight = getHorizontalToolbarHeight();
-  const dragArea = {
-    width: dragAreaRect.width,
-    height: dragAreaRect.height,
-  };
-
-  if (isVertical) {
-    const margin = {
-      left: toolbarDrawerSize.vertical,
-      top: 0,
-      right:
-        toolbarDrawerSize.vertical + toolbarWidth.vertical - dragArea.width,
-      bottom: 0,
-    };
-
-    const thickness = {
-      left: 0,
-      top: dragArea.height,
-      right: 0,
-      bottom: 0,
-    };
-
-    configureWindowMoveArea(margin, thickness);
-  } else {
-    const margin = {
-      left: 0,
-      top: horizontalHeight,
-      right: 0,
-      bottom: horizontalHeight,
-    };
-
-    const thickness = {
-      left: dragArea.width,
-      top: 0,
-      right: 0,
-      bottom: 0,
-    };
-
-    configureWindowMoveArea(margin, thickness);
-  }
+    await configureMyWindow({
+      moveAreaTopMargin: `${Math.round(dragAreaRect.left)}, ${Math.round(
+        dragAreaRect.top
+      )}, ${Math.round(
+        windowBounds.width - (dragAreaRect.left + dragAreaRect.width)
+      )}, 0`,
+      moveAreaThickness: `0, ${Math.round(
+        dragAreaRect.top + dragAreaRect.height
+      )}, 0, 0`,
+    });
+  }, 100);
 }
 
 // Keyboard Navigation
@@ -1481,6 +1446,7 @@ export {
   escapeHtml,
   getAppIcon,
   // openDrawer,
+  setWindowSize,
   setWindowPosition,
   setWindowMoveArea,
   setDrawerOpenClasses,
