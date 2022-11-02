@@ -1409,9 +1409,9 @@ function handleKeyboardNavigation() {
           const menuId = visibleDrawers.getAttribute('menu-id');
           const button = q(`[menu-button-id="${menuId}"]`);
           button?.click();
-          removeHover();
-          currentItem = undefined;
         }
+        removeHover();
+        currentItem = undefined;
         break;
       case 'Enter':
         itemClicked();
