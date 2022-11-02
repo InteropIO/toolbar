@@ -148,4 +148,5 @@ export {
   handleDropDownClicks,
   getMonitor,
   layoutDropDownVisibleObs,
+  topMenuVisibleObs,
 };

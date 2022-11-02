@@ -39,7 +39,7 @@ import {
   profile_handleFeedbackClick,
 } from './profile.js';
 
-import { layoutDropDownVisibleObs } from './visible-area.js';
+import { layoutDropDownVisibleObs, topMenuVisibleObs } from './visible-area.js';
 
 const windowMargin = 50;
 
@@ -167,7 +167,7 @@ function handleTopMenuClicks() {
         focusMenuInputAfterTransition
       );
       menuToToggle.classList.toggle('hide');
-      setDrawerOpenClass();
+      setDrawerOpenClasses();
 
       let hasVisibleDrawers = q('.toggle-content:not(.hide)');
 
@@ -488,13 +488,13 @@ function populateSettingsDropdown(
                     ${elementName}-name="${element.name}"
                     ${
                       element.name === selectOptionsObj.selected.name
-          ? 'checked'
-          : ''
-        }
+                        ? 'checked'
+                        : ''
+                    }
                 />
                 <label class="select_label" for="${elementName}-${
         element.name + i
-        }">${element.displayName}</label>
+      }">${element.displayName}</label>
             </li>
             `;
     });
@@ -568,7 +568,6 @@ async function handleToolbarAppRowsChange() {
 
 async function setWindowSize() {
   const isVertical = getSetting('vertical');
-  const app = q('.app');
   const appLancher = q('.viewport-header');
   const appContentHeader = q('.app-content-header');
   const appRowsNumber = getSetting('toolbarAppRows');
@@ -581,21 +580,11 @@ async function setWindowSize() {
   contentItems.style.height = `${navItem.offsetHeight * appRowsNumber}px`;
 
   if (isVertical) {
-    app.classList.contains('open-left')
-      ? (app.style.left = '0')
-      : (app.style.left = `${toolbarDrawerSize.vertical}px`);
-    app.style.top = '0';
-    app.style.maxHeight = `${horizontalHeight}px`;
-
     await moveMyWindow({
       width: toolbarWidth.vertical + toolbarDrawerSize.vertical * 2,
       height: horizontalHeight,
     });
   } else {
-    app.style.top = `${horizontalHeight}px`;
-    app.style.left = '0';
-    app.style.maxHeight = `${appLancher.offsetHeight}px`;
-
     await moveMyWindow({
       width: toolbarWidth.horizontal,
       height: appLancher.offsetHeight + horizontalHeight * 2,
@@ -633,63 +622,56 @@ function buildVisibleArea(element) {
   };
 }
 
-async function setDrawerOpenClass() {
-  const isVertical = getSetting('vertical');
+async function setDrawerOpenClasses() {
   const workArea = await getWindowWorkArea();
-  const windowBounds = await getWindowBounds();
+  const visibleArea = await getVisibleArea(q('.viewport'));
   const app = q('.app');
-  const appLancher = q('.viewport-header');
-  const appContentHeader = q('.app-content-header');
-  const appRowsNumber = getSetting('toolbarAppRows');
-  const navItem = q('.applications-nav');
+  const isVertical = getSetting('vertical');
   const horizontalHeight = getHorizontalToolbarHeight();
 
   if (isVertical) {
-    app.style.left = `${toolbarDrawerSize.vertical}px`;
+    app.style.top = 0;
+    app.style.maxHeight = `${horizontalHeight}px`;
 
-    if (
-      windowBounds.left + windowBounds.width >
-      workArea.left + workArea.width
-    ) {
+    if (visibleArea.right + toolbarDrawerSize.vertical > workArea.width) {
       app.classList.add('open-left');
-      app.classList.contains('has-drawer')
-        ? (app.style.left = '0')
-        : (app.style.left = `${toolbarDrawerSize.vertical}px`);
     } else {
       app.classList.remove('open-left');
     }
   } else {
+    const appLancher = q('.viewport');
+
     app.style.top = `${horizontalHeight}px`;
 
     app.classList.contains('has-drawer')
       ? (app.style.maxHeight = `${
-          appLancher.offsetHeight +
-        appContentHeader.offsetHeight +
-        navItem.offsetHeight * appRowsNumber
+          appLancher.offsetHeight + horizontalHeight
         }px`)
       : (app.style.maxHeight = `${appLancher.offsetHeight}px`);
 
-    if (
-      windowBounds.top + windowBounds.height >
-      workArea.top + workArea.height
-    ) {
-      app.classList.add('open-top');
-      app.classList.contains('has-drawer')
-        ? (app.style.top = '0')
-        : appLancher.offsetHeight +
-        appContentHeader.offsetHeight +
-        navItem.offsetHeight * appRowsNumber;
+    if (visibleArea.bottom + horizontalHeight > workArea.height) {
+      if (visibleArea.top - horizontalHeight < workArea.top) {
+        app.classList.remove('open-top');
+      } else {
+        app.classList.add('open-top');
+        app.classList.contains('has-drawer')
+          ? (app.style.top = 0)
+          : (app.style.top = `${horizontalHeight}px`);
+      }
     } else {
       app.classList.remove('open-top');
     }
   }
+
+  setWindowVisibleArea();
+  setWindowPosition();
 }
 
 async function setWindowParams() {
-  await setWindowSize();
-  setWindowVisibleArea();
-  await setWindowMoveArea();
   await setWindowPosition();
+  await setWindowSize();
+  await setWindowMoveArea();
+  setWindowVisibleArea();
 }
 
 function setToolbarOrientation() {
@@ -697,6 +679,7 @@ function setToolbarOrientation() {
   const app = q('.app');
 
   q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
+
   app.classList.add(isVertical ? 'vertical' : 'horizontal');
   app.classList.remove(isVertical ? 'horizontal' : 'vertical');
 
@@ -721,17 +704,25 @@ function handleToolbarOrientationChange() {
       app.classList.remove('open-left');
     }
 
-    setWindowParams();
     closeAllMenus();
+    setDrawerOpenClasses();
+    setWindowParams();
   });
 }
 
 function closeAllMenus() {
+  const appDrawer = q('.app');
   const openedMenus = qa('.toggle-content:not(.hide)');
+  const dropdownMenus = qa('.dropdown-menu');
   const activeButtons = qa('.nav-item.is-active');
 
   openedMenus.forEach((el) => el.classList.add('hide'));
   activeButtons.forEach((el) => el.classList.remove('is-active'));
+  dropdownMenus.forEach((el) => el.classList.remove('show'));
+  topMenuVisibleObs.next(false);
+  appDrawer.classList.contains('has-drawer')
+    ? appDrawer.classList.remove('has-drawer')
+    : null;
 }
 
 // Helper function to get a chosen HTML elements' visible area in the window bounds
@@ -807,19 +798,19 @@ async function setWindowPosition() {
   const drawerSize = toolbarDrawerSize.vertical / scaleFactor;
 
   if (isVertical) {
-    if (offBoundsDirection === 'left') {
+    if (offBoundsDirection !== 'undefined' && offBoundsDirection === 'left') {
       await moveMyWindow({
         left: (workArea.left + startPosition - drawerSize) * primaryScaleFactor,
       });
     }
 
-    if (offBoundsDirection === 'top') {
+    if (offBoundsDirection !== 'undefined' && offBoundsDirection === 'top') {
       await moveMyWindow({
         top: (workArea.top + startPosition) * primaryScaleFactor,
       });
     }
 
-    if (offBoundsDirection === 'right') {
+    if (offBoundsDirection !== 'undefined' && offBoundsDirection === 'right') {
       await moveMyWindow({
         left:
           (workArea.left +
@@ -831,7 +822,7 @@ async function setWindowPosition() {
       });
     }
 
-    if (offBoundsDirection === 'bottom') {
+    if (offBoundsDirection !== 'undefined' && offBoundsDirection === 'bottom') {
       await moveMyWindow({
         top:
           (workArea.top +
@@ -845,19 +836,19 @@ async function setWindowPosition() {
     const horizontalHeight = getHorizontalToolbarHeight();
     const drawerHeight = horizontalHeight / scaleFactor;
 
-    if (offBoundsDirection === 'left') {
+    if (offBoundsDirection !== 'undefined' && offBoundsDirection === 'left') {
       await moveMyWindow({
         left: (workArea.left + startPosition) * primaryScaleFactor,
       });
     }
 
-    if (offBoundsDirection === 'top') {
+    if (offBoundsDirection !== 'undefined' && offBoundsDirection === 'top') {
       await moveMyWindow({
         top: (workArea.top + startPosition - drawerHeight) * primaryScaleFactor,
       });
     }
 
-    if (offBoundsDirection === 'right') {
+    if (offBoundsDirection !== 'undefined' && offBoundsDirection === 'right') {
       await moveMyWindow({
         left:
           (workArea.left + workArea.width - visibleArea.width - startPosition) *
@@ -865,7 +856,7 @@ async function setWindowPosition() {
       });
     }
 
-    if (offBoundsDirection === 'bottom') {
+    if (offBoundsDirection !== 'undefined' && offBoundsDirection === 'bottom') {
       await moveMyWindow({
         top:
           (workArea.top +
@@ -967,11 +958,11 @@ function handleKeyboardNavigation() {
   }
 
   function getActionsMenuItems(item) {
-    if (item?.id === "layout-menu-tool") {
-      return [...item.querySelectorAll(".nav-item")];
+    if (item?.id === 'layout-menu-tool') {
+      return [...item.querySelectorAll('.nav-item')];
     }
-    if (item?.parentElement?.classList?.contains("layout-menu-tool")) {
-      return [...item.parentElement.querySelectorAll(".nav-item")];
+    if (item?.parentElement?.classList?.contains('layout-menu-tool')) {
+      return [...item.parentElement.querySelectorAll('.nav-item')];
     }
   }
 
@@ -1044,7 +1035,10 @@ function handleKeyboardNavigation() {
 
   const isItemFromActionsMenu = (item) =>
     upTo(item, (el) => {
-      return el?.id === 'layout-menu-tool' || el?.classList?.contains('layout-menu-tool');
+      return (
+        el?.id === 'layout-menu-tool' ||
+        el?.classList?.contains('layout-menu-tool')
+      );
     });
 
   function reset(e) {
@@ -1074,14 +1068,14 @@ function handleKeyboardNavigation() {
     } else if (isFolderElement(currentItem)) {
       currentItem = getActiveNodeFolderName(currentItem);
     } else if (isLayoutDeleteButton(currentItem)) {
-      const li = upToElement(currentItem, "li");
+      const li = upToElement(currentItem, 'li');
       currentItem = getFirstList(li)?.firstElementChild;
     } else if (isLayoutDeleteOrCancel(currentItem)) {
       if (currentItem.matches('.delete')) {
-        const ul = upToElement(currentItem.parentElement, "ul");
+        const ul = upToElement(currentItem.parentElement, 'ul');
         currentItem = ul?.firstElementChild;
       } else {
-        currentItem = upToElement(currentItem, "li");
+        currentItem = upToElement(currentItem, 'li');
       }
     } else if (q('.toggle-content:not(.hide)')) {
       clickedItem = currentItem;
@@ -1201,7 +1195,10 @@ function handleKeyboardNavigation() {
         direction = 'up';
       }
     }
-    if ((!isItemFromActionsMenu(currentItem)) && (direction === 'left' || direction === 'right')) {
+    if (
+      !isItemFromActionsMenu(currentItem) &&
+      (direction === 'left' || direction === 'right')
+    ) {
       if (isDrawerOpenDirectionDifferent()) {
         if (direction === 'left') {
           direction = 'right';
@@ -1214,13 +1211,21 @@ function handleKeyboardNavigation() {
         if (!mainList) {
           return;
         }
-        if (clickedItem && !isItemFromMainMenu(clickedItem) && isItemInToggleView(clickedItem)) {
+        if (
+          clickedItem &&
+          !isItemFromMainMenu(clickedItem) &&
+          isItemInToggleView(clickedItem)
+        ) {
           nextItem = clickedItem;
         } else {
           nextItem = mainList.querySelector('.nav-item');
         }
       } else if (isItemInToggleView(currentItem)) {
-        if (clickedItem && !isItemInToggleView(clickedItem) && isItemFromMainMenu(clickedItem)) {
+        if (
+          clickedItem &&
+          !isItemInToggleView(clickedItem) &&
+          isItemFromMainMenu(clickedItem)
+        ) {
           nextItem = clickedItem;
         } else {
           const mainList = getStartingListInMainMenu();
@@ -1230,7 +1235,11 @@ function handleKeyboardNavigation() {
         // do nothing;
         return;
       }
-    } else if (isItemFromActionsMenu(currentItem) || direction === 'up' || direction === 'down') {
+    } else if (
+      isItemFromActionsMenu(currentItem) ||
+      direction === 'up' ||
+      direction === 'down'
+    ) {
       if (isVertical) {
         nextItem = next(currentItem, direction);
       } else {
@@ -1256,16 +1265,22 @@ function handleKeyboardNavigation() {
       let items = [];
       if (isNavItem(item)) {
         if (isItemFromActionsMenu(item)) {
-          if (direction === "left" || direction === "right") {
-            items = getActionsMenuItems(item)
+          if (direction === 'left' || direction === 'right') {
+            items = getActionsMenuItems(item);
           } else {
             items = [...item.parentElement.querySelectorAll('.nav-item')];
-            items = items.filter((i) => upToElement(i, "li")?.id !== 'layout-menu-tool')
+            items = items.filter(
+              (i) => upToElement(i, 'li')?.id !== 'layout-menu-tool'
+            );
           }
         } else if (isLayoutDeleteOrCancel(item)) {
           items = [...item.parentElement.querySelectorAll('.nav-item')];
         } else {
-          items = [...item.parentElement.querySelectorAll('.nav-item:not(.delete):not(.cancel)')];
+          items = [
+            ...item.parentElement.querySelectorAll(
+              '.nav-item:not(.delete):not(.cancel)'
+            ),
+          ];
         }
         if (isFolderOpenedElement(item.parentElement?.parentElement)) {
           items.unshift(item.parentElement?.parentElement);
@@ -1316,17 +1331,22 @@ function handleKeyboardNavigation() {
             return i === item;
           });
         } else if (isItemFromActionsMenu(item)) {
-          if (direction === "up" || direction === "down") {
+          if (direction === 'up' || direction === 'down') {
             const li = getActionsMenuItems(item)[0];
             item = li.parentElement.parentElement;
-            items = [...li.parentElement.parentElement.parentElement.querySelectorAll('.nav-item')];
-            items = items.filter((i) => upToElement(i, "li")?.id !== 'layout-menu-tool');
+            items = [
+              ...li.parentElement.parentElement.parentElement.querySelectorAll(
+                '.nav-item'
+              ),
+            ];
+            items = items.filter(
+              (i) => upToElement(i, 'li')?.id !== 'layout-menu-tool'
+            );
             index = items.findIndex((i) => {
               return i === item;
             });
           }
-        }
-        else if (isItemFromMainMenu(item)) {
+        } else if (isItemFromMainMenu(item)) {
           const mainList = upTo(
             item,
             (el) =>
@@ -1334,7 +1354,9 @@ function handleKeyboardNavigation() {
               el?.id === 'applicationLauncher'
           ).firstElementChild;
           items = [...mainList.querySelectorAll('.nav-item')];
-          items = items.filter((i) => upToElement(i, "li")?.id !== 'layout-menu-tool')
+          items = items.filter(
+            (i) => upToElement(i, 'li')?.id !== 'layout-menu-tool'
+          );
           index = items.findIndex((i) => {
             return i === item;
           });
@@ -1358,7 +1380,6 @@ function handleKeyboardNavigation() {
       } else {
         item = temp;
       }
-
     } while (!isNavItem() && !isInput(item));
     return item;
   }
@@ -1369,10 +1390,10 @@ function handleKeyboardNavigation() {
     switch (e.key) {
       case 'Space':
       case ' ':
-        addRemoveFavouriteApp()
+        addRemoveFavouriteApp();
         break;
       case 'Delete':
-        const deleteButton = currentItem.querySelector(".delete-layout");
+        const deleteButton = currentItem.querySelector('.delete-layout');
         if (deleteButton) {
           currentItem = deleteButton;
           itemClicked();
@@ -1441,4 +1462,6 @@ export {
   // openDrawer,
   setWindowPosition,
   setWindowMoveArea,
+  setDrawerOpenClasses,
+  closeAllMenus,
 };
