@@ -80,6 +80,7 @@ function handleEvents() {
   profile_handleShutdownClick();
   profile_handleRestartClick();
   profile_handleFeedbackClick();
+  handleJumpListAction();
 }
 
 function handleThemeChange() {
@@ -262,6 +263,25 @@ function handleModalClose() {
       modal.classList.remove('show');
     }
   });
+}
+
+async function handleJumpListAction() {
+  try {
+    const jumpList = glue.windows.my().jumpList;
+    const category = await jumpList.categories.find("Tasks");
+    const action = {
+      singleInstanceTitle: "Adjust",
+      multiInstanceTitle: "Adjust",
+      callback: () => resetWindow()
+    };
+    if (category) {
+      category.actions.create([action]);
+    } else {
+      jumpList.categories.create("Tasks", [action]);
+    }
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 async function handleMouseHover() {
@@ -488,13 +508,13 @@ function populateSettingsDropdown(
                     ${elementName}-name="${element.name}"
                     ${
                       element.name === selectOptionsObj.selected.name
-                        ? 'checked'
-                        : ''
-                    }
+          ? 'checked'
+          : ''
+        }
                 />
                 <label class="select_label" for="${elementName}-${
         element.name + i
-      }">${element.displayName}</label>
+        }">${element.displayName}</label>
             </li>
             `;
     });
@@ -872,19 +892,10 @@ async function setWindowPosition() {
 }
 
 async function resetWindow() {
-  const workArea = await getWindowWorkArea();
-  const primaryScaleFactor = await getPrimaryScaleFactor();
-  const scaleFactor = await getScaleFactor();
-  const startPosition = initialPosition / scaleFactor;
-  const drawerSize = toolbarDrawerSize.vertical / scaleFactor;
-
   setSetting({ vertical: true });
   setToolbarOrientation();
-  moveMyWindow({
-    left: (workArea.left + startPosition - drawerSize) * primaryScaleFactor,
-    top: (workArea.top + startPosition) * primaryScaleFactor,
-  });
-  document.location.reload();
+  glue.windows.my().center();
+  glue.windows.my().refresh();
 }
 
 async function configureWindowMoveArea(margin, thickness) {
