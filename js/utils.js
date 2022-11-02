@@ -1404,20 +1404,13 @@ function handleKeyboardNavigation() {
         go('down');
         break;
       case 'Escape':
-        let hasVisibleDrawers = q('.toggle-content:not(.hide)');
-        const appLancher = q('.viewport-header');
-        const app = q('.app');
-        const horizontalHeight = getHorizontalToolbarHeight();
-        if (hasVisibleDrawers) {
-          hasVisibleDrawers.classList.add('hide');
-          if (isItemFromMainMenu(currentItem)) {
-            return;
-          }
+        const visibleDrawers = q('.toggle-content:not(.hide)');
+        if (visibleDrawers) {
+          const menuId = visibleDrawers.getAttribute("menu-id")
+          const button = q(`[menu-button-id="${menuId}"]`);
+          button?.click();
           removeHover();
-          app.classList.remove('has-drawer');
           currentItem = undefined;
-          app.style.maxHeight = `${appLancher.offsetHeight}px`;
-          app.style.top = `${horizontalHeight}px`;
         }
         break;
       case 'Enter':
