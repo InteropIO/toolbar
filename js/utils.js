@@ -1406,7 +1406,7 @@ function handleKeyboardNavigation() {
       case 'Escape':
         const visibleDrawers = q('.toggle-content:not(.hide)');
         if (visibleDrawers) {
-          const menuId = visibleDrawers.getAttribute("menu-id")
+          const menuId = visibleDrawers.getAttribute('menu-id');
           const button = q(`[menu-button-id="${menuId}"]`);
           button?.click();
           removeHover();
