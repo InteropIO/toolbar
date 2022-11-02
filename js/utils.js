@@ -562,6 +562,7 @@ async function handleToolbarAppRowsChange() {
       await setWindowSize();
       setWindowVisibleArea();
       await setWindowMoveArea();
+      closeAllMenus();
     }
   });
 }
@@ -868,6 +869,22 @@ async function setWindowPosition() {
       });
     }
   }
+}
+
+async function resetWindow() {
+  const workArea = await getWindowWorkArea();
+  const primaryScaleFactor = await getPrimaryScaleFactor();
+  const scaleFactor = await getScaleFactor();
+  const startPosition = initialPosition / scaleFactor;
+  const drawerSize = toolbarDrawerSize.vertical / scaleFactor;
+
+  setSetting({ vertical: true });
+  setToolbarOrientation();
+  moveMyWindow({
+    left: (workArea.left + startPosition - drawerSize) * primaryScaleFactor,
+    top: (workArea.top + startPosition) * primaryScaleFactor,
+  });
+  document.location.reload();
 }
 
 async function configureWindowMoveArea(margin, thickness) {
