@@ -10,7 +10,6 @@ import {
   openNotificationPanel,
   glueVersion,
   getMonitorInfo,
-  getWindowBounds,
   notificationEnabledObs,
   moveMyWindow,
   configureMyWindow,
@@ -25,6 +24,8 @@ import {
   getPrimaryScaleFactor,
   windowCenter,
   windowRefresh,
+  getLogicalWindowBounds,
+  getPhysicalWindowBounds,
 } from './glue-related.js';
 import {
   toolbarWidth,
@@ -462,7 +463,7 @@ function escapeHtml(unsafe) {
 
 async function isOutOfMonitor(viewportBounds) {
   let monitors = await getMonitorInfo();
-  let windowBounds = await getWindowBounds();
+  let windowBounds = await getPhysicalWindowBounds();
   let leftMostPoint = monitors.reduce(
     (acc, curr) => (curr.workingAreaLeft < acc ? curr.workingAreaLeft : acc),
     0
@@ -733,7 +734,7 @@ function closeAllMenus() {
 
 // Helper function to get a chosen HTML elements' visible area in the window bounds
 async function getVisibleArea(element) {
-  const windowBounds = await getWindowBounds();
+  const windowBounds = await getPhysicalWindowBounds();
   const visibleArea = element.getBoundingClientRect();
   const scaleFactor = await getScaleFactor();
 
@@ -888,7 +889,7 @@ async function resetWindow() {
 function setWindowMoveArea() {
   setTimeout(async () => {
     const dragAreaRect = q('.draggable').getBoundingClientRect();
-    const windowBounds = await getWindowBounds();
+    const windowBounds = await getLogicalWindowBounds();
 
     await configureMyWindow({
       moveAreaTopMargin: `${Math.round(dragAreaRect.left)}, ${Math.round(

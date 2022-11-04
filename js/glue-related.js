@@ -442,7 +442,11 @@ async function getWindowWorkArea() {
   };
 }
 
-async function getWindowBounds() {
+function getLogicalWindowBounds() {
+  return glue.windows.my().bounds;
+}
+
+async function getPhysicalWindowBounds() {
   await gluePromise;
   const bounds = glue.windows.my().bounds;
   const primaryScaleFactor = await getPrimaryScaleFactor();
@@ -627,7 +631,8 @@ export {
   isMinimizeAllowed,
   raiseNotification,
   getMonitorInfo,
-  getWindowBounds,
+  getLogicalWindowBounds,
+  getPhysicalWindowBounds,
   getSID,
   getEnvData,
   getGDVersion,
