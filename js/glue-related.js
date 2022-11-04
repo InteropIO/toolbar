@@ -199,13 +199,17 @@ async function trackThemeChanges() {
 
 async function trackWindowMove() {
   boundsObs.next(glue.windows.my().bounds);
-  await setWindowPosition();
   await setDrawerOpenClasses();
+  await setWindowPosition();
+  setWindowMoveArea();
+  setWindowVisibleArea();
 
   glue.windows.my().onBoundsChanged(async () => {
     boundsObs.next(glue.windows.my().bounds);
-    await setWindowPosition();
     await setDrawerOpenClasses();
+    await setWindowPosition();
+    setWindowMoveArea();
+    setWindowVisibleArea();
   });
 }
 

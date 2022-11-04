@@ -481,17 +481,6 @@ async function isOutOfMonitor(viewportBounds) {
   return visibleAreaLeft < leftMostPoint || visibleAreaRight > rightMostPoint;
 }
 
-// function openDrawer(drawerId) {
-//   let menuButton = q(`[menu-button-id=${drawerId}]`);
-//   let hoverEvent = new MouseEvent('mouseenter', {
-//     view: window,
-//     bubbles: true,
-//   });
-
-//   menuButton.dispatchEvent(hoverEvent);
-//   menuButton.click();
-// }
-
 function populateSettingsDropdown(
   selectElement,
   selectOptionsObj,
@@ -657,7 +646,7 @@ async function setDrawerOpenClasses() {
     app.style.top = 0;
     app.style.maxHeight = `${horizontalHeight}px`;
 
-    if (visibleArea.right + toolbarDrawerSize.vertical > workArea.width) {
+    if (visibleArea.right + toolbarDrawerSize.vertical > workArea.right) {
       app.classList.add('open-left');
     } else {
       app.classList.remove('open-left');
@@ -673,7 +662,7 @@ async function setDrawerOpenClasses() {
         }px`)
       : (app.style.maxHeight = `${appLancher.offsetHeight}px`);
 
-    if (visibleArea.bottom + horizontalHeight > workArea.height) {
+    if (visibleArea.bottom + horizontalHeight > workArea.bottom) {
       if (visibleArea.top - horizontalHeight < workArea.top) {
         app.classList.remove('open-top');
       } else {
@@ -686,16 +675,13 @@ async function setDrawerOpenClasses() {
       app.classList.remove('open-top');
     }
   }
-
-  setWindowVisibleArea();
-  setWindowPosition();
 }
 
 async function setWindowParams() {
   await setWindowSize();
   await setWindowPosition();
-  setWindowVisibleArea();
   setWindowMoveArea();
+  setWindowVisibleArea();
 }
 
 function setToolbarOrientation() {
@@ -715,22 +701,18 @@ function setToolbarOrientation() {
 }
 
 function handleToolbarOrientationChange() {
-  q('#toggle').addEventListener('click', () => {
+  q('#toggle').addEventListener('click', async () => {
     let isVertical = getSetting('vertical');
-    const app = q('.app');
     isVertical = !isVertical;
 
     setSetting({ vertical: isVertical });
 
-    if (isVertical) {
-      app.classList.remove('open-top');
-    } else {
-      app.classList.remove('open-left');
-    }
-
     closeAllMenus();
-    setDrawerOpenClasses();
-    setWindowParams();
+    await setDrawerOpenClasses();
+
+    setTimeout(async () => {
+      await setWindowParams();
+    }, 500);
   });
 }
 
@@ -771,43 +753,43 @@ async function getVisibleArea(element) {
   };
 }
 
+function checkRectangleOffBounds(rect1, rect2) {
+  // if rect2 moves beyond left boundaries of rect1
+  if (rect2.left < rect1.left) {
+    return {
+      left: rect2.left - rect1.left,
+    };
+  }
+
+  // if rect2 moves beyond top boundaries of rect1
+  if (rect2.top < rect1.top) {
+    return {
+      top: rect2.top - rect1.top,
+    };
+  }
+
+  // if rect2 moves beyond right boundaries of rect1
+  if (rect2.right > rect1.right) {
+    return {
+      right: rect2.right - rect1.right,
+    };
+  }
+
+  // if rect2 moves beyond bottom boundaries of rect1
+  if (rect2.bottom > rect1.bottom) {
+    return {
+      bottom: rect2.bottom - rect1.bottom,
+    };
+  }
+
+  return false;
+}
+
 async function checkWindowPosition() {
   const workArea = await getWindowWorkArea();
   const visibleArea = await getVisibleArea(q('.draggable'));
 
-  async function overlap(rect1, rect2) {
-    // if rect2 moves beyond left boundaries of rect1
-    if (rect2.left < rect1.left) {
-      return {
-        left: rect2.left - rect1.left,
-      };
-    }
-
-    // if rect2 moves beyond top boundaries of rect1
-    if (rect2.top < rect1.top) {
-      return {
-        top: rect2.top - rect1.top,
-      };
-    }
-
-    // if rect2 moves beyond right boundaries of rect1
-    if (rect2.right > rect1.right) {
-      return {
-        right: rect2.right - rect1.right,
-      };
-    }
-
-    // if rect2 moves beyond bottom boundaries of rect1
-    if (rect2.bottom > rect1.bottom) {
-      return {
-        bottom: rect2.bottom - rect1.bottom,
-      };
-    }
-
-    return true;
-  }
-
-  return overlap(workArea, visibleArea);
+  return checkRectangleOffBounds(workArea, visibleArea);
 }
 
 async function setWindowPosition() {
@@ -820,6 +802,8 @@ async function setWindowPosition() {
   const scaleFactor = await getScaleFactor();
   const startPosition = initialPosition / scaleFactor;
   const drawerSize = toolbarDrawerSize.vertical / scaleFactor;
+
+  if (!offBounds) return;
 
   if (isVertical) {
     if (offBoundsDirection !== 'undefined' && offBoundsDirection === 'left') {
@@ -916,7 +900,7 @@ function setWindowMoveArea() {
         dragAreaRect.top + dragAreaRect.height
       )}, 0, 0`,
     });
-  }, 100);
+  }, 500);
 }
 
 // Keyboard Navigation
@@ -1446,7 +1430,6 @@ export {
   escapeHtml,
   getAppIcon,
   // openDrawer,
-  setWindowSize,
   setWindowPosition,
   setWindowMoveArea,
   setDrawerOpenClasses,
