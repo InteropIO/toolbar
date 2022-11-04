@@ -143,8 +143,7 @@ function handleAppClick() {
 function handleSearchChange() {
   q('#app-search').addEventListener('keyup', (event) => {
       searchInputObs.next(event.target.value);
-    }
-  });
+    })
 }
 
 function getItemHTMLTemplate(item, options) {
