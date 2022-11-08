@@ -56,6 +56,8 @@ async function init() {
 
   initVisibleArea();
 
+  utils.elementObserver();
+
   console.log('window loaded');
 
   printApps();

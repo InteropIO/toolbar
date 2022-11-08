@@ -1,11 +1,13 @@
 import { setSettings, getSetting, getSettings } from './settings.js';
 import {
   setToolbarOrientation,
-  setWindowParams,
+  setWindowSize,
   setWindowPosition,
   setWindowMoveArea,
   setDrawerOpenClasses,
+  setDrawerOpenDirection,
   setWindowVisibleArea,
+  closeAllMenus,
 } from './utils.js';
 
 console.time('Glue');
@@ -199,25 +201,17 @@ async function trackThemeChanges() {
 
 async function trackWindowMove() {
   boundsObs.next(glue.windows.my().bounds);
-  await setDrawerOpenClasses();
-  await setWindowPosition();
-  setWindowMoveArea();
-  setWindowVisibleArea();
 
   glue.windows.my().onBoundsChanged(async () => {
     boundsObs.next(glue.windows.my().bounds);
-    await setDrawerOpenClasses();
-    await setWindowPosition();
-    setWindowMoveArea();
+    closeAllMenus();
     setWindowVisibleArea();
   });
 }
 
 async function trackDisplayChange() {
   glue.displays.onDisplayChanged(async () => {
-    await setWindowPosition();
     setWindowMoveArea();
-    setWindowVisibleArea();
   });
 }
 
@@ -574,7 +568,13 @@ async function getPrefs() {
   }
 
   setToolbarOrientation();
-  await setWindowParams();
+
+  await setWindowSize();
+  setDrawerOpenDirection();
+  await setDrawerOpenClasses();
+  await setWindowPosition();
+  setWindowVisibleArea();
+  setWindowMoveArea();
 
   glue.prefs.subscribe((prefs) => {
     setToolbarOrientation();

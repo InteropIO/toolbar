@@ -171,15 +171,28 @@ function handleTopMenuClicks() {
         focusMenuInputAfterTransition
       );
       menuToToggle.classList.toggle('hide');
-      setDrawerOpenClasses();
 
       let hasVisibleDrawers = q('.toggle-content:not(.hide)');
+      const isVertical = getSetting('vertical');
+      const viewPortHeight = q('.viewport').offsetHeight;
+      const drawerHeight = getHorizontalToolbarHeight();
 
       if (hasVisibleDrawers) {
         q('.app').classList.add('has-drawer');
       } else {
         q('.app').classList.remove('has-drawer');
       }
+
+      // TODO: Fix Manager Height
+      if (hasVisibleDrawers && !isVertical) {
+        q('.app').style.maxHeight = `${viewPortHeight + drawerHeight}px`;
+      } else if (!hasVisibleDrawers && !isVertical) {
+        q('.app').style.maxHeight = `${viewPortHeight}px`;
+      }
+
+      setTimeout(() => {
+        setWindowVisibleArea();
+      }, 500);
     } else if (e.target.matches('#fav-apps .nav-item, #fav-apps .nav-item *')) {
       //start or focus an app from the favorites list
       let topElement = e.path.find(
@@ -573,7 +586,6 @@ async function handleToolbarAppRowsChange() {
       }
 
       await setWindowSize();
-      setWindowVisibleArea();
       setWindowMoveArea();
       closeAllMenus();
     }
@@ -636,6 +648,36 @@ function buildVisibleArea(element) {
   };
 }
 
+function setDrawerOpenDirection() {
+  const app = q('.app');
+  const isVertical = getSetting('vertical');
+  const horizontalHeight = getHorizontalToolbarHeight();
+
+  if (isVertical) {
+    app.style.top = 0;
+    app.style.maxHeight = `${horizontalHeight}px`;
+  } else {
+    const appLancher = q('.viewport');
+
+    app.style.top = `${horizontalHeight}px`;
+
+    if (
+      app.classList.contains('open-top') &&
+      app.classList.contains('has-drawer')
+    ) {
+      app.style.top = 0;
+    } else {
+      app.style.top = `${horizontalHeight}px`;
+    }
+
+    if (app.classList.contains('has-drawer')) {
+      app.style.maxHeight = `${appLancher.offsetHeight + horizontalHeight}px`;
+    } else {
+      app.style.maxHeight = `${appLancher.offsetHeight}px`;
+    }
+  }
+}
+
 async function setDrawerOpenClasses() {
   const workArea = await getWindowWorkArea();
   const visibleArea = await getVisibleArea(q('.viewport'));
@@ -644,45 +686,22 @@ async function setDrawerOpenClasses() {
   const horizontalHeight = getHorizontalToolbarHeight();
 
   if (isVertical) {
-    app.style.top = 0;
-    app.style.maxHeight = `${horizontalHeight}px`;
-
     if (visibleArea.right + toolbarDrawerSize.vertical > workArea.right) {
       app.classList.add('open-left');
     } else {
       app.classList.remove('open-left');
     }
   } else {
-    const appLancher = q('.viewport');
-
-    app.style.top = `${horizontalHeight}px`;
-
-    app.classList.contains('has-drawer')
-      ? (app.style.maxHeight = `${
-          appLancher.offsetHeight + horizontalHeight
-        }px`)
-      : (app.style.maxHeight = `${appLancher.offsetHeight}px`);
-
     if (visibleArea.bottom + horizontalHeight > workArea.bottom) {
       if (visibleArea.top - horizontalHeight < workArea.top) {
         app.classList.remove('open-top');
       } else {
         app.classList.add('open-top');
-        app.classList.contains('has-drawer')
-          ? (app.style.top = 0)
-          : (app.style.top = `${horizontalHeight}px`);
       }
     } else {
       app.classList.remove('open-top');
     }
   }
-}
-
-async function setWindowParams() {
-  await setWindowSize();
-  await setWindowPosition();
-  setWindowMoveArea();
-  setWindowVisibleArea();
 }
 
 function setToolbarOrientation() {
@@ -704,16 +723,11 @@ function setToolbarOrientation() {
 function handleToolbarOrientationChange() {
   q('#toggle').addEventListener('click', async () => {
     let isVertical = getSetting('vertical');
-    isVertical = !isVertical;
 
+    isVertical = !isVertical;
     setSetting({ vertical: isVertical });
 
-    closeAllMenus();
-    await setDrawerOpenClasses();
-
-    setTimeout(async () => {
-      await setWindowParams();
-    }, 500);
+    windowRefresh();
   });
 }
 
@@ -822,11 +836,7 @@ async function setWindowPosition() {
     if (offBoundsDirection !== 'undefined' && offBoundsDirection === 'right') {
       await moveMyWindow({
         left:
-          (workArea.left +
-            workArea.width -
-            visibleArea.width -
-            drawerSize -
-            startPosition) *
+          (workArea.right - visibleArea.width - drawerSize - startPosition) *
           primaryScaleFactor,
       });
     }
@@ -834,10 +844,7 @@ async function setWindowPosition() {
     if (offBoundsDirection !== 'undefined' && offBoundsDirection === 'bottom') {
       await moveMyWindow({
         top:
-          (workArea.top +
-            workArea.height -
-            visibleArea.height -
-            startPosition) *
+          (workArea.bottom - visibleArea.height - startPosition) *
           primaryScaleFactor,
       });
     }
@@ -1412,6 +1419,31 @@ function handleKeyboardNavigation() {
   });
 }
 
+function elementObserver() {
+  const elementToObserve = document.querySelector('.app');
+  const config = {
+    attributeFilter: ['class', 'style'],
+    attributeOldValue: true,
+    attributes: true,
+  };
+  const observer = new MutationObserver(callback);
+
+  function callback(entries) {
+    let newValue;
+
+    entries.forEach((entry) => {
+      newValue = entry.target.getAttribute(entry.attributeName);
+
+      if (entry.type === 'attributes' && entry.attributeName === 'class') {
+        setDrawerOpenDirection();
+        setDrawerOpenClasses();
+      }
+    });
+  }
+
+  observer.observe(elementToObserve, config);
+}
+
 export {
   handleEvents,
   setToolbarOrientation,
@@ -1423,7 +1455,6 @@ export {
   handleModalClose,
   handleMouseHover,
   setWindowVisibleArea,
-  setWindowParams,
   focusInputAfterWindowRecover,
   windowMargin,
   startTutorial,
@@ -1431,8 +1462,11 @@ export {
   escapeHtml,
   getAppIcon,
   // openDrawer,
+  setWindowSize,
   setWindowPosition,
   setWindowMoveArea,
   setDrawerOpenClasses,
+  setDrawerOpenDirection,
   closeAllMenus,
+  elementObserver,
 };
