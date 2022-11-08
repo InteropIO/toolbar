@@ -587,6 +587,7 @@ async function handleToolbarAppRowsChange() {
       }
 
       await setWindowSize();
+      setWindowVisibleArea();
       setWindowMoveArea();
       closeAllMenus();
     }
