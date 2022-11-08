@@ -286,6 +286,7 @@ async function handleJumpListAction() {
     const jumpList = glue.windows.my().jumpList;
     const category = await jumpList.categories.find('Tasks');
     const action = {
+	   icon: "%GDDIR%/assets/images/adjust.ico", 
       singleInstanceTitle: 'Adjust',
       multiInstanceTitle: 'Adjust',
       callback: () => resetWindow(),
