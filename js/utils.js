@@ -688,17 +688,23 @@ async function setDrawerOpenClasses() {
     if (visibleArea.right + toolbarDrawerSize.vertical > workArea.right) {
       app.classList.add('open-left');
     } else {
-      app.classList.remove('open-left');
+      if (app.classList.contains('open-left')) {
+        app.classList.remove('open-left');
+      }
     }
   } else {
     if (visibleArea.bottom + horizontalHeight > workArea.bottom) {
       if (visibleArea.top - horizontalHeight < workArea.top) {
-        app.classList.remove('open-top');
+        if (app.classList.contains('open-top')) {
+          app.classList.remove('open-top');
+        }
       } else {
         app.classList.add('open-top');
       }
     } else {
-      app.classList.remove('open-top');
+      if (app.classList.contains('open-top')) {
+        app.classList.remove('open-top');
+      }
     }
   }
 }
