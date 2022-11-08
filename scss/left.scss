@@ -2,6 +2,10 @@
   &.open-left {
     @include transition("left, width", 0);
 
+    &.has-drawer {
+      left: 0;
+    }
+
     .viewport {
       order: 1;
     }

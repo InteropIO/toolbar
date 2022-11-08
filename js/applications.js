@@ -203,7 +203,7 @@ function applicationHTMLTemplate(app, options = {}) {
     `
     <li class="nav-item ${
       app.instances.length > 0 ? 'app-active' : ''
-    }"" app-name="${app.name}" tabindex="${1}">
+    }" app-name="${app.name}" tabindex="${1}">
       <div class="nav-link action-menu">
         ${getAppIcon(app)}
         ${

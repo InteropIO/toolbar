@@ -142,4 +142,11 @@ function calculateTotalOverlap(r1, r2) {
   return xOverlap * yOverlap;
 }
 
-export { initVisibleArea, handleWidthChange, handleDropDownClicks, getMonitor };
+export {
+  initVisibleArea,
+  handleWidthChange,
+  handleDropDownClicks,
+  getMonitor,
+  layoutDropDownVisibleObs,
+  topMenuVisibleObs,
+};

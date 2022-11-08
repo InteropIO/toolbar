@@ -42,12 +42,13 @@ html.dark {
     .layout-menu-tool {
       background: #2d2d2d; // rgba(255, 255, 255, 0.05);
 
-      div {
+      li {
         &:first-of-type {
           border-right: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         &:hover,
+        &.hover,
         &.active {
           background-color: rgba(255, 255, 255, 0.05);
           color: white;
@@ -103,7 +104,7 @@ html.dark {
     .layout-menu-tool {
       border: 1px solid rgba(255, 255, 255, 0.075);
 
-      div:first-child {
+      li:first-child {
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       }
     }
@@ -173,6 +174,7 @@ html.light {
       }
 
       &:hover,
+      &.hover,
       &.active {
         background-color: rgba(219, 222, 230, 0.8);
         color: black;
@@ -230,7 +232,7 @@ html.light {
     .layout-menu-tool {
       border: 1px solid rgba(219, 222, 230, 0.8);
 
-      div:first-child {
+      li:first-child {
         border-bottom: 1px solid rgba(0, 0, 0, 0.075);
       }
     }

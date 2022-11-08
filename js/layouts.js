@@ -98,7 +98,7 @@ function handleLayoutClick() {
 function handleLayoutSave() {
   q('#layout-save-btn').addEventListener('click', saveCurrentLayout);
   q('#layout-save-name').addEventListener('keyup', (e) =>
-    e.key === 'Enter' ? saveCurrentLayout() : null
+    e.key === 'Enter' && e.target.value.length > 0 ? saveCurrentLayout() : null
   );
 }
 
@@ -133,10 +133,10 @@ function layoutHTMLTemplate(layout) {
         </button>
       </div>
     </div>
-    <div class="layout-menu-tool">
-      <div class="delete">Delete</div>
-      <div class="cancel">Cancel</div>
-    </div>
+    <ul class="layout-menu-tool">
+      <li class="nav-item delete">Delete</li>
+      <li class="nav-item cancel">Cancel</li>
+    </ul>
   </li>
   `
   );

@@ -1,8 +1,13 @@
 import { setSettings, getSetting, getSettings } from './settings.js';
 import {
   setToolbarOrientation,
-  setWindowParams,
+  setWindowSize,
   setWindowPosition,
+  setWindowMoveArea,
+  setDrawerOpenClasses,
+  setDrawerOpenDirection,
+  setWindowVisibleArea,
+  closeAllMenus,
 } from './utils.js';
 
 console.time('Glue');
@@ -54,6 +59,7 @@ gluePromise.then((glue) => {
   trackWorkspaces();
   trackThemeChanges();
   trackWindowMove();
+  trackDisplayChange();
   trackConnection();
   trackNotificationCount();
   trackWindowZoom();
@@ -196,41 +202,26 @@ async function trackThemeChanges() {
 async function trackWindowMove() {
   boundsObs.next(glue.windows.my().bounds);
 
-  glue.windows.my().onBoundsChanged(() => {
+  glue.windows.my().onBoundsChanged(async () => {
     boundsObs.next(glue.windows.my().bounds);
-    setWindowPosition();
+    closeAllMenus();
+    setWindowVisibleArea();
   });
 }
 
-async function getPrimaryScaleFactor() {
-  let scaleFactor = 1;
-  const monitors = await getMonitorInfo();
-
-  monitors.forEach((monitor) => {
-    monitor.isPrimary ? (scaleFactor = monitor.scaleFactor) : scaleFactor;
+async function trackDisplayChange() {
+  glue.displays.onDisplayChanged(async () => {
+    setWindowVisibleArea();
+    setWindowMoveArea();
   });
-
-  return scaleFactor;
 }
 
-async function getScaleFactor() {
-  const currentMonitor = await glue.windows.my().getDisplay();
-  const scaleFactor = currentMonitor.scaleFactor;
-
-  return scaleFactor;
+function windowCenter() {
+  glue.windows.my().center();
 }
 
-async function getWindowWorkArea() {
-  const currentMonitor = await glue.windows.my().getDisplay();
-  const primaryScaleFactor = await getPrimaryScaleFactor();
-  const scaleFactor = await getScaleFactor();
-
-  return {
-    top: currentMonitor.workArea.top / primaryScaleFactor,
-    left: currentMonitor.workArea.left / primaryScaleFactor,
-    width: currentMonitor.workArea.width / scaleFactor,
-    height: currentMonitor.workArea.height / scaleFactor,
-  };
+function windowRefresh() {
+  glue.windows.my().refresh();
 }
 
 async function startApp(appName, context) {
@@ -409,15 +400,58 @@ async function openWindow(name, url, options) {
   window.glue.windows.open(name, url, options);
 }
 
-async function getWindowBounds() {
+async function getPrimaryScaleFactor() {
+  let scaleFactor = 1;
+  const monitors = await getMonitorInfo();
+
+  monitors.forEach((monitor) => {
+    monitor.isPrimary ? (scaleFactor = monitor.scaleFactor) : scaleFactor;
+  });
+
+  return scaleFactor;
+}
+
+async function getScaleFactor() {
+  const currentMonitor = await glue.windows.my().getDisplay();
+
+  return currentMonitor.scaleFactor;
+}
+
+async function getWindowWorkArea() {
+  await gluePromise;
+  const currentMonitor = await glue.windows.my().getDisplay();
+  const primaryScaleFactor = await getPrimaryScaleFactor();
+  const scaleFactor = currentMonitor.scaleFactor;
+
+  return {
+    left: currentMonitor.workArea.left / primaryScaleFactor,
+    top: currentMonitor.workArea.top / primaryScaleFactor,
+    right:
+      currentMonitor.workArea.left / primaryScaleFactor +
+      currentMonitor.workArea.width / scaleFactor,
+    bottom:
+      currentMonitor.workArea.top / primaryScaleFactor +
+      currentMonitor.workArea.height / scaleFactor,
+    width: currentMonitor.workArea.width / scaleFactor,
+    height: currentMonitor.workArea.height / scaleFactor,
+  };
+}
+
+function getLogicalWindowBounds() {
+  return glue.windows.my().bounds;
+}
+
+async function getPhysicalWindowBounds() {
   await gluePromise;
   const bounds = glue.windows.my().bounds;
   const primaryScaleFactor = await getPrimaryScaleFactor();
   const scaleFactor = await getScaleFactor();
 
   return {
-    top: bounds.top / primaryScaleFactor,
     left: bounds.left / primaryScaleFactor,
+    top: bounds.top / primaryScaleFactor,
+    right: bounds.left / primaryScaleFactor + bounds.width / scaleFactor,
+    bottom: bounds.top / primaryScaleFactor + bounds.height / scaleFactor,
     width: bounds.width / scaleFactor,
     height: bounds.height / scaleFactor,
   };
@@ -535,7 +569,13 @@ async function getPrefs() {
   }
 
   setToolbarOrientation();
-  await setWindowParams();
+
+  await setWindowSize();
+  setDrawerOpenDirection();
+  await setDrawerOpenClasses();
+  await setWindowPosition();
+  setWindowVisibleArea();
+  setWindowMoveArea();
 
   glue.prefs.subscribe((prefs) => {
     setToolbarOrientation();
@@ -592,7 +632,8 @@ export {
   isMinimizeAllowed,
   raiseNotification,
   getMonitorInfo,
-  getWindowBounds,
+  getLogicalWindowBounds,
+  getPhysicalWindowBounds,
   getSID,
   getEnvData,
   getGDVersion,
@@ -603,4 +644,8 @@ export {
   getPrefs,
   updatePrefs,
   getWindowWorkArea,
+  getPrimaryScaleFactor,
+  getScaleFactor,
+  windowCenter,
+  windowRefresh,
 };
