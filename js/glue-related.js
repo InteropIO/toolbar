@@ -211,6 +211,7 @@ async function trackWindowMove() {
 
 async function trackDisplayChange() {
   glue.displays.onDisplayChanged(async () => {
+    setWindowVisibleArea();
     setWindowMoveArea();
   });
 }
