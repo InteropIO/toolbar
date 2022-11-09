@@ -63,6 +63,7 @@ gluePromise.then((glue) => {
   trackConnection();
   trackNotificationCount();
   trackWindowZoom();
+  trackDisplayAreas();
 });
 
 async function showLoader() {
@@ -211,8 +212,31 @@ async function trackWindowMove() {
 
 async function trackDisplayChange() {
   glue.displays.onDisplayChanged(async () => {
+    await setWindowSize();
+    await setWindowPosition();
     setWindowVisibleArea();
     setWindowMoveArea();
+  });
+}
+
+async function trackDisplayAreas() {
+  const currentMonitor = await glue.windows.my().getDisplay();
+  let oldIndex = currentMonitor.index;
+  let oldScaleFactor = currentMonitor.scaleFactor;
+
+  glue.windows.my().onBoundsChanged(async () => {
+    const newMonitor = await glue.windows.my().getDisplay();
+    const newIndex = newMonitor.index;
+    const newScaleFactor = newMonitor.scaleFactor;
+
+    if (newIndex !== oldIndex || newScaleFactor !== oldScaleFactor) {
+      oldIndex = newIndex;
+      oldScaleFactor = newScaleFactor;
+
+      await setWindowSize();
+      setWindowVisibleArea();
+      setWindowMoveArea();
+    }
   });
 }
 
