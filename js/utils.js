@@ -732,7 +732,9 @@ function handleToolbarOrientationChange() {
     isVertical = !isVertical;
     setSetting({ vertical: isVertical });
 
-    windowRefresh();
+    setTimeout(() => {
+      windowRefresh();
+    }, 250);
   });
 }
 
