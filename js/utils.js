@@ -596,7 +596,6 @@ async function handleToolbarAppRowsChange() {
         });
       }
 
-      sessionStorage.setItem('hideTutorial', 'true');
       windowRefresh();
     }
   });
@@ -742,8 +741,6 @@ function handleToolbarOrientationChange() {
 
     isVertical = !isVertical;
     setSetting({ vertical: isVertical });
-
-    sessionStorage.setItem('hideTutorial', 'true');
 
     setTimeout(() => {
       windowRefresh();
@@ -950,6 +947,7 @@ function elementObserver() {
         if (newValue !== entry.oldValue) {
           setDrawerOpenDirection();
           setDrawerOpenClasses();
+          setWindowVisibleArea();
         }
       }
     });

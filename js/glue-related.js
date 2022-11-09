@@ -245,6 +245,8 @@ function windowCenter() {
 }
 
 function windowRefresh() {
+  sessionStorage.setItem('hideTutorial', 'true');
+
   glue.windows.my().refresh();
 }
 
