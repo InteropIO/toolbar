@@ -1427,7 +1427,7 @@ function handleKeyboardNavigation() {
 function elementObserver() {
   const elementToObserve = document.querySelector('.app');
   const config = {
-    attributeFilter: ['class', 'style'],
+    attributeFilter: ['class'],
     attributeOldValue: true,
     attributes: true,
   };
@@ -1440,8 +1440,10 @@ function elementObserver() {
       newValue = entry.target.getAttribute(entry.attributeName);
 
       if (entry.type === 'attributes' && entry.attributeName === 'class') {
-        setDrawerOpenDirection();
-        setDrawerOpenClasses();
+        if (newValue !== entry.oldValue) {
+          setDrawerOpenDirection();
+          setDrawerOpenClasses();
+        }
       }
     });
   }
