@@ -432,12 +432,20 @@ async function handleFeedbackClick() {
 async function startTutorial() {
   const userProperties = await getUserProperties();
   const hideTutorialOnStartup = userProperties.hideTutorialOnStartup;
+  const hideTutorialOnRefresh = Boolean(sessionStorage.getItem('hideTutorial'));
   const tutorialApp = await getApp('getting-started');
+
+  if (hideTutorialOnRefresh) {
+    sessionStorage.removeItem('hideTutorial');
+    return;
+  }
+
   if (!tutorialApp || hideTutorialOnStartup) {
     setSetting({ showTutorial: false });
     q('.show-tutorial-check').classList.add('d-none');
   } else {
     const showTutorial = getSetting('showTutorial');
+
     if (showTutorial) {
       try {
         startApp('getting-started');
@@ -588,6 +596,7 @@ async function handleToolbarAppRowsChange() {
         });
       }
 
+      sessionStorage.setItem('hideTutorial', 'true');
       windowRefresh();
     }
   });
@@ -733,6 +742,8 @@ function handleToolbarOrientationChange() {
 
     isVertical = !isVertical;
     setSetting({ vertical: isVertical });
+
+    sessionStorage.setItem('hideTutorial', 'true');
 
     setTimeout(() => {
       windowRefresh();
