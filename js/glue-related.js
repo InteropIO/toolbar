@@ -6,7 +6,6 @@ import {
   setWindowMoveArea,
   setDrawerOpenClasses,
   setDrawerOpenDirection,
-  setWindowVisibleArea,
   closeAllMenus,
 } from './utils.js';
 
@@ -206,7 +205,6 @@ async function trackWindowMove() {
   glue.windows.my().onBoundsChanged(async () => {
     boundsObs.next(glue.windows.my().bounds);
     closeAllMenus();
-    setWindowVisibleArea();
   });
 }
 
@@ -214,29 +212,7 @@ async function trackDisplayChange() {
   glue.displays.onDisplayChanged(async () => {
     await setWindowSize();
     await setWindowPosition();
-    setWindowVisibleArea();
     setWindowMoveArea();
-  });
-}
-
-async function trackDisplayAreas() {
-  const currentMonitor = await glue.windows.my().getDisplay();
-  let oldIndex = currentMonitor.index;
-  let oldScaleFactor = currentMonitor.scaleFactor;
-
-  glue.windows.my().onBoundsChanged(async () => {
-    const newMonitor = await glue.windows.my().getDisplay();
-    const newIndex = newMonitor.index;
-    const newScaleFactor = newMonitor.scaleFactor;
-
-    if (newIndex !== oldIndex || newScaleFactor !== oldScaleFactor) {
-      oldIndex = newIndex;
-      oldScaleFactor = newScaleFactor;
-
-      await setWindowSize();
-      setWindowVisibleArea();
-      setWindowMoveArea();
-    }
   });
 }
 
@@ -600,7 +576,6 @@ async function getPrefs() {
   setDrawerOpenDirection();
   await setDrawerOpenClasses();
   await setWindowPosition();
-  setWindowVisibleArea();
   setWindowMoveArea();
 
   glue.prefs.subscribe((prefs) => {

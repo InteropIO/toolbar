@@ -928,30 +928,9 @@ function setWindowMoveArea() {
   }, 500);
 }
 
-function elementObserver() {
-  const elementToObserve = document.querySelector('.app');
-  const config = {
-    attributeFilter: ['class'],
-    attributeOldValue: true,
-    attributes: true,
-  };
+function elementObserver(element, config, callback) {
+  const elementToObserve = element;
   const observer = new MutationObserver(callback);
-
-  function callback(entries) {
-    let newValue;
-
-    entries.forEach((entry) => {
-      newValue = entry.target.getAttribute(entry.attributeName);
-
-      if (entry.type === 'attributes' && entry.attributeName === 'class') {
-        if (newValue !== entry.oldValue) {
-          setDrawerOpenDirection();
-          setDrawerOpenClasses();
-          setWindowVisibleArea();
-        }
-      }
-    });
-  }
 
   observer.observe(elementToObserve, config);
 }

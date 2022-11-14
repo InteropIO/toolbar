@@ -56,7 +56,7 @@ async function init() {
 
   initVisibleArea();
 
-  utils.elementObserver();
+  observeAppElement();
 
   console.log('window loaded');
 
@@ -85,6 +85,32 @@ async function init() {
   populateSID();
   showFeedbackPanel();
   showProfilePanel();
+}
+
+function observeAppElement() {
+  const app = q('.app');
+  const config = {
+    attributeFilter: ['class'],
+    attributeOldValue: true,
+    attributes: true,
+  };
+
+  function callback(entries) {
+    let newValue;
+
+    entries.forEach((entry) => {
+      newValue = entry.target.getAttribute(entry.attributeName);
+
+      if (entry.type === 'attributes' && entry.attributeName === 'class') {
+        if (newValue !== entry.oldValue) {
+          utils.setDrawerOpenDirection();
+          utils.setDrawerOpenClasses();
+        }
+      }
+    });
+  }
+
+  utils.elementObserver(app, config, callback);
 }
 
 function printApps() {
