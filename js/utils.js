@@ -72,8 +72,8 @@ function handleEvents() {
   handleFeedbackClick();
   handleThemeChange();
   handleKeyboardNavigation();
-  handleToolbarOrientationChange();
-  handleToolbarAppRowsChange();
+  handleOrientationChange();
+  handleAppRowsChange();
   populateAboutPage();
   handleShutdownClick();
   handleTopMenuClicks();
@@ -548,7 +548,7 @@ function getHorizontalToolbarHeight(length) {
   return appContentHeader.offsetHeight + navItem.offsetHeight * numberOfRows;
 }
 
-async function handleToolbarAppRowsChange() {
+async function handleAppRowsChange() {
   const numberOfRows = getSetting('toolbarAppRows');
   const app = q('.app');
   const appSelectOptions = {
@@ -719,7 +719,7 @@ async function setDrawerOpenClasses() {
   }
 }
 
-function setToolbarOrientation() {
+function setOrientation() {
   const isVertical = getSetting('vertical');
   const app = q('.app');
 
@@ -735,17 +735,47 @@ function setToolbarOrientation() {
   });
 }
 
-function handleToolbarOrientationChange() {
+function handleOrientationChange() {
   q('#toggle').addEventListener('click', async () => {
     let isVertical = getSetting('vertical');
 
     isVertical = !isVertical;
     setSetting({ vertical: isVertical });
 
+    await repositionOnOrientationChange(isVertical);
+    setWindowMoveArea();
+
     setTimeout(() => {
       windowRefresh();
     }, 250);
   });
+}
+
+async function repositionOnOrientationChange(vertical) {
+  const windowBounds = await getPhysicalWindowBounds();
+  const primaryScaleFactor = await getPrimaryScaleFactor();
+  const scaleFactor = await getScaleFactor();
+  const horizontalHeight = getHorizontalToolbarHeight();
+
+  if (vertical) {
+    await moveMyWindow({
+      top:
+        (windowBounds.top + horizontalHeight / scaleFactor) *
+        primaryScaleFactor,
+      left:
+        (windowBounds.left - toolbarDrawerSize.vertical / scaleFactor) *
+        primaryScaleFactor,
+    });
+  } else {
+    await moveMyWindow({
+      top:
+        (windowBounds.top - horizontalHeight / scaleFactor) *
+        primaryScaleFactor,
+      left:
+        (windowBounds.left + toolbarDrawerSize.vertical / scaleFactor) *
+        primaryScaleFactor,
+    });
+  }
 }
 
 function closeAllMenus() {
@@ -905,7 +935,7 @@ async function setWindowPosition() {
 
 async function resetWindow() {
   setSetting({ vertical: true });
-  setToolbarOrientation();
+  setOrientation();
   windowCenter();
   windowRefresh();
 }
@@ -937,7 +967,7 @@ function elementObserver(element, config, callback) {
 
 export {
   handleEvents,
-  setToolbarOrientation,
+  setOrientation,
   handleThemeChange,
   handleShutdownClick,
   handleTopMenuClicks,

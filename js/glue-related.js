@@ -1,6 +1,6 @@
 import { setSettings, getSetting, getSettings } from './settings.js';
 import {
-  setToolbarOrientation,
+  setOrientation,
   setWindowSize,
   setWindowPosition,
   setWindowMoveArea,
@@ -62,7 +62,6 @@ gluePromise.then((glue) => {
   trackConnection();
   trackNotificationCount();
   trackWindowZoom();
-  trackDisplayAreas();
 });
 
 async function showLoader() {
@@ -570,7 +569,7 @@ async function getPrefs() {
     setSettings(prefs.data);
   }
 
-  setToolbarOrientation();
+  setOrientation();
 
   await setWindowSize();
   setDrawerOpenDirection();
@@ -579,7 +578,7 @@ async function getPrefs() {
   setWindowMoveArea();
 
   glue.prefs.subscribe((prefs) => {
-    setToolbarOrientation();
+    setOrientation();
   });
 }
 
