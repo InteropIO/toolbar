@@ -282,8 +282,12 @@ function handleKeyboardNavigation() {
     let nextItem;
     const isVertical = getSetting('vertical');
     if (!isVertical) {
-      if (direction === 'right') {
+      if (direction === 'up') {
+        direction = 'left';
+      } else if (direction === 'right') {
         direction = 'down';
+      } else if (direction === 'down') {
+        direction = 'right';
       } else if (direction === 'left') {
         direction = 'up';
       }
@@ -333,11 +337,7 @@ function handleKeyboardNavigation() {
       direction === 'up' ||
       direction === 'down'
     ) {
-      if (isVertical) {
-        nextItem = next(currentItem, direction);
-      } else {
-        nextItem = next(currentItem, direction);
-      }
+      nextItem = next(currentItem, direction);
     }
     removeHover();
     currentItem = nextItem;
