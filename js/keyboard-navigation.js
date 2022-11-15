@@ -3,6 +3,7 @@ import { layoutDropDownVisibleObs } from './visible-area.js';
 
 function handleKeyboardNavigation() {
   listenBodyClicks();
+  let disableLeftRight = false;
   let currentItem;
   let clickedItem;
 
@@ -188,6 +189,13 @@ function handleKeyboardNavigation() {
     if (func(el)) {
       return el;
     }
+
+    if (isInput(el)) {
+      disableLeftRight = true;
+    } else {
+      disableLeftRight = false;
+    }
+
     while (el && el.parentNode) {
       el = el.parentNode;
       if (func(el)) {
@@ -505,12 +513,18 @@ function handleKeyboardNavigation() {
         go('up');
         break;
       case 'ArrowRight':
+        if (disableLeftRight) {
+          break;
+        }
         go('right');
         break;
       case 'ArrowDown':
         go('down');
         break;
       case 'ArrowLeft':
+        if (disableLeftRight) {
+          break;
+        }
         go('left');
         break;
       default:
