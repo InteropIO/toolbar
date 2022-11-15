@@ -70,14 +70,25 @@ function handleKeyboardNavigation() {
 
   const isLayoutItem = () =>
     upTo(currentItem, (el) => {
+      let layoutOpenedTimeout;
+
       if (el?.id === 'layout-menu-tool') {
         const isVertical = getSetting('vertical');
+
         if (!isVertical) {
-          layoutDropDownVisibleObs.next(true);
+          layoutOpenedTimeout = setTimeout(() => {
+            layoutDropDownVisibleObs.next(true);
+          }, 500);
         }
         return el?.id === 'layout-menu-tool';
       } else {
-        layoutDropDownVisibleObs.next(false);
+        setTimeout(() => {
+          layoutDropDownVisibleObs.next(false);
+        }, 500);
+
+        if (layoutOpenedTimeout) {
+          clearInterval(layoutOpenedTimeout);
+        }
       }
     });
 
