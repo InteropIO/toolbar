@@ -192,6 +192,7 @@
       .nav-item {
         @include transition("flex-basis", 0);
 
+        &.hover,
         &:hover {
           flex-basis: 11rem;
 

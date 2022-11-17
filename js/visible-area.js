@@ -20,7 +20,6 @@ function initVisibleArea() {
       e.target.matches('.horizontal .layouts-nav, .horizontal .layouts-nav *')
     ) {
       layoutOpenedTimeout = setTimeout(() => {
-        // applyOpenClasses();
         layoutDropDownVisibleObs.next(true);
       }, 500);
     }

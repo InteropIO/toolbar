@@ -3,6 +3,7 @@ import { layoutDropDownVisibleObs } from './visible-area.js';
 
 function handleKeyboardNavigation() {
   listenBodyClicks();
+  let disableLeftRight = false;
   let currentItem;
   let clickedItem;
 
@@ -70,14 +71,25 @@ function handleKeyboardNavigation() {
 
   const isLayoutItem = () =>
     upTo(currentItem, (el) => {
+      let layoutOpenedTimeout;
+
       if (el?.id === 'layout-menu-tool') {
         const isVertical = getSetting('vertical');
+
         if (!isVertical) {
-          layoutDropDownVisibleObs.next(true);
+          layoutOpenedTimeout = setTimeout(() => {
+            layoutDropDownVisibleObs.next(true);
+          }, 500);
         }
         return el?.id === 'layout-menu-tool';
       } else {
-        layoutDropDownVisibleObs.next(false);
+        setTimeout(() => {
+          layoutDropDownVisibleObs.next(false);
+        }, 500);
+
+        if (layoutOpenedTimeout) {
+          clearInterval(layoutOpenedTimeout);
+        }
       }
     });
 
@@ -177,6 +189,13 @@ function handleKeyboardNavigation() {
     if (func(el)) {
       return el;
     }
+
+    if (isInput(el)) {
+      disableLeftRight = true;
+    } else {
+      disableLeftRight = false;
+    }
+
     while (el && el.parentNode) {
       el = el.parentNode;
       if (func(el)) {
@@ -263,8 +282,12 @@ function handleKeyboardNavigation() {
     let nextItem;
     const isVertical = getSetting('vertical');
     if (!isVertical) {
-      if (direction === 'right') {
+      if (direction === 'up') {
+        direction = 'left';
+      } else if (direction === 'right') {
         direction = 'down';
+      } else if (direction === 'down') {
+        direction = 'right';
       } else if (direction === 'left') {
         direction = 'up';
       }
@@ -314,11 +337,7 @@ function handleKeyboardNavigation() {
       direction === 'up' ||
       direction === 'down'
     ) {
-      if (isVertical) {
-        nextItem = next(currentItem, direction);
-      } else {
-        nextItem = next(currentItem, direction);
-      }
+      nextItem = next(currentItem, direction);
     }
     removeHover();
     currentItem = nextItem;
@@ -494,12 +513,18 @@ function handleKeyboardNavigation() {
         go('up');
         break;
       case 'ArrowRight':
+        if (disableLeftRight) {
+          break;
+        }
         go('right');
         break;
       case 'ArrowDown':
         go('down');
         break;
       case 'ArrowLeft':
+        if (disableLeftRight) {
+          break;
+        }
         go('left');
         break;
       default:
