@@ -185,6 +185,8 @@ function handleTopMenuClicks() {
         q('.app').classList.remove('has-drawer');
       }
 
+      setDrawerOpenDirection();
+
       // TODO: Fix Manager Height
       if (hasVisibleDrawers && !isVertical) {
         q('.app').style.maxHeight = `${viewPortHeight + drawerHeight}px`;
@@ -816,35 +818,37 @@ async function getVisibleArea(element) {
 }
 
 function checkRectangleOffBounds(rect1, rect2) {
+  const offBounds = [];
+
   // if rect2 moves beyond left boundaries of rect1
   if (rect2.left < rect1.left) {
-    return {
+    offBounds.push({
       left: rect2.left - rect1.left,
-    };
+    });
   }
 
   // if rect2 moves beyond top boundaries of rect1
   if (rect2.top < rect1.top) {
-    return {
+    offBounds.push({
       top: rect2.top - rect1.top,
-    };
+    });
   }
 
   // if rect2 moves beyond right boundaries of rect1
   if (rect2.right > rect1.right) {
-    return {
+    offBounds.push({
       right: rect2.right - rect1.right,
-    };
+    });
   }
 
   // if rect2 moves beyond bottom boundaries of rect1
   if (rect2.bottom > rect1.bottom) {
-    return {
+    offBounds.push({
       bottom: rect2.bottom - rect1.bottom,
-    };
+    });
   }
 
-  return false;
+  return offBounds;
 }
 
 async function checkWindowPosition() {
@@ -859,78 +863,100 @@ async function setWindowPosition() {
   const workArea = await getWindowWorkArea();
   const visibleArea = await getVisibleArea(q('.draggable'));
   const offBounds = await checkWindowPosition();
-  const offBoundsDirection = Object.keys(offBounds)[0];
   const primaryScaleFactor = await getPrimaryScaleFactor();
   const scaleFactor = await getScaleFactor();
   const startPosition = initialPosition / scaleFactor;
   const drawerSize = toolbarDrawerSize.vertical / scaleFactor;
 
-  if (!offBounds) return;
+  if (offBounds.length === 0) return;
 
-  if (isVertical) {
-    if (offBoundsDirection !== 'undefined' && offBoundsDirection === 'left') {
-      await moveMyWindow({
-        left: (workArea.left + startPosition - drawerSize) * primaryScaleFactor,
-      });
-    }
+  offBounds.forEach(async (offset) => {
+    if (isVertical) {
+      switch (Object.keys(offset)[0]) {
+        case 'left':
+          await moveMyWindow({
+            left:
+              (workArea.left + startPosition - drawerSize) * primaryScaleFactor,
+          });
+          break;
 
-    if (offBoundsDirection !== 'undefined' && offBoundsDirection === 'top') {
-      await moveMyWindow({
-        top: (workArea.top + startPosition) * primaryScaleFactor,
-      });
-    }
+        case 'top':
+          await moveMyWindow({
+            top: (workArea.top + startPosition) * primaryScaleFactor,
+          });
+          break;
 
-    if (offBoundsDirection !== 'undefined' && offBoundsDirection === 'right') {
-      await moveMyWindow({
-        left:
-          (workArea.right - visibleArea.width - drawerSize - startPosition) *
-          primaryScaleFactor,
-      });
-    }
+        case 'right':
+          await moveMyWindow({
+            left:
+              (workArea.right -
+                visibleArea.width -
+                drawerSize -
+                startPosition) *
+              primaryScaleFactor,
+          });
+          break;
 
-    if (offBoundsDirection !== 'undefined' && offBoundsDirection === 'bottom') {
-      await moveMyWindow({
-        top:
-          (workArea.bottom - visibleArea.height - startPosition) *
-          primaryScaleFactor,
-      });
-    }
-  } else {
-    const horizontalHeight = getHorizontalToolbarHeight();
-    const drawerHeight = horizontalHeight / scaleFactor;
+        case 'bottom':
+          await moveMyWindow({
+            top:
+              (workArea.bottom - visibleArea.height - startPosition) *
+              primaryScaleFactor,
+          });
+          break;
 
-    if (offBoundsDirection !== 'undefined' && offBoundsDirection === 'left') {
-      await moveMyWindow({
-        left: (workArea.left + startPosition) * primaryScaleFactor,
-      });
-    }
+        default:
+          break;
+      }
+    } else {
+      const horizontalHeight = getHorizontalToolbarHeight();
+      const drawerHeight = horizontalHeight / scaleFactor;
 
-    if (offBoundsDirection !== 'undefined' && offBoundsDirection === 'top') {
-      await moveMyWindow({
-        top: (workArea.top + startPosition - drawerHeight) * primaryScaleFactor,
-      });
-    }
+      switch (Object.keys(offset)[0]) {
+        case 'left':
+          await moveMyWindow({
+            left: (workArea.left + startPosition) * primaryScaleFactor,
+          });
+          break;
 
-    if (offBoundsDirection !== 'undefined' && offBoundsDirection === 'right') {
-      await moveMyWindow({
-        left:
-          (workArea.left + workArea.width - visibleArea.width - startPosition) *
-          primaryScaleFactor,
-      });
-    }
+        case 'top':
+          await moveMyWindow({
+            top:
+              (workArea.top + startPosition - drawerHeight) *
+              primaryScaleFactor,
+          });
+          break;
 
-    if (offBoundsDirection !== 'undefined' && offBoundsDirection === 'bottom') {
-      await moveMyWindow({
-        top:
-          (workArea.top +
-            workArea.height -
-            visibleArea.height -
-            drawerHeight -
-            startPosition) *
-          primaryScaleFactor,
-      });
+        case 'right':
+          await moveMyWindow({
+            left:
+              (workArea.left +
+                workArea.width -
+                visibleArea.width -
+                startPosition) *
+              primaryScaleFactor,
+          });
+          break;
+
+        case 'bottom':
+          await moveMyWindow({
+            top:
+              (workArea.top +
+                workArea.height -
+                visibleArea.height -
+                drawerHeight -
+                startPosition) *
+              primaryScaleFactor,
+          });
+          break;
+
+        default:
+          break;
+      }
     }
-  }
+  });
+
+  windowRefresh();
 }
 
 async function resetWindow() {
