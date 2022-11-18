@@ -5,12 +5,18 @@
   "main": "index.js",
   "scripts": {
     "start": "live-server --port=8080",
+    "format": "prettier --write \"js/**/*.js\"",
+    "format-check": "prettier --check \"js/**/*.js\"",
+    "lint": "eslint \"js/**/*.js\" --quiet",
     "build": "sass --style=compressed ./scss/app.scss ./scss/app.css && echo Done"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "eslint": "^8.27.0",
+    "eslint-config-prettier": "^8.5.0",
     "live-server": "^1.2.2",
+    "prettier": "^2.7.1",
     "sass": "^1.52.1"
   },
   "dependencies": {
