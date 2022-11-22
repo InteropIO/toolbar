@@ -363,7 +363,7 @@ html {
       }
 
       .dropdown-menu {
-        transition: none;
+        background-color: rgba(var(--t42-bg-light), 0.95);
       }
     }
 
@@ -389,7 +389,7 @@ html {
       }
 
       .dropdown-menu {
-        top: 100%;
+        top: 35px;
         right: 0;
         left: auto;
       }

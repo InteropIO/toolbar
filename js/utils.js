@@ -12,7 +12,7 @@ import {
   getMonitorInfo,
   notificationEnabledObs,
   moveMyWindow,
-  configureMyWindow,
+  // configureMyWindow,
   // resizeWindowVisibleArea,
   minimize,
   isMinimizeAllowed,
@@ -24,7 +24,7 @@ import {
   getPrimaryScaleFactor,
   windowCenter,
   windowRefresh,
-  getLogicalWindowBounds,
+  // getLogicalWindowBounds,
   getPhysicalWindowBounds,
 } from './glue-related.js';
 import {
@@ -598,7 +598,9 @@ async function handleAppRowsChange() {
         });
       }
 
-      windowRefresh();
+      console.log('sent setting:', isVertical);
+
+      setWindowSize();
     }
   });
 }
@@ -747,9 +749,10 @@ function handleOrientationChange() {
     await repositionOnOrientationChange(isVertical);
     // setWindowMoveArea();
 
-    setTimeout(() => {
-      windowRefresh();
-    }, 250);
+    setWindowSize();
+    // setTimeout(() => {
+    //   windowRefresh();
+    // }, 250);
   });
 }
 

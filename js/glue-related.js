@@ -438,9 +438,9 @@ async function getWindowWorkArea() {
   };
 }
 
-function getLogicalWindowBounds() {
-  return glue.windows.my().bounds;
-}
+// function getLogicalWindowBounds() {
+//   return glue.windows.my().bounds;
+// }
 
 async function getPhysicalWindowBounds() {
   await gluePromise;
@@ -468,11 +468,11 @@ async function minimize() {
   glue.windows.my().minimize();
 }
 
-async function configureMyWindow(config) {
-  await gluePromise;
-  const win = glue.windows.my();
-  await win.configure(config);
-}
+// async function configureMyWindow(config) {
+//   await gluePromise;
+//   const win = glue.windows.my();
+//   await win.configure(config);
+// }
 
 async function isMinimizeAllowed() {
   await gluePromise;
@@ -627,12 +627,12 @@ export {
   // resizeWindowVisibleArea,
   openWindow,
   moveMyWindow,
-  configureMyWindow,
+  // configureMyWindow,
   minimize,
   isMinimizeAllowed,
   raiseNotification,
   getMonitorInfo,
-  getLogicalWindowBounds,
+  // getLogicalWindowBounds,
   getPhysicalWindowBounds,
   getSID,
   getEnvData,
