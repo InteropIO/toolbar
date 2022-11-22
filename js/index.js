@@ -21,11 +21,7 @@ import {
 } from './layouts.js';
 import * as glueModule from './glue-related.js';
 import * as utils from './utils.js';
-import {
-  // initVisibleArea,
-  // handleWidthChange,
-  handleDropDownClicks,
-} from './visible-area.js';
+import { handleDropDownClicks } from './visible-area.js';
 import {
   clientHTMLTemplate,
   searchClients,
@@ -54,8 +50,6 @@ async function init() {
   await glueModule.getPrefs();
   glueModule.hideLoader();
 
-  // initVisibleArea();
-
   observeAppElement();
 
   console.log('window loaded');
@@ -68,7 +62,6 @@ async function init() {
   printNotificationButton();
   printInitialToastState();
 
-  // handleWidthChange();
   handleAppClick();
   handleSearchChange();
   handleLayoutClick();
@@ -174,7 +167,6 @@ function printApps() {
         hasSearch: search.trim().length > 1,
       });
 
-      // apps.forEach(app => newResultsHTML += applicationHTMLTemplate(app, {favoriteBtn: true}));
       q('#search-results').innerHTML = newResultsHTML || noApplicationsHTML;
       updateFavoriteApps();
     });
@@ -281,7 +273,6 @@ function printRunningApps() {
 function printLayouts() {
   filteredLayouts.subscribe((layouts) => {
     let newLayoutsHTML = '';
-    // console.log(layouts);
 
     if (layouts.length > 0) {
       layouts.forEach(
