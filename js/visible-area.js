@@ -1,72 +1,72 @@
 import * as glueModule from './glue-related.js';
-import { setWindowVisibleArea } from './utils.js';
+// import { setWindowVisibleArea } from './utils.js';
 
 let topMenuVisibleObs = new rxjs.BehaviorSubject(false);
 let layoutDropDownVisibleObs = new rxjs.BehaviorSubject(false);
-let layoutOpenedTimeout;
+// let layoutOpenedTimeout;
 
-function initVisibleArea() {
-  let appBoundsObs = new rxjs.BehaviorSubject({
-    width: Math.round(q('.app').offsetWidth),
-    height: Math.round(q('.app').offsetHeight),
-    left: 0,
-    top: 0,
-  });
-  window.appBoundsObs = appBoundsObs;
+// function initVisibleArea() {
+//   let appBoundsObs = new rxjs.BehaviorSubject({
+//     width: Math.round(q('.app').offsetWidth),
+//     height: Math.round(q('.app').offsetHeight),
+//     left: 0,
+//     top: 0,
+//   });
+//   window.appBoundsObs = appBoundsObs;
 
-  q('.layouts-nav').addEventListener('mouseenter', (e) => {
-    if (
-      e.target.matches &&
-      e.target.matches('.horizontal .layouts-nav, .horizontal .layouts-nav *')
-    ) {
-      layoutOpenedTimeout = setTimeout(() => {
-        layoutDropDownVisibleObs.next(true);
-      }, 500);
-    }
-  });
+//   q('.layouts-nav').addEventListener('mouseenter', (e) => {
+//     if (
+//       e.target.matches &&
+//       e.target.matches('.horizontal .layouts-nav, .horizontal .layouts-nav *')
+//     ) {
+//       layoutOpenedTimeout = setTimeout(() => {
+//         layoutDropDownVisibleObs.next(true);
+//       }, 500);
+//     }
+//   });
 
-  q('.layouts-nav').addEventListener('mouseleave', (e) => {
-    if (
-      e.target.matches &&
-      e.target.matches('.horizontal .layouts-nav, .horizontal .layouts-nav *')
-    ) {
-      layoutDropDownVisibleObs.next(false);
+//   q('.layouts-nav').addEventListener('mouseleave', (e) => {
+//     if (
+//       e.target.matches &&
+//       e.target.matches('.horizontal .layouts-nav, .horizontal .layouts-nav *')
+//     ) {
+//       layoutDropDownVisibleObs.next(false);
 
-      if (layoutOpenedTimeout) {
-        clearInterval(layoutOpenedTimeout);
-      }
-    }
-  });
+//       if (layoutOpenedTimeout) {
+//         clearInterval(layoutOpenedTimeout);
+//       }
+//     }
+//   });
 
-  glueModule.boundsObs
-    .pipe(rxjs.operators.filter((bounds) => bounds))
-    .subscribe((windowBounds) => {
-      glueModule.getMonitorInfo().then((monitors) => {
-        const launcherBounds = q('.viewport').getBoundingClientRect();
-        let viewPortBounds = {
-          left: windowBounds.left + launcherBounds.left,
-          top: windowBounds.top + launcherBounds.top,
-          height: launcherBounds.height,
-          width: launcherBounds.width,
-        };
-        let currentMonitor = getMonitor(viewPortBounds, monitors);
+//   glueModule.boundsObs
+//     .pipe(rxjs.operators.filter((bounds) => bounds))
+//     .subscribe((windowBounds) => {
+//       glueModule.getMonitorInfo().then((monitors) => {
+//         const launcherBounds = q('.viewport').getBoundingClientRect();
+//         let viewPortBounds = {
+//           left: windowBounds.left + launcherBounds.left,
+//           top: windowBounds.top + launcherBounds.top,
+//           height: launcherBounds.height,
+//           width: launcherBounds.width,
+//         };
+//         let currentMonitor = getMonitor(viewPortBounds, monitors);
 
-        if (!currentMonitor) {
-          q('.viewport').classList.add('expand');
-          q('.app').classList.add('expand-wrapper');
-          return;
-        }
-      });
-    });
+//         if (!currentMonitor) {
+//           q('.viewport').classList.add('expand');
+//           q('.app').classList.add('expand-wrapper');
+//           return;
+//         }
+//       });
+//     });
 
-  appBoundsObs
-    .pipe(
-      rxjs.operators.combineLatest(topMenuVisibleObs, layoutDropDownVisibleObs)
-    )
-    .subscribe(([appBounds, topMenuVisible, layoutDropDownVisible]) => {
-      setWindowVisibleArea(topMenuVisible, layoutDropDownVisible);
-    });
-}
+//   appBoundsObs
+//     .pipe(
+//       rxjs.operators.combineLatest(topMenuVisibleObs, layoutDropDownVisibleObs)
+//     )
+//     .subscribe(([appBounds, topMenuVisible, layoutDropDownVisible]) => {
+//       setWindowVisibleArea(topMenuVisible, layoutDropDownVisible);
+//     });
+// }
 
 function handleDropDownClicks() {
   document.addEventListener('click', (e) => {
@@ -88,13 +88,13 @@ function handleDropDownClicks() {
   });
 }
 
-function handleWidthChange() {
-  const appBoundsObserver = new ResizeObserver((elements) => {
-    appBoundsObs.next(true);
-  });
+// function handleWidthChange() {
+//   const appBoundsObserver = new ResizeObserver((elements) => {
+//     appBoundsObs.next(true);
+//   });
 
-  appBoundsObserver.observe(q('.app'));
-}
+//   appBoundsObserver.observe(q('.app'));
+// }
 
 function getMonitor(bounds, displays) {
   const monitorsSortedByOverlap = displays
@@ -142,8 +142,8 @@ function calculateTotalOverlap(r1, r2) {
 }
 
 export {
-  initVisibleArea,
-  handleWidthChange,
+  // initVisibleArea,
+  // handleWidthChange,
   handleDropDownClicks,
   getMonitor,
   layoutDropDownVisibleObs,

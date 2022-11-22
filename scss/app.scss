@@ -10,6 +10,7 @@ html {
     overflow: hidden;
     display: flex;
     justify-content: flex-start;
+    background-color: transparent;
   }
 
   .loaded {
@@ -58,6 +59,7 @@ html {
     width: 3.75rem;
     height: 3rem;
     left: 0;
+    -webkit-app-region: drag;
   }
 
   .toggle-content {

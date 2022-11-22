@@ -3,10 +3,10 @@ import {
   setOrientation,
   setWindowSize,
   setWindowPosition,
-  setWindowMoveArea,
+  // setWindowMoveArea,
   setDrawerOpenClasses,
   setDrawerOpenDirection,
-  closeAllMenus,
+  // closeAllMenus,
 } from './utils.js';
 
 console.time('Glue');
@@ -203,7 +203,7 @@ async function trackWindowMove() {
 
   glue.windows.my().onBoundsChanged(async () => {
     boundsObs.next(glue.windows.my().bounds);
-    closeAllMenus();
+    // closeAllMenus();
     setDrawerOpenDirection();
     await setDrawerOpenClasses();
   });
@@ -371,20 +371,20 @@ async function shutdown() {
   });
 }
 
-async function resizeWindowVisibleArea(visibleAreas) {
-  await gluePromise;
+// async function resizeWindowVisibleArea(visibleAreas) {
+//   await gluePromise;
 
-  return window.glue.agm
-    .invoke('T42.Wnd.Execute', {
-      command: 'updateVisibleAreas',
-      windowId: glue.windows.my().id,
-      options: {
-        areas: visibleAreas,
-      },
-    })
-    .then(() => {})
-    .catch(() => {}); // TODO
-}
+//   return window.glue.agm
+//     .invoke('T42.Wnd.Execute', {
+//       command: 'updateVisibleAreas',
+//       windowId: glue.windows.my().id,
+//       options: {
+//         areas: visibleAreas,
+//       },
+//     })
+//     .then(() => {})
+//     .catch(() => {}); // TODO
+// }
 
 async function changeTheme(themeName) {
   glue.themes.select(themeName);
@@ -575,7 +575,7 @@ async function getPrefs() {
   setDrawerOpenDirection();
   await setDrawerOpenClasses();
   await setWindowPosition();
-  setWindowMoveArea();
+  // setWindowMoveArea();
 
   glue.prefs.subscribe((prefs) => {
     setOrientation();
@@ -624,7 +624,7 @@ export {
   openWorkspace,
   registerHotkey,
   shutdown,
-  resizeWindowVisibleArea,
+  // resizeWindowVisibleArea,
   openWindow,
   moveMyWindow,
   configureMyWindow,

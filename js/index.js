@@ -22,8 +22,8 @@ import {
 import * as glueModule from './glue-related.js';
 import * as utils from './utils.js';
 import {
-  initVisibleArea,
-  handleWidthChange,
+  // initVisibleArea,
+  // handleWidthChange,
   handleDropDownClicks,
 } from './visible-area.js';
 import {
@@ -54,7 +54,7 @@ async function init() {
   await glueModule.getPrefs();
   glueModule.hideLoader();
 
-  initVisibleArea();
+  // initVisibleArea();
 
   observeAppElement();
 
@@ -68,7 +68,7 @@ async function init() {
   printNotificationButton();
   printInitialToastState();
 
-  handleWidthChange();
+  // handleWidthChange();
   handleAppClick();
   handleSearchChange();
   handleLayoutClick();

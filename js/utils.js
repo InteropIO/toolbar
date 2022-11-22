@@ -13,7 +13,7 @@ import {
   notificationEnabledObs,
   moveMyWindow,
   configureMyWindow,
-  resizeWindowVisibleArea,
+  // resizeWindowVisibleArea,
   minimize,
   isMinimizeAllowed,
   checkNotificationsConfigure,
@@ -194,9 +194,9 @@ function handleTopMenuClicks() {
         q('.app').style.maxHeight = `${viewPortHeight}px`;
       }
 
-      setTimeout(() => {
-        setWindowVisibleArea();
-      }, 500);
+      // setTimeout(() => {
+      //   setWindowVisibleArea();
+      // }, 500);
     } else if (e.target.matches('#fav-apps .nav-item, #fav-apps .nav-item *')) {
       //start or focus an app from the favorites list
       let topElement = e.path.find(
@@ -629,35 +629,35 @@ async function setWindowSize() {
   }
 }
 
-function setWindowVisibleArea(topMenuVisible, layoutDropDownVisible) {
-  const isVertical = getSetting('vertical');
-  const visibleAreas = [];
+// function setWindowVisibleArea(topMenuVisible, layoutDropDownVisible) {
+//   const isVertical = getSetting('vertical');
+//   const visibleAreas = [];
 
-  visibleAreas.push(buildVisibleArea(q('.app')));
+//   visibleAreas.push(buildVisibleArea(q('.app')));
 
-  if (!isVertical) {
-    if (topMenuVisible) {
-      visibleAreas.push(buildVisibleArea(q('#menu-top')));
-    }
+//   if (!isVertical) {
+//     if (topMenuVisible) {
+//       visibleAreas.push(buildVisibleArea(q('#menu-top')));
+//     }
 
-    if (layoutDropDownVisible) {
-      visibleAreas.push(buildVisibleArea(q('.layout-menu-tool')));
-    }
-  }
+//     if (layoutDropDownVisible) {
+//       visibleAreas.push(buildVisibleArea(q('.layout-menu-tool')));
+//     }
+//   }
 
-  return resizeWindowVisibleArea(visibleAreas);
-}
+//   return resizeWindowVisibleArea(visibleAreas);
+// }
 
-function buildVisibleArea(element) {
-  const { top, left, width, height } = element.getBoundingClientRect();
+// function buildVisibleArea(element) {
+//   const { top, left, width, height } = element.getBoundingClientRect();
 
-  return {
-    top: Math.round(top),
-    left: Math.round(left),
-    width: Math.round(width),
-    height: Math.round(height),
-  };
-}
+//   return {
+//     top: Math.round(top),
+//     left: Math.round(left),
+//     width: Math.round(width),
+//     height: Math.round(height),
+//   };
+// }
 
 function setDrawerOpenDirection() {
   const app = q('.app');
@@ -745,7 +745,7 @@ function handleOrientationChange() {
     setSetting({ vertical: isVertical });
 
     await repositionOnOrientationChange(isVertical);
-    setWindowMoveArea();
+    // setWindowMoveArea();
 
     setTimeout(() => {
       windowRefresh();
@@ -780,20 +780,20 @@ async function repositionOnOrientationChange(vertical) {
   }
 }
 
-function closeAllMenus() {
-  const appDrawer = q('.app');
-  const openedMenus = qa('.toggle-content:not(.hide)');
-  const dropdownMenus = qa('.dropdown-menu');
-  const activeButtons = qa('.nav-item.is-active');
+// function closeAllMenus() {
+//   const appDrawer = q('.app');
+//   const openedMenus = qa('.toggle-content:not(.hide)');
+//   const dropdownMenus = qa('.dropdown-menu');
+//   const activeButtons = qa('.nav-item.is-active');
 
-  openedMenus.forEach((el) => el.classList.add('hide'));
-  activeButtons.forEach((el) => el.classList.remove('is-active'));
-  dropdownMenus.forEach((el) => el.classList.remove('show'));
-  topMenuVisibleObs.next(false);
-  appDrawer.classList.contains('has-drawer')
-    ? appDrawer.classList.remove('has-drawer')
-    : null;
-}
+//   openedMenus.forEach((el) => el.classList.add('hide'));
+//   activeButtons.forEach((el) => el.classList.remove('is-active'));
+//   dropdownMenus.forEach((el) => el.classList.remove('show'));
+//   topMenuVisibleObs.next(false);
+//   appDrawer.classList.contains('has-drawer')
+//     ? appDrawer.classList.remove('has-drawer')
+//     : null;
+// }
 
 // Helper function to get a chosen HTML elements' visible area in the window bounds
 async function getVisibleArea(element) {
@@ -966,23 +966,23 @@ async function resetWindow() {
   windowRefresh();
 }
 
-function setWindowMoveArea() {
-  setTimeout(async () => {
-    const dragAreaRect = q('.draggable').getBoundingClientRect();
-    const windowBounds = await getLogicalWindowBounds();
+// function setWindowMoveArea() {
+//   setTimeout(async () => {
+//     const dragAreaRect = q('.draggable').getBoundingClientRect();
+//     const windowBounds = await getLogicalWindowBounds();
 
-    await configureMyWindow({
-      moveAreaTopMargin: `${Math.round(dragAreaRect.left)}, ${Math.round(
-        dragAreaRect.top
-      )}, ${Math.round(
-        windowBounds.width - (dragAreaRect.left + dragAreaRect.width)
-      )}, 0`,
-      moveAreaThickness: `0, ${Math.round(
-        dragAreaRect.top + dragAreaRect.height
-      )}, 0, 0`,
-    });
-  }, 500);
-}
+//     await configureMyWindow({
+//       moveAreaTopMargin: `${Math.round(dragAreaRect.left)}, ${Math.round(
+//         dragAreaRect.top
+//       )}, ${Math.round(
+//         windowBounds.width - (dragAreaRect.left + dragAreaRect.width)
+//       )}, 0`,
+//       moveAreaThickness: `0, ${Math.round(
+//         dragAreaRect.top + dragAreaRect.height
+//       )}, 0, 0`,
+//     });
+//   }, 500);
+// }
 
 function elementObserver(element, config, callback) {
   const elementToObserve = element;
@@ -1001,7 +1001,7 @@ export {
   handleNotificationClick,
   handleModalClose,
   handleMouseHover,
-  setWindowVisibleArea,
+  // setWindowVisibleArea,
   focusInputAfterWindowRecover,
   windowMargin,
   startTutorial,
@@ -1011,9 +1011,9 @@ export {
   // openDrawer,
   setWindowSize,
   setWindowPosition,
-  setWindowMoveArea,
+  // setWindowMoveArea,
   setDrawerOpenClasses,
   setDrawerOpenDirection,
-  closeAllMenus,
+  // closeAllMenus,
   elementObserver,
 };
