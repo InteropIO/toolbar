@@ -13,16 +13,9 @@ html {
     background-color: transparent;
   }
 
-  .loaded {
-    .app {
-      opacity: 1;
-    }
-  }
-
   .app {
     position: relative;
     height: 100%;
-    opacity: 0;
 
     &.vertical {
       display: inline-flex;
@@ -414,7 +407,6 @@ html {
       .nav.nav-tabs {
         .nav-link {
           @include non-underline();
-          // height: 3rem;
         }
       }
 

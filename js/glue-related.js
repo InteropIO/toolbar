@@ -8,6 +8,7 @@ import {
 } from './utils.js';
 
 console.time('Glue');
+
 var gluePromise = new Promise(async (res, rej) => {
   window.addEventListener('load', async () => {
     let glue = await Glue({
@@ -61,17 +62,6 @@ gluePromise.then((glue) => {
   trackNotificationCount();
   trackWindowZoom();
 });
-
-async function showLoader() {
-  await gluePromise;
-  glue.windows.my().showLoader();
-}
-
-async function hideLoader() {
-  await gluePromise;
-  glue.windows.my().hideLoader();
-  document.body.classList.add('loaded');
-}
 
 function trackWindowZoom() {
   applyWindowZoom();
@@ -566,8 +556,6 @@ export {
   glueVersion,
   glueInfo,
   glueAppsObs,
-  showLoader,
-  hideLoader,
   layoutsObs,
   boundsObs,
   startApp,

@@ -21,7 +21,6 @@ import {
 } from './layouts.js';
 import * as glueModule from './glue-related.js';
 import * as utils from './utils.js';
-import { handleDropDownClicks } from './visible-area.js';
 import {
   clientHTMLTemplate,
   searchClients,
@@ -40,15 +39,12 @@ let {
 
 let refreshAppsObs = new rxjs.BehaviorSubject(true);
 
-glueModule.showLoader();
-
 document.addEventListener('DOMContentLoaded', () => {
   init();
 });
 
 async function init() {
   await glueModule.getPrefs();
-  glueModule.hideLoader();
 
   observeAppElement();
 
@@ -67,7 +63,7 @@ async function init() {
   handleLayoutClick();
   handleLayoutSave();
 
-  handleDropDownClicks();
+  utils.handleDropDownClicks();
   handleClientAndInstrumentClicks();
 
   utils.handleEvents();

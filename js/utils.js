@@ -38,8 +38,6 @@ import {
   profile_handleFeedbackClick,
 } from './profile.js';
 
-import { topMenuVisibleObs } from './visible-area.js';
-
 import handleKeyboardNavigation from './keyboard-navigation.js';
 
 const windowMargin = 50;
@@ -356,6 +354,22 @@ async function handleMouseHover() {
   });
 }
 
+function handleDropDownClicks() {
+  document.addEventListener('click', (e) => {
+    if (e.target.matches('[dropdown-button-id], [dropdown-button-id] *')) {
+      const btnElement = e.path.find((e) =>
+        e.getAttribute('dropdown-button-id')
+      );
+      const menuId = btnElement.getAttribute('dropdown-button-id');
+      const menu = q(`[dropdown-id="${menuId}"]`);
+
+      menu.classList.toggle('show');
+    } else {
+      qa(`[dropdown-id].show`).forEach((e) => e.classList.remove('show'));
+    }
+  });
+}
+
 async function handleNotificationClick() {
   const enableNotifications = getSetting('enableNotifications');
 
@@ -573,6 +587,8 @@ async function handleAppRowsChange() {
 
       setSetting({ toolbarAppRows: selectedLength });
 
+      setWindowSize();
+
       if (!isVertical) {
         qa('.toggle-content').forEach((toggle) => {
           toggle.classList.add('hide');
@@ -583,8 +599,6 @@ async function handleAppRowsChange() {
           top: currentToolbarHeight - newToolbarHeight,
         });
       }
-
-      setWindowSize();
     }
   });
 }
@@ -651,6 +665,11 @@ async function setDrawerOpenClasses() {
   const app = q('.app');
   const isVertical = getSetting('vertical');
   const horizontalHeight = getHorizontalToolbarHeight();
+  const drawerOpen = app.classList.contains('has-drawer');
+
+  if (drawerOpen) {
+    return;
+  }
 
   if (isVertical) {
     if (visibleArea.right + toolbarDrawerSize.vertical > workArea.right) {
@@ -921,6 +940,7 @@ export {
   handleNotificationClick,
   handleModalClose,
   handleMouseHover,
+  handleDropDownClicks,
   focusInputAfterWindowRecover,
   windowMargin,
   startTutorial,
