@@ -313,39 +313,42 @@ async function handleMouseHover() {
 
     if (closeTimeout) {
       clearTimeout(closeTimeout);
+      closeTimeout = undefined;
     }
   });
 
-  q('.app').addEventListener('mouseleave', async (e) => {
-    let { offsetWidth: viewPortWidth, offsetHeight: viewPortHeight } =
-      q('.viewport');
-    let margin = windowMargin;
-
-    if (
-      e.x < viewPortWidth + margin &&
-      e.x > margin &&
-      e.y < viewPortHeight + margin - 6 &&
-      e.y > margin
-    ) {
-      console.warn('fake leave');
-    }
-
-    if (
-      qa('.toggle-content:not(.hide)').length > 0 ||
-      qa('.dropdown-menu.show').length > 0
-    ) {
-      return;
-    }
-
-    let viewPortBounds = q('.viewport').getBoundingClientRect();
-    let outOfMonitor = isOutOfMonitor(viewPortBounds);
-
-    if (await outOfMonitor) {
-      console.warn('window is positioned outside of monitor. will not shrink');
-      return;
-    }
-
+  q('.app').addEventListener('mouseleave', (e) => {
     closeTimeout = setTimeout(async () => {
+      let { offsetWidth: viewPortWidth, offsetHeight: viewPortHeight } =
+        q('.viewport');
+      let margin = windowMargin;
+
+      if (
+        e.x < viewPortWidth + margin &&
+        e.x > margin &&
+        e.y < viewPortHeight + margin - 6 &&
+        e.y > margin
+      ) {
+        console.warn('fake leave');
+      }
+
+      if (
+        qa('.toggle-content:not(.hide)').length > 0 ||
+        qa('.dropdown-menu.show').length > 0
+      ) {
+        return;
+      }
+
+      let viewPortBounds = q('.viewport').getBoundingClientRect();
+      let outOfMonitor = isOutOfMonitor(viewPortBounds);
+
+      if (await outOfMonitor) {
+        console.warn(
+          'window is positioned outside of monitor. will not shrink'
+        );
+        return;
+      }
+
       q('.viewport').classList.remove('expand');
       q('.app').classList.remove('expand-wrapper');
       qa('.toggle-content').forEach((e) => e.classList.add('hide'));

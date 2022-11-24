@@ -200,7 +200,6 @@ async function trackWindowMove() {
 
   glue.windows.my().onBoundsChanged(async () => {
     boundsObs.next(glue.windows.my().bounds);
-    // closeAllMenus();
     setDrawerOpenDirection();
     await setDrawerOpenClasses();
   });
@@ -547,7 +546,6 @@ async function getPrefs() {
   setDrawerOpenDirection();
   await setDrawerOpenClasses();
   await setWindowPosition();
-  // setWindowMoveArea();
 
   glue.prefs.subscribe((prefs) => {
     setOrientation();
