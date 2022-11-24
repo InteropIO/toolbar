@@ -23,8 +23,7 @@
     <div id="applicationLauncher" class="viewport">
       <ul class="nav nav-tabs flex-column" column>
         <li class="viewport-header">
-          <div class="draggable"></div>
-          <div class="logo">
+          <div class="logo draggable">
             <img src="./assets/logo.svg" width="120" />
           </div>
           <div class="menu">
@@ -64,7 +63,6 @@
           </ul>
         </li>
         <li class="favorite position-relative">
-          <!-- <span class="pl-2">Favorite apps</span> -->
           <i class="icon-star-full"></i>
         </li>
         <li class="fav-app-nav">
@@ -94,7 +92,7 @@
 
     <div class="toggle-content hide" id="app-content" menu-id="apps">
       <div class="app-content-header p-2">
-        <h5 class="d-flex justify-content-between mb-2">
+        <h5 class="draggable d-flex justify-content-between mb-2">
           Applications
           <span class="icon-arrow-up-down close-drawer"></span>
         </h5>
@@ -105,8 +103,8 @@
 
     <div class="toggle-content hide" id="layout-load" menu-id="layout-load">
       <div class="p-2">
-        <h5 class="d-flex justify-content-between mb-2">
-          Load layouts
+        <h5 class="draggable d-flex justify-content-between mb-2">
+          Load Layouts
           <span class="icon-arrow-up-down close-drawer"></span>
         </h5>
         <input class="form-control input-control" id="layout-search" autofocus placeholder="Search Layout..." />
@@ -116,8 +114,8 @@
 
     <div class="toggle-content hide" id="layout-content" menu-id="layout-save">
       <div class="p-2">
-        <h5 class="d-flex justify-content-between mb-2">
-          Save layouts
+        <h5 class="draggable d-flex justify-content-between mb-2">
+          Save Layouts
           <span class="icon-arrow-up-down close-drawer"></span>
         </h5>
         <div class="input-group">
@@ -135,7 +133,7 @@
 
     <div class="toggle-content hide" id="settings-content" menu-id="settings">
       <div class="settings-general p-2 border-bottom border-secondary">
-        <h5 class="d-flex justify-content-between">
+        <h5 class="draggable d-flex justify-content-between">
           General Settings
           <span class="icon-arrow-up-down close-drawer"></span>
         </h5>
@@ -229,7 +227,7 @@
 
     <div class="toggle-content hide" id="about-content" menu-id="about">
       <div class="p-2">
-        <h5 class="d-flex justify-content-between mb-2">
+        <h5 class="draggable d-flex justify-content-between mb-2">
           About
           <span class="icon-arrow-up-down close-drawer"></span>
         </h5>
@@ -275,7 +273,7 @@
 
     <div class="toggle-content hide" id="profile-content" menu-id="profile">
       <div class="p-2 border-bottom border-secondary">
-        <h5 class="d-flex justify-content-between">
+        <h5 class="draggable d-flex justify-content-between">
           Profile
           <span class="icon-arrow-up-down close-drawer"></span>
         </h5>

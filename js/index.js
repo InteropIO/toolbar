@@ -45,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function init() {
   await glueModule.getPrefs();
+  finishLoading();
 
   observeAppElement();
 
@@ -74,6 +75,10 @@ async function init() {
   populateSID();
   showFeedbackPanel();
   showProfilePanel();
+}
+
+function finishLoading() {
+  document.body.classList.add('loaded');
 }
 
 function observeAppElement() {
