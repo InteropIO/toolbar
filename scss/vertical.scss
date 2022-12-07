@@ -12,6 +12,12 @@
     }
   }
 
+  .menu {
+    max-width: 0;
+    opacity: 0;
+    @include transition("max-width, opacity", 0);
+  }
+
   .viewport-header {
     overflow: hidden;
   }
@@ -29,7 +35,8 @@
     }
 
     .menu {
-      display: flex;
+      max-width: 100%;
+      opacity: 1;
     }
 
     .text-animation {
