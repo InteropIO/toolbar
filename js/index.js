@@ -22,11 +22,6 @@ import {
 import * as glueModule from './glue-related.js';
 import * as utils from './utils.js';
 import {
-  initVisibleArea,
-  handleWidthChange,
-  handleDropDownClicks,
-} from './visible-area.js';
-import {
   clientHTMLTemplate,
   searchClients,
   searchInstruments,
@@ -44,17 +39,13 @@ let {
 
 let refreshAppsObs = new rxjs.BehaviorSubject(true);
 
-glueModule.showLoader();
-
 document.addEventListener('DOMContentLoaded', () => {
   init();
 });
 
 async function init() {
   await glueModule.getPrefs();
-  glueModule.hideLoader();
-
-  initVisibleArea();
+  finishLoading();
 
   observeAppElement();
 
@@ -68,13 +59,12 @@ async function init() {
   printNotificationButton();
   printInitialToastState();
 
-  handleWidthChange();
   handleAppClick();
   handleSearchChange();
   handleLayoutClick();
   handleLayoutSave();
 
-  handleDropDownClicks();
+  utils.handleDropDownClicks();
   handleClientAndInstrumentClicks();
 
   utils.handleEvents();
@@ -85,6 +75,10 @@ async function init() {
   populateSID();
   showFeedbackPanel();
   showProfilePanel();
+}
+
+function finishLoading() {
+  document.body.classList.add('loaded');
 }
 
 function observeAppElement() {
@@ -174,7 +168,6 @@ function printApps() {
         hasSearch: search.trim().length > 1,
       });
 
-      // apps.forEach(app => newResultsHTML += applicationHTMLTemplate(app, {favoriteBtn: true}));
       q('#search-results').innerHTML = newResultsHTML || noApplicationsHTML;
       updateFavoriteApps();
     });
@@ -281,7 +274,6 @@ function printRunningApps() {
 function printLayouts() {
   filteredLayouts.subscribe((layouts) => {
     let newLayoutsHTML = '';
-    // console.log(layouts);
 
     if (layouts.length > 0) {
       layouts.forEach(

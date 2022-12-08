@@ -12,8 +12,6 @@ import {
   getMonitorInfo,
   notificationEnabledObs,
   moveMyWindow,
-  configureMyWindow,
-  resizeWindowVisibleArea,
   minimize,
   isMinimizeAllowed,
   checkNotificationsConfigure,
@@ -24,7 +22,6 @@ import {
   getPrimaryScaleFactor,
   windowCenter,
   windowRefresh,
-  getLogicalWindowBounds,
   getPhysicalWindowBounds,
 } from './glue-related.js';
 import {
@@ -34,15 +31,12 @@ import {
   setSetting,
   getSetting,
 } from './settings.js';
-// import { searchInputObs } from './applications.js';
 import {
   populateProfileData,
   profile_handleShutdownClick,
   profile_handleRestartClick,
   profile_handleFeedbackClick,
 } from './profile.js';
-
-import { topMenuVisibleObs } from './visible-area.js';
 
 import handleKeyboardNavigation from './keyboard-navigation.js';
 
@@ -193,17 +187,12 @@ function handleTopMenuClicks() {
       } else if (!hasVisibleDrawers && !isVertical) {
         q('.app').style.maxHeight = `${viewPortHeight}px`;
       }
-
-      setTimeout(() => {
-        setWindowVisibleArea();
-      }, 500);
     } else if (e.target.matches('#fav-apps .nav-item, #fav-apps .nav-item *')) {
       //start or focus an app from the favorites list
       let topElement = e.path.find(
         (e) => e.classList && e.classList.contains('nav-item')
       );
       let appName = topElement.getAttribute('app-name');
-      let isActive = topElement.classList.contains('app-active');
 
       startApp(appName);
     }
@@ -218,7 +207,6 @@ function handleCloseDrawerClicks() {
 
       if (menuId) {
         q(`[menu-button-id="${menuId}"]`).click();
-        // q('.expand').classList.remove('expand');
       }
     }
   });
@@ -323,45 +311,62 @@ async function handleMouseHover() {
 
     if (closeTimeout) {
       clearTimeout(closeTimeout);
+      closeTimeout = undefined;
     }
   });
 
-  q('.app').addEventListener('mouseleave', async (e) => {
-    let { offsetWidth: viewPortWidth, offsetHeight: viewPortHeight } =
-      q('.viewport');
-    let margin = windowMargin;
-
-    if (
-      e.x < viewPortWidth + margin &&
-      e.x > margin &&
-      e.y < viewPortHeight + margin - 6 &&
-      e.y > margin
-    ) {
-      console.warn('fake leave');
-    }
-
-    if (
-      qa('.toggle-content:not(.hide)').length > 0 ||
-      qa('.dropdown-menu.show').length > 0
-    ) {
-      return;
-    }
-
-    let viewPortBounds = q('.viewport').getBoundingClientRect();
-    let outOfMonitor = isOutOfMonitor(viewPortBounds);
-
-    if (await outOfMonitor) {
-      console.warn('window is positioned outside of monitor. will not shrink');
-      return;
-    }
-
+  q('.app').addEventListener('mouseleave', (e) => {
     closeTimeout = setTimeout(async () => {
-      // await applyOpenClasses();
+      let { offsetWidth: viewPortWidth, offsetHeight: viewPortHeight } =
+        q('.viewport');
+      let margin = windowMargin;
+
+      if (
+        e.x < viewPortWidth + margin &&
+        e.x > margin &&
+        e.y < viewPortHeight + margin - 6 &&
+        e.y > margin
+      ) {
+        console.warn('fake leave');
+      }
+
+      if (
+        qa('.toggle-content:not(.hide)').length > 0 ||
+        qa('.dropdown-menu.show').length > 0
+      ) {
+        return;
+      }
+
+      let viewPortBounds = q('.viewport').getBoundingClientRect();
+      let outOfMonitor = isOutOfMonitor(viewPortBounds);
+
+      if (await outOfMonitor) {
+        console.warn(
+          'window is positioned outside of monitor. will not shrink'
+        );
+        return;
+      }
+
       q('.viewport').classList.remove('expand');
       q('.app').classList.remove('expand-wrapper');
       qa('.toggle-content').forEach((e) => e.classList.add('hide'));
-      // qa('[dropdown-id].show').forEach(e => e.classList.remove('show'));
     }, 500);
+  });
+}
+
+function handleDropDownClicks() {
+  document.addEventListener('click', (e) => {
+    if (e.target.matches('[dropdown-button-id], [dropdown-button-id] *')) {
+      const btnElement = e.path.find((e) =>
+        e.getAttribute('dropdown-button-id')
+      );
+      const menuId = btnElement.getAttribute('dropdown-button-id');
+      const menu = q(`[dropdown-id="${menuId}"]`);
+
+      menu.classList.toggle('show');
+    } else {
+      qa(`[dropdown-id].show`).forEach((e) => e.classList.remove('show'));
+    }
   });
 }
 
@@ -473,11 +478,6 @@ function getAppIcon(app = {}) {
   }
 }
 
-// function clearSearch() {
-//   searchInputObs.next('');
-//   q('#app-search').value = '';
-// }
-
 function escapeHtml(unsafe) {
   return unsafe
     .replace(/&/g, '&amp;')
@@ -587,6 +587,8 @@ async function handleAppRowsChange() {
 
       setSetting({ toolbarAppRows: selectedLength });
 
+      setWindowSize();
+
       if (!isVertical) {
         qa('.toggle-content').forEach((toggle) => {
           toggle.classList.add('hide');
@@ -597,8 +599,6 @@ async function handleAppRowsChange() {
           top: currentToolbarHeight - newToolbarHeight,
         });
       }
-
-      windowRefresh();
     }
   });
 }
@@ -627,36 +627,6 @@ async function setWindowSize() {
       height: appLancher.offsetHeight + horizontalHeight * 2,
     });
   }
-}
-
-function setWindowVisibleArea(topMenuVisible, layoutDropDownVisible) {
-  const isVertical = getSetting('vertical');
-  const visibleAreas = [];
-
-  visibleAreas.push(buildVisibleArea(q('.app')));
-
-  if (!isVertical) {
-    if (topMenuVisible) {
-      visibleAreas.push(buildVisibleArea(q('#menu-top')));
-    }
-
-    if (layoutDropDownVisible) {
-      visibleAreas.push(buildVisibleArea(q('.layout-menu-tool')));
-    }
-  }
-
-  return resizeWindowVisibleArea(visibleAreas);
-}
-
-function buildVisibleArea(element) {
-  const { top, left, width, height } = element.getBoundingClientRect();
-
-  return {
-    top: Math.round(top),
-    left: Math.round(left),
-    width: Math.round(width),
-    height: Math.round(height),
-  };
 }
 
 function setDrawerOpenDirection() {
@@ -695,6 +665,11 @@ async function setDrawerOpenClasses() {
   const app = q('.app');
   const isVertical = getSetting('vertical');
   const horizontalHeight = getHorizontalToolbarHeight();
+  const drawerOpen = app.classList.contains('has-drawer');
+
+  if (drawerOpen) {
+    return;
+  }
 
   if (isVertical) {
     if (visibleArea.right + toolbarDrawerSize.vertical > workArea.right) {
@@ -745,11 +720,8 @@ function handleOrientationChange() {
     setSetting({ vertical: isVertical });
 
     await repositionOnOrientationChange(isVertical);
-    setWindowMoveArea();
 
-    setTimeout(() => {
-      windowRefresh();
-    }, 250);
+    setWindowSize();
   });
 }
 
@@ -778,21 +750,6 @@ async function repositionOnOrientationChange(vertical) {
         primaryScaleFactor,
     });
   }
-}
-
-function closeAllMenus() {
-  const appDrawer = q('.app');
-  const openedMenus = qa('.toggle-content:not(.hide)');
-  const dropdownMenus = qa('.dropdown-menu');
-  const activeButtons = qa('.nav-item.is-active');
-
-  openedMenus.forEach((el) => el.classList.add('hide'));
-  activeButtons.forEach((el) => el.classList.remove('is-active'));
-  dropdownMenus.forEach((el) => el.classList.remove('show'));
-  topMenuVisibleObs.next(false);
-  appDrawer.classList.contains('has-drawer')
-    ? appDrawer.classList.remove('has-drawer')
-    : null;
 }
 
 // Helper function to get a chosen HTML elements' visible area in the window bounds
@@ -966,24 +923,6 @@ async function resetWindow() {
   windowRefresh();
 }
 
-function setWindowMoveArea() {
-  setTimeout(async () => {
-    const dragAreaRect = q('.draggable').getBoundingClientRect();
-    const windowBounds = await getLogicalWindowBounds();
-
-    await configureMyWindow({
-      moveAreaTopMargin: `${Math.round(dragAreaRect.left)}, ${Math.round(
-        dragAreaRect.top
-      )}, ${Math.round(
-        windowBounds.width - (dragAreaRect.left + dragAreaRect.width)
-      )}, 0`,
-      moveAreaThickness: `0, ${Math.round(
-        dragAreaRect.top + dragAreaRect.height
-      )}, 0, 0`,
-    });
-  }, 500);
-}
-
 function elementObserver(element, config, callback) {
   const elementToObserve = element;
   const observer = new MutationObserver(callback);
@@ -1001,19 +940,15 @@ export {
   handleNotificationClick,
   handleModalClose,
   handleMouseHover,
-  setWindowVisibleArea,
+  handleDropDownClicks,
   focusInputAfterWindowRecover,
   windowMargin,
   startTutorial,
-  // clearSearch,
   escapeHtml,
   getAppIcon,
-  // openDrawer,
   setWindowSize,
   setWindowPosition,
-  setWindowMoveArea,
   setDrawerOpenClasses,
   setDrawerOpenDirection,
-  closeAllMenus,
   elementObserver,
 };

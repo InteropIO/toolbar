@@ -8,8 +8,8 @@
       @include transition("margin-bottom", 50);
 
       .dropdown-menu {
-        top: -135px;
-        // margin-top: 0 !important;
+        top: auto;
+        bottom: 100%;
       }
 
       .layouts-nav {

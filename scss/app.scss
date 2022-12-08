@@ -10,6 +10,7 @@ html {
     overflow: hidden;
     display: flex;
     justify-content: flex-start;
+    background-color: transparent;
   }
 
   .loaded {
@@ -54,10 +55,7 @@ html {
   }
 
   .draggable {
-    position: absolute;
-    width: 3.75rem;
-    height: 3rem;
-    left: 0;
+    -webkit-app-region: drag;
   }
 
   .toggle-content {
@@ -361,7 +359,7 @@ html {
       }
 
       .dropdown-menu {
-        transition: none;
+        background-color: rgba(var(--t42-bg-light), 0.95);
       }
     }
 
@@ -387,7 +385,7 @@ html {
       }
 
       .dropdown-menu {
-        top: 100%;
+        top: 35px;
         right: 0;
         left: auto;
       }
@@ -412,7 +410,6 @@ html {
       .nav.nav-tabs {
         .nav-link {
           @include non-underline();
-          // height: 3rem;
         }
       }
 

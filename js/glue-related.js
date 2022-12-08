@@ -3,13 +3,12 @@ import {
   setOrientation,
   setWindowSize,
   setWindowPosition,
-  setWindowMoveArea,
   setDrawerOpenClasses,
   setDrawerOpenDirection,
-  closeAllMenus,
 } from './utils.js';
 
 console.time('Glue');
+
 var gluePromise = new Promise(async (res, rej) => {
   window.addEventListener('load', async () => {
     let glue = await Glue({
@@ -63,17 +62,6 @@ gluePromise.then((glue) => {
   trackNotificationCount();
   trackWindowZoom();
 });
-
-async function showLoader() {
-  await gluePromise;
-  glue.windows.my().showLoader();
-}
-
-async function hideLoader() {
-  await gluePromise;
-  glue.windows.my().hideLoader();
-  document.body.classList.add('loaded');
-}
 
 function trackWindowZoom() {
   applyWindowZoom();
@@ -150,7 +138,6 @@ function pushAllLayouts() {
 
 function trackWorkspaces() {
   pushWorkspaces();
-  // glue42gd.canvas.subscribeLayoutEvents(pushWorkspaces);
 }
 
 async function pushWorkspaces() {
@@ -203,7 +190,6 @@ async function trackWindowMove() {
 
   glue.windows.my().onBoundsChanged(async () => {
     boundsObs.next(glue.windows.my().bounds);
-    closeAllMenus();
     setDrawerOpenDirection();
     await setDrawerOpenClasses();
   });
@@ -211,9 +197,7 @@ async function trackWindowMove() {
 
 async function trackDisplayChange() {
   glue.displays.onDisplayChanged(async () => {
-    await setWindowSize();
-    await setWindowPosition();
-    setWindowMoveArea();
+    windowRefresh();
   });
 }
 
@@ -373,21 +357,6 @@ async function shutdown() {
   });
 }
 
-async function resizeWindowVisibleArea(visibleAreas) {
-  await gluePromise;
-
-  return window.glue.agm
-    .invoke('T42.Wnd.Execute', {
-      command: 'updateVisibleAreas',
-      windowId: glue.windows.my().id,
-      options: {
-        areas: visibleAreas,
-      },
-    })
-    .then(() => {})
-    .catch(() => {}); // TODO
-}
-
 async function changeTheme(themeName) {
   glue.themes.select(themeName);
 }
@@ -440,10 +409,6 @@ async function getWindowWorkArea() {
   };
 }
 
-function getLogicalWindowBounds() {
-  return glue.windows.my().bounds;
-}
-
 async function getPhysicalWindowBounds() {
   await gluePromise;
   const bounds = glue.windows.my().bounds;
@@ -468,12 +433,6 @@ async function moveMyWindow(bounds) {
 async function minimize() {
   await gluePromise;
   glue.windows.my().minimize();
-}
-
-async function configureMyWindow(config) {
-  await gluePromise;
-  const win = glue.windows.my();
-  await win.configure(config);
 }
 
 async function isMinimizeAllowed() {
@@ -577,7 +536,6 @@ async function getPrefs() {
   setDrawerOpenDirection();
   await setDrawerOpenClasses();
   await setWindowPosition();
-  setWindowMoveArea();
 
   glue.prefs.subscribe((prefs) => {
     setOrientation();
@@ -598,8 +556,6 @@ export {
   glueVersion,
   glueInfo,
   glueAppsObs,
-  showLoader,
-  hideLoader,
   layoutsObs,
   boundsObs,
   startApp,
@@ -626,15 +582,12 @@ export {
   openWorkspace,
   registerHotkey,
   shutdown,
-  resizeWindowVisibleArea,
   openWindow,
   moveMyWindow,
-  configureMyWindow,
   minimize,
   isMinimizeAllowed,
   raiseNotification,
   getMonitorInfo,
-  getLogicalWindowBounds,
   getPhysicalWindowBounds,
   getSID,
   getEnvData,
