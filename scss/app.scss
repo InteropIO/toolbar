@@ -86,6 +86,7 @@ html {
     }
 
     h5 {
+      flex-grow: 1;
       white-space: nowrap;
       user-select: none;
       padding-left: 0.063rem;
@@ -352,7 +353,7 @@ html {
     @include transition("width", 0);
 
     .menu {
-      display: none;
+      display: flex;
 
       .icon-window-minimize {
         font-size: 0.5rem;
@@ -391,8 +392,9 @@ html {
       }
 
       .logo {
-        min-width: 120px;
+        width: 100%;
         margin-left: -3px;
+        overflow: hidden;
       }
     }
 
