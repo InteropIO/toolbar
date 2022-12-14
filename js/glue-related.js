@@ -197,6 +197,7 @@ async function trackWindowMove() {
 
 async function trackDisplayChange() {
   glue.displays.onDisplayChanged(async () => {
+    await setWindowSize();
     windowRefresh();
   });
 }
