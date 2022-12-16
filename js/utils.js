@@ -576,13 +576,16 @@ async function handleAppRowsChange() {
     'length'
   );
 
-  const currentToolbarHeight = getHorizontalToolbarHeight();
+  let currentToolbarHeight = getHorizontalToolbarHeight();
 
   q('.length-select .select_options').addEventListener('click', async (e) => {
     const isVertical = getSetting('vertical');
 
     if (e.target.matches('input.select_input[type="radio"]')) {
       const selectedLength = e.target.getAttribute('length-name');
+      const windowBounds = await getPhysicalWindowBounds();
+      const scaleFactor = await getScaleFactor();
+      const primaryScaleFactor = await getPrimaryScaleFactor();
       const newToolbarHeight = getHorizontalToolbarHeight(selectedLength);
 
       setSetting({ toolbarAppRows: selectedLength });
@@ -596,9 +599,14 @@ async function handleAppRowsChange() {
         app.classList.remove('open-top');
 
         await moveMyWindow({
-          top: currentToolbarHeight - newToolbarHeight,
+          top:
+            ((windowBounds.top + (currentToolbarHeight - newToolbarHeight)) /
+              scaleFactor) *
+            primaryScaleFactor,
         });
       }
+
+      currentToolbarHeight = newToolbarHeight;
     }
   });
 }
