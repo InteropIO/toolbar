@@ -593,11 +593,6 @@ async function handleAppRowsChange() {
       setWindowSize();
 
       if (!isVertical) {
-        qa('.toggle-content').forEach((toggle) => {
-          toggle.classList.add('hide');
-        });
-        app.classList.remove('open-top');
-
         await moveMyWindow({
           top:
             ((windowBounds.top + (currentToolbarHeight - newToolbarHeight)) /
