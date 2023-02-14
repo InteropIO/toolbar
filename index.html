@@ -1,367 +1,464 @@
 <!DOCTYPE html>
 <html class="dark">
+  <head>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="./assets/t42bootstrap.bundle.css"
+    />
+    <link rel="stylesheet" type="text/css" href="scss/app.css" />
+    <title>Glue42 Toolbar</title>
+  </head>
 
-<head>
-  <link rel="stylesheet" type="text/css" href="./assets/t42bootstrap.bundle.css" />
-  <link rel="stylesheet" type="text/css" href="scss/app.css" />
-  <title>Glue42 Toolbar</title>
-</head>
+  <body class="">
+    <script>
+      if (!window.Glue) {
+        console.warn("Glue is not auto imported, will add it as a script");
 
-<body class="">
-  <script>
-    if (!window.Glue) {
-      console.warn("Glue is not auto imported, will add it as a script");
+        let scriptEl = document.createElement("script");
 
-      let scriptEl = document.createElement("script");
+        scriptEl.setAttribute("src", "assets/desktop.umd.min.js");
+        document.body.appendChild(scriptEl);
+      }
+    </script>
 
-      scriptEl.setAttribute("src", "assets/desktop.umd.min.js");
-      document.body.appendChild(scriptEl);
-    }
-  </script>
+    <div class="app">
+      <div id="applicationLauncher" class="viewport">
+        <ul class="nav nav-tabs flex-column" column>
+          <li class="viewport-header">
+            <div class="logo draggable">
+              <img src="./assets/logo.svg" width="120" />
+            </div>
+            <div class="menu">
+              <button
+                class="btn btn-icon btn-icon-action minimize"
+                type="button"
+                id="dropdownMenuButton"
+              >
+                <i class="icon-window-minimize"></i>
+              </button>
+              <button
+                class="btn btn-icon btn-icon-action"
+                type="button"
+                id="dropdownMenuButton"
+                dropdown-button-id="top-menu"
+              >
+                <i class="icon-ellipsis-vert"></i>
+              </button>
+              <div class="dropdown-menu" id="menu-top" dropdown-id="top-menu">
+                <a class="dropdown-item" href="#" id="toggle"
+                  >Switch to <span class="mode"></span
+                ></a>
+                <a class="dropdown-item" href="#" menu-button-id="settings"
+                  >Settings</a
+                >
+                <a class="dropdown-item" href="#" menu-button-id="about"
+                  >About</a
+                >
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#" id="shutdown">Shut down</a>
+              </div>
+            </div>
+          </li>
+          <li class="nav-item applications-nav" id="apps" menu-button-id="apps">
+            <a class="nav-link" href="#">
+              <span class="icon-size-16">
+                <i class="icon-th-large"></i>
+              </span>
+              <span class="text-animation">Applications</span>
+              <i class="icon-angle-right ml-auto chevron" id="apps-chevron"></i>
+            </a>
+          </li>
+          <li class="nav-item show-actions layouts-nav" id="layout-menu-tool">
+            <a class="nav-link">
+              <span class="icon-size-16"
+                ><i class="icon-03-context-viewer"></i
+              ></span>
+              <span class="text-animation">Layouts</span>
+            </a>
+            <ul class="layout-menu-tool">
+              <li id="load" class="nav-item" menu-button-id="layout-load">
+                Load
+              </li>
+              <li id="save" class="nav-item" menu-button-id="layout-save">
+                Save
+              </li>
+            </ul>
+          </li>
+          <li class="favorite position-relative">
+            <i class="icon-star-full"></i>
+          </li>
+          <li class="fav-app-nav">
+            <ul
+              id="fav-apps"
+              class="nav nav-tabs flex-column accordion"
+              column
+            ></ul>
+          </li>
+          <li class="nav-item viewport-footer d-none" id="feedback-panel">
+            <a class="nav-link" href="#">
+              <i class="icon-feedback mx-2"></i>
+              <span class="text-animation">Feedback</span>
+            </a>
+          </li>
+          <li
+            class="nav-item viewport-footer"
+            id="profile-panel"
+            menu-button-id="profile"
+          >
+            <a class="nav-link" href="#">
+              <i class="icon-user-o mx-2"></i>
+              <span class="text-animation" id="sid">sid</span>
+            </a>
+          </li>
+          <li class="nav-item viewport-footer d-none" id="notification-panel">
+            <a class="nav-link" href="#">
+              <i class="icon-bell-alt mx-2"></i>
+              <span class="text-animation">Notifications</span>
+              <span
+                id="notifications-count"
+                class="empty circle-index text-white"
+              ></span>
+            </a>
+          </li>
+        </ul>
+      </div>
 
-  <div class="app">
-    <div id="applicationLauncher" class="viewport">
-      <ul class="nav nav-tabs flex-column" column>
-        <li class="viewport-header">
-          <div class="logo draggable">
-            <img src="./assets/logo.svg" width="120" />
+      <div class="toggle-content hide" id="app-content" menu-id="apps">
+        <div class="app-content-header p-2">
+          <div class="d-flex justify-content-between mb-2">
+            <h5 class="draggable m-0">Applications</h5>
+            <span class="icon-arrow-up-down close-drawer m-0"></span>
           </div>
-          <div class="menu">
-            <button class="btn btn-icon btn-icon-action minimize" type="button" id="dropdownMenuButton">
-              <i class="icon-window-minimize"></i>
-            </button>
-            <button class="btn btn-icon btn-icon-action" type="button" id="dropdownMenuButton"
-              dropdown-button-id="top-menu">
-              <i class="icon-ellipsis-vert"></i>
-            </button>
-            <div class="dropdown-menu" id="menu-top" dropdown-id="top-menu">
-              <a class="dropdown-item" href="#" id="toggle">Switch to <span class="mode"></span></a>
-              <a class="dropdown-item" href="#" menu-button-id="settings">Settings</a>
-              <a class="dropdown-item" href="#" menu-button-id="about">About</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#" id="shutdown">Shut down</a>
+          <input
+            class="form-control input-control"
+            id="app-search"
+            autofocus
+            placeholder="Search..."
+          />
+        </div>
+        <ul
+          id="search-results"
+          class="nav nav-tabs flex-column content-items"
+        ></ul>
+      </div>
+
+      <div class="toggle-content hide" id="layout-load" menu-id="layout-load">
+        <div class="p-2">
+          <div class="d-flex justify-content-between mb-2">
+            <h5 class="draggable m-0">Load Layouts</h5>
+            <span class="icon-arrow-up-down close-drawer m-0"></span>
+          </div>
+          <input
+            class="form-control input-control"
+            id="layout-search"
+            autofocus
+            placeholder="Search Layout..."
+          />
+        </div>
+        <ul class="nav nav-tabs flex-column"></ul>
+      </div>
+
+      <div
+        class="toggle-content hide"
+        id="layout-content"
+        menu-id="layout-save"
+      >
+        <div class="p-2">
+          <div class="d-flex justify-content-between mb-2">
+            <h5 class="draggable m-0">Save Layouts</h5>
+            <span class="icon-arrow-up-down close-drawer m-0"></span>
+          </div>
+          <div class="input-group">
+            <input
+              type="text"
+              id="layout-save-name"
+              class="form-control input-control"
+              autofocus
+              placeholder="Layout name..."
+            />
+            <div class="input-group-append">
+              <button class="btn btn-secondary" id="layout-save-btn">
+                <i class="icon-floppy"></i>
+              </button>
             </div>
           </div>
-        </li>
-        <li class="nav-item applications-nav" id="apps" menu-button-id="apps">
-          <a class="nav-link" href="#">
-            <span class="icon-size-16">
-              <i class="icon-th-large"></i>
-            </span>
-            <span class="text-animation">Applications</span>
-            <i class="icon-angle-right ml-auto chevron" id="apps-chevron"></i>
-          </a>
-        </li>
-        <li class="nav-item show-actions layouts-nav" id="layout-menu-tool">
-          <a class="nav-link">
-            <span class="icon-size-16"><i class="icon-03-context-viewer"></i></span>
-            <span class="text-animation">Layouts</span>
-          </a>
-          <ul class="layout-menu-tool">
-            <li id="load" class="nav-item" menu-button-id="layout-load">Load</li>
-            <li id="save" class="nav-item" menu-button-id="layout-save">Save</li>
-          </ul>
-        </li>
-        <li class="favorite position-relative">
-          <i class="icon-star-full"></i>
-        </li>
-        <li class="fav-app-nav">
-          <ul id="fav-apps" class="nav nav-tabs flex-column accordion" column></ul>
-        </li>
-        <li class="nav-item viewport-footer d-none" id="feedback-panel">
-          <a class="nav-link" href="#">
-            <i class="icon-feedback mx-2"></i>
-            <span class="text-animation">Feedback</span>
-          </a>
-        </li>
-        <li class="nav-item viewport-footer" id="profile-panel" menu-button-id="profile">
-          <a class="nav-link" href="#">
-            <i class="icon-user-o mx-2"></i>
-            <span class="text-animation" id="sid">sid</span>
-          </a>
-        </li>
-        <li class="nav-item viewport-footer d-none" id="notification-panel">
-          <a class="nav-link" href="#">
-            <i class="icon-bell-alt mx-2"></i>
-            <span class="text-animation">Notifications</span>
-            <span id="notifications-count" class="empty circle-index text-white"></span>
-          </a>
-        </li>
-      </ul>
-    </div>
-
-    <div class="toggle-content hide" id="app-content" menu-id="apps">
-      <div class="app-content-header p-2">
-        <div class="d-flex justify-content-between mb-2">
-          <h5 class="draggable m-0">
-            Applications
-          </h5>
-          <span class="icon-arrow-up-down close-drawer m-0"></span>
         </div>
-        <input class="form-control input-control" id="app-search" autofocus placeholder="Search..." />
+        <ul id="running-apps" class="nav nav-tabs flex-column"></ul>
       </div>
-      <ul id="search-results" class="nav nav-tabs flex-column content-items"></ul>
-    </div>
 
-    <div class="toggle-content hide" id="layout-load" menu-id="layout-load">
-      <div class="p-2">
-        <div class="d-flex justify-content-between mb-2">
-          <h5 class="draggable m-0">
-            Load Layouts
-          </h5>
-          <span class="icon-arrow-up-down close-drawer m-0"></span>
+      <div class="toggle-content hide" id="settings-content" menu-id="settings">
+        <div class="settings-general p-2 border-bottom border-secondary">
+          <div class="d-flex justify-content-between mb-2">
+            <h5 class="draggable m-0">General Settings</h5>
+            <span class="icon-arrow-up-down close-drawer m-0"></span>
+          </div>
+          <form>
+            <div class="form-check show-tutorial-check ml-2">
+              <input
+                class="form-check-input show-tutorial"
+                type="checkbox"
+                value="1"
+                id="show-tutorial"
+                setting="showTutorial"
+              />
+              <label class="form-check-label" for="show-tutorial">
+                Show Tutorial on Startup
+              </label>
+            </div>
+            <div
+              class="form-check save-default-layout-check ml-2"
+              title="If this option is turned on, you won't be able to specify default layouts"
+            >
+              <input
+                class="form-check-input save-default-layout"
+                type="checkbox"
+                value="1"
+                id="save-default-layout"
+                setting="saveDefaultLayout"
+              />
+              <label class="form-check-label" for="save-default-layout">
+                Save Layout on Exit
+              </label>
+            </div>
+          </form>
         </div>
-        <input class="form-control input-control" id="layout-search" autofocus placeholder="Search Layout..." />
+        <div class="settings-theme p-2 pb-0 border-bottom border-secondary">
+          <h5 class="d-flex justify-content-between">Select Theme</h5>
+          <form>
+            <ul class="select theme-select">
+              <li class="select_items">
+                <input
+                  class="select_expand"
+                  type="radio"
+                  name="theme"
+                  id="theme-opener"
+                />
+                <label class="select_closeLabel" for="closeTheme"></label>
+                <ul class="select_options"></ul>
+                <label class="select_expandLabel" for="theme-opener"></label>
+              </li>
+            </ul>
+          </form>
+        </div>
+        <div class="settings-length p-2 pb-0 border-bottom border-secondary">
+          <h5 class="d-flex justify-content-between">Select Toolbar Length</h5>
+          <form>
+            <ul class="select length-select mb-2">
+              <li class="select_items">
+                <input
+                  class="select_expand"
+                  type="radio"
+                  name="length"
+                  id="length-opener"
+                />
+                <label class="select_closeLabel" for="closeLength"></label>
+                <ul class="select_options"></ul>
+                <label class="select_expandLabel" for="length-opener"></label>
+              </li>
+            </ul>
+            <small class="d-block fst-italic mb-1">
+              * How many menu items will be shown at a time.
+            </small>
+          </form>
+        </div>
+        <div class="settings-search p-2 border-bottom border-secondary">
+          <h5 class="d-flex justify-content-between">Search</h5>
+          <form>
+            <div class="form-check ml-2">
+              <input
+                class="form-check-input search-clients"
+                type="checkbox"
+                value="1"
+                id="search-clients"
+                setting="searchClients"
+              />
+              <label class="form-check-label" for="search-clients">
+                Search Clients
+              </label>
+            </div>
+            <div class="form-check ml-2">
+              <input
+                class="form-check-input search-instruments"
+                type="checkbox"
+                value="1"
+                id="search-instruments"
+                setting="searchInstruments"
+              />
+              <label class="form-check-label" for="search-instruments">
+                Search Instruments
+              </label>
+            </div>
+          </form>
+        </div>
+        <div class="settings-notifications p-2">
+          <h5 class="d-flex justify-content-between">Notifications</h5>
+          <form>
+            <div class="form-check ml-2">
+              <input
+                class="form-check-input enable-notifications"
+                type="checkbox"
+                value="1"
+                id="enable-notifications"
+                setting="enableNotifications"
+              />
+              <label class="form-check-label" for="enable-notifications">
+                Enable Notifications
+              </label>
+            </div>
+            <div class="form-check ml-2">
+              <input
+                class="form-check-input enable-toasts"
+                type="checkbox"
+                value="1"
+                id="enable-toasts"
+                setting="enableToasts"
+              />
+              <label class="form-check-label" for="enable-toasts">
+                Enable Toasts
+              </label>
+              <br />
+            </div>
+          </form>
+        </div>
       </div>
-      <ul class="nav nav-tabs flex-column"></ul>
-    </div>
 
-    <div class="toggle-content hide" id="layout-content" menu-id="layout-save">
-      <div class="p-2">
-        <div class="d-flex justify-content-between mb-2">
-          <h5 class="draggable m-0">
-            Save Layouts
-          </h5>
-          <span class="icon-arrow-up-down close-drawer m-0"></span>
+      <div class="toggle-content hide" id="about-content" menu-id="about">
+        <div class="p-2">
+          <div class="d-flex justify-content-between mb-2">
+            <h5 class="draggable m-0">About</h5>
+            <span class="icon-arrow-up-down close-drawer m-0"></span>
+          </div>
+          <table>
+            <tr>
+              <td class="text-right">GD version:</td>
+              <td class="pl-3">
+                <span class="gd-version"></span>
+              </td>
+            </tr>
+            <tr>
+              <td class="text-right">Glue.js version:</td>
+              <td class="pl-3">
+                <span class="glue-js-version"></span>
+              </td>
+            </tr>
+            <tr>
+              <td class="text-right">GW URL:</td>
+              <td class="pl-3"><span class="gw-url"></span></td>
+            </tr>
+            <tr>
+              <td class="text-right">Username:</td>
+              <td class="pl-3"><span class="username"></span></td>
+            </tr>
+            <tr>
+              <td class="text-right">Status:</td>
+              <td class="pl-3 status-connected d-none">
+                <span class="icon-size-12">
+                  <i class="icon-record position-relative text-success"></i>
+                </span>
+                <span>Connected</span>
+              </td>
+              <td class="pl-3 status-disconnected">
+                <span class="icon-size-12">
+                  <i class="icon-record position-relative text-danger"></i>
+                </span>
+                <span>Disconnected</span>
+              </td>
+            </tr>
+          </table>
         </div>
-        <div class="input-group">
-          <input type="text" id="layout-save-name" class="form-control input-control" autofocus
-            placeholder="Layout name..." />
-          <div class="input-group-append">
-            <button class="btn btn-secondary" id="layout-save-btn">
-              <i class="icon-floppy"></i>
+      </div>
+
+      <div class="toggle-content hide" id="profile-content" menu-id="profile">
+        <div class="p-2 border-bottom border-secondary">
+          <div class="d-flex justify-content-between mb-2">
+            <h5 class="draggable m-0">Profile</h5>
+            <span class="icon-arrow-up-down close-drawer m-0"></span>
+          </div>
+          <table class="mb-auto">
+            <tr>
+              <td class="text-right">User:</td>
+              <td class="pl-3">
+                <span class="profile-sid"></span>
+              </td>
+            </tr>
+            <tr>
+              <td class="text-right">Region:</td>
+              <td class="pl-3">
+                <span class="profile-reg"></span>
+              </td>
+            </tr>
+            <tr>
+              <td class="text-right">Environment:</td>
+              <td class="pl-3">
+                <span class="profile-env"></span>
+              </td>
+            </tr>
+            <tr>
+              <td class="text-right">Version:</td>
+              <td class="pl-3">
+                <span class="profile-version"></span>
+              </td>
+            </tr>
+            <tr>
+              <td class="text-right">Gateway Port:</td>
+              <td class="pl-3">
+                <span class="profile-gwport"></span>
+              </td>
+            </tr>
+            <tr>
+              <td class="text-right">Server:</td>
+              <td class="pl-3">
+                <span class="server-info"></span>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="p-2">
+          <h5 class="d-flex justify-content-between">Actions</h5>
+          <div class="d-flex justify-content-start">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              id="Profile_Restart"
+            >
+              Restart
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary mx-1"
+              id="Profile_Shutdown"
+            >
+              Shutdown
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              id="Profile_Feedback"
+            >
+              Feedback
             </button>
           </div>
         </div>
       </div>
-      <ul id="running-apps" class="nav nav-tabs flex-column"></ul>
     </div>
 
-    <div class="toggle-content hide" id="settings-content" menu-id="settings">
-      <div class="settings-general p-2 border-bottom border-secondary">
-        <div class="d-flex justify-content-between mb-2">
-          <h5 class="draggable m-0">
-            General Settings
-          </h5>
-          <span class="icon-arrow-up-down close-drawer m-0"></span>
-        </div>
-        <form>
-          <div class="form-check show-tutorial-check ml-2">
-            <input class="form-check-input show-tutorial" type="checkbox" value="1" id="show-tutorial"
-              setting="showTutorial" />
-            <label class="form-check-label" for="show-tutorial">
-              Show Tutorial on Startup
-            </label>
-          </div>
-          <div class="form-check save-default-layout-check ml-2"
-            title="If this option is turned on, you won't be able to specify default layouts">
-            <input class="form-check-input save-default-layout" type="checkbox" value="1" id="save-default-layout"
-              setting="saveDefaultLayout" />
-            <label class="form-check-label" for="save-default-layout">
-              Save Layout on Exit
-            </label>
-          </div>
-        </form>
-      </div>
-      <div class="settings-theme p-2 pb-0 border-bottom border-secondary">
-        <h5 class="d-flex justify-content-between">Select Theme</h5>
-        <form>
-          <ul class="select theme-select">
-            <li class="select_items">
-              <input class="select_expand" type="radio" name="theme" id="theme-opener" />
-              <label class="select_closeLabel" for="closeTheme"></label>
-              <ul class="select_options"></ul>
-              <label class="select_expandLabel" for="theme-opener"></label>
-            </li>
-          </ul>
-        </form>
-      </div>
-      <div class="settings-length p-2 pb-0 border-bottom border-secondary">
-        <h5 class="d-flex justify-content-between">Select Toolbar Length</h5>
-        <form>
-          <ul class="select length-select mb-2">
-            <li class="select_items">
-              <input class="select_expand" type="radio" name="length" id="length-opener" />
-              <label class="select_closeLabel" for="closeLength"></label>
-              <ul class="select_options"></ul>
-              <label class="select_expandLabel" for="length-opener"></label>
-            </li>
-          </ul>
-          <p class="fs-6 fst-italic mb-2">
-            *How many menu items will be shown at a time.
-          </p>
-        </form>
-      </div>
-      <div class="settings-search p-2 border-bottom border-secondary">
-        <h5 class="d-flex justify-content-between">Search</h5>
-        <form>
-          <div class="form-check ml-2">
-            <input class="form-check-input search-clients" type="checkbox" value="1" id="search-clients"
-              setting="searchClients" />
-            <label class="form-check-label" for="search-clients">
-              Search Clients
-            </label>
-          </div>
-          <div class="form-check ml-2">
-            <input class="form-check-input search-instruments" type="checkbox" value="1" id="search-instruments"
-              setting="searchInstruments" />
-            <label class="form-check-label" for="search-instruments">
-              Search Instruments
-            </label>
-          </div>
-        </form>
-      </div>
-      <div class="settings-notifications p-2">
-        <h5 class="d-flex justify-content-between">Notifications</h5>
-        <form>
-          <div class="form-check ml-2">
-            <input class="form-check-input enable-notifications" type="checkbox" value="1" id="enable-notifications"
-              setting="enableNotifications" />
-            <label class="form-check-label" for="enable-notifications">
-              Enable Notifications
-            </label>
-          </div>
-          <div class="form-check ml-2">
-            <input class="form-check-input enable-toasts" type="checkbox" value="1" id="enable-toasts"
-              setting="enableToasts" />
-            <label class="form-check-label" for="enable-toasts">
-              Enable Toasts
-            </label>
-            <br />
-          </div>
-        </form>
-      </div>
-    </div>
+    <script>
+      window.q = document.querySelector.bind(document);
+      window.qa = document.querySelectorAll.bind(document);
+    </script>
+    <script>
+      if (window.glue42gd && glue42gd.theme) {
+        const allThemes = ["dark", "light"];
+        const html = q("html");
 
-    <div class="toggle-content hide" id="about-content" menu-id="about">
-      <div class="p-2">
-        <div class="d-flex justify-content-between mb-2">
-          <h5 class="draggable m-0">
-            About
-          </h5>
-          <span class="icon-arrow-up-down close-drawer m-0"></span>
-        </div>
-        <table>
-          <tr>
-            <td class="text-right">GD version:</td>
-            <td class="pl-3">
-              <span class="gd-version"></span>
-            </td>
-          </tr>
-          <tr>
-            <td class="text-right">Glue.js version:</td>
-            <td class="pl-3">
-              <span class="glue-js-version"></span>
-            </td>
-          </tr>
-          <tr>
-            <td class="text-right">GW URL:</td>
-            <td class="pl-3"><span class="gw-url"></span></td>
-          </tr>
-          <tr>
-            <td class="text-right">Username:</td>
-            <td class="pl-3"><span class="username"></span></td>
-          </tr>
-          <tr>
-            <td class="text-right">Status:</td>
-            <td class="pl-3 status-connected d-none">
-              <span class="icon-size-12">
-                <i class="icon-record position-relative text-success"></i>
-              </span>
-              <span>Connected</span>
-            </td>
-            <td class="pl-3 status-disconnected">
-              <span class="icon-size-12">
-                <i class="icon-record position-relative text-danger"></i>
-              </span>
-              <span>Disconnected</span>
-            </td>
-          </tr>
-        </table>
-      </div>
-    </div>
-
-    <div class="toggle-content hide" id="profile-content" menu-id="profile">
-      <div class="p-2 border-bottom border-secondary">
-        <div class="d-flex justify-content-between mb-2">
-          <h5 class="draggable m-0">
-            Profile
-          </h5>
-          <span class="icon-arrow-up-down close-drawer m-0"></span>
-        </div>
-        <table class="mb-auto">
-          <tr>
-            <td class="text-right">User:</td>
-            <td class="pl-3">
-              <span class="profile-sid"></span>
-            </td>
-          </tr>
-          <tr>
-            <td class="text-right">Region:</td>
-            <td class="pl-3">
-              <span class="profile-reg"></span>
-            </td>
-          </tr>
-          <tr>
-            <td class="text-right">Environment:</td>
-            <td class="pl-3">
-              <span class="profile-env"></span>
-            </td>
-          </tr>
-          <tr>
-            <td class="text-right">Version:</td>
-            <td class="pl-3">
-              <span class="profile-version"></span>
-            </td>
-          </tr>
-          <tr>
-            <td class="text-right">Gateway Port:</td>
-            <td class="pl-3">
-              <span class="profile-gwport"></span>
-            </td>
-          </tr>
-          <tr>
-            <td class="text-right">Server:</td>
-            <td class="pl-3">
-              <span class="server-info"></span>
-            </td>
-          </tr>
-        </table>
-      </div>
-      <div class="p-2">
-        <h5 class="d-flex justify-content-between">Actions</h5>
-        <div class="d-flex justify-content-start">
-          <button type="button" class="btn btn-secondary" id="Profile_Restart">
-            Restart
-          </button>
-          <button type="button" class="btn btn-secondary mx-1" id="Profile_Shutdown">
-            Shutdown
-          </button>
-          <button type="button" class="btn btn-secondary" id="Profile_Feedback">
-            Feedback
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    window.q = document.querySelector.bind(document);
-    window.qa = document.querySelectorAll.bind(document);
-  </script>
-  <script>
-    if (window.glue42gd && glue42gd.theme) {
-      const allThemes = ["dark", "light"];
-      const html = q("html");
-
-      html.classList.remove(...allThemes);
-      html.classList.add(glue42gd.theme);
-    }
-  </script>
-  <script src="assets/workspaces.umd.min.js"></script>
-  <script src="assets/tick42-gss.js"></script>
-  <script src="assets/rxjs.umd.min.js"></script>
-  <script src="js/index.js" type="module"></script>
-</body>
-
+        html.classList.remove(...allThemes);
+        html.classList.add(glue42gd.theme);
+      }
+    </script>
+    <script src="assets/workspaces.umd.min.js"></script>
+    <script src="assets/tick42-gss.js"></script>
+    <script src="assets/rxjs.umd.min.js"></script>
+    <script src="js/index.js" type="module"></script>
+  </body>
 </html>
