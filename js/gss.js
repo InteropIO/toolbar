@@ -16,7 +16,11 @@ function init() {
       .then(() => {
         console.debug('GSS ready');
         gssInstance.onEntityTypes((err, entityTypes) => {
-          currentEntityTypes = entityTypes.entries().map((e) => e[0]);
+          if (err) {
+            console.log('GSS onEntityTypes failed', err);
+          } else {
+            currentEntityTypes = entityTypes.entries().map((e) => e[0]);
+          }
         });
         res(gssInstance);
       })
