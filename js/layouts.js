@@ -60,9 +60,9 @@ function init() {
 
 function handleLayoutClick() {
   q('#layout-load>ul').addEventListener('click', (e) => {
-    const layoutElement = e.path.find(
-      (e) => e.getAttribute && e.getAttribute('layout-name')
-    );
+    const layoutElement = e
+      .composedPath()
+      .find((e) => e.getAttribute && e.getAttribute('layout-name'));
 
     if (!layoutElement) {
       return;

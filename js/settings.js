@@ -58,9 +58,9 @@ async function populateSettings() {
 
 function trackSettingsChange() {
   q('#settings-content').addEventListener('change', (e) => {
-    let settingElement = e.path.find(
-      (e) => e && e.getAttribute && e.getAttribute('setting')
-    );
+    let settingElement = e
+      .composedPath()
+      .find((e) => e && e.getAttribute && e.getAttribute('setting'));
 
     if (settingElement) {
       const setting = {};

@@ -111,7 +111,7 @@ function orderApps(a, b) {
 
 function handleAppClick() {
   q('#search-results').addEventListener('click', (e) => {
-    let appName = e.path.reduce((name, el) => {
+    let appName = e.composedPath().reduce((name, el) => {
       return el.getAttribute && el.getAttribute('app-name')
         ? el.getAttribute('app-name')
         : name;
@@ -127,11 +127,11 @@ function handleAppClick() {
       }
     } else if (e.target.matches('[app-name], [app-name] *')) {
       startApp(appName);
-      // if (!e.ctrlKey) {
-      //   clearSearch();
-      // }
     } else if (e.target.matches('[folder-name], [folder-name] *')) {
-      let folderElement = e.path.find((e) => e.getAttribute('folder-name'));
+      let folderElement = e
+        .composedPath()
+        .find((e) => e.getAttribute('folder-name'));
+
       let folderName = folderElement.getAttribute('folder-name');
       let isFolderOpen = folderElement.classList.contains('folder-open');
 
