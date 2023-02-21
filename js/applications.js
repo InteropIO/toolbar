@@ -6,7 +6,7 @@ import {
 } from './favorites.js';
 import { getSetting, getSettings } from './settings.js';
 // import { clearSearch, getAppIcon } from './utils.js';
-import { getAppIcon } from './utils.js';
+import { q, getAppIcon } from './utils.js';
 import { changeFolderState, isFolderOpened } from './folders.js';
 
 const searchInputObs = new rxjs.BehaviorSubject('');
@@ -155,7 +155,6 @@ function getItemHTMLTemplate(item, options) {
 }
 
 function applicationFolderHTMLTemplate(folder, options) {
-  // console.log(folder);
   let folderName = folder.item;
   let folderContents = '';
   let isFolderOpen = options.hasSearch || isFolderOpened(folderName);
@@ -172,7 +171,7 @@ function applicationFolderHTMLTemplate(folder, options) {
       folderContents += getItemHTMLTemplate(child, options);
     });
 
-  let folderHeight = 48 + folder.children.length * 48;
+  // let folderHeight = 48 + folder.children.length * 48;
 
   return `<li class="nav-item folder ${
     isFolderOpen ? 'folder-open' : ''

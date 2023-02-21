@@ -3,6 +3,7 @@ import {
   checkNotificationsConfigure,
   configureNotifications,
 } from './glue-related.js';
+import { q } from './utils.js';
 
 let settings = {
   showTutorial: true,

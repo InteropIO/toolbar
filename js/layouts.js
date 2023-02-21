@@ -8,7 +8,7 @@ import {
   clearDefaultLayout,
   setDefaultGlobal,
 } from './glue-related.js';
-import { escapeHtml } from './utils.js';
+import { q, escapeHtml } from './utils.js';
 import { getSetting } from './settings.js';
 
 let filteredLayouts;

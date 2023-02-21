@@ -20,7 +20,16 @@ import {
   noLayoutsHTML,
 } from './layouts.js';
 import * as glueModule from './glue-related.js';
-import * as utils from './utils.js';
+import {
+  q,
+  handleDropDownClicks,
+  handleEvents,
+  startTutorial,
+  focusInputAfterWindowRecover,
+  setDrawerOpenDirection,
+  setDrawerOpenClasses,
+  elementObserver,
+} from './utils.js';
 import {
   clientHTMLTemplate,
   searchClients,
@@ -64,13 +73,13 @@ async function init() {
   handleLayoutClick();
   handleLayoutSave();
 
-  utils.handleDropDownClicks();
+  handleDropDownClicks();
   handleClientAndInstrumentClicks();
 
-  utils.handleEvents();
-  utils.startTutorial();
+  handleEvents();
+  startTutorial();
   glueModule.registerHotkey();
-  glueModule.focusWindow(utils.focusInputAfterWindowRecover);
+  glueModule.focusWindow(focusInputAfterWindowRecover);
 
   populateSID();
   showFeedbackPanel();
@@ -97,14 +106,14 @@ function observeAppElement() {
 
       if (entry.type === 'attributes' && entry.attributeName === 'class') {
         if (newValue !== entry.oldValue) {
-          utils.setDrawerOpenDirection();
-          utils.setDrawerOpenClasses();
+          setDrawerOpenDirection();
+          setDrawerOpenClasses();
         }
       }
     });
   }
 
-  utils.elementObserver(app, config, callback);
+  elementObserver(app, config, callback);
 }
 
 function printApps() {

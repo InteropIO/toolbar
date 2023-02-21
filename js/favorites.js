@@ -26,12 +26,6 @@ function updateFavoriteApps() {
       appElement.classList.remove('fav-app');
     }
   });
-  // favoriteApps.subscribe(([favApps, allApps]) => {
-  //   document.querySelectorAll('#search-results>li').forEach((appElement) => {
-  //     // console.log(appElement);
-  //     // let appName = appElement.getAttribute('app-name');
-  //   });
-  // });
 }
 
 function addFavoriteApp(appName) {

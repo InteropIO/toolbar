@@ -1,4 +1,5 @@
 import { getSetting } from './settings.js';
+import { q, qa } from './utils.js';
 
 function handleKeyboardNavigation() {
   listenBodyClicks();
@@ -91,10 +92,10 @@ function handleKeyboardNavigation() {
       return el?.classList && el.classList?.contains('folder');
     });
 
-  const isItemAppFavorite = (e) =>
-    upTo(e, (el) => {
-      return el?.id === 'fav-apps';
-    });
+  // const isItemAppFavorite = (e) =>
+  //   upTo(e, (el) => {
+  //     return el?.id === 'fav-apps';
+  //   });
 
   const isItemFromMainMenu = (e) =>
     upTo(e, (el) => {
@@ -462,23 +463,27 @@ function handleKeyboardNavigation() {
   document.addEventListener('keydown', (e) => {
     q('.app').classList.add('expand-wrapper');
     q('.viewport').classList.add('expand');
+
     switch (e.key) {
       case 'Space':
-      case ' ':
+      case ' ': {
         addRemoveFavouriteApp();
         break;
-      case 'Delete':
+      }
+      case 'Delete': {
         const deleteButton = currentItem.querySelector('.delete-layout');
         if (deleteButton) {
           currentItem = deleteButton;
           itemClicked();
         }
         break;
-      case 'Tab':
+      }
+      case 'Tab': {
         e.preventDefault();
         go('down');
         break;
-      case 'Escape':
+      }
+      case 'Escape': {
         const visibleDrawers = q('.toggle-content:not(.hide)');
         if (visibleDrawers) {
           const menuId = visibleDrawers.getAttribute('menu-id');
@@ -488,29 +493,36 @@ function handleKeyboardNavigation() {
         removeHover();
         currentItem = undefined;
         break;
-      case 'Enter':
+      }
+      case 'Enter': {
         itemClicked();
         break;
-      case 'ArrowUp':
+      }
+      case 'ArrowUp': {
         go('up');
         break;
-      case 'ArrowRight':
+      }
+      case 'ArrowRight': {
         if (disableLeftRight) {
           break;
         }
         go('right');
         break;
-      case 'ArrowDown':
+      }
+      case 'ArrowDown': {
         go('down');
         break;
-      case 'ArrowLeft':
+      }
+      case 'ArrowLeft': {
         if (disableLeftRight) {
           break;
         }
         go('left');
         break;
-      default:
+      }
+      default: {
         break;
+      }
     }
   });
 }

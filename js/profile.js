@@ -1,4 +1,5 @@
 import * as glueModule from './glue-related.js';
+import { q } from './utils.js';
 
 function populateSID() {
   let SID = glueModule.getSID();

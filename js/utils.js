@@ -42,23 +42,26 @@ import handleKeyboardNavigation from './keyboard-navigation.js';
 
 const windowMargin = 50;
 
-let pressedKey;
-let keyObs = rxjs
-  .fromEvent(document, 'keydown')
-  .pipe(
-    rxjs.operators.filter(
-      (e) =>
-        e.key === 'ArrowUp' ||
-        e.key === 'ArrowRight' ||
-        e.key === 'ArrowDown' ||
-        e.key === 'ArrowLeft' ||
-        e.key === 'Enter' ||
-        e.key === 'Escape' ||
-        e.key === 'Backspace' ||
-        e.key === 'Tab'
-    )
-  )
-  .subscribe((key) => (pressedKey = key));
+const q = document.querySelector.bind(document);
+const qa = document.querySelectorAll.bind(document);
+
+// let pressedKey;
+// let keyObs = rxjs
+//   .fromEvent(document, 'keydown')
+//   .pipe(
+//     rxjs.operators.filter(
+//       (e) =>
+//         e.key === 'ArrowUp' ||
+//         e.key === 'ArrowRight' ||
+//         e.key === 'ArrowDown' ||
+//         e.key === 'ArrowLeft' ||
+//         e.key === 'Enter' ||
+//         e.key === 'Escape' ||
+//         e.key === 'Backspace' ||
+//         e.key === 'Tab'
+//     )
+//   )
+//   .subscribe((key) => (pressedKey = key));
 
 function handleEvents() {
   handleNotificationClick();
@@ -115,7 +118,7 @@ function populateAboutPage() {
   q('.gw-url').innerText = glue42gd.gwURL;
   q('.username').innerText = glue42gd.user;
 
-  gluePromise.then(async (glue) => {
+  gluePromise.then(async () => {
     q('.glue-js-version').innerText = await glueVersion();
   });
 }
@@ -554,7 +557,6 @@ function getHorizontalToolbarHeight(length) {
 
 async function handleAppRowsChange() {
   const numberOfRows = getSetting('toolbarAppRows');
-  const app = q('.app');
   const appSelectOptions = {
     all: [
       { name: '8', displayName: '8 Items (Default)' },
@@ -936,6 +938,8 @@ function elementObserver(element, config, callback) {
 }
 
 export {
+  q,
+  qa,
   handleEvents,
   setOrientation,
   handleThemeChange,

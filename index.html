@@ -442,20 +442,6 @@
         </div>
       </div>
     </div>
-
-    <script>
-      window.q = document.querySelector.bind(document);
-      window.qa = document.querySelectorAll.bind(document);
-    </script>
-    <script>
-      if (window.glue42gd && glue42gd.theme) {
-        const allThemes = ["dark", "light"];
-        const html = q("html");
-
-        html.classList.remove(...allThemes);
-        html.classList.add(glue42gd.theme);
-      }
-    </script>
     <script src="assets/workspaces.umd.min.js"></script>
     <script src="assets/tick42-gss.js"></script>
     <script src="assets/rxjs.umd.min.js"></script>

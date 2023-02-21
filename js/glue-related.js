@@ -1,5 +1,6 @@
 import { setSettings, getSetting, getSettings } from './settings.js';
 import {
+  q,
   setOrientation,
   setWindowSize,
   setWindowPosition,
