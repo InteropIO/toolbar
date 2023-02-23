@@ -8,27 +8,38 @@
       "enabled": true,
       "autoInit": {
         "appManager": "full",
-        "layouts": "full"
+        "layouts": "fullWaitSnapshot"
       }
     },
-    "url": "http://localhost:8080",
-    "mode": "html",
+    "url": "file://%GDDIR%/assets/app-toolbar/index.html",
+    "mode": "frameless",
     "top": 5,
     "left": 5,
-    "isSticky": true,
+    "isSticky": false,
     "allowClose": false,
     "allowMaximize": false,
-    "allowMinimize": true,
+    "allowMinimize": false,
     "allowCollapse": false,
-    "sizeAreaThickness": "0, 0, 0, 0",
-    "processAffinity": "util"
+    "moveAreaPassThroughMouseHover": true,
+    "zoom": {
+      "enabled": false
+    },
+    "nativeWindowOpen": "off",
+    "search": {
+      "enabled": false
+    },
+    "taskbar": {
+      "allowPin": true,
+      "appId": "glue42-enterprise-appManager"
+    },
+    "jumpList": {
+      "enabled": true
+    }
   },
   "autoStart": true,
   "allowMultiple": false,
   "ignoreSavedLayout": false,
   "customProperties": {
-    "hideFeedbackButton": true,
-    "hideProfileButton": false,
-    "hideTutorialOnStartup": false
+    "hideFeedbackButton": true
   }
 }
