@@ -190,7 +190,6 @@ async function trackWindowMove() {
 
   glue.windows.my().onBoundsChanged(async () => {
     boundsObs.next(glue.windows.my().bounds);
-    setDrawerOpenDirection();
     await setDrawerOpenClasses();
   });
 }

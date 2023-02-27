@@ -79,10 +79,12 @@ async function init() {
 function handleClientAndInstrumentClicks() {
   document.addEventListener('click', (e) => {
     if (e.target.matches('[client-app-id], [client-app-id] *')) {
-      let appId = e.path
+      let appId = e
+        .composedPath()
         .find((e) => e && e.getAttribute('client-app-id'))
         .getAttribute('client-app-id');
-      let clientId = e.path
+      let clientId = e
+        .composedPath()
         .find((e) => e && e.getAttribute('client-id'))
         .getAttribute('client-id');
 
@@ -97,10 +99,12 @@ function handleClientAndInstrumentClicks() {
     }
 
     if (e.target.matches('[instrument-app-id], [instrument-app-id] *')) {
-      let appId = e.path
+      let appId = e
+        .composedPath()
         .find((e) => e && e.getAttribute('instrument-app-id'))
         .getAttribute('instrument-app-id');
-      let insturmentId = e.path
+      let insturmentId = e
+        .composedPath()
         .find((e) => e && e.getAttribute('instrument-id'))
         .getAttribute('instrument-id');
 
@@ -112,18 +116,20 @@ function handleClientAndInstrumentClicks() {
     }
 
     if (e.target.matches('[workspace-id], [workspace-id] *')) {
-      let workspaceId = e.path
+      let workspaceId = e
+        .composedPath()
         .find((e) => e.getAttribute && e.getAttribute('workspace-id'))
         .getAttribute('workspace-id');
-      let workspaceType = e.path
+      let workspaceType = e
+        .composedPath()
         .find((e) => e.getAttribute && e.getAttribute('workspace-type'))
         .getAttribute('workspace-type');
-      let clientIdElement = e.path.find(
-        (e) => e.getAttribute && e.getAttribute('client-id')
-      );
-      let instrumentIdElement = e.path.find(
-        (e) => e.getAttribute && e.getAttribute('instrument-id')
-      );
+      let clientIdElement = e
+        .composedPath()
+        .find((e) => e.getAttribute && e.getAttribute('client-id'));
+      let instrumentIdElement = e
+        .composedPath()
+        .find((e) => e.getAttribute && e.getAttribute('instrument-id'));
 
       if (clientIdElement) {
         let clientId = clientIdElement.getAttribute('client-id');
