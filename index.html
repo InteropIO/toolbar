@@ -223,20 +223,23 @@
             </div>
           </form>
         </div>
-        <div class="settings-theme p-2 pb-0 border-bottom border-secondary">
+        <div class="settings-theme p-2 border-bottom border-secondary">
           <h5 class="d-flex justify-content-between">Select Theme</h5>
           <form>
-            <ul class="select theme-select">
+            <ul class="select theme-select mb-1">
               <li class="select_items">
                 <input
                   class="select_expand"
                   type="radio"
                   name="theme"
-                  id="theme-opener"
+                  id="settings-theme-opener"
                 />
                 <label class="select_closeLabel" for="closeTheme"></label>
                 <ul class="select_options"></ul>
-                <label class="select_expandLabel" for="theme-opener"></label>
+                <label
+                  class="select_expandLabel"
+                  for="settings-theme-opener"
+                ></label>
               </li>
             </ul>
           </form>
@@ -414,7 +417,26 @@
             </tr>
           </table>
         </div>
-        <div class="p-2">
+        <div class="p-2 border-bottom border-secondary">
+          <h5 class="d-flex justify-content-between">Select Theme</h5>
+          <ul class="select theme-select mb-1">
+            <li class="select_items">
+              <input
+                class="select_expand"
+                type="radio"
+                name="theme"
+                id="profile-theme-opener"
+              />
+              <label class="select_closeLabel" for="close"></label>
+              <ul class="select_options"></ul>
+              <label
+                class="select_expandLabel"
+                for="profile-theme-opener"
+              ></label>
+            </li>
+          </ul>
+        </div>
+        <div class="profile-actions p-2">
           <h5 class="d-flex justify-content-between">Actions</h5>
           <div class="d-flex justify-content-start">
             <button
