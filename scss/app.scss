@@ -433,6 +433,10 @@ html {
     }
   }
 
+  .profile-actions .btn {
+    flex: 1 1 auto;
+  }
+
   .modal.fade {
     display: block;
     width: 200px;
