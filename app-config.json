@@ -1,7 +1,7 @@
 {
   "title": "AppManager-Embedded",
   "type": "window",
-  "name": "embeddedShell-dev",
+  "name": "glue42-application-manager",
   "shell": true,
   "details": {
     "autoInjectAPI": {
@@ -21,10 +21,10 @@
     "allowMinimize": false,
     "allowCollapse": false,
     "moveAreaPassThroughMouseHover": true,
+    "nativeWindowOpen": "off",
     "zoom": {
       "enabled": false
     },
-    "nativeWindowOpen": "off",
     "search": {
       "enabled": false
     },
