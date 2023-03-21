@@ -61,6 +61,7 @@ async function init() {
 
   handleAppClick();
   handleSearchChange();
+  utils.handleLayoutsHover();
   handleLayoutClick();
   handleLayoutSave();
 

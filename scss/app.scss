@@ -110,17 +110,6 @@ html {
   .nav {
     &-item {
       &.hover {
-        &::after {
-          content: "";
-          position: absolute;
-          top: 0;
-          right: 0;
-          bottom: 0;
-          left: 0;
-          border: 1px solid var(--primary);
-          cursor: pointer;
-        }
-
         .nav-link {
           border-color: var(--t42-color-opacity-10);
           color: var(--t42-link-color);
@@ -285,6 +274,7 @@ html {
       visibility: hidden;
       width: 100%;
       top: 0;
+      z-index: 1;
 
       li {
         display: flex;
