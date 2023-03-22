@@ -526,15 +526,14 @@ async function getPrefs() {
     setSettings(prefs.data);
   }
 
-  if (glue.windows.my().state === 'minimized') {
-    const un = glue.windows.my().onNormal(() => {
-      un();
+  setOrientation();
 
-      setWindowSize();
+  if (glue.windows.my().state === 'minimized') {
+    const un = glue.windows.my().onNormal(async () => {
+      un();
+      await setWindowSize();
     });
   }
-
-  setOrientation();
 
   await setWindowSize();
   setDrawerOpenDirection();
