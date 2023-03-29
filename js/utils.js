@@ -598,8 +598,8 @@ async function handleAppRowsChange() {
     if (e.target.matches('input.select_input[type="radio"]')) {
       const selectedLength = e.target.getAttribute('length-name');
       const windowBounds = await getPhysicalWindowBounds();
-      const scaleFactor = await getScaleFactor();
       const primaryScaleFactor = await getPrimaryScaleFactor();
+      const scaleFactor = await getScaleFactor();
       const newToolbarHeight = getHorizontalToolbarHeight(selectedLength);
 
       setSetting({ toolbarAppRows: selectedLength });

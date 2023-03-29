@@ -38,7 +38,6 @@ const defaultLayout = new rxjs.BehaviorSubject({});
 const activeLayout = new rxjs.BehaviorSubject({});
 const notificationsCountObs = new rxjs.BehaviorSubject(null);
 const themeObs = new rxjs.BehaviorSubject(null);
-const boundsObs = new rxjs.BehaviorSubject(null);
 let notificationEnabledObs = new rxjs.BehaviorSubject(false);
 
 if (!window.glue42gd) {
@@ -186,10 +185,7 @@ async function trackThemeChanges() {
 }
 
 async function trackWindowMove() {
-  boundsObs.next(glue.windows.my().bounds);
-
   glue.windows.my().onBoundsChanged(async () => {
-    boundsObs.next(glue.windows.my().bounds);
     await setDrawerOpenClasses();
   });
 }
@@ -532,6 +528,13 @@ async function getPrefs() {
 
   setOrientation();
 
+  if (glue.windows.my().state === 'minimized') {
+    const un = glue.windows.my().onNormal(async () => {
+      un();
+      await setWindowSize();
+    });
+  }
+
   await setWindowSize();
   setDrawerOpenDirection();
   await setDrawerOpenClasses();
@@ -557,7 +560,6 @@ export {
   glueInfo,
   glueAppsObs,
   layoutsObs,
-  boundsObs,
   startApp,
   focusApp,
   focusWindow,
