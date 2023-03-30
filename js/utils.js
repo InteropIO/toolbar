@@ -296,6 +296,18 @@ async function handleJumpListAction() {
   }
 }
 
+function handleLayoutsHover() {
+  const menuItem = '.show-actions';
+
+  document.addEventListener('mouseover', (event) => {
+    if (event.target.closest(menuItem)) {
+      q(menuItem).classList.add('hover');
+    } else {
+      q(menuItem).classList.remove('hover');
+    }
+  });
+}
+
 async function handleMouseHover() {
   q('#fav-apps').addEventListener('mousewheel', (e) => {
     // TODO: move
@@ -945,6 +957,7 @@ export {
   handleNotificationClick,
   handleModalClose,
   handleMouseHover,
+  handleLayoutsHover,
   handleDropDownClicks,
   focusInputAfterWindowRecover,
   windowMargin,
