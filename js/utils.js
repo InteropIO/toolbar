@@ -353,6 +353,7 @@ async function handleMouseHover() {
       }
 
       q('.viewport').classList.remove('expand');
+      q('.show-actions').classList.remove('hover');
       q('.app').classList.remove('expand-wrapper');
       qa('.toggle-content').forEach((e) => e.classList.add('hide'));
     }, 500);
