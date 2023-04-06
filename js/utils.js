@@ -168,12 +168,10 @@ function handleTopMenuClicks() {
         'transitionend',
         focusMenuInputAfterTransition
       );
+
       menuToToggle.classList.toggle('hide');
 
       let hasVisibleDrawers = q('.toggle-content:not(.hide)');
-      const isVertical = getSetting('vertical');
-      const viewPortHeight = q('.viewport').offsetHeight;
-      const drawerHeight = getHorizontalToolbarHeight();
 
       if (hasVisibleDrawers) {
         q('.app').classList.add('has-drawer');
@@ -182,13 +180,6 @@ function handleTopMenuClicks() {
       }
 
       setDrawerOpenDirection();
-
-      // TODO: Fix Manager Height
-      if (hasVisibleDrawers && !isVertical) {
-        q('.app').style.maxHeight = `${viewPortHeight + drawerHeight}px`;
-      } else if (!hasVisibleDrawers && !isVertical) {
-        q('.app').style.maxHeight = `${viewPortHeight}px`;
-      }
     } else if (e.target.matches('#fav-apps .nav-item, #fav-apps .nav-item *')) {
       // start or focus an app from the favorites list
       let topElement = e
@@ -557,11 +548,11 @@ function populateSettingsDropdown(
 }
 
 function getHorizontalToolbarHeight(length) {
-  const appContentHeader = q('.app-content-header');
-  const navItem = q('.applications-nav');
+  const appContentHeaderSize = q('.app-content-header').offsetHeight;
+  const navItemSize = 48;
   const numberOfRows = length ?? getSetting('toolbarAppRows');
 
-  return appContentHeader.offsetHeight + navItem.offsetHeight * numberOfRows;
+  return appContentHeaderSize + navItemSize * numberOfRows;
 }
 
 async function handleAppRowsChange() {
@@ -604,7 +595,8 @@ async function handleAppRowsChange() {
 
       setSetting({ toolbarAppRows: selectedLength });
 
-      setWindowSize();
+      await setWindowSize();
+      setDrawerOpenDirection();
 
       if (!isVertical) {
         await moveMyWindow({
@@ -737,8 +729,7 @@ function handleOrientationChange() {
     setSetting({ vertical: isVertical });
 
     await repositionOnOrientationChange(isVertical);
-
-    setWindowSize();
+    await setWindowSize();
   });
 }
 
