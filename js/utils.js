@@ -558,7 +558,6 @@ function getHorizontalToolbarHeight(length) {
 
 async function handleAppRowsChange() {
   const numberOfRows = getSetting('toolbarAppRows');
-  const app = q('.app');
   const appSelectOptions = {
     all: [
       { name: '8', displayName: '8 Items (Default)' },
@@ -602,8 +601,9 @@ async function handleAppRowsChange() {
       if (!isVertical) {
         await moveMyWindow({
           top:
-            ((windowBounds.top + (currentToolbarHeight - newToolbarHeight)) /
-              scaleFactor) *
+            (windowBounds.top +
+              currentToolbarHeight / scaleFactor -
+              newToolbarHeight / scaleFactor) *
             primaryScaleFactor,
         });
       }
