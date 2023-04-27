@@ -291,10 +291,14 @@ function handleLayoutsHover() {
   const menuItem = '.show-actions';
 
   document.addEventListener('mouseover', (event) => {
-    if (event.target.closest(menuItem)) {
-      q(menuItem).classList.add('hover');
+    const target = event.target.closest(menuItem);
+
+    if (target) {
+      target.classList.add('hover');
     } else {
-      q(menuItem).classList.remove('hover');
+      qa(menuItem).forEach((item) => {
+        item.classList.remove('hover');
+      });
     }
   });
 }
