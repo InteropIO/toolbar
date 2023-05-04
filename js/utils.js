@@ -21,7 +21,6 @@ import {
   getScaleFactor,
   getPrimaryScaleFactor,
   windowCenter,
-  windowRefresh,
   getPhysicalWindowBounds,
 } from './glue-related.js';
 import {
@@ -925,15 +924,12 @@ async function setWindowPosition() {
       }
     }
   });
-
-  windowRefresh();
 }
 
 async function resetWindow() {
   setSetting({ vertical: true });
-  setOrientation();
+  await setWindowSize();
   windowCenter();
-  windowRefresh();
 }
 
 function elementObserver(element, config, callback) {

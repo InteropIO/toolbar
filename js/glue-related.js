@@ -193,18 +193,11 @@ async function trackWindowMove() {
 async function trackDisplayChange() {
   glue.displays.onDisplayChanged(async () => {
     await setWindowSize();
-    windowRefresh();
   });
 }
 
 function windowCenter() {
   glue.windows.my().center();
-}
-
-function windowRefresh() {
-  sessionStorage.setItem('hideTutorial', 'true');
-
-  glue.windows.my().refresh();
 }
 
 async function startApp(appName, context) {
@@ -604,5 +597,4 @@ export {
   getPrimaryScaleFactor,
   getScaleFactor,
   windowCenter,
-  windowRefresh,
 };
