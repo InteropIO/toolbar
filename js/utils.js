@@ -21,7 +21,6 @@ import {
   getScaleFactor,
   getPrimaryScaleFactor,
   windowCenter,
-  windowRefresh,
   getPhysicalWindowBounds,
 } from './glue-related.js';
 import {
@@ -168,12 +167,10 @@ function handleTopMenuClicks() {
         'transitionend',
         focusMenuInputAfterTransition
       );
+
       menuToToggle.classList.toggle('hide');
 
       let hasVisibleDrawers = q('.toggle-content:not(.hide)');
-      const isVertical = getSetting('vertical');
-      const viewPortHeight = q('.viewport').offsetHeight;
-      const drawerHeight = getHorizontalToolbarHeight();
 
       if (hasVisibleDrawers) {
         q('.app').classList.add('has-drawer');
@@ -182,13 +179,6 @@ function handleTopMenuClicks() {
       }
 
       setDrawerOpenDirection();
-
-      // TODO: Fix Manager Height
-      if (hasVisibleDrawers && !isVertical) {
-        q('.app').style.maxHeight = `${viewPortHeight + drawerHeight}px`;
-      } else if (!hasVisibleDrawers && !isVertical) {
-        q('.app').style.maxHeight = `${viewPortHeight}px`;
-      }
     } else if (e.target.matches('#fav-apps .nav-item, #fav-apps .nav-item *')) {
       // start or focus an app from the favorites list
       let topElement = e
@@ -300,10 +290,14 @@ function handleLayoutsHover() {
   const menuItem = '.show-actions';
 
   document.addEventListener('mouseover', (event) => {
-    if (event.target.closest(menuItem)) {
-      q(menuItem).classList.add('hover');
+    const target = event.target.closest(menuItem);
+
+    if (target) {
+      target.classList.add('hover');
     } else {
-      q(menuItem).classList.remove('hover');
+      qa(menuItem).forEach((item) => {
+        item.classList.remove('hover');
+      });
     }
   });
 }
@@ -362,6 +356,7 @@ async function handleMouseHover() {
       }
 
       q('.viewport').classList.remove('expand');
+      q('.show-actions').classList.remove('hover');
       q('.app').classList.remove('expand-wrapper');
       qa('.toggle-content').forEach((e) => e.classList.add('hide'));
     }, 500);
@@ -557,16 +552,15 @@ function populateSettingsDropdown(
 }
 
 function getHorizontalToolbarHeight(length) {
-  const appContentHeader = q('.app-content-header');
-  const navItem = q('.applications-nav');
+  const appContentHeaderSize = q('.app-content-header').offsetHeight;
+  const navItemSize = 48;
   const numberOfRows = length ?? getSetting('toolbarAppRows');
 
-  return appContentHeader.offsetHeight + navItem.offsetHeight * numberOfRows;
+  return appContentHeaderSize + navItemSize * numberOfRows;
 }
 
 async function handleAppRowsChange() {
   const numberOfRows = getSetting('toolbarAppRows');
-  const app = q('.app');
   const appSelectOptions = {
     all: [
       { name: '8', displayName: '8 Items (Default)' },
@@ -604,13 +598,15 @@ async function handleAppRowsChange() {
 
       setSetting({ toolbarAppRows: selectedLength });
 
-      setWindowSize();
+      await setWindowSize();
+      setDrawerOpenDirection();
 
       if (!isVertical) {
         await moveMyWindow({
           top:
-            ((windowBounds.top + (currentToolbarHeight - newToolbarHeight)) /
-              scaleFactor) *
+            (windowBounds.top +
+              currentToolbarHeight / scaleFactor -
+              newToolbarHeight / scaleFactor) *
             primaryScaleFactor,
         });
       }
@@ -737,8 +733,7 @@ function handleOrientationChange() {
     setSetting({ vertical: isVertical });
 
     await repositionOnOrientationChange(isVertical);
-
-    setWindowSize();
+    await setWindowSize();
   });
 }
 
@@ -929,15 +924,12 @@ async function setWindowPosition() {
       }
     }
   });
-
-  windowRefresh();
 }
 
 async function resetWindow() {
   setSetting({ vertical: true });
-  setOrientation();
+  await setWindowSize();
   windowCenter();
-  windowRefresh();
 }
 
 function elementObserver(element, config, callback) {

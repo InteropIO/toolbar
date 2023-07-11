@@ -28,14 +28,13 @@
 
       .menu {
         position: absolute;
-        top: 0.875rem;
-        right: 3px;
+        right: 0.5em;
         z-index: 11;
         display: flex;
       }
 
       .dropdown-menu {
-        right: -5px;
+        right: -1em;
       }
     }
 

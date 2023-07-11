@@ -20,6 +20,14 @@
 
   .viewport-header {
     overflow: hidden;
+
+    .menu {
+      margin-right: 0.75em;
+    }
+
+    .dropdown-menu {
+      right: -0.75em;
+    }
   }
 
   .fav-app-nav {
