@@ -406,20 +406,13 @@ async function handleEnableNotifications() {
 }
 
 function handleEnableNotificationsClick() {
-  const notificationPanel = q('#notification-panel');
   const enableNotifications = q('#enable-notifications');
-  const enableToasts = q('#enable-toasts');
 
   enableNotifications.addEventListener('click', (e) => {
     if (e.target.checked) {
       configureNotifications({ enable: true, enableToasts: false });
-      notificationPanel.classList.remove('d-none');
-      enableToasts.disabled = false;
     } else {
       configureNotifications({ enable: false, enableToasts: false });
-      notificationPanel.classList.add('d-none');
-      enableToasts.checked = false;
-      enableToasts.disabled = true;
     }
   });
 }

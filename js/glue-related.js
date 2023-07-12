@@ -1,4 +1,9 @@
-import { setSettings, getSetting, getSettings } from './settings.js';
+import {
+  setSettings,
+  getSetting,
+  getSettings,
+  setSetting,
+} from './settings.js';
 import {
   setOrientation,
   setWindowSize,
@@ -287,23 +292,23 @@ async function clearDefaultLayout() {
 
 async function trackNotificationsEnabled() {
   await gluePromise;
-  let notificationMethoExists = new rxjs.BehaviorSubject(false);
-  notificationMethoExists.next(
+  let notificationMethodExists = new rxjs.BehaviorSubject(false);
+  notificationMethodExists.next(
     glue.agm.methods({ name: 'T42.Notifications.Show' }).length > 0
   );
   glue.agm.methodAdded(() => {
-    notificationMethoExists.next(
+    notificationMethodExists.next(
       glue.agm.methods({ name: 'T42.Notifications.Show' }).length > 0
     );
   });
 
   glue.agm.methodRemoved(() => {
-    notificationMethoExists.next(
+    notificationMethodExists.next(
       glue.agm.methods({ name: 'T42.Notifications.Show' }).length > 0
     );
   });
 
-  notificationMethoExists
+  notificationMethodExists
     .pipe(rxjs.operators.distinctUntilChanged())
     .subscribe((data) => notificationEnabledObs.next(data));
 }
@@ -320,6 +325,48 @@ async function configureNotifications(config) {
   if (methodExists) {
     glue.notifications.configure(config);
   }
+}
+
+async function getNotificationsConfiguration() {
+  const glue = await gluePromise;
+  const { enable, enableToasts } = await glue.notifications.getConfiguration();
+  const setting = {
+    enableNotifications: enable,
+    enableToasts,
+  };
+
+  setSetting(setting);
+  updatePrefs(setting);
+}
+
+async function trackNotificationsConfigurationChange() {
+  const glue = await gluePromise;
+
+  await glue.notifications.onConfigurationChanged((config) => {
+    const { enable, enableToasts } = config;
+    const setting = {
+      enableNotifications: enable,
+      enableToasts,
+    };
+
+    setSetting(setting);
+    updatePrefs(setting);
+
+    const notificationPanel = q('#notification-panel');
+    const enableNotificationsCheckbox = q('#enable-notifications');
+    const enableToastsCheckbox = q('#enable-toasts');
+
+    if (enable) {
+      notificationPanel.classList.remove('d-none');
+      enableNotificationsCheckbox.checked = true;
+      enableToastsCheckbox.disabled = false;
+    } else {
+      notificationPanel.classList.add('d-none');
+      enableNotificationsCheckbox.checked = false;
+      enableToastsCheckbox.checked = false;
+      enableToastsCheckbox.disabled = true;
+    }
+  });
 }
 
 async function openNotificationPanel() {
@@ -597,4 +644,6 @@ export {
   getPrimaryScaleFactor,
   getScaleFactor,
   windowCenter,
+  getNotificationsConfiguration,
+  trackNotificationsConfigurationChange,
 };
