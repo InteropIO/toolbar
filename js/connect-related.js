@@ -327,23 +327,19 @@ async function configureNotifications(config) {
   }
 }
 
-async function getNotificationsConfiguration() {
+async function checkNotificationsConfiguration() {
   const glue = await gluePromise;
-  const { enable, enableToasts } = await glue.notifications.getConfiguration();
-  const setting = {
-    enableNotifications: enable,
-    enableToasts,
-  };
 
-  setSetting(setting);
-  updatePrefs(setting);
+  return typeof glue.notifications.getConfiguration === 'function';
 }
 
-async function trackNotificationsConfigurationChange() {
+async function getNotificationsConfiguration() {
   const glue = await gluePromise;
+  const methodExists = await checkNotificationsConfiguration();
 
-  await glue.notifications.onConfigurationChanged((config) => {
-    const { enable, enableToasts } = config;
+  if (methodExists) {
+    const { enable, enableToasts } =
+      await glue.notifications.getConfiguration();
     const setting = {
       enableNotifications: enable,
       enableToasts,
@@ -351,22 +347,46 @@ async function trackNotificationsConfigurationChange() {
 
     setSetting(setting);
     updatePrefs(setting);
+  }
+}
 
-    const notificationPanel = q('#notification-panel');
-    const enableNotificationsCheckbox = q('#enable-notifications');
-    const enableToastsCheckbox = q('#enable-toasts');
+async function checkNotificationsOnConfigurationChanged() {
+  const glue = await gluePromise;
 
-    if (enable) {
-      notificationPanel.classList.remove('d-none');
-      enableNotificationsCheckbox.checked = true;
-      enableToastsCheckbox.disabled = false;
-    } else {
-      notificationPanel.classList.add('d-none');
-      enableNotificationsCheckbox.checked = false;
-      enableToastsCheckbox.checked = false;
-      enableToastsCheckbox.disabled = true;
-    }
-  });
+  return typeof glue.notifications.onConfigurationChanged === 'function';
+}
+
+async function trackNotificationsConfigurationChange() {
+  const glue = await gluePromise;
+  const methodExists = await checkNotificationsOnConfigurationChanged();
+
+  if (methodExists) {
+    await glue.notifications.onConfigurationChanged((config) => {
+      const { enable, enableToasts } = config;
+      const setting = {
+        enableNotifications: enable,
+        enableToasts,
+      };
+
+      setSetting(setting);
+      updatePrefs(setting);
+
+      const notificationPanel = q('#notification-panel');
+      const enableNotificationsCheckbox = q('#enable-notifications');
+      const enableToastsCheckbox = q('#enable-toasts');
+
+      if (enable) {
+        notificationPanel.classList.remove('d-none');
+        enableNotificationsCheckbox.checked = true;
+        enableToastsCheckbox.disabled = false;
+      } else {
+        notificationPanel.classList.add('d-none');
+        enableNotificationsCheckbox.checked = false;
+        enableToastsCheckbox.checked = false;
+        enableToastsCheckbox.disabled = true;
+      }
+    });
+  }
 }
 
 async function openNotificationPanel() {

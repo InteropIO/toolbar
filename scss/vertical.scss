@@ -21,7 +21,12 @@
   .viewport-header {
     overflow: hidden;
 
+    .logo-wordmark {
+      display: none;
+    }
+
     .menu {
+      display: none;
       margin-right: 0.75em;
     }
 
@@ -39,10 +44,18 @@
     width: 200px;
 
     .viewport-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       overflow: initial;
     }
 
+    .logo-wordmark {
+      display: block;
+    }
+
     .menu {
+      display: flex;
       max-width: 100%;
       opacity: 1;
     }

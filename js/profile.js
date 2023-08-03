@@ -1,4 +1,4 @@
-import * as glueModule from './glue-related.js';
+import * as glueModule from './connect-related.js';
 
 function populateSID() {
   let SID = glueModule.getSID();

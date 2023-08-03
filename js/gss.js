@@ -1,4 +1,4 @@
-import { gluePromise } from './glue-related.js';
+import { gluePromise } from './connect-related.js';
 
 let gssPromise;
 let currentEntityTypes = [];

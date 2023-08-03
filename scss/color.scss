@@ -141,10 +141,6 @@ html.light {
     }
   }
 
-  .logo img {
-    content: url("../assets/logoLight.svg");
-  }
-
   .applications-nav {
     @include divider("");
   }

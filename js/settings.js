@@ -1,4 +1,4 @@
-import { updatePrefs } from './glue-related.js';
+import { updatePrefs } from './connect-related.js';
 
 let settings = {
   showTutorial: true,
