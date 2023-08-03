@@ -30,7 +30,7 @@
     },
     "taskbar": {
       "allowPin": true,
-      "appId": "connect-application-manager"
+      "appId": "connect-desktop-application-manager"
     },
     "jumpList": {
       "enabled": true
