@@ -45,6 +45,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function init() {
   await glueModule.getPrefs();
+  await glueModule.getNotificationsConfiguration();
+  await glueModule.trackNotificationsConfigurationChange();
+
   finishLoading();
 
   observeAppElement();
@@ -56,7 +59,6 @@ async function init() {
   printLayouts();
   printFavoriteApps();
   printNotificationCount();
-  printNotificationButton();
   printInitialToastState();
 
   handleAppClick();
@@ -326,15 +328,6 @@ function printNotificationCount() {
       }
     }
   });
-}
-
-function printNotificationButton() {
-  const notificationsEnabled = getSetting('enableNotifications');
-  const notificationButton = q('#notification-panel');
-
-  if (!notificationsEnabled) {
-    notificationButton.classList.add('d-none');
-  }
 }
 
 function printInitialToastState() {

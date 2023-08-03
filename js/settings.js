@@ -1,8 +1,4 @@
-import {
-  updatePrefs,
-  checkNotificationsConfigure,
-  configureNotifications,
-} from './glue-related.js';
+import { updatePrefs } from './glue-related.js';
 
 let settings = {
   showTutorial: true,
@@ -31,17 +27,6 @@ async function init() {
 }
 
 async function populateSettings() {
-  const methodExists = await checkNotificationsConfigure();
-
-  if (methodExists) {
-    configureNotifications({
-      enable: settings.enableNotifications,
-      enableToasts: settings.enableToasts,
-    });
-  } else {
-    q('.settings-notifications').classList.add('d-none');
-  }
-
   for (const setting in settings) {
     if (
       typeof settings[setting] === 'boolean' &&
@@ -84,7 +69,6 @@ function getSettings() {
 
 function setSettings(prefs) {
   settings = { ...settings, ...prefs };
-  populateSettings();
   init();
 }
 
