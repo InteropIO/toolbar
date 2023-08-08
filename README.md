@@ -1,10 +1,10 @@
-# io.Connect Application Manager
+# io.Connect Floating Toolbar
 
-Pure JavaScript implementation of the io.Connect Application Manager for [**io.Connect Desktop**](https://interop.io/products/io-connect/).
+Pure JavaScript implementation of the io.Connect Floating Toolbar for [**io.Connect Desktop**](https://interop.io/products/io-connect/).
 
 ![Toolbar GIF](./toolbar.gif)
 
-For more details, see also the [io.Connect Application Manager documentation](https://docs.glue42.com/glue42-concepts/glue42-toolbar/index.html).
+For more details, see also the [io.Connect Floating Toolbar documentation](https://docs.glue42.com/glue42-concepts/glue42-toolbar/index.html).
 
 ## Prerequisites
 
@@ -24,7 +24,7 @@ None. The code doesn't require any other modules, packages or installations.
 
 ## Customizing the Toolbar
 
-You can use the Floating Toolbar source code to create your own modified version of the io.Connect Application Manager. Once you have implemented a toolbar, you must host it, create an [application configuration](https://docs.glue42.com/developers/configuration/application/index.html#application_configuration) file for it and add it to your application store. Make sure to set the `"shell"` top-level key to `true`:
+You can use the Floating Toolbar source code to create your own modified version of the io.Connect Floating Toolbar. Once you have implemented a toolbar, you must host it, create an [application configuration](https://docs.glue42.com/developers/configuration/application/index.html#application_configuration) file for it and add it to your application store. Make sure to set the `"shell"` top-level key to `true`:
 
 ```json
 {
