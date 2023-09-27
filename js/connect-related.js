@@ -390,8 +390,14 @@ async function trackNotificationsConfigurationChange() {
 }
 
 async function openNotificationPanel() {
-  await gluePromise;
-  glue.agm.invoke('T42.Notifications.Show');
+  const glue = await gluePromise;
+  const isPanelVisible = await glue.notifications.panel.isVisible();
+
+  if (isPanelVisible) {
+    await glue.notifications.panel.hide();
+  } else {
+    await glue.notifications.panel.show();
+  }
 }
 
 async function openFeedbackForm() {
@@ -574,13 +580,26 @@ async function getUserProperties() {
 async function getPrefs() {
   await gluePromise;
   const prefs = await glue.prefs.get();
+  const settings = getSettings();
 
   // if we don't have any prefs, get the default settings and update prefs
   if (
     typeof prefs.data === 'undefined' ||
     Object.keys(prefs.data).length === 0
   ) {
-    await glue.prefs.update({ ...getSettings() });
+    const newSettings = {
+      showTutorial: settings.showTutorial,
+      saveDefaultLayout: settings.saveDefaultLayout,
+      searchClients: settings.searchClients,
+      searchInstruments: settings.searchInstruments,
+      enableNotifications: settings.enableNotifications,
+      enableToasts: settings.enableToasts,
+      toolbarAppRows: settings.toolbarAppRows,
+      vertical: settings.vertical,
+    };
+
+    await glue.prefs.update({ ...newSettings });
+
     setSettings();
   } else {
     setSettings(prefs.data);

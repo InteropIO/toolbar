@@ -78,6 +78,11 @@ function getSetting(setting) {
 
 function setSetting(setting) {
   Object.assign(settings, setting);
+
+  if (Object.keys(setting).includes('showHiddenApps')) {
+    return;
+  }
+
   updatePrefs(setting);
 }
 
