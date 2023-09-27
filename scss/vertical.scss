@@ -22,12 +22,22 @@
     overflow: hidden;
 
     .logo-wordmark {
-      display: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-width: 0;
+      height: 25%;
+      padding-left: 0;
+      opacity: 0;
+      @include transition(all, 0);
     }
 
     .menu {
-      display: none;
-      margin-right: 0.75em;
+      max-width: 0;
+      opacity: 0;
+      pointer-events: none;
+      margin-right: 0;
+      @include transition(all, 0);
     }
 
     .dropdown-menu {
@@ -48,16 +58,19 @@
       align-items: center;
       justify-content: space-between;
       overflow: initial;
-    }
 
-    .logo-wordmark {
-      display: block;
+      .logo-wordmark {
+        max-width: 100%;
+        padding-left: 0.8em;
+        opacity: 1;
+      }
     }
 
     .menu {
-      display: flex;
       max-width: 100%;
       opacity: 1;
+      pointer-events: all;
+      margin-right: 0.75em;
     }
 
     .text-animation {
