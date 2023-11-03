@@ -422,11 +422,16 @@ async function openNotificationPanel() {
   );
   const isPanelVisible = await glue.notifications.panel.isVisible();
 
+  if (!panelApp) {
+    await glue.notifications.panel.show();
+    return;
+  }
+
   if (typeof isPanelVisible !== 'boolean') {
     return;
   }
 
-  if (panelApp.isFocused) {
+  if (typeof panelApp.isFocused !== 'boolean' && !panelApp.isFocused) {
     return;
   }
 
