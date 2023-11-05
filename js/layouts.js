@@ -7,7 +7,7 @@ import {
   activeLayout,
   clearDefaultLayout,
   setDefaultGlobal,
-} from './glue-related.js';
+} from './connect-related.js';
 import { escapeHtml } from './utils.js';
 import { getSetting } from './settings.js';
 

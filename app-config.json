@@ -1,7 +1,7 @@
 {
   "title": "AppManager-Embedded",
   "type": "window",
-  "name": "glue42-application-manager",
+  "name": "io-connect-toolbar",
   "shell": true,
   "details": {
     "autoInjectAPI": {
@@ -30,7 +30,7 @@
     },
     "taskbar": {
       "allowPin": true,
-      "appId": "glue42-enterprise-appManager"
+      "appId": "io-connect-toolbar"
     },
     "jumpList": {
       "enabled": true

@@ -19,7 +19,7 @@ import {
   handleLayoutSave,
   noLayoutsHTML,
 } from './layouts.js';
-import * as glueModule from './glue-related.js';
+import * as glueModule from './connect-related.js';
 import * as utils from './utils.js';
 import {
   clientHTMLTemplate,

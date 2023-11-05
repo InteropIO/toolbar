@@ -2,6 +2,18 @@
 @import "color";
 @import "folders";
 
+:root {
+  --logo-color-accent: #007be5;
+}
+
+.dark {
+  --logo-color-base: #ffffff;
+}
+
+.light {
+  --logo-color-base: #083044;
+}
+
 html {
   height: 100%;
 
@@ -353,9 +365,6 @@ html {
     }
 
     .viewport-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
       position: relative;
 
       a {
@@ -378,9 +387,23 @@ html {
       }
 
       .logo {
+        display: flex;
+        align-items: center;
         width: 100%;
-        padding: 1.25em 1.325em;
+        height: 100%;
+        padding: 0 1.25em;
         overflow: hidden;
+
+        svg {
+          width: 100%;
+          height: 100%;
+        }
+
+        &-icon {
+          flex-shrink: 0;
+          width: 2.33em;
+          height: 60%;
+        }
       }
     }
 

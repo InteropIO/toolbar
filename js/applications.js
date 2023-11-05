@@ -1,4 +1,4 @@
-import { glueAppsObs, startApp } from './glue-related.js';
+import { glueAppsObs, startApp } from './connect-related.js';
 import {
   favoriteApps,
   addFavoriteApp,

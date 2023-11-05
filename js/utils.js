@@ -22,7 +22,7 @@ import {
   getPrimaryScaleFactor,
   windowCenter,
   getPhysicalWindowBounds,
-} from './glue-related.js';
+} from './connect-related.js';
 import {
   toolbarWidth,
   toolbarDrawerSize,
@@ -110,12 +110,12 @@ function handleThemeChange() {
 }
 
 function populateAboutPage() {
-  q('.gd-version').innerText = glue42gd.version;
+  q('.connect-desktop-version').innerText = glue42gd.version;
   q('.gw-url').innerText = glue42gd.gwURL;
   q('.username').innerText = glue42gd.user;
 
   gluePromise.then(async (glue) => {
-    q('.glue-js-version').innerText = await glueVersion();
+    q('.desktop-client-version').innerText = await glueVersion();
   });
 }
 

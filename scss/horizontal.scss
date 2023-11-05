@@ -19,18 +19,19 @@
       overflow-y: auto;
     }
 
+    .logo-wordmark {
+      display: none;
+    }
+
     .viewport-header {
       position: static;
 
-      .logo {
-        overflow: hidden;
-      }
-
       .menu {
         position: absolute;
+        top: 50%;
         right: 0.5em;
         z-index: 11;
-        display: flex;
+        transform: translateY(-50%);
       }
 
       .dropdown-menu {

@@ -327,23 +327,19 @@ async function configureNotifications(config) {
   }
 }
 
-async function getNotificationsConfiguration() {
+async function checkNotificationsConfiguration() {
   const glue = await gluePromise;
-  const { enable, enableToasts } = await glue.notifications.getConfiguration();
-  const setting = {
-    enableNotifications: enable,
-    enableToasts,
-  };
 
-  setSetting(setting);
-  updatePrefs(setting);
+  return typeof glue.notifications.getConfiguration === 'function';
 }
 
-async function trackNotificationsConfigurationChange() {
+async function getNotificationsConfiguration() {
   const glue = await gluePromise;
+  const methodExists = await checkNotificationsConfiguration();
 
-  await glue.notifications.onConfigurationChanged((config) => {
-    const { enable, enableToasts } = config;
+  if (methodExists) {
+    const { enable, enableToasts } =
+      await glue.notifications.getConfiguration();
     const setting = {
       enableNotifications: enable,
       enableToasts,
@@ -351,27 +347,57 @@ async function trackNotificationsConfigurationChange() {
 
     setSetting(setting);
     updatePrefs(setting);
+  }
+}
 
-    const notificationPanel = q('#notification-panel');
-    const enableNotificationsCheckbox = q('#enable-notifications');
-    const enableToastsCheckbox = q('#enable-toasts');
+async function checkNotificationsOnConfigurationChanged() {
+  const glue = await gluePromise;
 
-    if (enable) {
-      notificationPanel.classList.remove('d-none');
-      enableNotificationsCheckbox.checked = true;
-      enableToastsCheckbox.disabled = false;
-    } else {
-      notificationPanel.classList.add('d-none');
-      enableNotificationsCheckbox.checked = false;
-      enableToastsCheckbox.checked = false;
-      enableToastsCheckbox.disabled = true;
-    }
-  });
+  return typeof glue.notifications.onConfigurationChanged === 'function';
+}
+
+async function trackNotificationsConfigurationChange() {
+  const glue = await gluePromise;
+  const methodExists = await checkNotificationsOnConfigurationChanged();
+
+  if (methodExists) {
+    await glue.notifications.onConfigurationChanged((config) => {
+      const { enable, enableToasts } = config;
+      const setting = {
+        enableNotifications: enable,
+        enableToasts,
+      };
+
+      setSetting(setting);
+      updatePrefs(setting);
+
+      const notificationPanel = q('#notification-panel');
+      const enableNotificationsCheckbox = q('#enable-notifications');
+      const enableToastsCheckbox = q('#enable-toasts');
+
+      if (enable) {
+        notificationPanel.classList.remove('d-none');
+        enableNotificationsCheckbox.checked = true;
+        enableToastsCheckbox.disabled = false;
+      } else {
+        notificationPanel.classList.add('d-none');
+        enableNotificationsCheckbox.checked = false;
+        enableToastsCheckbox.checked = false;
+        enableToastsCheckbox.disabled = true;
+      }
+    });
+  }
 }
 
 async function openNotificationPanel() {
-  await gluePromise;
-  glue.agm.invoke('T42.Notifications.Show');
+  const glue = await gluePromise;
+  const isPanelVisible = await glue.notifications.panel.isVisible();
+
+  if (isPanelVisible) {
+    await glue.notifications.panel.hide();
+  } else {
+    await glue.notifications.panel.show();
+  }
 }
 
 async function openFeedbackForm() {
@@ -554,13 +580,25 @@ async function getUserProperties() {
 async function getPrefs() {
   await gluePromise;
   const prefs = await glue.prefs.get();
+  const settings = getSettings();
 
   // if we don't have any prefs, get the default settings and update prefs
   if (
     typeof prefs.data === 'undefined' ||
     Object.keys(prefs.data).length === 0
   ) {
-    await glue.prefs.update({ ...getSettings() });
+    await glue.prefs.update({
+      ...{
+        showTutorial: settings.showTutorial,
+        saveDefaultLayout: settings.saveDefaultLayout,
+        searchClients: settings.searchClients,
+        searchInstruments: settings.searchInstruments,
+        enableNotifications: settings.enableNotifications,
+        enableToasts: settings.enableToasts,
+        toolbarAppRows: settings.toolbarAppRows,
+        vertical: settings.vertical,
+      },
+    });
     setSettings();
   } else {
     setSettings(prefs.data);

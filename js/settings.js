@@ -1,4 +1,4 @@
-import { updatePrefs } from './glue-related.js';
+import { updatePrefs } from './connect-related.js';
 
 let settings = {
   showTutorial: true,
@@ -78,6 +78,11 @@ function getSetting(setting) {
 
 function setSetting(setting) {
   Object.assign(settings, setting);
+
+  if (Object.keys(setting).includes('showHiddenApps')) {
+    return;
+  }
+
   updatePrefs(setting);
 }
 

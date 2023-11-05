@@ -1,6 +1,10 @@
 import { gssPromise, getCurrentEntityTypes } from './gss.js';
 import { allApplicationsObs } from './applications.js';
-import { startApp, allWorkspacesObs, openWorkspace } from './glue-related.js';
+import {
+  startApp,
+  allWorkspacesObs,
+  openWorkspace,
+} from './connect-related.js';
 // import { clearSearch, getAppIcon } from './utils.js';
 import { getAppIcon } from './utils.js';
 
