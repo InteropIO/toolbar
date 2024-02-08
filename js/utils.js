@@ -381,14 +381,15 @@ function handleDropDownClicks() {
 
 async function handleNotificationClick() {
   const enableNotifications = getSetting('enableNotifications');
+  const notificationPanel = q('#notification-panel');
 
   if (enableNotifications) {
     notificationEnabledObs.subscribe((data) => {
-      q('#notification-panel').classList[data ? 'remove' : 'add']('d-none');
+      notificationPanel.classList[data ? 'remove' : 'add']('d-none');
     });
   }
 
-  q('#notification-panel').addEventListener('click', (e) => {
+  notificationPanel.addEventListener('click', (e) => {
     e.preventDefault();
     e.stopPropagation();
     e.stopImmediatePropagation();

@@ -8,7 +8,7 @@
   }
 
   @mixin divider($theme) {
-    &::before {
+    &::after {
       @if $theme == "dark" {
         background-color: rgba(255, 255, 255, 0.075);
       } @else {
@@ -23,7 +23,7 @@
     }
 
     &:hover {
-      &::before {
+      &::after {
         background-color: transparent;
       }
     }
