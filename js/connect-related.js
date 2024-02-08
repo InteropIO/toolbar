@@ -431,16 +431,12 @@ async function openNotificationPanel() {
     return;
   }
 
-  if (typeof panelApp.isFocused !== 'boolean' && !panelApp.isFocused) {
-    return;
-  }
-
   if (isPanelVisible) {
-    await panelApp.focus();
     return;
   }
 
   await glue.notifications.panel.show();
+  await panelApp.focus();
 }
 
 async function openFeedbackForm() {
