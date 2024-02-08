@@ -420,18 +420,9 @@ async function openNotificationPanel() {
   const panelApp = glue.windows.find(
     'io-connect-notifications-panel-application'
   );
-  const isPanelVisible = await glue.notifications.panel.isVisible();
 
   if (!panelApp) {
     await glue.notifications.panel.show();
-    return;
-  }
-
-  if (typeof isPanelVisible !== 'boolean') {
-    return;
-  }
-
-  if (isPanelVisible) {
     return;
   }
 
