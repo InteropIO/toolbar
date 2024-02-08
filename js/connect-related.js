@@ -421,11 +421,6 @@ async function openNotificationPanel() {
     'io-connect-notifications-panel-application'
   );
 
-  if (!panelApp) {
-    await glue.notifications.panel.show();
-    return;
-  }
-
   await glue.notifications.panel.show();
   await panelApp.focus();
 }
