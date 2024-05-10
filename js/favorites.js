@@ -1,16 +1,9 @@
+import { getSetting, setSetting } from "./settings.js";
+
 const favoriteApps = new rxjs.BehaviorSubject([]);
 
-init();
-
 function init() {
-  let storageData = localStorage.getItem('favorite-apps');
-
-  if (storageData === null) {
-    localStorage.setItem('favorite-apps', '[]');
-  }
-
-  let savedFavApps = JSON.parse(localStorage.getItem('favorite-apps'));
-
+  const savedFavApps = getSetting('favoriteApps');
   favoriteApps.next(savedFavApps);
 }
 
@@ -26,12 +19,6 @@ function updateFavoriteApps() {
       appElement.classList.remove('fav-app');
     }
   });
-  // favoriteApps.subscribe(([favApps, allApps]) => {
-  //   document.querySelectorAll('#search-results>li').forEach((appElement) => {
-  //     // console.log(appElement);
-  //     // let appName = appElement.getAttribute('app-name');
-  //   });
-  // });
 }
 
 function addFavoriteApp(appName) {
@@ -41,7 +28,7 @@ function addFavoriteApp(appName) {
 
   newApps.push(appName);
   favoriteApps.next(newApps);
-  localStorage.setItem('favorite-apps', JSON.stringify(newApps));
+  setSetting({ favoriteApps: newApps });
   updateFavoriteApps();
 }
 
@@ -54,8 +41,8 @@ function removeFavoriteApp(appName) {
     (checkedAppName) => checkedAppName !== appName
   );
   favoriteApps.next(currentApps);
-  localStorage.setItem('favorite-apps', JSON.stringify(currentApps));
+  setSetting({ favoriteApps: currentApps });
   updateFavoriteApps();
 }
 
-export { favoriteApps, addFavoriteApp, removeFavoriteApp, updateFavoriteApps };
+export { init, favoriteApps, addFavoriteApp, removeFavoriteApp, updateFavoriteApps };
