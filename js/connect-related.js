@@ -65,6 +65,7 @@ gluePromise.then((glue) => {
   trackConnection();
   trackNotificationCount();
   trackWindowZoom();
+  trackNotificationPanelVisibilityChange();
 });
 
 function trackWindowZoom() {
@@ -199,6 +200,31 @@ async function trackDisplayChange() {
   glue.displays.onDisplayChanged(async () => {
     await setWindowSize();
   });
+}
+
+async function trackNotificationPanelVisibilityChange() {
+  const notificationPanel = q('#notification-panel');
+  const isPanelVisible = await glue.notifications.panel.isVisible();
+
+  if (isPanelVisible) {
+    notificationPanel.classList.add('app-active');
+  }
+
+  if (typeof glue.notifications.panel.onVisibilityChanged !== 'function') {
+    return;
+  }
+
+  const unSubscribe = glue.notifications.panel.onVisibilityChanged(
+    (isVisible) => {
+      if (isVisible) {
+        notificationPanel.classList.add('app-active');
+      } else {
+        notificationPanel.classList.remove('app-active');
+      }
+    }
+  );
+
+  return () => unSubscribe();
 }
 
 function windowCenter() {
@@ -391,13 +417,12 @@ async function trackNotificationsConfigurationChange() {
 
 async function openNotificationPanel() {
   const glue = await gluePromise;
-  const isPanelVisible = await glue.notifications.panel.isVisible();
+  const panelApp = glue.windows.find(
+    'io-connect-notifications-panel-application'
+  );
 
-  if (isPanelVisible) {
-    await glue.notifications.panel.hide();
-  } else {
-    await glue.notifications.panel.show();
-  }
+  await glue.notifications.panel.show();
+  await panelApp.focus();
 }
 
 async function openFeedbackForm() {
