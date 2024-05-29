@@ -112,9 +112,21 @@ html {
     }
   }
 
+  .settings-header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: var(--t42-body);
+  }
+
   .settings-content {
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .settings-content h5 {
+    margin: 0;
   }
 
   .settings-content > div {

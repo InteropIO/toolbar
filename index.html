@@ -262,10 +262,15 @@
         id="settings-content"
         menu-id="settings"
       >
+        <div class="settings-header border-bottom border-secondary">
+          <div>
+            <h5 class="draggable">Settings</h5>
+            <span class="icon-arrow-up-down close-drawer m-0"></span>
+          </div>
+        </div>
         <div class="settings-general border-bottom border-secondary">
           <div>
-            <h5 class="draggable m-0">General Settings</h5>
-            <span class="icon-arrow-up-down close-drawer m-0"></span>
+            <h5>General Settings</h5>
           </div>
           <div class="show-tutorial-check">
             <label class="switch" for="show-tutorial">
@@ -283,7 +288,7 @@
 
         <div class="settings-theme border-bottom border-secondary">
           <div>
-            <h5 class="draggable m-0">Theme</h5>
+            <h5>Theme</h5>
           </div>
           <form>
             <ul class="select theme-select mb-1">
@@ -307,7 +312,7 @@
 
         <div class="settings-length border-bottom border-secondary">
           <div>
-            <h5 class="draggable m-0">Toolbar Length</h5>
+            <h5>Toolbar Length</h5>
           </div>
           <form>
             <ul class="select length-select mb-2">
@@ -329,7 +334,7 @@
 
         <div class="settings-layouts border-bottom border-secondary">
           <div>
-            <h5 class="draggable m-0">Layouts</h5>
+            <h5>Layouts</h5>
           </div>
           <div>
             <label class="switch" for="save-default-layout">
@@ -347,7 +352,7 @@
 
         <div class="settings-notifications border-bottom border-secondary">
           <div>
-            <h5 class="draggable m-0">Notifications</h5>
+            <h5>Notifications</h5>
           </div>
           <div>
             <label class="switch" for="enable-notifications">
@@ -375,9 +380,39 @@
           </div>
         </div>
 
+        <div class="settings-system border-bottom border-secondary">
+          <div>
+            <h5>System</h5>
+          </div>
+          <div>
+            <label class="switch" for="schedule-restart">
+              <input
+                type="checkbox"
+                id="schedule-restart"
+                class="schedule-restart"
+                data-setting="scheduleRestart"
+              />
+              <span class="slider"></span>
+              <span>Schedule restart</span>
+            </label>
+          </div>
+          <div>
+            <label class="switch" for="schedule-shutdown">
+              <input
+                type="checkbox"
+                id="schedule-shutdown"
+                class="schedule-shutdown"
+                data-setting="scheduleShutdown"
+              />
+              <span class="slider"></span>
+              <span>Schedule shutdown</span>
+            </label>
+          </div>
+        </div>
+
         <div class="settings-search">
           <div>
-            <h5 class="draggable m-0">Search</h5>
+            <h5>Search</h5>
           </div>
           <div>
             <label class="switch" for="search-clients">
