@@ -26,36 +26,51 @@ async function init() {
   trackSettingsChange();
 }
 
-async function populateSettings() {
-  for (const setting in settings) {
-    if (
-      typeof settings[setting] === 'boolean' &&
-      q(`#settings-content [setting='${setting}']`)
-    ) {
-      let checkbox = q(`#settings-content [setting='${setting}']`);
+function populateSettings() {
+  const settingsContainer = document.querySelector('#settings-content');
 
+  for (const setting in settings) {
+    const settingElement = settingsContainer.querySelector(
+      `[data-setting='${setting}']`
+    );
+
+    if (!settingElement) {
+      continue;
+    }
+
+    if (typeof settings[setting] === 'boolean') {
       getSetting(setting)
-        ? checkbox.setAttribute('checked', true)
-        : checkbox.removeAttribute('checked');
+        ? settingElement.setAttribute('checked', true)
+        : settingElement.removeAttribute('checked');
     }
   }
 }
 
 function trackSettingsChange() {
-  q('#settings-content').addEventListener('change', (e) => {
+  const settingsContainer = document.querySelector('#settings-content');
+
+  settingsContainer.addEventListener('change', (e) => {
+    const settingDropdown =
+      e.target.getAttribute('name') === 'theme' ||
+      e.target.getAttribute('name') === 'length';
+
+    if (settingDropdown) {
+      return;
+    }
+
     let settingElement = e
       .composedPath()
-      .find((e) => e && e.getAttribute && e.getAttribute('setting'));
+      .find((el) => el && el.dataset.setting);
 
     if (settingElement) {
       const setting = {};
 
-      setting[settingElement.getAttribute('setting')] = e.srcElement.checked;
+      setting[settingElement.dataset.setting] = e.target.checked;
       setSetting(setting);
 
       if (
-        e.target.getAttribute('setting') === 'enableNotifications' &&
-        e.srcElement.checked === false
+        e.target.dataset.setting === 'enableNotifications' &&
+        e.target.checked === false
       ) {
         setSetting({ enableNotifications: false, enableToasts: false });
       }

@@ -222,7 +222,7 @@ function focusMenuInputAfterTransition(e) {
     return;
   }
 
-  let menu = e.srcElement;
+  let menu = e.target;
 
   menu.removeEventListener('transitionend', focusMenuInputAfterTransition);
 
@@ -526,7 +526,7 @@ function populateSettingsDropdown(
                     class="select_input"
                     type="radio"
                     name="${elementName}"
-                    id="${elementName}-${element.name + i}"
+                    id="${elementName}-${element.name}"
                     ${elementName}-name="${element.name}"
                     ${
                       element.name === selectOptionsObj.selected.name
@@ -535,7 +535,7 @@ function populateSettingsDropdown(
                     }
                 />
                 <label class="select_label" for="${elementName}-${
-        element.name + i
+        element.name
       }">${element.displayName}</label>
             </li>
             `;
@@ -557,12 +557,12 @@ async function handleAppRowsChange() {
   const numberOfRows = getSetting('toolbarAppRows');
   const appSelectOptions = {
     all: [
-      { name: '8', displayName: '8 Items (Default)' },
-      { name: '10', displayName: '10 Items' },
-      { name: '12', displayName: '12 Items' },
-      { name: '14', displayName: '14 Items' },
-      { name: '16', displayName: '16 Items' },
-      { name: '18', displayName: '18 Items' },
+      { name: '8', displayName: '8 items (Default)' },
+      { name: '10', displayName: '10 items' },
+      { name: '12', displayName: '12 items' },
+      { name: '14', displayName: '14 items' },
+      { name: '16', displayName: '16 items' },
+      { name: '18', displayName: '18 items' },
     ],
   };
 

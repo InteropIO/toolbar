@@ -112,6 +112,36 @@ html {
     }
   }
 
+  .settings-content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .settings-content > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+
+  .settings-content > div > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .switch {
+    .slider {
+      border-color: transparent !important;
+      border-radius: 0.5rem;
+      background-color: color-mix(in srgb, var(--secondary), transparent 50%);
+
+      &::before {
+        border-radius: 50%;
+      }
+    }
+  }
+
   .text-animation {
     @include text-animation("off", "left", 0);
     overflow: hidden;
