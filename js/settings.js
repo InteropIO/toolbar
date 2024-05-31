@@ -10,6 +10,7 @@ let settings = {
   toolbarAppRows: '8',
   showHiddenApps: false,
   vertical: true,
+  favoriteApps: [],
 };
 const toolbarWidth = {
   vertical: 200,
