@@ -28,6 +28,11 @@ async function init() {
 
 function populateSettings() {
   const settingsContainer = document.querySelector('#settings-content');
+  const notificationPanel = document.querySelector('#notification-panel');
+  const enableNotificationsCheckbox = document.querySelector(
+    '#enable-notifications'
+  );
+  const enableToastsCheckbox = document.querySelector('#enable-toasts');
 
   for (const setting in settings) {
     const settingElement = settingsContainer.querySelector(
@@ -36,6 +41,20 @@ function populateSettings() {
 
     if (!settingElement) {
       continue;
+    }
+
+    if (setting === 'enableNotifications') {
+      const enable = settings[setting];
+      if (enable) {
+        notificationPanel.classList.remove('d-none');
+        enableNotificationsCheckbox.checked = true;
+        enableToastsCheckbox.disabled = false;
+      } else {
+        notificationPanel.classList.add('d-none');
+        enableNotificationsCheckbox.checked = false;
+        enableToastsCheckbox.checked = false;
+        enableToastsCheckbox.disabled = true;
+      }
     }
 
     if (typeof settings[setting] === 'boolean') {
@@ -58,12 +77,10 @@ function trackSettingsChange() {
       return;
     }
 
-    let settingElement = e
-      .composedPath()
-      .find((el) => el && el.dataset.setting);
+    let settingElement = e.composedPath().find((el) => el?.dataset.setting);
 
     if (settingElement) {
-      const setting = {};
+      let setting = {};
 
       setting[settingElement.dataset.setting] = e.target.checked;
       setSetting(setting);
@@ -72,8 +89,9 @@ function trackSettingsChange() {
         e.target.dataset.setting === 'enableNotifications' &&
         e.target.checked === false
       ) {
-        setSetting({ enableNotifications: false, enableToasts: false });
+        setting = { enableNotifications: false, enableToasts: false };
       }
+      setSetting(setting);
     }
   });
 }
@@ -99,6 +117,7 @@ function setSetting(setting) {
   }
 
   updatePrefs(setting);
+  populateSettings();
 }
 
 export {

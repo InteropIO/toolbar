@@ -372,7 +372,6 @@ async function getNotificationsConfiguration() {
     };
 
     setSetting(setting);
-    updatePrefs(setting);
   }
 }
 
@@ -395,22 +394,6 @@ async function trackNotificationsConfigurationChange() {
       };
 
       setSetting(setting);
-      updatePrefs(setting);
-
-      const notificationPanel = q('#notification-panel');
-      const enableNotificationsCheckbox = q('#enable-notifications');
-      const enableToastsCheckbox = q('#enable-toasts');
-
-      if (enable) {
-        notificationPanel.classList.remove('d-none');
-        enableNotificationsCheckbox.checked = true;
-        enableToastsCheckbox.disabled = false;
-      } else {
-        notificationPanel.classList.add('d-none');
-        enableNotificationsCheckbox.checked = false;
-        enableToastsCheckbox.checked = false;
-        enableToastsCheckbox.disabled = true;
-      }
     });
   }
 }
