@@ -237,7 +237,7 @@ async function startApp(appName, context) {
   if (glueApp) {
     glueApp
       .start(context)
-      .then(() => { })
+      .then(() => {})
       .catch((e) => {
         console.warn('Failed to start app');
         console.warn(e);
@@ -415,9 +415,15 @@ async function openFeedbackForm() {
 
 async function registerHotkey() {
   await gluePromise;
-  glue.hotkeys.register({ hotkey: 'Ctrl+Alt+T', description: 'Bring app to front for seamless workflow.' }, () => {
-    glue.windows.my().focus();
-  });
+  glue.hotkeys.register(
+    {
+      hotkey: 'Ctrl+Alt+T',
+      description: 'Bring app to front for seamless workflow.',
+    },
+    () => {
+      glue.windows.my().focus();
+    }
+  );
 }
 
 async function shutdown() {

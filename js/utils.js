@@ -458,7 +458,7 @@ async function startTutorial() {
 
     if (showTutorial) {
       try {
-        startApp('getting-started');
+        await startApp('getting-started');
       } catch (e) {
         console.log('could not start Getting started app', e);
       }

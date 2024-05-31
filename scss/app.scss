@@ -146,7 +146,7 @@ html {
     .slider {
       border-color: transparent !important;
       border-radius: 0.5rem;
-      background-color: color-mix(in srgb, var(--secondary), transparent 50%);
+      background-color: color-mix(in srgb, var(--secondary), transparent 75%);
 
       &::before {
         border-radius: 50%;
