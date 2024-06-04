@@ -7,6 +7,7 @@
       href="./assets/t42bootstrap.bundle.css"
     />
     <link rel="stylesheet" type="text/css" href="scss/app.css" />
+    <link rel="stylesheet" href="./assets/flatpickr.min.css" />
     <title>io.Connect Floating Toolbar</title>
   </head>
 
@@ -321,11 +322,14 @@
                   class="select_expand"
                   type="radio"
                   name="length"
-                  id="length-opener"
+                  id="settings-length-opener"
                 />
                 <label class="select_closeLabel" for="closeLength"></label>
                 <ul class="select_options"></ul>
-                <label class="select_expandLabel" for="length-opener"></label>
+                <label
+                  class="select_expandLabel"
+                  for="settings-length-opener"
+                ></label>
               </li>
             </ul>
             <small> * How many menu items will be shown at a time. </small>
@@ -396,6 +400,55 @@
               <span>Schedule restart</span>
             </label>
           </div>
+          <div class="settings-system-schedule-restart">
+            <div>
+              <input
+                type="text"
+                id="schedule-restart-time"
+                class="form-control input-control"
+              />
+            </div>
+            <div class="settings-system-schedule-restart-period">
+              <form>
+                <ul class="select restart-period-select">
+                  <li class="select_items">
+                    <input
+                      class="select_expand"
+                      type="radio"
+                      name="restart-period"
+                      id="settings-restart-period-opener"
+                    />
+                    <label class="select_closeLabel" for="closeLength"></label>
+                    <ul class="select_options"></ul>
+                    <label
+                      class="select_expandLabel"
+                      for="settings-restart-period-opener"
+                    ></label>
+                  </li>
+                </ul>
+              </form>
+            </div>
+            <div class="settings-system-schedule-restart-interval">
+              <form>
+                <ul class="select restart-interval-select">
+                  <li class="select_items">
+                    <input
+                      class="select_expand"
+                      type="radio"
+                      name="restart-interval"
+                      id="settings-restart-interval-opener"
+                    />
+                    <label class="select_closeLabel" for="closeLength"></label>
+                    <ul class="select_options"></ul>
+                    <label
+                      class="select_expandLabel"
+                      for="settings-restart-interval-opener"
+                    ></label>
+                  </li>
+                </ul>
+              </form>
+            </div>
+          </div>
           <div>
             <label class="switch" for="schedule-shutdown">
               <input
@@ -407,6 +460,55 @@
               <span class="slider"></span>
               <span>Schedule shutdown</span>
             </label>
+          </div>
+          <div class="settings-system-schedule-shutdown">
+            <div>
+              <input
+                type="text"
+                id="schedule-shutdown-time"
+                class="form-control input-control"
+              />
+            </div>
+            <div class="settings-system-schedule-shutdown-period">
+              <form>
+                <ul class="select shutdown-period-select">
+                  <li class="select_items">
+                    <input
+                      class="select_expand"
+                      type="radio"
+                      name="shutdown-period"
+                      id="settings-shutdown-period-opener"
+                    />
+                    <label class="select_closeLabel" for="closeLength"></label>
+                    <ul class="select_options"></ul>
+                    <label
+                      class="select_expandLabel"
+                      for="settings-shutdown-period-opener"
+                    ></label>
+                  </li>
+                </ul>
+              </form>
+            </div>
+            <div class="settings-system-schedule-shutdown-interval">
+              <form>
+                <ul class="select shutdown-interval-select">
+                  <li class="select_items">
+                    <input
+                      class="select_expand"
+                      type="radio"
+                      name="shutdown-interval"
+                      id="settings-shutdown-interval-opener"
+                    />
+                    <label class="select_closeLabel" for="closeLength"></label>
+                    <ul class="select_options"></ul>
+                    <label
+                      class="select_expandLabel"
+                      for="settings-shutdown-interval-opener"
+                    ></label>
+                  </li>
+                </ul>
+              </form>
+            </div>
           </div>
         </div>
 

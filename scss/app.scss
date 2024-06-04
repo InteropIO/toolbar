@@ -115,7 +115,7 @@ html {
   .settings-header {
     position: sticky;
     top: 0;
-    z-index: 1;
+    z-index: 15;
     background-color: var(--t42-body);
   }
 
@@ -123,23 +123,95 @@ html {
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+
+    h5 {
+      margin: 0;
+    }
+
+    > div {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      padding: 0.5rem;
+
+      > div {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
   }
 
-  .settings-content h5 {
-    margin: 0;
-  }
-
-  .settings-content > div {
-    display: flex;
-    flex-direction: column;
+  .settings-system-schedule-restart,
+  .settings-system-schedule-shutdown {
+    align-items: normal !important;
     gap: 0.5rem;
-    padding: 0.5rem;
+
+    .select {
+      margin-bottom: 0;
+    }
+
+    &-period {
+      min-width: 7.5em;
+    }
+
+    &-interval {
+      min-width: 6.5em;
+    }
   }
 
-  .settings-content > div > div {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  .form-control.flatpickr-input {
+    height: 34px;
+    color: var(--t42-content-color-muted);
+    opacity: 1;
+    transition: none;
+
+    &:hover {
+      border-color: var(--primary);
+    }
+  }
+
+  .flatpickr-calendar {
+    width: 10rem;
+    border: 1px solid var(--t42-color-opacity-10);
+    border-radius: 0;
+    box-shadow: none;
+
+    &:hover {
+      border-color: var(--primary);
+    }
+
+    &.arrowTop {
+      &::before,
+      &::after {
+        content: none;
+      }
+    }
+
+    &.hasTime .flatpickr-time {
+      border-top: none;
+    }
+
+    input,
+    .flatpickr-am-pm {
+      font-size: inherit;
+      font-weight: inherit !important;
+      border: none !important;
+      color: var(--t42-content-color-muted);
+    }
+
+    input {
+      padding-right: 1rem;
+    }
+
+    .flatpickr-am-pm {
+      width: 25%;
+    }
+
+    .numInputWrapper span {
+      width: 1rem;
+      border-color: var(--t42-color-opacity-10);
+    }
   }
 
   .switch {

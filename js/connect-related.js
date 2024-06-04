@@ -611,6 +611,8 @@ async function getPrefs() {
         enableToasts: settings.enableToasts,
         toolbarAppRows: settings.toolbarAppRows,
         vertical: settings.vertical,
+        favoriteApps: settings.favoriteApps,
+        schedule: settings.schedule,
       },
     });
     setSettings();

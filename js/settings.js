@@ -11,6 +11,20 @@ let settings = {
   showHiddenApps: false,
   vertical: true,
   favoriteApps: [],
+  schedule: {
+    restart: {
+      enable: false,
+      time: '',
+      period: 'weekly',
+      interval: 'monday',
+    },
+    shutdown: {
+      enable: false,
+      time: '',
+      period: 'weekly',
+      interval: 'monday',
+    },
+  },
 };
 const toolbarWidth = {
   vertical: 200,
@@ -72,7 +86,11 @@ function trackSettingsChange() {
   settingsContainer.addEventListener('change', (e) => {
     const settingDropdown =
       e.target.getAttribute('name') === 'theme' ||
-      e.target.getAttribute('name') === 'length';
+      e.target.getAttribute('name') === 'length' ||
+      e.target.getAttribute('name') === 'restart-period' ||
+      e.target.getAttribute('name') === 'restart-interval' ||
+      e.target.getAttribute('name') === 'shutdown-period' ||
+      e.target.getAttribute('name') === 'shutdown-interval';
 
     if (settingDropdown) {
       return;
@@ -91,6 +109,44 @@ function trackSettingsChange() {
         e.target.checked === false
       ) {
         setting = { enableNotifications: false, enableToasts: false };
+      } else if (e.target.dataset.setting === 'scheduleRestart') {
+        const prevSetting = getSetting('schedule');
+
+        setting = {
+          schedule: {
+            shutdown: {
+              enable: prevSetting.shutdown.enable,
+              time: prevSetting.shutdown.time,
+              period: prevSetting.shutdown.period,
+              interval: prevSetting.shutdown.interval,
+            },
+            restart: {
+              enable: e.target.checked,
+              time: prevSetting.restart.time,
+              period: prevSetting.restart.period,
+              interval: prevSetting.restart.interval,
+            },
+          },
+        };
+      } else if (e.target.dataset.setting === 'scheduleShutdown') {
+        const prevSetting = getSetting('schedule');
+
+        setting = {
+          schedule: {
+            restart: {
+              enable: prevSetting.restart.enable,
+              time: prevSetting.restart.time,
+              period: prevSetting.restart.period,
+              interval: prevSetting.restart.interval,
+            },
+            shutdown: {
+              enable: e.target.checked,
+              time: prevSetting.shutdown.time,
+              period: prevSetting.shutdown.period,
+              interval: prevSetting.shutdown.interval,
+            },
+          },
+        };
       }
       setSetting(setting);
     }
