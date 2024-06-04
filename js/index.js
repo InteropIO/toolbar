@@ -30,10 +30,7 @@ import {
 } from './clients-and-instrument-search.js';
 import { getSetting } from './settings.js';
 import { populateSID } from './profile.js';
-import {
-  createScheduleShutdownInput,
-  createScheduleRestartInput,
-} from './schedule-shutdown-restart.js';
+import { createScheduleInputs } from './schedule-shutdown-restart.js';
 
 let {
   map: rxMap,
@@ -71,9 +68,7 @@ async function init() {
   utils.handleLayoutsHover();
   handleLayoutClick();
   handleLayoutSave();
-  createScheduleShutdownInput();
-  createScheduleRestartInput();
-
+  createScheduleInputs();
   utils.handleDropDownClicks();
   handleClientAndInstrumentClicks();
 

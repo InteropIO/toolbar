@@ -36,6 +36,7 @@ import {
   profile_handleRestartClick,
   profile_handleFeedbackClick,
 } from './profile.js';
+import { createScheduleDropdowns } from './schedule-shutdown-restart.js';
 
 import handleKeyboardNavigation from './keyboard-navigation.js';
 
@@ -67,10 +68,7 @@ function handleEvents() {
   handleKeyboardNavigation();
   handleOrientationChange();
   handleAppRowsChange();
-  handlePlatformRestartPeriodScheduleChange();
-  handlePlatformRestartIntervalScheduleChange();
-  handlePlatformShutdownPeriodScheduleChange();
-  handlePlatformShutdownIntervalScheduleChange();
+  createScheduleDropdowns();
   populateAboutPage();
   handleShutdownClick();
   handleTopMenuClicks();
@@ -557,183 +555,6 @@ function getHorizontalToolbarHeight(length) {
   return appContentHeaderSize + navItemSize * numberOfRows;
 }
 
-// TODO: Refactor
-function handlePlatformRestartPeriodScheduleChange() {
-  const initialSetting = getSetting('schedule')['restart']['period'];
-  const selectOptions = {
-    all: [
-      { name: 'weekly', displayName: 'Weekly' },
-      { name: 'daily', displayName: 'Daily' },
-    ],
-  };
-
-  selectOptions.selected = {
-    name: initialSetting,
-    displayName: selectOptions.all.find((el) => el.name === initialSetting)
-      .displayName,
-  };
-
-  populateSettingsDropdown(
-    qa('.restart-period-select .select_options'),
-    selectOptions,
-    'restart-period'
-  );
-
-  q('.restart-period-select .select_options').addEventListener('click', (e) => {
-    const setting = getSetting('schedule');
-
-    if (e.target.matches('input.select_input[type="radio"]')) {
-      const selectedOption = e.target.getAttribute('restart-period-name');
-
-      setSetting({
-        schedule: {
-          ...setting,
-          ...{ restart: { ...setting.restart, ...{ period: selectedOption } } },
-        },
-      });
-    }
-  });
-}
-
-function handlePlatformRestartIntervalScheduleChange() {
-  const initialSetting = getSetting('schedule')['restart']['interval'];
-  const selectOptions = {
-    all: [
-      { name: 'monday', displayName: 'Mon' },
-      { name: 'tuesday', displayName: 'Tue' },
-      { name: 'wednesday', displayName: 'Wed' },
-      { name: 'thursday', displayName: 'Thu' },
-      { name: 'friday', displayName: 'Fri' },
-      { name: 'saturday', displayName: 'Sat' },
-      { name: 'sunday', displayName: 'Sun' },
-    ],
-  };
-
-  selectOptions.selected = {
-    name: initialSetting,
-    displayName: selectOptions.all.find((el) => el.name === initialSetting)
-      .displayName,
-  };
-
-  populateSettingsDropdown(
-    qa('.restart-interval-select .select_options'),
-    selectOptions,
-    'restart-interval'
-  );
-
-  q('.restart-interval-select .select_options').addEventListener(
-    'click',
-    (e) => {
-      const setting = getSetting('schedule');
-
-      if (e.target.matches('input.select_input[type="radio"]')) {
-        const selectedOption = e.target.getAttribute('restart-interval-name');
-
-        setSetting({
-          schedule: {
-            ...setting,
-            ...{
-              restart: { ...setting.restart, ...{ interval: selectedOption } },
-            },
-          },
-        });
-      }
-    }
-  );
-}
-
-function handlePlatformShutdownPeriodScheduleChange() {
-  const initialSetting = getSetting('schedule')['shutdown']['period'];
-  const selectOptions = {
-    all: [
-      { name: 'weekly', displayName: 'Weekly' },
-      { name: 'daily', displayName: 'Daily' },
-    ],
-  };
-
-  selectOptions.selected = {
-    name: initialSetting,
-    displayName: selectOptions.all.find((el) => el.name === initialSetting)
-      .displayName,
-  };
-
-  populateSettingsDropdown(
-    qa('.shutdown-period-select .select_options'),
-    selectOptions,
-    'shutdown-period'
-  );
-
-  q('.shutdown-period-select .select_options').addEventListener(
-    'click',
-    (e) => {
-      const setting = getSetting('schedule');
-
-      if (e.target.matches('input.select_input[type="radio"]')) {
-        const selectedOption = e.target.getAttribute('shutdown-period-name');
-
-        setSetting({
-          schedule: {
-            ...setting,
-            ...{
-              shutdown: { ...setting.shutdown, ...{ period: selectedOption } },
-            },
-          },
-        });
-      }
-    }
-  );
-}
-
-function handlePlatformShutdownIntervalScheduleChange() {
-  const initialSetting = getSetting('schedule')['shutdown']['interval'];
-  const selectOptions = {
-    all: [
-      { name: 'monday', displayName: 'Mon' },
-      { name: 'tuesday', displayName: 'Tue' },
-      { name: 'wednesday', displayName: 'Wed' },
-      { name: 'thursday', displayName: 'Thu' },
-      { name: 'friday', displayName: 'Fri' },
-      { name: 'saturday', displayName: 'Sat' },
-      { name: 'sunday', displayName: 'Sun' },
-    ],
-  };
-
-  selectOptions.selected = {
-    name: initialSetting,
-    displayName: selectOptions.all.find((el) => el.name === initialSetting)
-      .displayName,
-  };
-
-  populateSettingsDropdown(
-    qa('.shutdown-interval-select .select_options'),
-    selectOptions,
-    'shutdown-interval'
-  );
-
-  q('.shutdown-interval-select .select_options').addEventListener(
-    'click',
-    (e) => {
-      const setting = getSetting('schedule');
-
-      if (e.target.matches('input.select_input[type="radio"]')) {
-        const selectedOption = e.target.getAttribute('shutdown-interval-name');
-
-        setSetting({
-          schedule: {
-            ...setting,
-            ...{
-              shutdown: {
-                ...setting.shutdown,
-                ...{ interval: selectedOption },
-              },
-            },
-          },
-        });
-      }
-    }
-  );
-}
-
 async function handleAppRowsChange() {
   const numberOfRows = getSetting('toolbarAppRows');
   const appSelectOptions = {
@@ -1136,4 +957,5 @@ export {
   setDrawerOpenClasses,
   setDrawerOpenDirection,
   elementObserver,
+  populateSettingsDropdown,
 };
