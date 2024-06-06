@@ -148,6 +148,30 @@ async function getSchedule(scheduleOption) {
   return schedule.returned.cronTime;
 }
 
+async function cancelShutdownSchedule() {
+  const schedule = await getSchedule('shutdown');
+
+  if (!schedule) {
+    return;
+  }
+
+  await io.interop.invoke('T42.GD.Execute', {
+    command: 'cancel-shutdown',
+  });
+}
+
+async function cancelRestartSchedule() {
+  const schedule = await getSchedule('shutdown');
+
+  if (!schedule) {
+    return;
+  }
+
+  await io.interop.invoke('T42.GD.Execute', {
+    command: 'cancel-restart',
+  });
+}
+
 function parseScheduleToObj(scheduleString) {
   const schedule = scheduleString.split(' ');
 
@@ -194,7 +218,7 @@ async function getInitialSettings(scheduleOptions) {
 
     return {
       [scheduleOption]: {
-        enable: true,
+        ...currentSettings[scheduleOption],
         ...setting,
       },
     };
@@ -214,13 +238,98 @@ async function getInitialSettings(scheduleOptions) {
   });
 }
 
+function setInitialToggleStates() {
+  const scheduleSettings = getSetting('schedule');
+
+  document.querySelector('#schedule-restart').checked =
+    scheduleSettings.restart.enable;
+  document.querySelector('#schedule-shutdown').checked =
+    scheduleSettings.shutdown.enable;
+}
+
+function setInitialInputStates() {
+  const scheduleSettings = getSetting('schedule');
+  const scheduleOptions = ['shutdown', 'restart'];
+
+  scheduleOptions.forEach((option) => {
+    if (!scheduleSettings[option].enable) {
+      document.querySelector(`#schedule-${option}-time`).disabled = true;
+      document
+        .querySelector(`.settings-system-schedule-${option}`)
+        .classList.add('d-none');
+    }
+  });
+}
+
+async function setInputStatesOnChange(option, checked) {
+  const input = document.querySelector(`#schedule-${option}-time`);
+  const periodDropdown = document.querySelector(`.${option}-period-select`);
+  const intervalDropdown = document.querySelector(`.${option}-interval-select`);
+  const container = document.querySelector(
+    `.settings-system-schedule-${option}`
+  );
+
+  if (!checked) {
+    if (option === 'restart') {
+      await cancelRestartSchedule();
+    } else if (option === 'shutdown') {
+      await cancelShutdownSchedule();
+    }
+  }
+
+  if (checked) {
+    input.disabled = false;
+    periodDropdown.classList.remove('disabled');
+    intervalDropdown.classList.remove('disabled');
+    container.classList.remove('d-none');
+  } else {
+    input.disabled = true;
+    periodDropdown.classList.add('disabled');
+    intervalDropdown.classList.add('disabled');
+    container.classList.add('d-none');
+  }
+}
+
+async function handleScheduleToggleClick() {
+  const scheduleOptions = ['shutdown', 'restart'];
+
+  scheduleOptions.forEach(async (option) => {
+    document
+      .querySelector(`#schedule-${option}`)
+      .addEventListener('click', async (e) => {
+        const prevSettings = getSetting('schedule');
+
+        if (e.target.matches('input[type="checkbox"]')) {
+          const checked = e.target.checked;
+
+          await setInputStatesOnChange(option, checked);
+
+          setSetting({
+            schedule: {
+              ...prevSettings,
+              ...{
+                [option]: {
+                  ...prevSettings[option],
+                  ...{ enable: checked },
+                },
+              },
+            },
+          });
+        }
+      });
+  });
+}
+
 async function handleScheduledShutdownRestart() {
   const scheduleOptions = ['shutdown', 'restart'];
 
   await getInitialSettings(scheduleOptions)
-    .then(() => {
+    .then(async () => {
       createScheduleInputs();
       createScheduleDropdowns();
+      setInitialToggleStates();
+      setInitialInputStates();
+      await handleScheduleToggleClick();
     })
     .catch(console.error);
 }

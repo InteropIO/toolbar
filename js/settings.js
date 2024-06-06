@@ -183,8 +183,8 @@ export {
   toolbarWidth,
   toolbarDrawerSize,
   initialPosition,
-  setSettings,
   setSetting,
+  setSettings,
   getSetting,
   getSettings,
 };

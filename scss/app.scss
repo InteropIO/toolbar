@@ -142,6 +142,10 @@ html {
     }
   }
 
+  .settings-system-schedule-restart {
+    z-index: 13;
+  }
+
   .settings-system-schedule-restart,
   .settings-system-schedule-shutdown {
     align-items: normal !important;
@@ -163,11 +167,18 @@ html {
   .form-control.flatpickr-input {
     height: 34px;
     color: var(--t42-content-color-muted);
+    background-color: var(--t42-input-bg);
     opacity: 1;
     transition: none;
 
-    &:hover {
+    &:hover:not(:disabled) {
       border-color: var(--primary);
+    }
+
+    &:disabled {
+      background-color: var(--t42-input-disabled-bg);
+      opacity: 0.65;
+      pointer-events: none;
     }
   }
 
@@ -175,6 +186,7 @@ html {
     width: 10rem;
     border: 1px solid var(--t42-color-opacity-10);
     border-radius: 0;
+    background-color: var(--t42-input-bg);
     box-shadow: none;
 
     &:hover {
@@ -198,6 +210,11 @@ html {
       font-weight: inherit !important;
       border: none !important;
       color: var(--t42-content-color-muted);
+
+      &:hover,
+      &:focus {
+        background-color: var(--t42-input-bg);
+      }
     }
 
     input {
@@ -211,6 +228,16 @@ html {
     .numInputWrapper span {
       width: 1rem;
       border-color: var(--t42-color-opacity-10);
+    }
+
+    .flatpickr-time {
+      span.arrowUp:after {
+        border-bottom-color: var(--t42-content-color);
+      }
+
+      span.arrowDown:after {
+        border-top-color: var(--t42-content-color);
+      }
     }
   }
 

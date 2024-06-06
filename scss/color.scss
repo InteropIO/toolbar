@@ -101,32 +101,6 @@ html.dark {
     }
   }
 
-  .form-control.flatpickr-input {
-    background-color: #1e1e1e;
-  }
-
-  .flatpickr-calendar {
-    background-color: #1e1e1e;
-
-    input,
-    .flatpickr-am-pm {
-      &:hover,
-      &:focus {
-        background: #252525;
-      }
-    }
-
-    .flatpickr-time {
-      span.arrowUp:after {
-        border-bottom-color: #eeeeee;
-      }
-
-      span.arrowDown:after {
-        border-top-color: #eeeeee;
-      }
-    }
-  }
-
   .horizontal {
     .layout-menu-tool {
       border: 1px solid rgba(255, 255, 255, 0.075);
@@ -248,12 +222,6 @@ html.light {
           color: #2c2c2c;
         }
       }
-    }
-  }
-
-  .flatpickr-calendar {
-    &:hover {
-      background-color: #fff;
     }
   }
 

@@ -61,7 +61,6 @@ let keyObs = rxjs
 
 function handleEvents() {
   handleNotificationClick();
-  handleScheduledShutdownClick();
   handleEnableNotifications();
   handleFeedbackClick();
   handleThemeChange();
@@ -442,22 +441,6 @@ function handleEnableToastsClick() {
       configureNotifications({ enableToasts: true });
     } else {
       configureNotifications({ enableToasts: false });
-    }
-  });
-}
-
-function handleScheduledShutdownClick() {
-  const scheduleShutdown = document.querySelector('#schedule-shutdown');
-
-  scheduleShutdown.addEventListener('click', (e) => {
-    if (e.target.matches('input[type="checkbox"]')) {
-      const checked = e.target.checked;
-
-      if (checked) {
-        console.log('schedule shutdown');
-      } else {
-        console.log('cancel schedule shutdown');
-      }
     }
   });
 }
