@@ -2,6 +2,30 @@ import flatpickr from '../assets/flatpickr.js';
 import { getSetting, setSetting } from './settings.js';
 import { populateSettingsDropdown } from './utils.js';
 
+const daysOfTheWeek = [
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+];
+const monthsOfTheYear = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
+
 const defaultConfig = {
   enableTime: true,
   noCalendar: true,
@@ -37,27 +61,29 @@ function createInstance(input, config = defaultConfig) {
   const instance = initTimePicker(input, config);
 
   instance.config.onChange.push((selectedDates, dateStr, instance) => {
-    console.log(selectedDates, dateStr, instance);
+    // console.log(selectedDates, dateStr, instance);
+    console.log(dateStr);
   });
 
   return instance;
 }
 
-function createScheduleInputs() {
-  const shutdownInput = '#schedule-shutdown-time';
-  const restartInput = '#schedule-restart-time';
-
-  createInstance(document.querySelector(shutdownInput));
-  createInstance(document.querySelector(restartInput));
-}
-
 function createDropdown(scheduleOption, scheduleType, dropdownItems) {
-  const initialSetting = getSetting('schedule')[scheduleOption][scheduleType];
+  const initialSetting = getSetting('schedule')[scheduleOption]?.[scheduleType];
+
+  if (!initialSetting) {
+    return;
+  }
 
   dropdownItems.selected = {
-    name: initialSetting,
-    displayName: dropdownItems.all.find((el) => el.name === initialSetting)
-      .displayName,
+    name: initialSetting.toLowerCase(),
+    displayName: dropdownItems.all.find((el) => {
+      const name = el.name.toLowerCase();
+
+      if (name === initialSetting) {
+        return el.displayName;
+      }
+    }),
   };
 
   populateSettingsDropdown(
@@ -100,4 +126,101 @@ function createScheduleDropdowns() {
   createDropdown('shutdown', 'interval', intervalItems);
 }
 
-export { createScheduleInputs, createScheduleDropdowns };
+function createScheduleInputs() {
+  const restartInput = document.querySelector('#schedule-restart-time');
+  const shutdownInput = document.querySelector('#schedule-shutdown-time');
+
+  createInstance(restartInput, {
+    ...defaultConfig,
+    ...{ defaultDate: getSetting('schedule')['restart']['time'] },
+  });
+  createInstance(shutdownInput, {
+    ...defaultConfig,
+    ...{ defaultDate: getSetting('schedule')['shutdown']['time'] },
+  });
+}
+
+async function getSchedule(scheduleOption) {
+  const schedule = await io.interop.invoke('T42.GD.Execute', {
+    command: `get-schedule-${scheduleOption}`,
+  });
+
+  return schedule.returned.cronTime;
+}
+
+function parseScheduleToObj(scheduleString) {
+  const schedule = scheduleString.split(' ');
+
+  const scheduleObj = {
+    minute: schedule[0] === '0' ? '00' : schedule[0],
+    hour: schedule[1] === '0' ? '00' : schedule[1],
+    day: schedule[2],
+    month: schedule[3] === '*' ? '*' : monthsOfTheYear[schedule[3]],
+    dayOfWeek: schedule[4] === '*' ? '*' : daysOfTheWeek[schedule[4]],
+  };
+
+  return scheduleObj;
+}
+
+function parseScheduleToString(scheduleObj) {
+  return `${scheduleObj.minute} ${scheduleObj.hour} ${scheduleObj.day} ${scheduleObj.month} ${scheduleObj.dayOfWeek}`;
+}
+
+async function getInitialSettings(scheduleOptions) {
+  const currentSettings = getSetting('schedule');
+
+  const settings = scheduleOptions.map(async (scheduleOption) => {
+    const schedule = await getSchedule(scheduleOption);
+
+    if (!schedule) {
+      return;
+    }
+
+    const { minute, hour, day, month, dayOfWeek } =
+      parseScheduleToObj(schedule);
+
+    const setting = {};
+
+    if (day === '*' && month === '*' && dayOfWeek === '*') {
+      setting.period = 'Daily';
+    }
+
+    if (daysOfTheWeek !== '*' && day === '*' && month === '*') {
+      setting.period = 'Weekly';
+      setting.interval = dayOfWeek;
+    }
+
+    setting.time = `${hour}:${minute}`;
+
+    return {
+      [scheduleOption]: {
+        enable: true,
+        ...setting,
+      },
+    };
+  });
+
+  const settingsObj = await Promise.all(settings).then((res) => {
+    return res.reduce((acc, val) => {
+      return { ...acc, ...val };
+    }, {});
+  });
+
+  setSetting({
+    schedule: {
+      ...currentSettings,
+      ...settingsObj,
+    },
+  });
+}
+
+async function handleScheduledShutdownRestart() {
+  const scheduleOptions = ['shutdown', 'restart'];
+
+  await getInitialSettings(scheduleOptions).then(() => {
+    createScheduleInputs();
+    createScheduleDropdowns();
+  });
+}
+
+export default handleScheduledShutdownRestart;

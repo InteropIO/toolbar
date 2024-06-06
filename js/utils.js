@@ -36,7 +36,6 @@ import {
   profile_handleRestartClick,
   profile_handleFeedbackClick,
 } from './profile.js';
-import { createScheduleDropdowns } from './schedule-shutdown-restart.js';
 
 import handleKeyboardNavigation from './keyboard-navigation.js';
 
@@ -68,7 +67,6 @@ function handleEvents() {
   handleKeyboardNavigation();
   handleOrientationChange();
   handleAppRowsChange();
-  createScheduleDropdowns();
   populateAboutPage();
   handleShutdownClick();
   handleTopMenuClicks();
