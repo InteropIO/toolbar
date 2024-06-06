@@ -61,6 +61,7 @@ let keyObs = rxjs
 
 function handleEvents() {
   handleNotificationClick();
+  handleScheduledShutdownClick();
   handleEnableNotifications();
   handleFeedbackClick();
   handleThemeChange();
@@ -82,7 +83,7 @@ function handleEvents() {
 }
 
 function handleThemeChange() {
-  qa('.theme-select').forEach((a) => {
+  document.querySelectorAll('.theme-select').forEach((a) => {
     a.addEventListener('click', (e) => {
       if (e.target.matches('input.select_input[type="radio"]')) {
         let themeToSelect = e.target.getAttribute('theme-name');
@@ -95,13 +96,13 @@ function handleThemeChange() {
   themeObs.subscribe((themeObj) => {
     if (themeObj) {
       themeObj.all.forEach((theme) => {
-        q('html').classList.remove(theme.name);
+        document.querySelector('html').classList.remove(theme.name);
       });
 
-      q('html').classList.add(themeObj.selected.name);
+      document.querySelector('html').classList.add(themeObj.selected.name);
 
       populateSettingsDropdown(
-        qa('.theme-select .select_options'),
+        document.querySelectorAll('.theme-select .select_options'),
         themeObj,
         'theme'
       );
@@ -110,17 +111,19 @@ function handleThemeChange() {
 }
 
 function populateAboutPage() {
-  q('.connect-desktop-version').innerText = glue42gd.version;
-  q('.gw-url').innerText = glue42gd.gwURL;
-  q('.username').innerText = glue42gd.user;
+  document.querySelector('.connect-desktop-version').innerText =
+    glue42gd.version;
+  document.querySelector('.gw-url').innerText = glue42gd.gwURL;
+  document.querySelector('.username').innerText = glue42gd.user;
 
   gluePromise.then(async (glue) => {
-    q('.desktop-client-version').innerText = await glueVersion();
+    document.querySelector('.desktop-client-version').innerText =
+      await glueVersion();
   });
 }
 
 function handleShutdownClick() {
-  q('#shutdown').addEventListener('click', () => {
+  document.querySelector('#shutdown').addEventListener('click', () => {
     shutdown();
   });
 }
@@ -151,17 +154,19 @@ function handleTopMenuClicks() {
         .find((e) => e.getAttribute('menu-button-id'));
       let menuId = topElement.getAttribute('menu-button-id');
 
-      qa(`[menu-button-id]:not([menu-button-id="${menuId}"])`).forEach(
-        (menu) => {
+      document
+        .querySelectorAll(`[menu-button-id]:not([menu-button-id="${menuId}"])`)
+        .forEach((menu) => {
           menu.classList.remove('is-active');
-        }
-      );
-      qa(`[menu-id]:not([menu-id="${menuId}"])`).forEach((menu) => {
-        menu.classList.add('hide');
-      });
+        });
+      document
+        .querySelectorAll(`[menu-id]:not([menu-id="${menuId}"])`)
+        .forEach((menu) => {
+          menu.classList.add('hide');
+        });
       topElement.classList.toggle('is-active');
 
-      let menuToToggle = q(`[menu-id="${menuId}"]`);
+      let menuToToggle = document.querySelector(`[menu-id="${menuId}"]`);
 
       menuToToggle.addEventListener(
         'transitionend',
@@ -170,12 +175,14 @@ function handleTopMenuClicks() {
 
       menuToToggle.classList.toggle('hide');
 
-      let hasVisibleDrawers = q('.toggle-content:not(.hide)');
+      let hasVisibleDrawers = document.querySelector(
+        '.toggle-content:not(.hide)'
+      );
 
       if (hasVisibleDrawers) {
-        q('.app').classList.add('has-drawer');
+        document.querySelector('.app').classList.add('has-drawer');
       } else {
-        q('.app').classList.remove('has-drawer');
+        document.querySelector('.app').classList.remove('has-drawer');
       }
 
       setDrawerOpenDirection();
@@ -198,7 +205,7 @@ function handleCloseDrawerClicks() {
       let menuId = menu && menu.getAttribute('menu-id');
 
       if (menuId) {
-        q(`[menu-button-id="${menuId}"]`).click();
+        document.querySelector(`[menu-button-id="${menuId}"]`).click();
       }
     }
   });
@@ -213,7 +220,8 @@ function handleMinimizeClick() {
   });
 
   isMinimizeAllowed().then(
-    (allowed) => allowed && q('.minimize').classList.remove('d-none')
+    (allowed) =>
+      allowed && document.querySelector('.minimize').classList.remove('d-none')
   );
 }
 
@@ -236,7 +244,7 @@ function focusMenuInputAfterTransition(e) {
 }
 
 function focusInputAfterWindowRecover(window) {
-  const drawer = qa('.toggle-content');
+  const drawer = document.querySelectorAll('.toggle-content');
 
   if (window.isFocused) {
     drawer.forEach((el) => {
@@ -295,7 +303,7 @@ function handleLayoutsHover() {
     if (target) {
       target.classList.add('hover');
     } else {
-      qa(menuItem).forEach((item) => {
+      document.querySelectorAll(menuItem).forEach((item) => {
         item.classList.remove('hover');
       });
     }
@@ -303,19 +311,21 @@ function handleLayoutsHover() {
 }
 
 async function handleMouseHover() {
-  q('#fav-apps').addEventListener('mousewheel', (e) => {
+  document.querySelector('#fav-apps').addEventListener('mousewheel', (e) => {
     // TODO: move
-    if (q('.horizontal')) {
-      q('#fav-apps').scrollLeft += Math.round(e.deltaY * 0.8);
+    if (document.querySelector('.horizontal')) {
+      document.querySelector('#fav-apps').scrollLeft += Math.round(
+        e.deltaY * 0.8
+      );
       e.preventDefault();
     }
   });
 
   let closeTimeout;
 
-  q('.app').addEventListener('mouseenter', (e) => {
-    q('.viewport').classList.add('expand');
-    q('.app').classList.add('expand-wrapper');
+  document.querySelector('.app').addEventListener('mouseenter', (e) => {
+    document.querySelector('.viewport').classList.add('expand');
+    document.querySelector('.app').classList.add('expand-wrapper');
 
     if (closeTimeout) {
       clearTimeout(closeTimeout);
@@ -323,10 +333,10 @@ async function handleMouseHover() {
     }
   });
 
-  q('.app').addEventListener('mouseleave', (e) => {
+  document.querySelector('.app').addEventListener('mouseleave', (e) => {
     closeTimeout = setTimeout(async () => {
       let { offsetWidth: viewPortWidth, offsetHeight: viewPortHeight } =
-        q('.viewport');
+        document.querySelector('.viewport');
       let margin = windowMargin;
 
       if (
@@ -339,13 +349,15 @@ async function handleMouseHover() {
       }
 
       if (
-        qa('.toggle-content:not(.hide)').length > 0 ||
-        qa('.dropdown-menu.show').length > 0
+        document.querySelectorAll('.toggle-content:not(.hide)').length > 0 ||
+        document.querySelectorAll('.dropdown-menu.show').length > 0
       ) {
         return;
       }
 
-      let viewPortBounds = q('.viewport').getBoundingClientRect();
+      let viewPortBounds = document
+        .querySelector('.viewport')
+        .getBoundingClientRect();
       let outOfMonitor = isOutOfMonitor(viewPortBounds);
 
       if (await outOfMonitor) {
@@ -355,10 +367,12 @@ async function handleMouseHover() {
         return;
       }
 
-      q('.viewport').classList.remove('expand');
-      q('.show-actions').classList.remove('hover');
-      q('.app').classList.remove('expand-wrapper');
-      qa('.toggle-content').forEach((e) => e.classList.add('hide'));
+      document.querySelector('.viewport').classList.remove('expand');
+      document.querySelector('.show-actions').classList.remove('hover');
+      document.querySelector('.app').classList.remove('expand-wrapper');
+      document
+        .querySelectorAll('.toggle-content')
+        .forEach((e) => e.classList.add('hide'));
     }, 500);
   });
 }
@@ -370,18 +384,20 @@ function handleDropDownClicks() {
         .composedPath()
         .find((e) => e.getAttribute('dropdown-button-id'));
       const menuId = btnElement.getAttribute('dropdown-button-id');
-      const menu = q(`[dropdown-id="${menuId}"]`);
+      const menu = document.querySelector(`[dropdown-id="${menuId}"]`);
 
       menu.classList.toggle('show');
     } else {
-      qa(`[dropdown-id].show`).forEach((e) => e.classList.remove('show'));
+      document
+        .querySelectorAll(`[dropdown-id].show`)
+        .forEach((e) => e.classList.remove('show'));
     }
   });
 }
 
 async function handleNotificationClick() {
   const enableNotifications = getSetting('enableNotifications');
-  const notificationPanel = q('#notification-panel');
+  const notificationPanel = document.querySelector('#notification-panel');
 
   if (enableNotifications) {
     notificationEnabledObs.subscribe((data) => {
@@ -407,7 +423,7 @@ async function handleEnableNotifications() {
 }
 
 function handleEnableNotificationsClick() {
-  const enableNotifications = q('#enable-notifications');
+  const enableNotifications = document.querySelector('#enable-notifications');
 
   enableNotifications.addEventListener('click', (e) => {
     if (e.target.checked) {
@@ -419,7 +435,7 @@ function handleEnableNotificationsClick() {
 }
 
 function handleEnableToastsClick() {
-  const enableToasts = q('#enable-toasts');
+  const enableToasts = document.querySelector('#enable-toasts');
 
   enableToasts.addEventListener('click', (e) => {
     if (e.target.checked) {
@@ -430,8 +446,24 @@ function handleEnableToastsClick() {
   });
 }
 
+function handleScheduledShutdownClick() {
+  const scheduleShutdown = document.querySelector('#schedule-shutdown');
+
+  scheduleShutdown.addEventListener('click', (e) => {
+    if (e.target.matches('input[type="checkbox"]')) {
+      const checked = e.target.checked;
+
+      if (checked) {
+        console.log('schedule shutdown');
+      } else {
+        console.log('cancel schedule shutdown');
+      }
+    }
+  });
+}
+
 async function handleFeedbackClick() {
-  q('#feedback-panel').addEventListener('click', (e) => {
+  document.querySelector('#feedback-panel').addEventListener('click', (e) => {
     e.preventDefault();
     e.stopPropagation();
     e.stopImmediatePropagation();
@@ -452,7 +484,7 @@ async function startTutorial() {
 
   if (!tutorialApp || hideTutorialOnStartup) {
     setSetting({ showTutorial: false });
-    q('.show-tutorial-check').classList.add('d-none');
+    document.querySelector('.show-tutorial-check').classList.add('d-none');
   } else {
     const showTutorial = getSetting('showTutorial');
 
@@ -546,7 +578,9 @@ function populateSettingsDropdown(
 }
 
 function getHorizontalToolbarHeight(length) {
-  const appContentHeaderSize = q('.app-content-header').offsetHeight;
+  const appContentHeaderSize = document.querySelector(
+    '.app-content-header'
+  ).offsetHeight;
   const navItemSize = 48;
   const numberOfRows = length ?? getSetting('toolbarAppRows');
 
@@ -573,50 +607,52 @@ async function handleAppRowsChange() {
   };
 
   populateSettingsDropdown(
-    qa('.length-select .select_options'),
+    document.querySelectorAll('.length-select .select_options'),
     appSelectOptions,
     'length'
   );
 
   let currentToolbarHeight = getHorizontalToolbarHeight();
 
-  q('.length-select .select_options').addEventListener('click', async (e) => {
-    const isVertical = getSetting('vertical');
+  document
+    .querySelector('.length-select .select_options')
+    .addEventListener('click', async (e) => {
+      const isVertical = getSetting('vertical');
 
-    if (e.target.matches('input.select_input[type="radio"]')) {
-      const selectedLength = e.target.getAttribute('length-name');
-      const windowBounds = await getPhysicalWindowBounds();
-      const primaryScaleFactor = await getPrimaryScaleFactor();
-      const scaleFactor = await getScaleFactor();
-      const newToolbarHeight = getHorizontalToolbarHeight(selectedLength);
+      if (e.target.matches('input.select_input[type="radio"]')) {
+        const selectedLength = e.target.getAttribute('length-name');
+        const windowBounds = await getPhysicalWindowBounds();
+        const primaryScaleFactor = await getPrimaryScaleFactor();
+        const scaleFactor = await getScaleFactor();
+        const newToolbarHeight = getHorizontalToolbarHeight(selectedLength);
 
-      setSetting({ toolbarAppRows: selectedLength });
+        setSetting({ toolbarAppRows: selectedLength });
 
-      await setWindowSize();
-      setDrawerOpenDirection();
+        await setWindowSize();
+        setDrawerOpenDirection();
 
-      if (!isVertical) {
-        await moveMyWindow({
-          top:
-            (windowBounds.top +
-              currentToolbarHeight / scaleFactor -
-              newToolbarHeight / scaleFactor) *
-            primaryScaleFactor,
-        });
+        if (!isVertical) {
+          await moveMyWindow({
+            top:
+              (windowBounds.top +
+                currentToolbarHeight / scaleFactor -
+                newToolbarHeight / scaleFactor) *
+              primaryScaleFactor,
+          });
+        }
+
+        currentToolbarHeight = newToolbarHeight;
       }
-
-      currentToolbarHeight = newToolbarHeight;
-    }
-  });
+    });
 }
 
 async function setWindowSize() {
   const isVertical = getSetting('vertical');
-  const appLancher = q('.viewport-header');
-  const appContentHeader = q('.app-content-header');
+  const appLancher = document.querySelector('.viewport-header');
+  const appContentHeader = document.querySelector('.app-content-header');
   const appRowsNumber = getSetting('toolbarAppRows');
-  const navItem = q('.applications-nav');
-  const contentItems = q('.content-items');
+  const navItem = document.querySelector('.applications-nav');
+  const contentItems = document.querySelector('.content-items');
   const horizontalHeight = getHorizontalToolbarHeight();
 
   appLancher.style.height = `${appLancher.offsetHeight}px`;
@@ -637,7 +673,7 @@ async function setWindowSize() {
 }
 
 function setDrawerOpenDirection() {
-  const app = q('.app');
+  const app = document.querySelector('.app');
   const isVertical = getSetting('vertical');
   const horizontalHeight = getHorizontalToolbarHeight();
 
@@ -645,7 +681,7 @@ function setDrawerOpenDirection() {
     app.style.top = 0;
     app.style.maxHeight = `${horizontalHeight}px`;
   } else {
-    const appLancher = q('.viewport');
+    const appLancher = document.querySelector('.viewport');
 
     app.style.top = `${horizontalHeight}px`;
 
@@ -668,8 +704,8 @@ function setDrawerOpenDirection() {
 
 async function setDrawerOpenClasses() {
   const workArea = await getWindowWorkArea();
-  const visibleArea = await getVisibleArea(q('.viewport'));
-  const app = q('.app');
+  const visibleArea = await getVisibleArea(document.querySelector('.viewport'));
+  const app = document.querySelector('.app');
   const isVertical = getSetting('vertical');
   const horizontalHeight = getHorizontalToolbarHeight();
   const drawerOpen = app.classList.contains('has-drawer');
@@ -705,14 +741,16 @@ async function setDrawerOpenClasses() {
 
 function setOrientation() {
   const isVertical = getSetting('vertical');
-  const app = q('.app');
+  const app = document.querySelector('.app');
 
-  q('#toggle .mode').innerHTML = isVertical ? 'horizontal' : 'vertical';
+  document.querySelector('#toggle .mode').innerHTML = isVertical
+    ? 'horizontal'
+    : 'vertical';
 
   app.classList.add(isVertical ? 'vertical' : 'horizontal');
   app.classList.remove(isVertical ? 'horizontal' : 'vertical');
 
-  qa('[column]').forEach((col) => {
+  document.querySelectorAll('[column]').forEach((col) => {
     isVertical
       ? col.classList.add('flex-column')
       : col.classList.remove('flex-column');
@@ -720,7 +758,7 @@ function setOrientation() {
 }
 
 function handleOrientationChange() {
-  q('#toggle').addEventListener('click', async () => {
+  document.querySelector('#toggle').addEventListener('click', async () => {
     let isVertical = getSetting('vertical');
 
     isVertical = !isVertical;
@@ -816,7 +854,9 @@ function checkRectangleOffBounds(rect1, rect2) {
 
 async function checkWindowPosition() {
   const workArea = await getWindowWorkArea();
-  const visibleArea = await getVisibleArea(q('.draggable'));
+  const visibleArea = await getVisibleArea(
+    document.querySelector('.draggable')
+  );
 
   return checkRectangleOffBounds(workArea, visibleArea);
 }
@@ -824,7 +864,9 @@ async function checkWindowPosition() {
 async function setWindowPosition() {
   const isVertical = getSetting('vertical');
   const workArea = await getWindowWorkArea();
-  const visibleArea = await getVisibleArea(q('.draggable'));
+  const visibleArea = await getVisibleArea(
+    document.querySelector('.draggable')
+  );
   const offBounds = await checkWindowPosition();
   const primaryScaleFactor = await getPrimaryScaleFactor();
   const scaleFactor = await getScaleFactor();
@@ -940,7 +982,6 @@ export {
   handleShutdownClick,
   handleTopMenuClicks,
   handleCloseDrawerClicks,
-  handleNotificationClick,
   handleModalClose,
   handleMouseHover,
   handleLayoutsHover,

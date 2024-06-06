@@ -217,10 +217,12 @@ async function getInitialSettings(scheduleOptions) {
 async function handleScheduledShutdownRestart() {
   const scheduleOptions = ['shutdown', 'restart'];
 
-  await getInitialSettings(scheduleOptions).then(() => {
-    createScheduleInputs();
-    createScheduleDropdowns();
-  });
+  await getInitialSettings(scheduleOptions)
+    .then(() => {
+      createScheduleInputs();
+      createScheduleDropdowns();
+    })
+    .catch(console.error);
 }
 
 export default handleScheduledShutdownRestart;

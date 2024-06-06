@@ -39,15 +39,17 @@ const initialPosition = 20;
 async function init() {
   populateSettings();
   trackSettingsChange();
+
+  console.log('settings:', settings);
 }
 
 function populateSettings() {
   const settingsContainer = document.querySelector('#settings-content');
   const notificationPanel = document.querySelector('#notification-panel');
-  const enableNotificationsCheckbox = document.querySelector(
+  const enableNotificationsToggle = document.querySelector(
     '#enable-notifications'
   );
-  const enableToastsCheckbox = document.querySelector('#enable-toasts');
+  const enableToastsToggle = document.querySelector('#enable-toasts');
 
   for (const setting in settings) {
     const settingElement = settingsContainer.querySelector(
@@ -62,13 +64,13 @@ function populateSettings() {
       const enable = settings[setting];
       if (enable) {
         notificationPanel.classList.remove('d-none');
-        enableNotificationsCheckbox.checked = true;
-        enableToastsCheckbox.disabled = false;
+        enableNotificationsToggle.checked = true;
+        enableToastsToggle.disabled = false;
       } else {
         notificationPanel.classList.add('d-none');
-        enableNotificationsCheckbox.checked = false;
-        enableToastsCheckbox.checked = false;
-        enableToastsCheckbox.disabled = true;
+        enableNotificationsToggle.checked = false;
+        enableToastsToggle.checked = false;
+        enableToastsToggle.disabled = true;
       }
     }
 
