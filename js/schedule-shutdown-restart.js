@@ -36,20 +36,20 @@ const defaultConfig = {
 
 const periodItems = {
   all: [
-    { name: 'weekly', displayName: 'Weekly' },
-    { name: 'daily', displayName: 'Daily' },
+    { name: 'Weekly', displayName: 'Weekly' },
+    { name: 'Daily', displayName: 'Daily' },
   ],
 };
 
 const intervalItems = {
   all: [
-    { name: 'monday', displayName: 'Mon' },
-    { name: 'tuesday', displayName: 'Tue' },
-    { name: 'wednesday', displayName: 'Wed' },
-    { name: 'thursday', displayName: 'Thu' },
-    { name: 'friday', displayName: 'Fri' },
-    { name: 'saturday', displayName: 'Sat' },
-    { name: 'sunday', displayName: 'Sun' },
+    { name: 'Monday', displayName: 'Mon' },
+    { name: 'Tuesday', displayName: 'Tue' },
+    { name: 'Wednesday', displayName: 'Wed' },
+    { name: 'Thursday', displayName: 'Thu' },
+    { name: 'Friday', displayName: 'Fri' },
+    { name: 'Saturday', displayName: 'Sat' },
+    { name: 'Sunday', displayName: 'Sun' },
   ],
 };
 
@@ -60,25 +60,46 @@ function initTimePicker(domElement, config) {
 function createInstance(input, config = defaultConfig) {
   const instance = initTimePicker(input, config);
 
-  instance.config.onChange.push((selectedDates, dateStr, instance) => {
-    // console.log(selectedDates, dateStr, instance);
-    console.log(dateStr);
+  instance.config.onChange.push((selectedDates, time, instance) => {
+    const option = input.id.split('-')[1];
+    const prevSetting = getSetting('schedule');
+    const obj = {
+      time,
+      period: prevSetting[option].period,
+      interval: prevSetting[option].interval,
+    };
+
+    const parsedString = parseScheduleToString(obj);
+
+    setSetting({
+      schedule: {
+        ...prevSetting,
+        ...{
+          [option]: {
+            ...prevSetting[option],
+            time,
+          },
+        },
+      },
+    });
+
+    setSchedule(option, parsedString);
   });
 
   return instance;
 }
 
-function createDropdown(scheduleOption, scheduleType, dropdownItems) {
-  const initialSetting = getSetting('schedule')[scheduleOption]?.[scheduleType];
+function createDropdown(option, scheduleType, dropdownItems) {
+  const initialSetting = getSetting('schedule')[option]?.[scheduleType];
 
   if (!initialSetting) {
     return;
   }
 
   dropdownItems.selected = {
-    name: initialSetting.toLowerCase(),
+    name: initialSetting,
     displayName: dropdownItems.all.find((el) => {
-      const name = el.name.toLowerCase();
+      const name = el.name;
 
       if (name === initialSetting) {
         return el.displayName;
@@ -88,28 +109,38 @@ function createDropdown(scheduleOption, scheduleType, dropdownItems) {
 
   populateSettingsDropdown(
     document.querySelectorAll(
-      `.${scheduleOption}-${scheduleType}-select .select_options`
+      `.${option}-${scheduleType}-select .select_options`
     ),
     dropdownItems,
-    `${scheduleOption}-${scheduleType}`
+    `${option}-${scheduleType}`
   );
 
   document
-    .querySelector(`.${scheduleOption}-${scheduleType}-select .select_options`)
+    .querySelector(`.${option}-${scheduleType}-select .select_options`)
     .addEventListener('click', (e) => {
       const setting = getSetting('schedule');
 
       if (e.target.matches('input.select_input[type="radio"]')) {
         const selectedOption = e.target.getAttribute(
-          `${scheduleOption}-${scheduleType}-name`
+          `${option}-${scheduleType}-name`
         );
+
+        const intervalDropdown = document.querySelector(
+          `.${option}-interval-select`
+        );
+
+        if (selectedOption === 'Daily') {
+          intervalDropdown.classList.add('d-none');
+        } else {
+          intervalDropdown.classList.remove('d-none');
+        }
 
         setSetting({
           schedule: {
             ...setting,
             ...{
-              [scheduleOption]: {
-                ...setting[scheduleOption],
+              [option]: {
+                ...setting[option],
                 ...{ [scheduleType]: selectedOption },
               },
             },
@@ -132,11 +163,11 @@ function createScheduleInputs() {
 
   createInstance(restartInput, {
     ...defaultConfig,
-    ...{ defaultDate: getSetting('schedule')['restart']['time'] },
+    ...{ defaultDate: getSetting('schedule')['restart']['time'] ?? '00:00' },
   });
   createInstance(shutdownInput, {
     ...defaultConfig,
-    ...{ defaultDate: getSetting('schedule')['shutdown']['time'] },
+    ...{ defaultDate: getSetting('schedule')['shutdown']['time'] ?? '00:00' },
   });
 }
 
@@ -148,27 +179,24 @@ async function getSchedule(scheduleOption) {
   return schedule.returned.cronTime;
 }
 
-async function cancelShutdownSchedule() {
-  const schedule = await getSchedule('shutdown');
-
-  if (!schedule) {
-    return;
-  }
-
+async function setSchedule(option, scheduleString) {
   await io.interop.invoke('T42.GD.Execute', {
-    command: 'cancel-shutdown',
+    command: `schedule-${option}`,
+    args: {
+      cronTime: scheduleString,
+    },
   });
 }
 
-async function cancelRestartSchedule() {
-  const schedule = await getSchedule('shutdown');
+async function cancelSchedule(option) {
+  const schedule = await getSchedule(option);
 
   if (!schedule) {
     return;
   }
 
   await io.interop.invoke('T42.GD.Execute', {
-    command: 'cancel-restart',
+    command: `cancel-${option}`,
   });
 }
 
@@ -186,15 +214,22 @@ function parseScheduleToObj(scheduleString) {
   return scheduleObj;
 }
 
-function parseScheduleToString(scheduleObj) {
-  return `${scheduleObj.minute} ${scheduleObj.hour} ${scheduleObj.day} ${scheduleObj.month} ${scheduleObj.dayOfWeek}`;
+function parseScheduleToString(option) {
+  const minute = option.time.split(':')[1];
+  const hour = option.time.split(':')[0];
+  const day = '*';
+  const month = '*';
+  const dayOfWeek =
+    option.period === 'Weekly' ? daysOfTheWeek.indexOf(option.interval) : '*';
+
+  return `${minute} ${hour} ${day} ${month} ${dayOfWeek}`;
 }
 
 async function getInitialSettings(scheduleOptions) {
   const currentSettings = getSetting('schedule');
 
-  const settings = scheduleOptions.map(async (scheduleOption) => {
-    const schedule = await getSchedule(scheduleOption);
+  const settings = scheduleOptions.map(async (option) => {
+    const schedule = await getSchedule(option);
 
     if (!schedule) {
       return;
@@ -205,21 +240,24 @@ async function getInitialSettings(scheduleOptions) {
 
     const setting = {};
 
-    if (day === '*' && month === '*' && dayOfWeek === '*') {
-      setting.period = 'Daily';
-    }
-
     if (daysOfTheWeek !== '*' && day === '*' && month === '*') {
       setting.period = 'Weekly';
       setting.interval = dayOfWeek;
     }
 
+    if (day === '*' && month === '*' && dayOfWeek === '*') {
+      setting.period = 'Daily';
+    }
+
     setting.time = `${hour}:${minute}`;
 
     return {
-      [scheduleOption]: {
-        ...currentSettings[scheduleOption],
-        ...setting,
+      [option]: {
+        ...currentSettings[option],
+        ...{
+          enable: true,
+          ...setting,
+        },
       },
     };
   });
@@ -261,6 +299,27 @@ function setInitialInputStates() {
   });
 }
 
+function setInitialDropdownStates() {
+  const scheduleSettings = getSetting('schedule');
+  const scheduleOptions = ['shutdown', 'restart'];
+
+  scheduleOptions.forEach((option) => {
+    const periodDropdown = document.querySelector(`.${option}-period-select`);
+    const intervalDropdown = document.querySelector(
+      `.${option}-interval-select`
+    );
+
+    if (!scheduleSettings[option].enable) {
+      periodDropdown.classList.add('disabled');
+      intervalDropdown.classList.add('disabled');
+    }
+
+    if (scheduleSettings[option].period === 'Daily') {
+      intervalDropdown.classList.add('d-none');
+    }
+  });
+}
+
 async function setInputStatesOnChange(option, checked) {
   const input = document.querySelector(`#schedule-${option}-time`);
   const periodDropdown = document.querySelector(`.${option}-period-select`);
@@ -270,11 +329,7 @@ async function setInputStatesOnChange(option, checked) {
   );
 
   if (!checked) {
-    if (option === 'restart') {
-      await cancelRestartSchedule();
-    } else if (option === 'shutdown') {
-      await cancelShutdownSchedule();
-    }
+    cancelSchedule(option);
   }
 
   if (checked) {
@@ -329,6 +384,7 @@ async function handleScheduledShutdownRestart() {
       createScheduleDropdowns();
       setInitialToggleStates();
       setInitialInputStates();
+      setInitialDropdownStates();
       await handleScheduleToggleClick();
     })
     .catch(console.error);

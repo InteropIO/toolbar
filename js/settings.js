@@ -14,15 +14,15 @@ let settings = {
   schedule: {
     restart: {
       enable: false,
-      time: '',
-      period: 'weekly',
-      interval: 'monday',
+      time: '00:00',
+      period: 'Weekly',
+      interval: 'Monday',
     },
     shutdown: {
       enable: false,
-      time: '',
-      period: 'weekly',
-      interval: 'monday',
+      time: '00:00',
+      period: 'Weekly',
+      interval: 'Monday',
     },
   },
 };
@@ -39,8 +39,6 @@ const initialPosition = 20;
 async function init() {
   populateSettings();
   trackSettingsChange();
-
-  console.log('settings:', settings);
 }
 
 function populateSettings() {
