@@ -57,33 +57,32 @@ function initTimePicker(domElement, config) {
   return flatpickr(domElement, config);
 }
 
-function createInstance(input, config = defaultConfig) {
+async function createInstance(input, config = defaultConfig) {
   const instance = initTimePicker(input, config);
 
-  instance.config.onChange.push((selectedDates, time, instance) => {
+  instance.config.onClose.push(async (selectedDates, time, instance) => {
     const option = input.id.split('-')[1];
-    const prevSetting = getSetting('schedule');
+    const prevSettings = getSetting('schedule');
     const obj = {
       time,
-      period: prevSetting[option].period,
-      interval: prevSetting[option].interval,
+      period: prevSettings[option].period,
+      interval: prevSettings[option].interval,
     };
-
     const parsedString = parseScheduleToString(obj);
 
     setSetting({
       schedule: {
-        ...prevSetting,
+        ...prevSettings,
         ...{
           [option]: {
-            ...prevSetting[option],
-            time,
+            ...prevSettings[option],
+            ...{ time },
           },
         },
       },
     });
 
-    setSchedule(option, parsedString);
+    await setSchedule(option, parsedString);
   });
 
   return instance;
@@ -135,6 +134,24 @@ function createDropdown(option, scheduleType, dropdownItems) {
           intervalDropdown.classList.remove('d-none');
         }
 
+        const obj = {};
+
+        switch (scheduleType) {
+          case 'period':
+            obj.time = setting[option].time;
+            obj.period = selectedOption;
+            obj.interval = setting[option].interval;
+            break;
+
+          case 'interval':
+            obj.time = setting[option].time;
+            obj.period = setting[option].period;
+            obj.interval = selectedOption;
+            break;
+        }
+
+        const parsedString = parseScheduleToString(obj);
+
         setSetting({
           schedule: {
             ...setting,
@@ -146,6 +163,8 @@ function createDropdown(option, scheduleType, dropdownItems) {
             },
           },
         });
+
+        setSchedule(option, parsedString);
       }
     });
 }
@@ -157,23 +176,23 @@ function createScheduleDropdowns() {
   createDropdown('shutdown', 'interval', intervalItems);
 }
 
-function createScheduleInputs() {
+async function createScheduleInputs() {
   const restartInput = document.querySelector('#schedule-restart-time');
   const shutdownInput = document.querySelector('#schedule-shutdown-time');
 
-  createInstance(restartInput, {
+  await createInstance(restartInput, {
     ...defaultConfig,
     ...{ defaultDate: getSetting('schedule')['restart']['time'] ?? '00:00' },
   });
-  createInstance(shutdownInput, {
+  await createInstance(shutdownInput, {
     ...defaultConfig,
     ...{ defaultDate: getSetting('schedule')['shutdown']['time'] ?? '00:00' },
   });
 }
 
-async function getSchedule(scheduleOption) {
+async function getSchedule(option) {
   const schedule = await io.interop.invoke('T42.GD.Execute', {
-    command: `get-schedule-${scheduleOption}`,
+    command: `get-schedule-${option}`,
   });
 
   return schedule.returned.cronTime;
@@ -214,21 +233,25 @@ function parseScheduleToObj(scheduleString) {
   return scheduleObj;
 }
 
-function parseScheduleToString(option) {
-  const minute = option.time.split(':')[1];
-  const hour = option.time.split(':')[0];
+function parseScheduleToString(obj) {
+  const minute = obj.time.split(':')[1];
+  const hour = obj.time.split(':')[0];
   const day = '*';
   const month = '*';
   const dayOfWeek =
-    option.period === 'Weekly' ? daysOfTheWeek.indexOf(option.interval) : '*';
+    obj.interval === '*'
+      ? '*'
+      : obj.period === 'Weekly'
+      ? daysOfTheWeek.indexOf(obj.interval)
+      : '*';
 
   return `${minute} ${hour} ${day} ${month} ${dayOfWeek}`;
 }
 
-async function getInitialSettings(scheduleOptions) {
+async function getInitialSettings(options) {
   const currentSettings = getSetting('schedule');
 
-  const settings = scheduleOptions.map(async (option) => {
+  const settings = options.map(async (option) => {
     const schedule = await getSchedule(option);
 
     if (!schedule) {
@@ -287,9 +310,9 @@ function setInitialToggleStates() {
 
 function setInitialInputStates() {
   const scheduleSettings = getSetting('schedule');
-  const scheduleOptions = ['shutdown', 'restart'];
+  const options = ['shutdown', 'restart'];
 
-  scheduleOptions.forEach((option) => {
+  options.forEach((option) => {
     if (!scheduleSettings[option].enable) {
       document.querySelector(`#schedule-${option}-time`).disabled = true;
       document
@@ -301,9 +324,9 @@ function setInitialInputStates() {
 
 function setInitialDropdownStates() {
   const scheduleSettings = getSetting('schedule');
-  const scheduleOptions = ['shutdown', 'restart'];
+  const options = ['shutdown', 'restart'];
 
-  scheduleOptions.forEach((option) => {
+  options.forEach((option) => {
     const periodDropdown = document.querySelector(`.${option}-period-select`);
     const intervalDropdown = document.querySelector(
       `.${option}-interval-select`
@@ -346,9 +369,9 @@ async function setInputStatesOnChange(option, checked) {
 }
 
 async function handleScheduleToggleClick() {
-  const scheduleOptions = ['shutdown', 'restart'];
+  const options = ['shutdown', 'restart'];
 
-  scheduleOptions.forEach(async (option) => {
+  options.forEach(async (option) => {
     document
       .querySelector(`#schedule-${option}`)
       .addEventListener('click', async (e) => {
@@ -376,11 +399,11 @@ async function handleScheduleToggleClick() {
 }
 
 async function handleScheduledShutdownRestart() {
-  const scheduleOptions = ['shutdown', 'restart'];
+  const options = ['shutdown', 'restart'];
 
-  await getInitialSettings(scheduleOptions)
+  await getInitialSettings(options)
     .then(async () => {
-      createScheduleInputs();
+      await createScheduleInputs();
       createScheduleDropdowns();
       setInitialToggleStates();
       setInitialInputStates();

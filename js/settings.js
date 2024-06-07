@@ -87,6 +87,8 @@ function trackSettingsChange() {
     const settingDropdown =
       e.target.getAttribute('name') === 'theme' ||
       e.target.getAttribute('name') === 'length' ||
+      e.target.getAttribute('name') === 'restart-time' ||
+      e.target.getAttribute('name') === 'shutdown-time' ||
       e.target.getAttribute('name') === 'restart-period' ||
       e.target.getAttribute('name') === 'restart-interval' ||
       e.target.getAttribute('name') === 'shutdown-period' ||
