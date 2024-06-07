@@ -142,10 +142,6 @@ html {
     }
   }
 
-  .settings-system-schedule-restart {
-    z-index: 13;
-  }
-
   .settings-system-schedule-restart,
   .settings-system-schedule-shutdown {
     align-items: normal !important;
@@ -155,13 +151,39 @@ html {
       margin-bottom: 0;
     }
 
+    &-time {
+      position: relative;
+
+      &::after {
+        content: "\f133";
+        position: absolute;
+        top: 50%;
+        right: 0.75rem;
+        font-family: "tick42-icons";
+        color: var(--t42-link-color);
+        transform: translateY(-50%);
+        pointer-events: none;
+      }
+    }
+
     &-period {
       min-width: 7.5em;
     }
 
     &-interval {
       min-width: 6.5em;
+
+      .select {
+        &_items {
+          top: auto;
+          bottom: 0;
+        }
+      }
     }
+  }
+
+  .settings-system-schedule-restart-period {
+    z-index: 13;
   }
 
   .form-control.flatpickr-input {
