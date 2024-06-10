@@ -195,6 +195,10 @@ async function getSchedule(option) {
     command: `get-schedule-${option}`,
   });
 
+  if (!schedule) {
+    return;
+  }
+
   return schedule.returned.cronTime;
 }
 
