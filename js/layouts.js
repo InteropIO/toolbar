@@ -28,7 +28,7 @@ function init() {
     .fromEvent(q('#layout-search'), 'keyup')
     .pipe(
       rxjs.operators.map((event) => {
-        return event.srcElement.value.toString().toLowerCase().trim();
+        return event.target.value.toString().toLowerCase().trim();
       })
     )
     .pipe(rxjs.operators.distinctUntilChanged())

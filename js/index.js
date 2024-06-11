@@ -30,6 +30,7 @@ import {
 } from './clients-and-instrument-search.js';
 import { getSetting } from './settings.js';
 import { populateSID } from './profile.js';
+import handleScheduledShutdownRestart from './schedule-shutdown-restart.js';
 
 let {
   map: rxMap,
@@ -67,9 +68,9 @@ async function init() {
   utils.handleLayoutsHover();
   handleLayoutClick();
   handleLayoutSave();
-
   utils.handleDropDownClicks();
   handleClientAndInstrumentClicks();
+  await handleScheduledShutdownRestart();
 
   utils.handleEvents();
   utils.startTutorial();
@@ -264,9 +265,9 @@ function printRunningApps() {
     if (runningApps.length > 0) {
       runningApps.forEach(
         (runningApp) =>
-        (newRunningAppsHTML += applicationHTMLTemplate(runningApp, {
-          favoriteBtn: false,
-        }))
+          (newRunningAppsHTML += applicationHTMLTemplate(runningApp, {
+            favoriteBtn: false,
+          }))
       );
       q('#running-apps').innerHTML = newRunningAppsHTML;
     } else {
