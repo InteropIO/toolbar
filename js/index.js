@@ -11,7 +11,7 @@ import {
   noFavoriteAppsHTML,
   getItemHTMLTemplate,
 } from './applications.js';
-import { favoriteApps, updateFavoriteApps } from './favorites.js';
+import * as favoritesModule from './favorites.js';
 import {
   filteredLayouts,
   layoutHTMLTemplate,
@@ -30,6 +30,7 @@ import {
 } from './clients-and-instrument-search.js';
 import { getSetting } from './settings.js';
 import { populateSID } from './profile.js';
+import handleScheduledShutdownRestart from './schedule-shutdown-restart.js';
 
 let {
   map: rxMap,
@@ -47,6 +48,7 @@ async function init() {
   await glueModule.getPrefs();
   await glueModule.getNotificationsConfiguration();
   await glueModule.trackNotificationsConfigurationChange();
+  favoritesModule.init();
 
   finishLoading();
 
@@ -66,9 +68,9 @@ async function init() {
   utils.handleLayoutsHover();
   handleLayoutClick();
   handleLayoutSave();
-
   utils.handleDropDownClicks();
   handleClientAndInstrumentClicks();
+  await handleScheduledShutdownRestart();
 
   utils.handleEvents();
   utils.startTutorial();
@@ -172,7 +174,7 @@ function printApps() {
       });
 
       q('#search-results').innerHTML = newResultsHTML || noApplicationsHTML;
-      updateFavoriteApps();
+      favoritesModule.updateFavoriteApps();
     });
 }
 
@@ -290,7 +292,7 @@ function printLayouts() {
 }
 
 function printFavoriteApps() {
-  favoriteApps
+  favoritesModule.favoriteApps
     .pipe(rxjs.operators.combineLatest(allApplicationsObs))
     .subscribe(([favApps, allApps]) => {
       let favAppsHtml = ``;

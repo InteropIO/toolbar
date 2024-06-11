@@ -237,7 +237,7 @@ async function startApp(appName, context) {
   if (glueApp) {
     glueApp
       .start(context)
-      .then(() => { })
+      .then(() => {})
       .catch((e) => {
         console.warn('Failed to start app');
         console.warn(e);
@@ -372,7 +372,6 @@ async function getNotificationsConfiguration() {
     };
 
     setSetting(setting);
-    updatePrefs(setting);
   }
 }
 
@@ -395,22 +394,6 @@ async function trackNotificationsConfigurationChange() {
       };
 
       setSetting(setting);
-      updatePrefs(setting);
-
-      const notificationPanel = q('#notification-panel');
-      const enableNotificationsCheckbox = q('#enable-notifications');
-      const enableToastsCheckbox = q('#enable-toasts');
-
-      if (enable) {
-        notificationPanel.classList.remove('d-none');
-        enableNotificationsCheckbox.checked = true;
-        enableToastsCheckbox.disabled = false;
-      } else {
-        notificationPanel.classList.add('d-none');
-        enableNotificationsCheckbox.checked = false;
-        enableToastsCheckbox.checked = false;
-        enableToastsCheckbox.disabled = true;
-      }
     });
   }
 }
@@ -432,9 +415,15 @@ async function openFeedbackForm() {
 
 async function registerHotkey() {
   await gluePromise;
-  glue.hotkeys.register({ hotkey: 'Ctrl+Alt+T', description: 'Bring app to front for seamless workflow.' }, () => {
-    glue.windows.my().focus();
-  });
+  glue.hotkeys.register(
+    {
+      hotkey: 'Ctrl+Alt+T',
+      description: 'Bring app to front for seamless workflow.',
+    },
+    () => {
+      glue.windows.my().focus();
+    }
+  );
 }
 
 async function shutdown() {
@@ -621,6 +610,8 @@ async function getPrefs() {
       enableToasts: settings.enableToasts,
       toolbarAppRows: settings.toolbarAppRows,
       vertical: settings.vertical,
+      favoriteApps: settings.favoriteApps,
+      schedule: settings.schedule,
     });
     setSettings();
   } else {
@@ -648,9 +639,9 @@ async function getPrefs() {
 
 async function updatePrefs(setting) {
   try {
-    await glue.prefs.update({ ...setting });  
+    await glue.prefs.update({ ...setting });
   } catch (error) {
-    console.error("Failed to update preferences.", error);
+    console.error('Failed to update preferences.', error);
   }
 }
 

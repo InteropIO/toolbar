@@ -7,6 +7,7 @@
       href="./assets/t42bootstrap.bundle.css"
     />
     <link rel="stylesheet" type="text/css" href="scss/app.css" />
+    <link rel="stylesheet" href="./assets/flatpickr.min.css" />
     <title>io.Connect Floating Toolbar</title>
   </head>
 
@@ -257,44 +258,39 @@
         <ul id="running-apps" class="nav nav-tabs flex-column"></ul>
       </div>
 
-      <div class="toggle-content hide" id="settings-content" menu-id="settings">
-        <div class="settings-general p-2 border-bottom border-secondary">
-          <div class="d-flex justify-content-between mb-2">
-            <h5 class="draggable m-0">General Settings</h5>
+      <div
+        class="settings-content toggle-content hide"
+        id="settings-content"
+        menu-id="settings"
+      >
+        <div class="settings-header border-bottom border-secondary">
+          <div>
+            <h5 class="draggable">Settings</h5>
             <span class="icon-arrow-up-down close-drawer m-0"></span>
           </div>
-          <form>
-            <div class="form-check show-tutorial-check ml-2">
-              <input
-                class="form-check-input show-tutorial"
-                type="checkbox"
-                value="1"
-                id="show-tutorial"
-                setting="showTutorial"
-              />
-              <label class="form-check-label" for="show-tutorial">
-                Show Tutorial on Startup
-              </label>
-            </div>
-            <div
-              class="form-check save-default-layout-check ml-2"
-              title="If this option is turned on, you won't be able to specify default layouts"
-            >
-              <input
-                class="form-check-input save-default-layout"
-                type="checkbox"
-                value="1"
-                id="save-default-layout"
-                setting="saveDefaultLayout"
-              />
-              <label class="form-check-label" for="save-default-layout">
-                Save Layout on Exit
-              </label>
-            </div>
-          </form>
         </div>
-        <div class="settings-theme p-2 border-bottom border-secondary">
-          <h5 class="d-flex justify-content-between">Select Theme</h5>
+        <div class="settings-general border-bottom border-secondary">
+          <div>
+            <h5>General Settings</h5>
+          </div>
+          <div class="show-tutorial-check">
+            <label class="switch" for="show-tutorial">
+              <input
+                type="checkbox"
+                id="show-tutorial"
+                class="show-tutorial"
+                data-setting="showTutorial"
+              />
+              <span class="slider"></span>
+              <span>Show tutorial on startup</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-theme border-bottom border-secondary">
+          <div>
+            <h5>Theme</h5>
+          </div>
           <form>
             <ul class="select theme-select mb-1">
               <li class="select_items">
@@ -314,8 +310,11 @@
             </ul>
           </form>
         </div>
-        <div class="settings-length p-2 pb-0 border-bottom border-secondary">
-          <h5 class="d-flex justify-content-between">Select Toolbar Length</h5>
+
+        <div class="settings-length border-bottom border-secondary">
+          <div>
+            <h5>Toolbar Length</h5>
+          </div>
           <form>
             <ul class="select length-select mb-2">
               <li class="select_items">
@@ -323,76 +322,226 @@
                   class="select_expand"
                   type="radio"
                   name="length"
-                  id="length-opener"
+                  id="settings-length-opener"
                 />
                 <label class="select_closeLabel" for="closeLength"></label>
                 <ul class="select_options"></ul>
-                <label class="select_expandLabel" for="length-opener"></label>
+                <label
+                  class="select_expandLabel"
+                  for="settings-length-opener"
+                ></label>
               </li>
             </ul>
-            <small class="d-block fst-italic mb-1">
-              * How many menu items will be shown at a time.
-            </small>
+            <small> * How many menu items will be shown at a time. </small>
           </form>
         </div>
-        <div class="settings-search p-2 border-bottom border-secondary">
-          <h5 class="d-flex justify-content-between">Search</h5>
-          <form>
-            <div class="form-check ml-2">
+
+        <div class="settings-layouts border-bottom border-secondary">
+          <div>
+            <h5>Layouts</h5>
+          </div>
+          <div>
+            <label class="switch" for="save-default-layout">
               <input
-                class="form-check-input search-clients"
                 type="checkbox"
-                value="1"
-                id="search-clients"
-                setting="searchClients"
+                id="save-default-layout"
+                class="save-default-layout"
+                data-setting="saveDefaultLayout"
               />
-              <label class="form-check-label" for="search-clients">
-                Search Clients
-              </label>
-            </div>
-            <div class="form-check ml-2">
-              <input
-                class="form-check-input search-instruments"
-                type="checkbox"
-                value="1"
-                id="search-instruments"
-                setting="searchInstruments"
-              />
-              <label class="form-check-label" for="search-instruments">
-                Search Instruments
-              </label>
-            </div>
-          </form>
+              <span class="slider"></span>
+              <span>Save current on exit</span>
+            </label>
+          </div>
         </div>
-        <div class="settings-notifications p-2">
-          <h5 class="d-flex justify-content-between">Notifications</h5>
-          <form>
-            <div class="form-check ml-2">
+
+        <div class="settings-notifications border-bottom border-secondary">
+          <div>
+            <h5>Notifications</h5>
+          </div>
+          <div>
+            <label class="switch" for="enable-notifications">
               <input
-                class="form-check-input enable-notifications"
                 type="checkbox"
-                value="1"
                 id="enable-notifications"
-                setting="enableNotifications"
+                class="enable-notifications"
+                data-setting="enableNotifications"
               />
-              <label class="form-check-label" for="enable-notifications">
-                Enable Notifications
-              </label>
-            </div>
-            <div class="form-check ml-2">
+              <span class="slider"></span>
+              <span>Allow notifications</span>
+            </label>
+          </div>
+          <div>
+            <label class="switch" for="enable-toasts">
               <input
-                class="form-check-input enable-toasts"
                 type="checkbox"
-                value="1"
                 id="enable-toasts"
-                setting="enableToasts"
+                class="enable-toasts"
+                data-setting="enableToasts"
               />
-              <label class="form-check-label" for="enable-toasts">
-                Enable Toasts
-              </label>
-              <br />
+              <span class="slider"></span>
+              <span>Allow notification toasts</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-system border-bottom border-secondary">
+          <div>
+            <h5>System</h5>
+          </div>
+          <div>
+            <label class="switch" for="schedule-restart">
+              <input
+                type="checkbox"
+                id="schedule-restart"
+                class="schedule-restart"
+                data-setting="scheduleRestart"
+              />
+              <span class="slider"></span>
+              <span>Schedule restart</span>
+            </label>
+          </div>
+          <div class="settings-system-schedule-restart">
+            <div class="settings-system-schedule-restart-time">
+              <input
+                type="text"
+                id="schedule-restart-time"
+                class="form-control input-control"
+                name="restart-time"
+              />
             </div>
-          </form>
+            <div class="settings-system-schedule-restart-period">
+              <form>
+                <ul class="select restart-period-select">
+                  <li class="select_items">
+                    <input
+                      class="select_expand"
+                      type="radio"
+                      name="restart-period"
+                      id="settings-restart-period-opener"
+                    />
+                    <label class="select_closeLabel" for="closeLength"></label>
+                    <ul class="select_options"></ul>
+                    <label
+                      class="select_expandLabel"
+                      for="settings-restart-period-opener"
+                    ></label>
+                  </li>
+                </ul>
+              </form>
+            </div>
+            <div class="settings-system-schedule-restart-interval">
+              <form>
+                <ul class="select restart-interval-select">
+                  <li class="select_items">
+                    <input
+                      class="select_expand"
+                      type="radio"
+                      name="restart-interval"
+                      id="settings-restart-interval-opener"
+                    />
+                    <label class="select_closeLabel" for="closeLength"></label>
+                    <ul class="select_options"></ul>
+                    <label
+                      class="select_expandLabel"
+                      for="settings-restart-interval-opener"
+                    ></label>
+                  </li>
+                </ul>
+              </form>
+            </div>
+          </div>
+          <div>
+            <label class="switch" for="schedule-shutdown">
+              <input
+                type="checkbox"
+                id="schedule-shutdown"
+                class="schedule-shutdown"
+                data-setting="scheduleShutdown"
+              />
+              <span class="slider"></span>
+              <span>Schedule shutdown</span>
+            </label>
+          </div>
+          <div class="settings-system-schedule-shutdown">
+            <div class="settings-system-schedule-shutdown-time">
+              <input
+                type="text"
+                id="schedule-shutdown-time"
+                class="form-control input-control"
+                name="shutdown-time"
+              />
+            </div>
+            <div class="settings-system-schedule-shutdown-period">
+              <form>
+                <ul class="select shutdown-period-select">
+                  <li class="select_items">
+                    <input
+                      class="select_expand"
+                      type="radio"
+                      name="shutdown-period"
+                      id="settings-shutdown-period-opener"
+                    />
+                    <label class="select_closeLabel" for="closeLength"></label>
+                    <ul class="select_options"></ul>
+                    <label
+                      class="select_expandLabel"
+                      for="settings-shutdown-period-opener"
+                    ></label>
+                  </li>
+                </ul>
+              </form>
+            </div>
+            <div class="settings-system-schedule-shutdown-interval">
+              <form>
+                <ul class="select shutdown-interval-select">
+                  <li class="select_items">
+                    <input
+                      class="select_expand"
+                      type="radio"
+                      name="shutdown-interval"
+                      id="settings-shutdown-interval-opener"
+                    />
+                    <label class="select_closeLabel" for="closeLength"></label>
+                    <ul class="select_options"></ul>
+                    <label
+                      class="select_expandLabel"
+                      for="settings-shutdown-interval-opener"
+                    ></label>
+                  </li>
+                </ul>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-search">
+          <div>
+            <h5>Search</h5>
+          </div>
+          <div>
+            <label class="switch" for="search-clients">
+              <input
+                type="checkbox"
+                id="search-clients"
+                class="search-clients"
+                data-setting="searchClients"
+              />
+              <span class="slider"></span>
+              <span>Search clients</span>
+            </label>
+          </div>
+          <div>
+            <label class="switch" for="search-instruments">
+              <input
+                type="checkbox"
+                id="search-instruments"
+                class="search-instruments"
+                data-setting="searchInstruments"
+              />
+              <span class="slider"></span>
+              <span>Search instruments</span>
+            </label>
+          </div>
         </div>
       </div>
 
