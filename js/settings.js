@@ -35,6 +35,23 @@ async function populateSettings() {
     ) {
       let checkbox = q(`#settings-content [setting='${setting}']`);
 
+      const notificationPanel = q('#notification-panel');
+      const enableNotificationsCheckbox = q('#enable-notifications');
+      const enableToastsCheckbox = q('#enable-toasts');
+      if (setting === "enableNotifications") {
+        const enable = settings[setting];
+        if (enable) {
+          notificationPanel.classList.remove('d-none');
+          enableNotificationsCheckbox.checked = true;
+          enableToastsCheckbox.disabled = false;
+        } else {
+          notificationPanel.classList.add('d-none');
+          enableNotificationsCheckbox.checked = false;
+          enableToastsCheckbox.checked = false;
+          enableToastsCheckbox.disabled = true;
+        }
+      }
+
       getSetting(setting)
         ? checkbox.setAttribute('checked', true)
         : checkbox.removeAttribute('checked');
@@ -49,17 +66,17 @@ function trackSettingsChange() {
       .find((e) => e && e.getAttribute && e.getAttribute('setting'));
 
     if (settingElement) {
-      const setting = {};
+      let setting = {};
 
       setting[settingElement.getAttribute('setting')] = e.srcElement.checked;
-      setSetting(setting);
 
       if (
         e.target.getAttribute('setting') === 'enableNotifications' &&
         e.srcElement.checked === false
       ) {
-        setSetting({ enableNotifications: false, enableToasts: false });
+        setting = { enableNotifications: false, enableToasts: false };
       }
+      setSetting(setting);
     }
   });
 }
@@ -85,6 +102,7 @@ function setSetting(setting) {
   }
 
   updatePrefs(setting);
+  populateSettings();
 }
 
 export {
