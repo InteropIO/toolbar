@@ -191,15 +191,23 @@ async function createScheduleInputs() {
 }
 
 async function getSchedule(option) {
-  const schedule = await io.interop.invoke('T42.GD.Execute', {
-    command: `get-schedule-${option}`,
-  });
+  try {
+    const schedule = await io.interop.invoke('T42.GD.Execute', {
+      command: `get-schedule-${option}`,
+    });
 
-  if (!schedule) {
-    return;
+    if (!schedule) {
+      return;
+    }
+
+    return schedule.returned.cronTime;
+  } catch ({ method, called_with, executed_by, message, status, returned }) {
+    if (Object.keys(returned).length === 0) {
+      document.querySelector('.settings-system').classList.add('d-none');
+
+      return;
+    }
   }
-
-  return schedule.returned.cronTime;
 }
 
 async function setSchedule(option, scheduleString) {
