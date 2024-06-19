@@ -60,7 +60,7 @@ function initTimePicker(domElement, config) {
 async function createInstance(input, config = defaultConfig) {
   const instance = initTimePicker(input, config);
 
-  instance.config.onClose.push(async (selectedDates, time, instance) => {
+  instance.config.onClose.push(async (selectedDates, time) => {
     const option = input.id.split('-')[1];
     const prevSettings = getSetting('schedule');
     const obj = {
@@ -250,12 +250,9 @@ function parseScheduleToString(obj) {
   const hour = obj.time.split(':')[0];
   const day = '*';
   const month = '*';
-  const dayOfWeek =
-    obj.interval === '*'
-      ? '*'
-      : obj.period === 'Weekly'
-      ? daysOfTheWeek.indexOf(obj.interval)
-      : '*';
+  const indexOfDay =
+    obj.period === 'Weekly' ? daysOfTheWeek.indexOf(obj.interval) : '*';
+  const dayOfWeek = obj.interval === '*' ? '*' : indexOfDay;
 
   return `${minute} ${hour} ${day} ${month} ${dayOfWeek}`;
 }
@@ -364,20 +361,17 @@ async function setInputStatesOnChange(option, checked) {
   );
 
   if (!checked) {
-    cancelSchedule(option);
-  }
-
-  if (checked) {
-    input.disabled = false;
-    periodDropdown.classList.remove('disabled');
-    intervalDropdown.classList.remove('disabled');
-    container.classList.remove('d-none');
-  } else {
     input.disabled = true;
     periodDropdown.classList.add('disabled');
     intervalDropdown.classList.add('disabled');
     container.classList.add('d-none');
+    cancelSchedule(option);
   }
+
+  input.disabled = false;
+  periodDropdown.classList.remove('disabled');
+  intervalDropdown.classList.remove('disabled');
+  container.classList.remove('d-none');
 }
 
 async function handleScheduleToggleClick() {

@@ -606,8 +606,6 @@ async function getPrefs() {
       saveDefaultLayout: settings.saveDefaultLayout,
       searchClients: settings.searchClients,
       searchInstruments: settings.searchInstruments,
-      enableNotifications: settings.enableNotifications,
-      enableToasts: settings.enableToasts,
       toolbarAppRows: settings.toolbarAppRows,
       vertical: settings.vertical,
       favoriteApps: settings.favoriteApps,
