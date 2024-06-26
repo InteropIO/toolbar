@@ -60,6 +60,7 @@ function populateSettings() {
 
     if (setting === 'enableNotifications') {
       const enable = settings[setting];
+
       if (enable) {
         notificationPanel.classList.remove('d-none');
         enableNotificationsToggle.checked = true;
@@ -104,7 +105,6 @@ function trackSettingsChange() {
       let setting = {};
 
       setting[settingElement.dataset.setting] = e.target.checked;
-      setSetting(setting);
 
       if (
         e.target.dataset.setting === 'enableNotifications' &&
@@ -150,6 +150,7 @@ function trackSettingsChange() {
           },
         };
       }
+
       setSetting(setting);
     }
   });
@@ -171,12 +172,17 @@ function getSetting(setting) {
 function setSetting(setting) {
   Object.assign(settings, setting);
 
-  if (Object.keys(setting).includes('showHiddenApps')) {
+  populateSettings();
+
+  if (
+    Object.keys(setting).includes('showHiddenApps') ||
+    Object.keys(setting).includes('enableNotifications') ||
+    Object.keys(setting).includes('enableToasts')
+  ) {
     return;
   }
 
   updatePrefs(setting);
-  populateSettings();
 }
 
 export {

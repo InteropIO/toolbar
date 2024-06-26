@@ -60,7 +60,7 @@ function initTimePicker(domElement, config) {
 async function createInstance(input, config = defaultConfig) {
   const instance = initTimePicker(input, config);
 
-  instance.config.onClose.push(async (selectedDates, time, instance) => {
+  instance.config.onClose.push(async (selectedDates, time) => {
     const option = input.id.split('-')[1];
     const prevSettings = getSetting('schedule');
     const obj = {
@@ -191,15 +191,23 @@ async function createScheduleInputs() {
 }
 
 async function getSchedule(option) {
-  const schedule = await io.interop.invoke('T42.GD.Execute', {
-    command: `get-schedule-${option}`,
-  });
+  try {
+    const schedule = await io.interop.invoke('T42.GD.Execute', {
+      command: `get-schedule-${option}`,
+    });
 
-  if (!schedule) {
-    return;
+    if (!schedule) {
+      return;
+    }
+
+    return schedule.returned.cronTime;
+  } catch ({ method, called_with, executed_by, message, status, returned }) {
+    if (Object.keys(returned).length === 0) {
+      document.querySelector('.settings-system').classList.add('d-none');
+
+      return;
+    }
   }
-
-  return schedule.returned.cronTime;
 }
 
 async function setSchedule(option, scheduleString) {
@@ -242,12 +250,9 @@ function parseScheduleToString(obj) {
   const hour = obj.time.split(':')[0];
   const day = '*';
   const month = '*';
-  const dayOfWeek =
-    obj.interval === '*'
-      ? '*'
-      : obj.period === 'Weekly'
-      ? daysOfTheWeek.indexOf(obj.interval)
-      : '*';
+  const indexOfDay =
+    obj.period === 'Weekly' ? daysOfTheWeek.indexOf(obj.interval) : '*';
+  const dayOfWeek = obj.interval === '*' ? '*' : indexOfDay;
 
   return `${minute} ${hour} ${day} ${month} ${dayOfWeek}`;
 }
@@ -356,20 +361,17 @@ async function setInputStatesOnChange(option, checked) {
   );
 
   if (!checked) {
-    cancelSchedule(option);
-  }
-
-  if (checked) {
-    input.disabled = false;
-    periodDropdown.classList.remove('disabled');
-    intervalDropdown.classList.remove('disabled');
-    container.classList.remove('d-none');
-  } else {
     input.disabled = true;
     periodDropdown.classList.add('disabled');
     intervalDropdown.classList.add('disabled');
     container.classList.add('d-none');
+    cancelSchedule(option);
   }
+
+  input.disabled = false;
+  periodDropdown.classList.remove('disabled');
+  intervalDropdown.classList.remove('disabled');
+  container.classList.remove('d-none');
 }
 
 async function handleScheduleToggleClick() {

@@ -70,6 +70,49 @@ html {
     -webkit-app-region: drag;
   }
 
+  .logo {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 0 1.25em;
+    overflow: hidden;
+
+    &-icon,
+    &-wordmark {
+      background-size: contain;
+      background-repeat: no-repeat;
+      height: 100%;
+    }
+
+    &-icon {
+      flex-shrink: 0;
+      width: 2.33em;
+      height: 60%;
+      background-image: url("../assets/logo-icon.svg");
+      background-position: center;
+    }
+
+    &-wordmark {
+      background-image: url("../assets/logo-wordmark.svg");
+      background-position: left;
+    }
+  }
+
+  &.light {
+    .logo {
+      &-icon {
+        background-image: url("../assets/logo-icon-alt.svg"),
+          url("../assets/logo-icon.svg");
+      }
+
+      &-wordmark {
+        background-image: url("../assets/logo-wordmark-alt.svg"),
+          url("../assets/logo-wordmark.svg");
+      }
+    }
+  }
+
   .toggle-content {
     @include transition("width", 0);
     height: 100%;
@@ -547,26 +590,6 @@ html {
         top: 32px;
         right: 0;
         left: auto;
-      }
-
-      .logo {
-        display: flex;
-        align-items: center;
-        width: 100%;
-        height: 100%;
-        padding: 0 1.25em;
-        overflow: hidden;
-
-        svg {
-          width: 100%;
-          height: 100%;
-        }
-
-        &-icon {
-          flex-shrink: 0;
-          width: 2.33em;
-          height: 60%;
-        }
       }
     }
 

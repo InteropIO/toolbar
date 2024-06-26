@@ -601,19 +601,15 @@ async function getPrefs() {
     typeof prefs.data === 'undefined' ||
     Object.keys(prefs.data).length === 0
   ) {
-    await glue.prefs.update({
-      ...{
-        showTutorial: settings.showTutorial,
-        saveDefaultLayout: settings.saveDefaultLayout,
-        searchClients: settings.searchClients,
-        searchInstruments: settings.searchInstruments,
-        enableNotifications: settings.enableNotifications,
-        enableToasts: settings.enableToasts,
-        toolbarAppRows: settings.toolbarAppRows,
-        vertical: settings.vertical,
-        favoriteApps: settings.favoriteApps,
-        schedule: settings.schedule,
-      },
+    await updatePrefs({
+      showTutorial: settings.showTutorial,
+      saveDefaultLayout: settings.saveDefaultLayout,
+      searchClients: settings.searchClients,
+      searchInstruments: settings.searchInstruments,
+      toolbarAppRows: settings.toolbarAppRows,
+      vertical: settings.vertical,
+      favoriteApps: settings.favoriteApps,
+      schedule: settings.schedule,
     });
     setSettings();
   } else {
@@ -640,7 +636,11 @@ async function getPrefs() {
 }
 
 async function updatePrefs(setting) {
-  await glue.prefs.update({ ...setting });
+  try {
+    await glue.prefs.update({ ...setting });
+  } catch (error) {
+    console.error('Failed to update preferences.', error);
+  }
 }
 
 async function getServerInfo() {

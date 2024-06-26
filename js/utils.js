@@ -7,15 +7,11 @@ import {
   themeObs,
   changeTheme,
   refreshApps,
-  openNotificationPanel,
   glueVersion,
   getMonitorInfo,
-  notificationEnabledObs,
   moveMyWindow,
   minimize,
   isMinimizeAllowed,
-  checkNotificationsConfigure,
-  configureNotifications,
   openFeedbackForm,
   getWindowWorkArea,
   getScaleFactor,
@@ -36,6 +32,11 @@ import {
   profile_handleRestartClick,
   profile_handleFeedbackClick,
 } from './profile.js';
+
+import {
+  handleNotificationClick,
+  handleEnableNotifications,
+} from './notifications.js';
 
 import handleKeyboardNavigation from './keyboard-navigation.js';
 
@@ -394,57 +395,6 @@ function handleDropDownClicks() {
   });
 }
 
-async function handleNotificationClick() {
-  const enableNotifications = getSetting('enableNotifications');
-  const notificationPanel = document.querySelector('#notification-panel');
-
-  if (enableNotifications) {
-    notificationEnabledObs.subscribe((data) => {
-      notificationPanel.classList[data ? 'remove' : 'add']('d-none');
-    });
-  }
-
-  notificationPanel.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    e.stopImmediatePropagation();
-    openNotificationPanel();
-  });
-}
-
-async function handleEnableNotifications() {
-  const methodExists = await checkNotificationsConfigure();
-
-  if (methodExists) {
-    handleEnableNotificationsClick();
-    handleEnableToastsClick();
-  }
-}
-
-function handleEnableNotificationsClick() {
-  const enableNotifications = document.querySelector('#enable-notifications');
-
-  enableNotifications.addEventListener('click', (e) => {
-    if (e.target.checked) {
-      configureNotifications({ enable: true, enableToasts: false });
-    } else {
-      configureNotifications({ enable: false, enableToasts: false });
-    }
-  });
-}
-
-function handleEnableToastsClick() {
-  const enableToasts = document.querySelector('#enable-toasts');
-
-  enableToasts.addEventListener('click', (e) => {
-    if (e.target.checked) {
-      configureNotifications({ enableToasts: true });
-    } else {
-      configureNotifications({ enableToasts: false });
-    }
-  });
-}
-
 async function handleFeedbackClick() {
   document.querySelector('#feedback-panel').addEventListener('click', (e) => {
     e.preventDefault();
@@ -700,25 +650,19 @@ async function setDrawerOpenClasses() {
   if (isVertical) {
     if (visibleArea.right + toolbarDrawerSize.vertical > workArea.right) {
       app.classList.add('open-left');
-    } else {
-      if (app.classList.contains('open-left')) {
-        app.classList.remove('open-left');
-      }
+    } else if (app.classList.contains('open-left')) {
+      app.classList.remove('open-left');
     }
-  } else {
-    if (visibleArea.bottom + horizontalHeight > workArea.bottom) {
-      if (visibleArea.top - horizontalHeight < workArea.top) {
-        if (app.classList.contains('open-top')) {
-          app.classList.remove('open-top');
-        }
-      } else {
-        app.classList.add('open-top');
-      }
-    } else {
+  } else if (visibleArea.bottom + horizontalHeight > workArea.bottom) {
+    if (visibleArea.top - horizontalHeight < workArea.top) {
       if (app.classList.contains('open-top')) {
         app.classList.remove('open-top');
       }
+    } else {
+      app.classList.add('open-top');
     }
+  } else if (app.classList.contains('open-top')) {
+    app.classList.remove('open-top');
   }
 }
 
