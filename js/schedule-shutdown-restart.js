@@ -362,8 +362,6 @@ async function setInputStatesOnChange(option, checked) {
     `.settings-system-schedule-${option}`
   );
 
-  console.log(option, checked, container);
-
   if (!checked) {
     input.disabled = true;
     periodDropdown.classList.add('disabled');
