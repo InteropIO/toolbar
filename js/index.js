@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function init() {
   await glueModule.getPrefs();
   await glueModule.getNotificationsConfiguration();
-  await glueModule.trackNotificationsConfigurationChange();
+  await glueModule.trackNotificationsConfigurationChanged();
   favoritesModule.init();
 
   finishLoading();
