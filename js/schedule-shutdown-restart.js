@@ -267,6 +267,8 @@ async function getInitialSettings(options) {
       return;
     }
 
+    console.log('currentSettings', currentSettings);
+
     const { minute, hour, day, month, dayOfWeek } =
       parseScheduleToObj(schedule);
 
@@ -281,7 +283,9 @@ async function getInitialSettings(options) {
       setting.period = 'Daily';
     }
 
-    setting.time = `${hour}:${minute}`;
+    setting.time = `${hour === '*' ? '00' : hour}:${
+      minute === '*' ? '00' : minute
+    }`;
 
     return {
       [option]: {
