@@ -267,8 +267,6 @@ async function getInitialSettings(options) {
       return;
     }
 
-    console.log('currentSettings', currentSettings);
-
     const { minute, hour, day, month, dayOfWeek } =
       parseScheduleToObj(schedule);
 
