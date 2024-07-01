@@ -362,18 +362,20 @@ async function setInputStatesOnChange(option, checked) {
     `.settings-system-schedule-${option}`
   );
 
+  console.log(option, checked, container);
+
   if (!checked) {
     input.disabled = true;
     periodDropdown.classList.add('disabled');
     intervalDropdown.classList.add('disabled');
     container.classList.add('d-none');
     cancelSchedule(option);
+  } else {
+    input.disabled = false;
+    periodDropdown.classList.remove('disabled');
+    intervalDropdown.classList.remove('disabled');
+    container.classList.remove('d-none');
   }
-
-  input.disabled = false;
-  periodDropdown.classList.remove('disabled');
-  intervalDropdown.classList.remove('disabled');
-  container.classList.remove('d-none');
 }
 
 async function handleScheduleToggleClick() {
