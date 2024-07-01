@@ -43,7 +43,7 @@ const defaultLayout = new rxjs.BehaviorSubject({});
 const activeLayout = new rxjs.BehaviorSubject({});
 const notificationsCountObs = new rxjs.BehaviorSubject(null);
 const themeObs = new rxjs.BehaviorSubject(null);
-let notificationEnabledObs = new rxjs.BehaviorSubject(false);
+const notificationEnabledObs = new rxjs.BehaviorSubject(false);
 
 if (!window.glue42gd) {
   window.glue42gd = {};
@@ -68,7 +68,8 @@ gluePromise.then((glue) => {
   trackNotificationPanelVisibilityChange();
 });
 
-function trackWindowZoom() {
+async function trackWindowZoom() {
+  const glue = await gluePromise;
   applyWindowZoom();
   trackWindowResize();
 
@@ -77,7 +78,8 @@ function trackWindowZoom() {
   });
 }
 
-function applyWindowZoom() {
+async function applyWindowZoom() {
+  const glue = await gluePromise;
   const glueWindowHeight = glue.windows.my().bounds.height;
   const windowHeight = window.innerHeight;
   const zoomRatio = windowHeight / glueWindowHeight;
@@ -98,7 +100,9 @@ function trackWindowResize() {
   });
 }
 
-function trackApplications() {
+async function trackApplications() {
+  const glue = await gluePromise;
+
   pushAllApps();
   glue.appManager.onAppAdded(pushAllApps);
   glue.appManager.onAppRemoved(pushAllApps);
@@ -107,7 +111,8 @@ function trackApplications() {
   glue.appManager.onInstanceStopped(pushAllApps);
 }
 
-function pushAllApps() {
+async function pushAllApps() {
+  const glue = await gluePromise;
   glueAppsObs.next(
     glue.appManager.applications().map((a) => {
       return {
@@ -124,6 +129,8 @@ function pushAllApps() {
 }
 
 async function trackLayouts() {
+  const glue = await gluePromise;
+
   pushAllLayouts();
   glue.layouts.onAdded(pushAllLayouts);
   glue.layouts.onRemoved(pushAllLayouts);
@@ -137,6 +144,8 @@ async function trackLayouts() {
 }
 
 function pushAllLayouts() {
+  const glue = window.glue;
+
   layoutsObs.next(glue.layouts.list());
   pushWorkspaces();
 }
@@ -146,6 +155,7 @@ function trackWorkspaces() {
 }
 
 async function pushWorkspaces() {
+  const glue = await gluePromise;
   const workspaces = glue.layouts
     .list()
     .filter(
@@ -167,6 +177,7 @@ async function pushWorkspaces() {
 }
 
 async function trackNotificationCount() {
+  const glue = await gluePromise;
   await trackNotificationsEnabled();
   notificationEnabledObs
     .pipe(rxjs.operators.filter((data) => data))
@@ -181,6 +192,8 @@ async function trackNotificationCount() {
 }
 
 async function trackThemeChanges() {
+  const glue = await gluePromise;
+
   await glue.themes.ready();
   glue.themes.onChanged(async (selected) => {
     themeObs.next({
@@ -191,19 +204,24 @@ async function trackThemeChanges() {
 }
 
 async function trackWindowMove() {
+  const glue = await gluePromise;
+
   glue.windows.my().onBoundsChanged(async () => {
     await setDrawerOpenClasses();
   });
 }
 
 async function trackDisplayChange() {
+  const glue = await gluePromise;
+
   glue.displays.onDisplayChanged(async () => {
     await setWindowSize();
   });
 }
 
 async function trackNotificationPanelVisibilityChange() {
-  const notificationPanel = q('#notification-panel');
+  const glue = await gluePromise;
+  const notificationPanel = document.querySelector('#notification-panel');
   const isPanelVisible = await glue.notifications.panel.isVisible();
 
   if (isPanelVisible) {
@@ -227,12 +245,13 @@ async function trackNotificationPanelVisibilityChange() {
   return () => unSubscribe();
 }
 
-function windowCenter() {
+async function windowCenter() {
+  const glue = await gluePromise;
   glue.windows.my().center();
 }
 
 async function startApp(appName, context) {
-  await gluePromise;
+  const glue = await gluePromise;
   let glueApp = glue.appManager.application(appName);
   if (glueApp) {
     glueApp
@@ -248,33 +267,36 @@ async function startApp(appName, context) {
 }
 
 async function getApp(appName) {
-  await gluePromise;
+  const glue = await gluePromise;
   return glue.appManager.application(appName);
 }
 
 async function focusApp(appName) {
-  await gluePromise;
+  const glue = await gluePromise;
   let app = glue.appManager.application(appName);
+
   app.instances.forEach((i) => i.activate());
 }
 
 async function focusWindow(callback) {
-  await gluePromise;
+  const glue = await gluePromise;
+
   glue.windows.my().onFocusChanged(callback);
 }
 
 async function refreshApps() {
-  await gluePromise;
-  pushAllApps();
+  await gluePromise.then(pushAllApps).catch(console.error);
 }
 
 async function removeLayout(type, name) {
-  await gluePromise;
+  const glue = await gluePromise;
   glue.layouts.remove(type, name);
 }
 
 async function restoreLayout(type, name) {
-  await gluePromise;
+  const glue = await gluePromise;
+  const glue42gd = window.glue42gd;
+
   if (type === 'Global') {
     glue.layouts.restore({ name });
   } else if (type === 'Swimlane') {
@@ -285,7 +307,8 @@ async function restoreLayout(type, name) {
 }
 
 async function openWorkspace(name, type, context) {
-  await gluePromise;
+  const glue = await gluePromise;
+  const glue42gd = window.glue42gd;
 
   if (type === 'swimlane') {
     glue42gd.canvas.openWorkspace(name, { context });
@@ -295,30 +318,35 @@ async function openWorkspace(name, type, context) {
 }
 
 async function saveLayout(name) {
-  await gluePromise;
+  const glue = await gluePromise;
+
   return glue.layouts.save({ name });
 }
 
 async function getDefaultLayout() {
-  await gluePromise;
+  const glue = await gluePromise;
+
   defaultLayout.next(await glue.layouts.getDefaultGlobal());
 }
 
 async function setDefaultGlobal(name) {
-  await gluePromise;
+  const glue = await gluePromise;
+
   await glue.layouts.setDefaultGlobal(name);
   getDefaultLayout();
 }
 
 async function clearDefaultLayout() {
-  await gluePromise;
+  const glue = await gluePromise;
+
   await glue.layouts.clearDefaultGlobal();
   getDefaultLayout();
 }
 
 async function trackNotificationsEnabled() {
-  await gluePromise;
+  const glue = await gluePromise;
   let notificationMethodExists = new rxjs.BehaviorSubject(false);
+
   notificationMethodExists.next(
     glue.agm.methods({ name: 'T42.Notifications.Show' }).length > 0
   );
@@ -346,6 +374,7 @@ async function checkNotificationsConfigure() {
 }
 
 async function configureNotifications(config) {
+  const glue = await gluePromise;
   const methodExists = await checkNotificationsConfigure();
 
   if (methodExists) {
@@ -381,17 +410,32 @@ async function checkNotificationsOnConfigurationChanged() {
   return typeof glue.notifications.onConfigurationChanged === 'function';
 }
 
-async function trackNotificationsConfigurationChange() {
+async function trackNotificationsConfigurationChanged() {
   const glue = await gluePromise;
   const methodExists = await checkNotificationsOnConfigurationChanged();
 
   if (methodExists) {
     await glue.notifications.onConfigurationChanged((config) => {
-      const { enable, enableToasts } = config;
+      console.log('Notifications configuration changed', config);
+
+      const { enable, enableToasts, showNotificationBadge } = config;
       const setting = {
         enableNotifications: enable,
         enableToasts,
+        showNotificationBadge,
       };
+
+      if (typeof showNotificationBadge !== 'undefined') {
+        const notificationBadge = document.querySelector(
+          '#notifications-count'
+        );
+
+        if (showNotificationBadge) {
+          notificationBadge.classList.remove('d-none');
+        } else {
+          notificationBadge.classList.add('d-none');
+        }
+      }
 
       setSetting(setting);
     });
@@ -404,17 +448,23 @@ async function openNotificationPanel() {
     'io-connect-notifications-panel-application'
   );
 
-  await glue.notifications.panel.show();
-  await panelApp.focus();
+  try {
+    await glue.notifications.panel.show();
+    await panelApp.focus();
+  } catch (error) {
+    console.error('Failed to open notification panel.', error);
+  }
 }
 
 async function openFeedbackForm() {
-  await gluePromise;
-  glue.feedback && glue.feedback();
+  const glue = await gluePromise;
+
+  glue.feedback ?? glue.feedback();
 }
 
 async function registerHotkey() {
-  await gluePromise;
+  const glue = await gluePromise;
+
   glue.hotkeys.register(
     {
       hotkey: 'Ctrl+Alt+T',
@@ -427,18 +477,22 @@ async function registerHotkey() {
 }
 
 async function shutdown() {
-  await gluePromise;
+  const glue = await gluePromise;
+
   glue.appManager.exit({
     autoSave: getSetting('saveDefaultLayout'),
   });
 }
 
 async function changeTheme(themeName) {
+  const glue = await gluePromise;
+
   glue.themes.select(themeName);
 }
 
 async function openWindow(name, url, options) {
-  await gluePromise;
+  const glue = await gluePromise;
+
   const myBounds = glue.windows.my().bounds;
   options = {
     ...options,
@@ -460,13 +514,14 @@ async function getPrimaryScaleFactor() {
 }
 
 async function getScaleFactor() {
+  const glue = await gluePromise;
   const currentMonitor = await glue.windows.my().getDisplay();
 
   return currentMonitor.scaleFactor;
 }
 
 async function getWindowWorkArea() {
-  await gluePromise;
+  const glue = await gluePromise;
   const currentMonitor = await glue.windows.my().getDisplay();
   const primaryScaleFactor = await getPrimaryScaleFactor();
   const scaleFactor = currentMonitor.scaleFactor;
@@ -486,7 +541,7 @@ async function getWindowWorkArea() {
 }
 
 async function getPhysicalWindowBounds() {
-  await gluePromise;
+  const glue = await gluePromise;
   const bounds = glue.windows.my().bounds;
   const primaryScaleFactor = await getPrimaryScaleFactor();
   const scaleFactor = await getScaleFactor();
@@ -502,22 +557,26 @@ async function getPhysicalWindowBounds() {
 }
 
 async function moveMyWindow(bounds) {
-  await gluePromise;
+  const glue = await gluePromise;
+
   return glue.windows.my().moveResize(bounds);
 }
 
 async function minimize() {
-  await gluePromise;
+  const glue = await gluePromise;
+
   glue.windows.my().minimize();
 }
 
 async function isMinimizeAllowed() {
-  await gluePromise;
+  const glue = await gluePromise;
+
   return glue.windows.my().settings.allowMinimize;
 }
 
 async function raiseNotification(options) {
-  await gluePromise;
+  const glue = await gluePromise;
+
   if (
     glue.agm
       .methods()
@@ -530,20 +589,23 @@ async function raiseNotification(options) {
   }
 }
 
-function trackConnection() {
+async function trackConnection() {
+  const glue = await gluePromise;
+
   glue.connection.connected(() => {
-    q('.status-connected').classList.remove('d-none');
-    q('.status-disconnected').classList.add('d-none');
+    document.querySelector('.status-connected').classList.remove('d-none');
+    document.querySelector('.status-disconnected').classList.add('d-none');
   });
   glue.connection.disconnected(() => {
     console.log('disconnected');
-    q('.status-connected').classList.add('d-none');
-    q('.status-disconnected').classList.remove('d-none');
+    document.querySelector('.status-connected').classList.add('d-none');
+    document.querySelector('.status-disconnected').classList.remove('d-none');
   });
 }
 
 async function getMonitorInfo() {
-  await gluePromise;
+  const glue = await gluePromise;
+
   return (await glue.displays.all()).map((display) => ({
     left: display.bounds.left,
     top: display.bounds.top,
@@ -559,40 +621,50 @@ async function getMonitorInfo() {
 }
 
 async function glueVersion() {
-  await gluePromise;
+  const glue = await gluePromise;
+
   return glue.version;
 }
 
 async function restart() {
-  await gluePromise;
+  const glue = await gluePromise;
+
   glue.appManager.restart({
     autoSave: getSetting('saveDefaultLayout'),
   });
 }
 
 function getGWURL() {
+  const glue42gd = window.glue42gd;
+
   return glue42gd.gwURL;
 }
 
 function getSID() {
+  const glue42gd = window.glue42gd;
+
   return glue42gd.sid;
 }
 
 function getEnvData() {
+  const glue42gd = window.glue42gd;
+
   return glue42gd.env;
 }
 
 function getGDVersion() {
+  const glue42gd = window.glue42gd;
+
   return glue42gd.version;
 }
 
 async function getUserProperties() {
-  await gluePromise;
+  const glue = await gluePromise;
   return glue.appManager.myInstance.application.userProperties;
 }
 
 async function getPrefs() {
-  await gluePromise;
+  const glue = await gluePromise;
   const prefs = await glue.prefs.get();
   const settings = getSettings();
 
@@ -630,12 +702,14 @@ async function getPrefs() {
   await setDrawerOpenClasses();
   await setWindowPosition();
 
-  glue.prefs.subscribe((prefs) => {
+  glue.prefs.subscribe(() => {
     setOrientation();
   });
 }
 
 async function updatePrefs(setting) {
+  const glue = await gluePromise;
+
   try {
     await glue.prefs.update({ ...setting });
   } catch (error) {
@@ -644,7 +718,9 @@ async function updatePrefs(setting) {
 }
 
 async function getServerInfo() {
+  const glue42gd = window.glue42gd;
   const configs = await glue42gd.getConfigs();
+
   return configs.server;
 }
 
@@ -699,5 +775,5 @@ export {
   getScaleFactor,
   windowCenter,
   getNotificationsConfiguration,
-  trackNotificationsConfigurationChange,
+  trackNotificationsConfigurationChanged,
 };
