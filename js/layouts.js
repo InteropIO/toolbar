@@ -98,7 +98,7 @@ function handleLayoutClick() {
 
 function handleLayoutsSaveMenuItemClick() {
   q('#save').addEventListener('click', () => {
-    q('#layout-save-name').value = activeLayout._value.name;
+    q('#layout-save-name').value = (activeLayout._value.name || defaultLayout._value.name);
   });
 }
 
