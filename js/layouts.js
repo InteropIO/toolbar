@@ -19,6 +19,7 @@ function init() {
   let allLayouts = layoutsObs.pipe(
     rxjs.operators.map((layouts) => {
       return layouts
+        .toReversed()
         .map((l) => ({ name: l.name, type: l.type }))
         .filter((l) => ['Global', 'Swimlane', 'Workspace'].includes(l.type));
     })
@@ -95,6 +96,12 @@ function handleLayoutClick() {
   });
 }
 
+function handleLayoutsSaveMenuItemClick() {
+  q('#save').addEventListener('click', () => {
+    q('#layout-save-name').value = activeLayout._value.name;
+  });
+}
+
 function handleLayoutSave() {
   q('#layout-save-btn').addEventListener('click', saveCurrentLayout);
   q('#layout-save-name').addEventListener('keyup', (e) =>
@@ -104,9 +111,9 @@ function handleLayoutSave() {
 
 function saveCurrentLayout() {
   saveLayout(escapeHtml(q('#layout-save-name').value));
-  q('#layout-save-name').value = '';
-  q('#layout-content').classList.add('hide');
-  q('#layout-load').classList.remove('hide');
+  // q('#layout-save-name').value = '';
+  // q('#layout-content').classList.add('hide');
+  // q('#layout-load').classList.remove('hide');
 }
 
 function layoutHTMLTemplate(layout) {
@@ -149,5 +156,6 @@ export {
   layoutHTMLTemplate,
   handleLayoutClick,
   handleLayoutSave,
+  handleLayoutsSaveMenuItemClick,
   noLayoutsHTML,
 };

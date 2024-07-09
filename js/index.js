@@ -17,6 +17,7 @@ import {
   layoutHTMLTemplate,
   handleLayoutClick,
   handleLayoutSave,
+  handleLayoutsSaveMenuItemClick,
   noLayoutsHTML,
 } from './layouts.js';
 import * as glueModule from './connect-related.js';
@@ -68,6 +69,7 @@ async function init() {
   utils.handleLayoutsHover();
   handleLayoutClick();
   handleLayoutSave();
+  handleLayoutsSaveMenuItemClick();
   utils.handleDropDownClicks();
   handleClientAndInstrumentClicks();
   await handleScheduledShutdownRestart();

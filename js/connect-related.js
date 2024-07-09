@@ -416,8 +416,6 @@ async function trackNotificationsConfigurationChanged() {
 
   if (methodExists) {
     await glue.notifications.onConfigurationChanged((config) => {
-      console.log('Notifications configuration changed', config);
-
       const { enable, enableToasts, showNotificationBadge } = config;
       const setting = {
         enableNotifications: enable,
