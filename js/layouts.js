@@ -8,9 +8,10 @@ import {
   clearDefaultLayout,
   setDefaultGlobal,
 } from './connect-related.js';
-import { escapeHtml } from './utils.js';
+import { escapeHtml, renderAlert } from './utils.js';
 import { getSetting } from './settings.js';
 
+const rxjs = window.rxjs;
 let filteredLayouts;
 
 init();
@@ -26,7 +27,7 @@ function init() {
   );
 
   const layoutSearch = rxjs
-    .fromEvent(q('#layout-search'), 'keyup')
+    .fromEvent(document.querySelector('#layout-search'), 'keyup')
     .pipe(
       rxjs.operators.map((event) => {
         return event.target.value.toString().toLowerCase().trim();
@@ -60,10 +61,10 @@ function init() {
 }
 
 function handleLayoutClick() {
-  q('#layout-load>ul').addEventListener('click', (e) => {
+  document.querySelector('#layout-load>ul').addEventListener('click', (e) => {
     const layoutElement = e
       .composedPath()
-      .find((e) => e.getAttribute && e.getAttribute('layout-name'));
+      .find((e) => e.getAttribute?.('layout-name'));
 
     if (!layoutElement) {
       return;
@@ -97,26 +98,59 @@ function handleLayoutClick() {
 }
 
 function handleLayoutsSaveMenuItemClick() {
-  q('#save').addEventListener('click', () => {
-    q('#layout-save-name').value = activeLayout._value.name;
+  document.querySelector('#save').addEventListener('click', () => {
+    document.querySelector('#layout-save-name').value =
+      activeLayout._value.name || defaultLayout._value.name;
   });
 }
 
 function handleLayoutSave() {
-  q('#layout-save-btn').addEventListener('click', saveCurrentLayout);
-  q('#layout-save-name').addEventListener('keyup', (e) =>
-    e.key === 'Enter' && e.target.value.length > 0 ? saveCurrentLayout() : null
-  );
+  document
+    .querySelector('#layout-save-btn')
+    .addEventListener('click', saveCurrentLayout);
+  document
+    .querySelector('#layout-save-name')
+    .addEventListener('keyup', (e) =>
+      e.key === 'Enter' && e.target.value.length > 0
+        ? saveCurrentLayout()
+        : null
+    );
 }
 
-function saveCurrentLayout() {
-  saveLayout(escapeHtml(q('#layout-save-name').value));
-  // q('#layout-save-name').value = '';
-  // q('#layout-content').classList.add('hide');
-  // q('#layout-load').classList.remove('hide');
+async function saveCurrentLayout() {
+  const alertElement = document.querySelector('#layout-save-alert');
+  const layoutName = document.querySelector('#layout-save-name').value;
+
+  if (!layoutName || !alertElement) {
+    return;
+  }
+
+  try {
+    await saveLayout(escapeHtml(layoutName));
+
+    renderAlert(
+      alertElement,
+      'success',
+      `Layout ${layoutName} has been saved successfully`
+    );
+  } catch (error) {
+    const inputString = error.message;
+    const stringLimiter = ', type:';
+    const endIndex = inputString.indexOf(stringLimiter);
+    const errorMessage = inputString.substring(0, endIndex);
+
+    console.error('error:', error);
+    renderAlert(
+      alertElement,
+      'warning',
+      `Failed to save the layout. ${errorMessage}`
+    );
+  }
 }
 
 function layoutHTMLTemplate(layout) {
+  const textColor = layout.isDefault ? 'text-primary' : '';
+
   return (
     `
   <li class="nav-item ${layout.isActive ? 'app-active' : ''} ${
@@ -129,9 +163,7 @@ function layoutHTMLTemplate(layout) {
     }</span>
       <div class="action-menu-tool">` +
     (layout.type === 'Global' && !getSetting('saveDefaultLayout')
-      ? `<button class="btn btn-icon secondary set-default ${
-          layout.isDefault ? 'text-primary' : ''
-        }" id="menu-tool-4">
+      ? `<button class="btn btn-icon secondary set-default ${textColor}" id="menu-tool-4">
           <i class="icon-asterisk"></i>
         </button>`
       : '') +

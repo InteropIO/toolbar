@@ -41,6 +41,7 @@ import {
 import handleKeyboardNavigation from './keyboard-navigation.js';
 
 const windowMargin = 50;
+const rxjs = window.rxjs;
 
 let pressedKey;
 let keyObs = rxjs
@@ -111,12 +112,14 @@ function handleThemeChange() {
 }
 
 function populateAboutPage() {
+  const glue42gd = window.glue42gd;
+
   document.querySelector('.connect-desktop-version').innerText =
     glue42gd.version;
   document.querySelector('.gw-url').innerText = glue42gd.gwURL;
   document.querySelector('.username').innerText = glue42gd.user;
 
-  gluePromise.then(async (glue) => {
+  gluePromise.then(async () => {
     document.querySelector('.desktop-client-version').innerText =
       await glueVersion();
   });
@@ -275,6 +278,7 @@ function handleModalClose() {
 
 async function handleJumpListAction() {
   try {
+    const glue = window.glue;
     const jumpList = glue.windows.my().jumpList;
     const category = await jumpList.categories.find('Tasks');
     const action = {
@@ -323,7 +327,7 @@ async function handleMouseHover() {
 
   let closeTimeout;
 
-  document.querySelector('.app').addEventListener('mouseenter', (e) => {
+  document.querySelector('.app').addEventListener('mouseenter', () => {
     document.querySelector('.viewport').classList.add('expand');
     document.querySelector('.app').classList.add('expand-wrapper');
 
@@ -455,6 +459,46 @@ function escapeHtml(unsafe) {
     .replace(/'/g, '&#039;');
 }
 
+function renderAlert(
+  domEl,
+  type = 'primary',
+  message = 'Default Alert Message',
+  duration = 5000
+) {
+  if (!domEl) {
+    return;
+  }
+
+  switch (type) {
+    case 'success':
+      domEl.classList.add('alert-success');
+      break;
+    case 'warning':
+      domEl.classList.add('alert-warning');
+      break;
+    case 'danger':
+      domEl.classList.add('alert-danger');
+      break;
+    default:
+      domEl.classList.add('alert-primary');
+  }
+
+  const timeout = setTimeout(() => {
+    domEl.classList.remove('show');
+  }, duration);
+
+  domEl.querySelector('.alert-message').innerText = message;
+
+  domEl.classList.add('show');
+
+  domEl.querySelector('.close').addEventListener('click', () => {
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+    domEl.classList.remove('show');
+  });
+}
+
 async function isOutOfMonitor(viewportBounds) {
   let monitors = await getMonitorInfo();
   let windowBounds = await getPhysicalWindowBounds();
@@ -481,7 +525,7 @@ function populateSettingsDropdown(
   selectOptionsObj,
   elementName
 ) {
-  selectElement.forEach((item, i) => {
+  selectElement.forEach((item) => {
     let html = ``;
 
     selectOptionsObj.all.forEach((element) => {
@@ -924,4 +968,5 @@ export {
   setDrawerOpenDirection,
   elementObserver,
   populateSettingsDropdown,
+  renderAlert,
 };

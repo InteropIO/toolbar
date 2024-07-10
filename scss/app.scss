@@ -680,6 +680,33 @@ html {
     }
   }
 
+  .layout-save-alert-wrapper {
+    position: relative;
+
+    .alert {
+      position: absolute;
+      top: 0;
+      right: 0.5rem;
+      left: 0.5rem;
+      max-height: 0;
+      padding: 0 4em 0 1em;
+      border-color: transparent;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.34, 0.03, 0.13, 0.93);
+
+      &::before {
+        flex-shrink: 0;
+      }
+
+      &.show {
+        max-height: 10em;
+        padding: 0.5em 4em 0.5em 1em;
+        border-color: var(--t42-color-opacity-10);
+        opacity: 1;
+      }
+    }
+  }
+
   @import "select";
   @import "vertical";
   @import "horizontal";
