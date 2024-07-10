@@ -82,6 +82,36 @@ function handleEvents() {
   handleJumpListAction();
 }
 
+function renderLogo(theme) {
+  const logoIcon = document.querySelector('.logo-icon img');
+  const logoWordmark = document.querySelector('.logo-wordmark img');
+
+  const logoData = {
+    dark: {
+      icon: './assets/logo-icon.svg',
+      wordmark: './assets/logo-wordmark.svg',
+    },
+    light: {
+      icon: './assets/logo-icon-alt.svg',
+      wordmark: './assets/logo-wordmark-alt.svg',
+    },
+  };
+
+  if (logoIcon) {
+    logoIcon.src = logoData[theme].icon;
+    logoIcon.onerror = () => {
+      logoIcon.src = logoData['dark'].icon;
+    };
+  }
+
+  if (logoWordmark) {
+    logoWordmark.src = logoData[theme].wordmark;
+    logoWordmark.onerror = () => {
+      logoWordmark.src = logoData['dark'].wordmark;
+    };
+  }
+}
+
 function handleThemeChange() {
   document.querySelectorAll('.theme-select').forEach((a) => {
     a.addEventListener('click', (e) => {
@@ -100,6 +130,8 @@ function handleThemeChange() {
       });
 
       document.querySelector('html').classList.add(themeObj.selected.name);
+
+      renderLogo(themeObj.selected.name);
 
       populateSettingsDropdown(
         document.querySelectorAll('.theme-select .select_options'),
