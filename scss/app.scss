@@ -2,18 +2,6 @@
 @import "color";
 @import "folders";
 
-:root {
-  --logo-color-accent: #007be5;
-}
-
-.dark {
-  --logo-color-base: #ffffff;
-}
-
-.light {
-  --logo-color-base: #083044;
-}
-
 html {
   height: 100%;
 
@@ -83,32 +71,23 @@ html {
       background-size: contain;
       background-repeat: no-repeat;
       height: 100%;
+
+      img {
+        width: 100%;
+      }
     }
 
     &-icon {
       flex-shrink: 0;
       width: 2.33em;
       height: 60%;
-      background-image: url("../assets/logo-icon.svg");
-      background-position: center;
     }
 
     &-wordmark {
-      background-image: url("../assets/logo-wordmark.svg");
-      background-position: left;
-    }
-  }
+      height: 100%;
 
-  &.light {
-    .logo {
-      &-icon {
-        background-image: url("../assets/logo-icon-alt.svg"),
-          url("../assets/logo-icon.svg");
-      }
-
-      &-wordmark {
-        background-image: url("../assets/logo-wordmark-alt.svg"),
-          url("../assets/logo-wordmark.svg");
+      img {
+        height: 100%;
       }
     }
   }
