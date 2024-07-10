@@ -14,6 +14,8 @@ import {
 
 console.time('Glue');
 
+const rxjs = window.rxjs;
+
 var gluePromise = new Promise(async (res, rej) => {
   window.addEventListener('load', async () => {
     let glue = await Glue({
@@ -55,7 +57,7 @@ const glueInfo = {
   gw: window.glue42gd.gwURL,
 };
 
-gluePromise.then((glue) => {
+gluePromise.then(() => {
   trackApplications();
   trackLayouts();
   trackWorkspaces();
@@ -136,6 +138,9 @@ async function trackLayouts() {
   glue.layouts.onRemoved(pushAllLayouts);
   glue.layouts.onChanged(pushAllLayouts);
   glue.layouts.onRenamed(pushAllLayouts);
+  glue.layouts.onSaveRequested((info) => {
+    console.log(info);
+  });
   activeLayout.next((await glue.layouts.getCurrentLayout()) || {});
   glue.layouts.onRestored((layout) => {
     activeLayout.next(layout || {});
@@ -182,7 +187,7 @@ async function trackNotificationCount() {
   notificationEnabledObs
     .pipe(rxjs.operators.filter((data) => data))
     .pipe(rxjs.operators.take(1))
-    .subscribe((data) => {
+    .subscribe(() => {
       glue.agm.subscribe('T42.Notifications.Counter').then((subscription) => {
         subscription.onData(({ data }) => {
           notificationsCountObs.next(data.count);
@@ -319,8 +324,9 @@ async function openWorkspace(name, type, context) {
 
 async function saveLayout(name) {
   const glue = await gluePromise;
+  const result = await glue.layouts.save({ name });
 
-  return glue.layouts.save({ name });
+  return result;
 }
 
 async function getDefaultLayout() {

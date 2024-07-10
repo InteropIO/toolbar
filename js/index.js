@@ -33,6 +33,7 @@ import { getSetting } from './settings.js';
 import { populateSID } from './profile.js';
 import handleScheduledShutdownRestart from './schedule-shutdown-restart.js';
 
+const rxjs = window.rxjs;
 let {
   map: rxMap,
   combineLatest: rxCombineLatest,
@@ -89,7 +90,7 @@ function finishLoading() {
 }
 
 function observeAppElement() {
-  const app = q('.app');
+  const app = document.querySelector('.app');
   const config = {
     attributeFilter: ['class'],
     attributeOldValue: true,
@@ -175,7 +176,8 @@ function printApps() {
         hasSearch: search.trim().length > 1,
       });
 
-      q('#search-results').innerHTML = newResultsHTML || noApplicationsHTML;
+      document.querySelector('#search-results').innerHTML =
+        newResultsHTML || noApplicationsHTML;
       favoritesModule.updateFavoriteApps();
     });
 }
@@ -271,9 +273,9 @@ function printRunningApps() {
             favoriteBtn: false,
           }))
       );
-      q('#running-apps').innerHTML = newRunningAppsHTML;
+      document.querySelector('#running-apps').innerHTML = newRunningAppsHTML;
     } else {
-      q('#running-apps').innerHTML = noRunningAppsHTML;
+      document.querySelector('#running-apps').innerHTML = noRunningAppsHTML;
     }
   });
 }
@@ -286,9 +288,9 @@ function printLayouts() {
       layouts.forEach(
         (layout) => (newLayoutsHTML += layoutHTMLTemplate(layout))
       );
-      q('#layout-load>ul').innerHTML = newLayoutsHTML;
+      document.querySelector('#layout-load>ul').innerHTML = newLayoutsHTML;
     } else {
-      q('#layout-load>ul').innerHTML = noLayoutsHTML;
+      document.querySelector('#layout-load>ul').innerHTML = noLayoutsHTML;
     }
   });
 }
@@ -316,19 +318,21 @@ function printFavoriteApps() {
         favAppsHtml = noFavoriteAppsHTML;
       }
 
-      q('#fav-apps').innerHTML = favAppsHtml;
+      document.querySelector('#fav-apps').innerHTML = favAppsHtml;
     });
 }
 
 function printNotificationCount() {
   glueModule.notificationsCountObs.subscribe((count) => {
     if (count !== null) {
-      q('#notifications-count').innerHTML = count;
+      document.querySelector('#notifications-count').innerHTML = count;
 
       if (count === 0) {
-        q('#notifications-count').classList.add('empty');
+        document.querySelector('#notifications-count').classList.add('empty');
       } else {
-        q('#notifications-count').classList.remove('empty');
+        document
+          .querySelector('#notifications-count')
+          .classList.remove('empty');
       }
     }
   });
@@ -336,7 +340,7 @@ function printNotificationCount() {
 
 function printInitialToastState() {
   const notificationsEnabled = getSetting('enableNotifications');
-  const enableToasts = q('#enable-toasts');
+  const enableToasts = document.querySelector('#enable-toasts');
 
   if (!notificationsEnabled) {
     enableToasts.checked = false;
@@ -349,7 +353,7 @@ async function showFeedbackPanel() {
   const hideFeedback = userProperties.hideFeedbackButton;
 
   if (!hideFeedback) {
-    q('#feedback-panel').classList.remove('d-none');
+    document.querySelector('#feedback-panel').classList.remove('d-none');
   }
 }
 
@@ -358,7 +362,7 @@ async function showProfilePanel() {
   const hideProfile = userProperties.hideProfileButton;
 
   if (hideProfile === true) {
-    q('#profile-panel').classList.add('d-none');
+    document.querySelector('#profile-panel').classList.add('d-none');
   }
 }
 
