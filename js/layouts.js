@@ -119,11 +119,14 @@ function handleLayoutSave() {
 
 async function saveCurrentLayout() {
   const alertElement = document.querySelector('#layout-save-alert');
+  const loaderElement = document.querySelector('#layout-save-loader');
   const layoutName = document.querySelector('#layout-save-name').value;
 
   if (!layoutName || !alertElement) {
     return;
   }
+
+  loaderElement.classList.add('show');
 
   try {
     await saveLayout(escapeHtml(layoutName));
@@ -146,6 +149,8 @@ async function saveCurrentLayout() {
       `Failed to save the layout. ${errorMessage}`
     );
   }
+
+  loaderElement.classList.remove('show');
 }
 
 function layoutHTMLTemplate(layout) {

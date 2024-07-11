@@ -177,7 +177,7 @@
             <h5 class="draggable m-0">Save Layouts</h5>
             <span class="icon-arrow-up-down close-drawer m-0"></span>
           </div>
-          <div class="input-group">
+          <div class="input-group layout-save-input-group">
             <input
               type="text"
               id="layout-save-name"
@@ -186,6 +186,9 @@
               placeholder="Layout name..."
             />
             <div class="input-group-append">
+              <div class="loader-wrapper">
+                <div id="layout-save-loader" class="loader"></div>
+              </div>
               <button class="btn btn-secondary" id="layout-save-btn">
                 <i class="icon-floppy"></i>
               </button>

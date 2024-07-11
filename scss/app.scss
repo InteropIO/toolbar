@@ -686,6 +686,54 @@ html {
     }
   }
 
+  .layout-save-input-group {
+    .input-control {
+      padding-right: 1.25rem;
+    }
+
+    .input-group-append {
+      position: relative;
+    }
+
+    .loader-wrapper {
+      position: absolute;
+      inset: 0 25%;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: translateX(-150%);
+    }
+
+    .loader {
+      display: none;
+      width: 0.5em;
+      height: 0.5em;
+      border-radius: 50%;
+      background-color: var(--primary);
+      animation: pulse 1s linear infinite;
+
+      &.show {
+        display: block;
+      }
+    }
+  }
+
+  @keyframes pulse {
+    0% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
   @import "select";
   @import "vertical";
   @import "horizontal";
