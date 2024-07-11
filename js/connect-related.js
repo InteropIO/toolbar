@@ -463,7 +463,7 @@ async function openNotificationPanel() {
 async function openFeedbackForm() {
   const glue = await gluePromise;
 
-  glue.feedback ?? glue.feedback();
+  glue.feedback?.();
 }
 
 async function registerHotkey() {
