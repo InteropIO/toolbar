@@ -245,6 +245,26 @@ function favoriteApplicationHTMLTemplate(app) {
   `;
 }
 
+function favoriteLayoutHTMLTemplate(layout) {
+  if (!layout) {
+    return '';
+  }
+
+  const displayName = typeof layout.name === 'string' ? layout.name : 'No name set';
+  const isLayoutActive = layout.isActive
+
+  return `
+  <li class="nav-item ${
+    isLayoutActive ? 'app-active' : ''
+  }" layout-name="${layout.name}">
+    <a class="nav-link" href="#" draggable="false" title="${displayName}">
+      <i class="icon-03-context-viewer ml-2 mr-4"></i>
+      <span class="text-animation">${displayName}</span>
+    </a>
+  </li>
+  `;
+}
+
 const noApplicationsHTML = `<li class="text-center pt-3">No applications</li>`;
 const noRunningAppsHTML = `<li class="text-center pt-3">No running applications</li><li class="text-center pt-3"><button class="btn btn-secondary" menu-button-id="apps">Start application</button></li>`;
 const noFavoriteAppsHTML = `<li class="text-center pt-3">No favorite apps</li>`;
@@ -257,6 +277,7 @@ export {
   applicationHTMLTemplate,
   applicationFolderHTMLTemplate,
   favoriteApplicationHTMLTemplate,
+  favoriteLayoutHTMLTemplate,
   handleAppClick,
   handleSearchChange,
   runningApps,

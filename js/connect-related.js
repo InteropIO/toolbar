@@ -685,6 +685,7 @@ async function getPrefs() {
       toolbarAppRows: settings.toolbarAppRows,
       vertical: settings.vertical,
       favoriteApps: settings.favoriteApps,
+      favoriteLayouts: settings.favoriteLayouts,
       schedule: settings.schedule,
     });
     setSettings();

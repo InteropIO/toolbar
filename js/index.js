@@ -10,6 +10,7 @@ import {
   noApplicationsHTML,
   noFavoriteAppsHTML,
   getItemHTMLTemplate,
+  favoriteLayoutHTMLTemplate,
 } from './applications.js';
 import * as favoritesModule from './favorites.js';
 import {
@@ -320,6 +321,29 @@ function printFavoriteApps() {
 
       document.querySelector('#fav-apps').innerHTML = favAppsHtml;
     });
+  
+  favoritesModule.favoriteLayouts
+    .pipe(rxjs.operators
+      .combineLatest(glueModule.layoutsObs))
+    .subscribe(([favLayoutNames, allLayouts]) => {
+      console.log('🚀 ~ favoritesModule.favoriteLayouts.pipe ~ favLayoutNames:', favLayoutNames)
+      console.log('🚀 ~ favoritesModule.favoriteLayouts.pipe ~ allLayouts:', allLayouts)
+      // get the current favAppsHtml
+      let favLayoutsHtml = document.querySelector('#fav-apps').innerHTML;
+
+      if (favLayoutNames.length > 0) { 
+        favLayoutNames.forEach((favLayoutName) => {
+          let fullLayout = allLayouts.find((l) => l.name === favLayoutName);
+
+          if (fullLayout) {
+            favLayoutsHtml += favoriteLayoutHTMLTemplate(fullLayout);
+          }
+        });
+
+        // put the favLayoutsHtml after the favAppsHtml
+        document.querySelector('#fav-apps').innerHTML = favLayoutsHtml;
+      }
+    })
 }
 
 function printNotificationCount() {
