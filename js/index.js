@@ -293,6 +293,8 @@ function printLayouts() {
     } else {
       document.querySelector('#layout-load>ul').innerHTML = noLayoutsHTML;
     }
+    
+    favoritesModule.updateFavoriteLayouts();
   });
 }
 

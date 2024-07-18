@@ -95,5 +95,6 @@ export {
   addFavoriteLayout,
   removeFavoriteApp,
   removeFavoriteLayout,
-  updateFavoriteApps
+  updateFavoriteApps,
+  updateFavoriteLayouts,
 };
