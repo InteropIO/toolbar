@@ -8,7 +8,7 @@ import {
   runningApps,
   noRunningAppsHTML,
   noApplicationsHTML,
-  noFavoriteAppsHTML,
+  noFavoriteAppsOrLayoutsHTML,
   getItemHTMLTemplate,
   favoriteLayoutHTMLTemplate,
 } from './applications.js';
@@ -298,14 +298,15 @@ function printLayouts() {
 
 function printFavoriteApps() {
   favoritesModule.favoriteApps
-    .pipe(rxjs.operators.combineLatest(allApplicationsObs))
-    .subscribe(([favApps, allApps]) => {
+    .pipe(rxjs.operators.combineLatest(allApplicationsObs, favoritesModule.favoriteLayouts, glueModule.layoutsObs, glueModule.activeLayout))
+    .subscribe(([favApps, allApps, favLayoutNames, allLayouts, currentlyActiveLayout]) => {
       let favAppsHtml = ``;
+      let favLayoutsHtml = ``;
       let existingFavApps = favApps.filter((favApp) =>
         allApps.find((a) => a.name === favApp)
       );
 
-      if (existingFavApps.length > 0) {
+      if (existingFavApps.length > 0 || favLayoutNames.length > 0) {
         existingFavApps.forEach((favApp) => {
           let fullApp = allApps.find((a) => a.name === favApp);
 
@@ -315,35 +316,22 @@ function printFavoriteApps() {
             });
           }
         });
-      } else {
-        favAppsHtml = noFavoriteAppsHTML;
-      }
 
-      document.querySelector('#fav-apps').innerHTML = favAppsHtml;
-    });
-  
-  favoritesModule.favoriteLayouts
-    .pipe(rxjs.operators
-      .combineLatest(glueModule.layoutsObs))
-    .subscribe(([favLayoutNames, allLayouts]) => {
-      console.log('🚀 ~ favoritesModule.favoriteLayouts.pipe ~ favLayoutNames:', favLayoutNames)
-      console.log('🚀 ~ favoritesModule.favoriteLayouts.pipe ~ allLayouts:', allLayouts)
-      // get the current favAppsHtml
-      let favLayoutsHtml = document.querySelector('#fav-apps').innerHTML;
-
-      if (favLayoutNames.length > 0) { 
         favLayoutNames.forEach((favLayoutName) => {
           let fullLayout = allLayouts.find((l) => l.name === favLayoutName);
 
           if (fullLayout) {
-            favLayoutsHtml += favoriteLayoutHTMLTemplate(fullLayout);
+            favLayoutsHtml += favoriteLayoutHTMLTemplate(fullLayout, currentlyActiveLayout);
           }
         });
-
-        // put the favLayoutsHtml after the favAppsHtml
-        document.querySelector('#fav-apps').innerHTML = favLayoutsHtml;
+      } else {
+        favAppsHtml = noFavoriteAppsOrLayoutsHTML;
       }
-    })
+
+      document.querySelector('#fav-apps').innerHTML = favAppsHtml;
+      // put the new favLayoutsHtml in place of the old one
+      document.querySelector('#fav-layouts').innerHTML = favLayoutsHtml;
+    });
 }
 
 function printNotificationCount() {

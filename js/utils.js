@@ -18,6 +18,7 @@ import {
   getPrimaryScaleFactor,
   windowCenter,
   getPhysicalWindowBounds,
+  restoreLayout,
 } from './connect-related.js';
 import {
   toolbarWidth,
@@ -229,6 +230,15 @@ function handleTopMenuClicks() {
       let appName = topElement.getAttribute('app-name');
 
       startApp(appName);
+    } else if (e.target.matches('#fav-layouts .nav-item, #fav-layouts .nav-item *')) {
+      // restore a layout from the favorites list
+      let topElement = e
+        .composedPath()
+        .find((e) => e.classList && e.classList.contains('nav-item'));
+      let layoutName = topElement.getAttribute('layout-name');
+      let layoutType = topElement.getAttribute('layout-type');
+
+      restoreLayout(layoutType, layoutName);
     }
   });
 }

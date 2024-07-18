@@ -245,20 +245,19 @@ function favoriteApplicationHTMLTemplate(app) {
   `;
 }
 
-function favoriteLayoutHTMLTemplate(layout) {
+function favoriteLayoutHTMLTemplate(layout, currentlyActiveLayout) {
   if (!layout) {
     return '';
   }
 
   const displayName = typeof layout.name === 'string' ? layout.name : 'No name set';
-  const isLayoutActive = layout.isActive
+  const isLayoutActive = layout.name === currentlyActiveLayout.name
 
-  return `
-  <li class="nav-item ${
-    isLayoutActive ? 'app-active' : ''
-  }" layout-name="${layout.name}">
+  return `<li class="nav-item${
+    isLayoutActive ? ' layout-active' : ''
+  }" layout-name="${layout.name}" layout-type="${layout.type}">
     <a class="nav-link" href="#" draggable="false" title="${displayName}">
-      <i class="icon-03-context-viewer ml-2 mr-4"></i>
+      <i class="icon-03-context-viewer ml-2 mr-2"></i>
       <span class="text-animation">${displayName}</span>
     </a>
   </li>
@@ -267,7 +266,7 @@ function favoriteLayoutHTMLTemplate(layout) {
 
 const noApplicationsHTML = `<li class="text-center pt-3">No applications</li>`;
 const noRunningAppsHTML = `<li class="text-center pt-3">No running applications</li><li class="text-center pt-3"><button class="btn btn-secondary" menu-button-id="apps">Start application</button></li>`;
-const noFavoriteAppsHTML = `<li class="text-center pt-3">No favorite apps</li>`;
+const noFavoriteAppsOrLayoutsHTML = `<li class="text-center pt-3">No favorite apps or layouts</li>`;
 
 export {
   // applicationsObs,
@@ -283,5 +282,5 @@ export {
   runningApps,
   noApplicationsHTML,
   noRunningAppsHTML,
-  noFavoriteAppsHTML,
+  noFavoriteAppsOrLayoutsHTML,
 };

@@ -166,9 +166,8 @@ function layoutHTMLTemplate(layout) {
   const textColor = layout.isDefault ? 'text-primary' : '';
 
   return (
-    `
-  <li class="nav-item ${layout.isActive ? 'app-active' : ''} ${
-      layout.isDefault ? 'default-layout' : ''
+    `<li class="nav-item${layout.isActive ? ' layout-active' : ''}${
+      layout.isDefault ? ' default-layout' : ''
     }" layout-name="${escapeHtml(layout.name)}" layout-type="${layout.type}">
     <div class="nav-link action-menu">
       <i class="icon-03-context-viewer ml-2 mr-4"></i>
@@ -182,7 +181,8 @@ function layoutHTMLTemplate(layout) {
         </button>`
       : '') +
     `<button class="btn btn-icon secondary add-favorite">
-          ${layout.isFavorite ? '<i class="icon-star-full" draggable="false"></i>' : '<i class="icon-star-empty-1" draggable="false"></i>'}
+          <i class="icon-star-empty-1" draggable="false"></i>
+          <i class="icon-star-full" draggable="false"></i>
           </button>
     <button class="btn btn-icon secondary delete-layout" id="menu-tool-4">
           <i class="icon-trash-empty"></i>
