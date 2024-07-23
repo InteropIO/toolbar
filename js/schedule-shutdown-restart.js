@@ -32,6 +32,7 @@ const defaultConfig = {
   dateFormat: 'H:i',
   defaultDate: '00:00',
   // minuteIncrement: 1,
+  clickOpens: false,
 };
 
 const periodItems = {
@@ -59,6 +60,10 @@ function initTimePicker(domElement, config) {
 
 async function createInstance(input, config = defaultConfig) {
   const instance = initTimePicker(input, config);
+
+  input.addEventListener('click', () => {
+    instance.open();
+  });
 
   instance.config.onClose.push(async (selectedDates, time) => {
     const option = input.id.split('-')[1];
@@ -177,20 +182,19 @@ function createScheduleDropdowns() {
 }
 
 async function createScheduleInputs() {
-  const restartInput = document.querySelector('#schedule-restart-time');
-  const shutdownInput = document.querySelector('#schedule-shutdown-time');
+  const options = ['shutdown', 'restart'];
 
-  await createInstance(restartInput, {
-    ...defaultConfig,
-    ...{ defaultDate: getSetting('schedule')['restart']['time'] ?? '00:00' },
-  });
-  await createInstance(shutdownInput, {
-    ...defaultConfig,
-    ...{ defaultDate: getSetting('schedule')['shutdown']['time'] ?? '00:00' },
+  options.forEach(async (input) => {
+    await createInstance(document.querySelector(`#schedule-${input}-time`), {
+      ...defaultConfig,
+      ...{ defaultDate: getSetting('schedule')[input]['time'] ?? '00:00' },
+    });
   });
 }
 
 async function getSchedule(option) {
+  const io = window.io;
+
   try {
     const schedule = await io.interop.invoke('T42.GD.Execute', {
       command: `get-schedule-${option}`,
@@ -199,6 +203,9 @@ async function getSchedule(option) {
     if (!schedule) {
       return;
     }
+
+    console.log(`schedule for ${option}:`);
+    console.log(schedule);
 
     return schedule.returned.cronTime;
   } catch ({ method, called_with, executed_by, message, status, returned }) {
@@ -211,6 +218,8 @@ async function getSchedule(option) {
 }
 
 async function setSchedule(option, scheduleString) {
+  const io = window.io;
+
   await io.interop.invoke('T42.GD.Execute', {
     command: `schedule-${option}`,
     args: {
@@ -220,6 +229,7 @@ async function setSchedule(option, scheduleString) {
 }
 
 async function cancelSchedule(option) {
+  const io = window.io;
   const schedule = await getSchedule(option);
 
   if (!schedule) {
@@ -263,42 +273,57 @@ async function getInitialSettings(options) {
   const settings = options.map(async (option) => {
     const schedule = await getSchedule(option);
 
-    if (!schedule) {
-      return;
-    }
+    if (schedule) {
+      console.log(`schedule for ${option}: ${schedule}`);
 
-    const { minute, hour, day, month, dayOfWeek } =
-      parseScheduleToObj(schedule);
+      const setting = {};
+      const { minute, hour, day, month, dayOfWeek } =
+        parseScheduleToObj(schedule);
 
-    const setting = {};
+      if (daysOfTheWeek != '*' && day === '*' && month === '*') {
+        setting.period = 'Weekly';
+        setting.interval = dayOfWeek;
+      }
 
-    if (daysOfTheWeek !== '*' && day === '*' && month === '*') {
-      setting.period = 'Weekly';
-      setting.interval = dayOfWeek;
-    }
+      if (day === '*' && month === '*' && dayOfWeek === '*') {
+        setting.period = 'Daily';
+      }
 
-    if (day === '*' && month === '*' && dayOfWeek === '*') {
-      setting.period = 'Daily';
-    }
+      setting.time = `${hour}:${minute}`;
 
-    setting.time = `${hour}:${minute}`;
-
-    return {
-      [option]: {
-        ...currentSettings[option],
-        ...{
-          enable: true,
-          ...setting,
+      return {
+        [option]: {
+          ...currentSettings[option],
+          ...{
+            enable: true,
+            ...setting,
+          },
         },
-      },
-    };
+      };
+    } else {
+      console.log('no schedule for -', option);
+
+      return {
+        [option]: {
+          ...currentSettings[option],
+          ...{
+            enable: false,
+            interval: currentSettings[option].interval,
+            period: currentSettings[option].period,
+            time: currentSettings[option].time,
+          },
+        },
+      };
+    }
   });
 
-  const settingsObj = await Promise.all(settings).then((res) => {
-    return res.reduce((acc, val) => {
-      return { ...acc, ...val };
-    }, {});
-  });
+  const settingsObj = await Promise.all(settings)
+    .then((res) => {
+      return res.reduce((acc, val) => {
+        return { ...acc, ...val };
+      }, {});
+    })
+    .catch(console.error);
 
   setSetting({
     schedule: {
@@ -360,18 +385,18 @@ async function setInputStatesOnChange(option, checked) {
     `.settings-system-schedule-${option}`
   );
 
-  if (!checked) {
+  if (checked) {
+    input.disabled = false;
+    periodDropdown.classList.remove('disabled');
+    intervalDropdown.classList.remove('disabled');
+    container.classList.remove('d-none');
+  } else {
     input.disabled = true;
     periodDropdown.classList.add('disabled');
     intervalDropdown.classList.add('disabled');
     container.classList.add('d-none');
     cancelSchedule(option);
   }
-
-  input.disabled = false;
-  periodDropdown.classList.remove('disabled');
-  intervalDropdown.classList.remove('disabled');
-  container.classList.remove('d-none');
 }
 
 async function handleScheduleToggleClick() {
