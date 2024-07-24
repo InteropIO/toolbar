@@ -55,10 +55,18 @@ const intervalItems = {
 };
 
 function initTimePicker(domElement, config) {
+  if (!domElement || !config) {
+    return;
+  }
+
   return flatpickr(domElement, config);
 }
 
 async function createInstance(input, config = defaultConfig) {
+  if (!input) {
+    return;
+  }
+
   const instance = initTimePicker(input, config);
 
   input.addEventListener('click', () => {
@@ -87,13 +95,21 @@ async function createInstance(input, config = defaultConfig) {
       },
     });
 
-    await setSchedule(option, parsedString);
+    try {
+      await setSchedule(option, parsedString);
+    } catch (e) {
+      console.error(e);
+    }
   });
 
   return instance;
 }
 
-function createDropdown(option, scheduleType, dropdownItems) {
+async function createDropdown(option, scheduleType, dropdownItems) {
+  if (!option || !scheduleType || !dropdownItems) {
+    return;
+  }
+
   const initialSetting = getSetting('schedule')[option]?.[scheduleType];
 
   if (!initialSetting) {
@@ -121,7 +137,7 @@ function createDropdown(option, scheduleType, dropdownItems) {
 
   document
     .querySelector(`.${option}-${scheduleType}-select .select_options`)
-    .addEventListener('click', (e) => {
+    .addEventListener('click', async (e) => {
       const setting = getSetting('schedule');
 
       if (e.target.matches('input.select_input[type="radio"]')) {
@@ -169,25 +185,29 @@ function createDropdown(option, scheduleType, dropdownItems) {
           },
         });
 
-        setSchedule(option, parsedString);
+        try {
+          await setSchedule(option, parsedString);
+        } catch (e) {
+          console.error(e);
+        }
       }
     });
 }
 
-function createScheduleDropdowns() {
-  createDropdown('restart', 'period', periodItems);
-  createDropdown('restart', 'interval', intervalItems);
-  createDropdown('shutdown', 'period', periodItems);
-  createDropdown('shutdown', 'interval', intervalItems);
+async function createScheduleDropdowns() {
+  await createDropdown('restart', 'period', periodItems);
+  await createDropdown('restart', 'interval', intervalItems);
+  await createDropdown('shutdown', 'period', periodItems);
+  await createDropdown('shutdown', 'interval', intervalItems);
 }
 
 async function createScheduleInputs() {
   const options = ['shutdown', 'restart'];
 
-  options.forEach(async (input) => {
-    await createInstance(document.querySelector(`#schedule-${input}-time`), {
+  options.forEach(async (option) => {
+    await createInstance(document.querySelector(`#schedule-${option}-time`), {
       ...defaultConfig,
-      ...{ defaultDate: getSetting('schedule')[input]['time'] ?? '00:00' },
+      ...{ defaultDate: getSetting('schedule')[option]['time'] ?? '00:00' },
     });
   });
 }
@@ -204,44 +224,59 @@ async function getSchedule(option) {
       return;
     }
 
-    console.log(`schedule for ${option}:`);
-    console.log(schedule);
-
     return schedule.returned.cronTime;
   } catch ({ method, called_with, executed_by, message, status, returned }) {
     if (Object.keys(returned).length === 0) {
       document.querySelector('.settings-system').classList.add('d-none');
-
-      return;
     }
   }
 }
 
 async function setSchedule(option, scheduleString) {
+  if (!option || !scheduleString) {
+    return;
+  }
+
   const io = window.io;
 
-  await io.interop.invoke('T42.GD.Execute', {
-    command: `schedule-${option}`,
-    args: {
-      cronTime: scheduleString,
-    },
-  });
+  if (!io) {
+    return;
+  }
+
+  try {
+    await io.interop.invoke('T42.GD.Execute', {
+      command: `schedule-${option}`,
+      args: {
+        cronTime: scheduleString,
+      },
+    });
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 async function cancelSchedule(option) {
   const io = window.io;
   const schedule = await getSchedule(option);
 
-  if (!schedule) {
+  if (!io || !schedule) {
     return;
   }
 
-  await io.interop.invoke('T42.GD.Execute', {
-    command: `cancel-${option}`,
-  });
+  try {
+    await io.interop.invoke('T42.GD.Execute', {
+      command: `cancel-${option}`,
+    });
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 function parseScheduleToObj(scheduleString) {
+  if (!scheduleString) {
+    return;
+  }
+
   const schedule = scheduleString.split(' ');
 
   const scheduleObj = {
@@ -274,8 +309,6 @@ async function getInitialSettings(options) {
     const schedule = await getSchedule(option);
 
     if (schedule) {
-      console.log(`schedule for ${option}: ${schedule}`);
-
       const setting = {};
       const { minute, hour, day, month, dayOfWeek } =
         parseScheduleToObj(schedule);
@@ -301,8 +334,6 @@ async function getInitialSettings(options) {
         },
       };
     } else {
-      console.log('no schedule for -', option);
-
       return {
         [option]: {
           ...currentSettings[option],
@@ -378,6 +409,10 @@ function setInitialDropdownStates() {
 }
 
 async function setInputStatesOnChange(option, checked) {
+  if (!option || checked === undefined) {
+    return;
+  }
+
   const input = document.querySelector(`#schedule-${option}-time`);
   const periodDropdown = document.querySelector(`.${option}-period-select`);
   const intervalDropdown = document.querySelector(`.${option}-interval-select`);
@@ -395,7 +430,11 @@ async function setInputStatesOnChange(option, checked) {
     periodDropdown.classList.add('disabled');
     intervalDropdown.classList.add('disabled');
     container.classList.add('d-none');
-    cancelSchedule(option);
+    try {
+      await cancelSchedule(option);
+    } catch (e) {
+      console.error(e);
+    }
   }
 }
 
@@ -411,7 +450,11 @@ async function handleScheduleToggleClick() {
         if (e.target.matches('input[type="checkbox"]')) {
           const checked = e.target.checked;
 
-          await setInputStatesOnChange(option, checked);
+          try {
+            await setInputStatesOnChange(option, checked);
+          } catch (e) {
+            console.error(e);
+          }
 
           setSetting({
             schedule: {
@@ -424,6 +467,25 @@ async function handleScheduleToggleClick() {
               },
             },
           });
+
+          if (checked) {
+            const parsedString = parseScheduleToString({
+              time: prevSettings[option].time,
+              period: prevSettings[option].period,
+              interval: prevSettings[option].interval,
+            });
+            try {
+              await setSchedule(option, parsedString);
+            } catch (e) {
+              console.error(e);
+            }
+          } else {
+            try {
+              await cancelSchedule(option);
+            } catch (e) {
+              console.error(e);
+            }
+          }
         }
       });
   });
@@ -435,7 +497,7 @@ async function handleScheduledShutdownRestart() {
   await getInitialSettings(options)
     .then(async () => {
       await createScheduleInputs();
-      createScheduleDropdowns();
+      await createScheduleDropdowns();
       setInitialToggleStates();
       setInitialInputStates();
       setInitialDropdownStates();
