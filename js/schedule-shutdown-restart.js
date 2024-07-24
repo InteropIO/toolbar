@@ -323,7 +323,7 @@ async function getInitialSettings(options) {
         setting.period = 'Daily';
       }
 
-      setting.time = `${hour}:${minute}`;
+      setting.time = `${hour === '*' ? '00' : hour}:${minute}`;
 
       return {
         [option]: {
