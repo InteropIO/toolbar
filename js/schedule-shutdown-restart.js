@@ -248,6 +248,7 @@ async function setSchedule(option, scheduleString) {
       command: `schedule-${option}`,
       args: {
         cronTime: scheduleString,
+        discardUnsavedLayoutChanges: !getSetting('saveDefaultLayout'),
       },
     });
   } catch (e) {
