@@ -195,10 +195,12 @@ async function createDropdown(option, scheduleType, dropdownItems) {
 }
 
 async function createScheduleDropdowns() {
-  await createDropdown('restart', 'period', periodItems);
-  await createDropdown('restart', 'interval', intervalItems);
-  await createDropdown('shutdown', 'period', periodItems);
-  await createDropdown('shutdown', 'interval', intervalItems);
+  await Promise.all([
+    createDropdown('restart', 'period', periodItems),
+    createDropdown('restart', 'interval', intervalItems),
+    createDropdown('shutdown', 'period', periodItems),
+    createDropdown('shutdown', 'interval', intervalItems),
+  ]).catch(console.error);
 }
 
 async function createScheduleInputs() {

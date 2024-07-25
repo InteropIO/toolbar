@@ -393,12 +393,15 @@ async function getNotificationsConfiguration() {
   const methodExists = await checkNotificationsConfiguration();
 
   if (methodExists) {
-    const { enable, enableToasts } =
+    const { enable, enableToasts, showNotificationBadge } =
       await glue.notifications.getConfiguration();
     const setting = {
       enableNotifications: enable,
       enableToasts,
+      showNotificationBadge,
     };
+
+    showHideNotificationBadge(showNotificationBadge);
 
     setSetting(setting);
   }
@@ -416,8 +419,6 @@ async function trackNotificationsConfigurationChanged() {
 
   if (methodExists) {
     await glue.notifications.onConfigurationChanged((config) => {
-      console.log('Notifications configuration changed', config);
-
       const { enable, enableToasts, showNotificationBadge } = config;
       const setting = {
         enableNotifications: enable,
@@ -425,22 +426,24 @@ async function trackNotificationsConfigurationChanged() {
         showNotificationBadge,
       };
 
-      if (typeof showNotificationBadge !== 'undefined') {
-        const notificationBadge = document.querySelector(
-          '#notifications-count'
-        );
-
-        if (showNotificationBadge) {
-          notificationBadge.classList.remove('d-none');
-        } else {
-          notificationBadge.classList.add('d-none');
-        }
-      }
+      showHideNotificationBadge(showNotificationBadge);
 
       setSetting(setting);
     });
   }
 }
+
+const showHideNotificationBadge = (flag) => {
+  if (typeof flag !== 'undefined') {
+    const notificationBadge = document.querySelector('#notifications-count');
+
+    if (flag) {
+      notificationBadge.classList.remove('d-none');
+    } else {
+      notificationBadge.classList.add('d-none');
+    }
+  }
+};
 
 async function openNotificationPanel() {
   const glue = await gluePromise;
@@ -459,7 +462,7 @@ async function openNotificationPanel() {
 async function openFeedbackForm() {
   const glue = await gluePromise;
 
-  glue.feedback ?? glue.feedback();
+  glue.feedback?.();
 }
 
 async function registerHotkey() {
