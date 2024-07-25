@@ -59,6 +59,26 @@
       }
     }
 
+    .layout-active {
+      &::before {
+        @include transition("width, left, right", 0);
+        width: 23px;
+        height: 3px;
+        top: unset;
+        right: 30%;
+        bottom: 0;
+        left: 30%;
+      }
+
+      &:hover {
+        &::before {
+          top: unset;
+          width: 100%;
+          left: 0;
+        }
+      }
+    }
+
     .nav {
       &-item {
         .chevron {
@@ -170,6 +190,10 @@
               overflow-y: scroll;
 
               .app-active::before {
+                height: 2px;
+              }
+
+              .layout-active::before {
                 height: 2px;
               }
             }

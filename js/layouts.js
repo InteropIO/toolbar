@@ -10,6 +10,7 @@ import {
 } from './connect-related.js';
 import { escapeHtml, renderAlert } from './utils.js';
 import { getSetting } from './settings.js';
+import { addFavoriteLayout, favoriteLayouts, removeFavoriteLayout } from './favorites.js';
 
 const rxjs = window.rxjs;
 let filteredLayouts;
@@ -70,7 +71,7 @@ function handleLayoutClick() {
       return;
     }
 
-    const name = layoutElement.getAttribute('layout-name');
+    const layoutName = layoutElement.getAttribute('layout-name');
     const type = layoutElement.getAttribute('layout-type');
 
     if (e.target.matches('.delete-layout, .delete-layout *')) {
@@ -82,17 +83,25 @@ function handleLayoutClick() {
       if (isDefault) {
         clearDefaultLayout();
       } else {
-        setDefaultGlobal(name);
+        setDefaultGlobal(layoutName);
+      }
+    } else if (e.target.matches('.add-favorite, .add-favorite *')) {
+      let isLayoutFavorite = favoriteLayouts.value.includes(layoutName);
+
+      if (isLayoutFavorite) {
+        removeFavoriteLayout(layoutName);
+      } else {
+        addFavoriteLayout(layoutName);
       }
     } else if (e.target.matches('.layout-menu-tool, .layout-menu-tool *')) {
       if (e.target.matches('.layout-menu-tool .delete')) {
-        removeLayout(type, name);
+        removeLayout(type, layoutName);
       }
 
       layoutElement.classList.remove('show-actions');
       layoutElement.classList.remove('active');
     } else {
-      restoreLayout(type, name);
+      restoreLayout(type, layoutName);
     }
   });
 }
@@ -157,9 +166,8 @@ function layoutHTMLTemplate(layout) {
   const textColor = layout.isDefault ? 'text-primary' : '';
 
   return (
-    `
-  <li class="nav-item ${layout.isActive ? 'app-active' : ''} ${
-      layout.isDefault ? 'default-layout' : ''
+    `<li class="nav-item${layout.isActive ? ' layout-active' : ''}${
+      layout.isDefault ? ' default-layout' : ''
     }" layout-name="${escapeHtml(layout.name)}" layout-type="${layout.type}">
     <div class="nav-link action-menu">
       <i class="icon-03-context-viewer ml-2 mr-4"></i>
@@ -172,7 +180,11 @@ function layoutHTMLTemplate(layout) {
           <i class="icon-asterisk"></i>
         </button>`
       : '') +
-    `<button class="btn btn-icon secondary delete-layout" id="menu-tool-4">
+    `<button class="btn btn-icon secondary add-favorite">
+          <i class="icon-star-empty-1" draggable="false"></i>
+          <i class="icon-star-full" draggable="false"></i>
+          </button>
+    <button class="btn btn-icon secondary delete-layout" id="menu-tool-4">
           <i class="icon-trash-empty"></i>
         </button>
       </div>

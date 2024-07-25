@@ -12,6 +12,7 @@ let settings = {
   showHiddenApps: false,
   vertical: true,
   favoriteApps: [],
+  favoriteLayouts: [],
   schedule: {
     restart: {
       enable: false,

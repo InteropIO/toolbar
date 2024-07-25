@@ -8,8 +8,9 @@ import {
   runningApps,
   noRunningAppsHTML,
   noApplicationsHTML,
-  noFavoriteAppsHTML,
+  noFavoriteAppsOrLayoutsHTML,
   getItemHTMLTemplate,
+  favoriteLayoutHTMLTemplate,
 } from './applications.js';
 import * as favoritesModule from './favorites.js';
 import {
@@ -292,19 +293,22 @@ function printLayouts() {
     } else {
       document.querySelector('#layout-load>ul').innerHTML = noLayoutsHTML;
     }
+    
+    favoritesModule.updateFavoriteLayouts();
   });
 }
 
 function printFavoriteApps() {
   favoritesModule.favoriteApps
-    .pipe(rxjs.operators.combineLatest(allApplicationsObs))
-    .subscribe(([favApps, allApps]) => {
+    .pipe(rxjs.operators.combineLatest(allApplicationsObs, favoritesModule.favoriteLayouts, glueModule.layoutsObs, glueModule.activeLayout))
+    .subscribe(([favApps, allApps, favLayoutNames, allLayouts, currentlyActiveLayout]) => {
       let favAppsHtml = ``;
+      let favLayoutsHtml = ``;
       let existingFavApps = favApps.filter((favApp) =>
         allApps.find((a) => a.name === favApp)
       );
 
-      if (existingFavApps.length > 0) {
+      if (existingFavApps.length > 0 || favLayoutNames.length > 0) {
         existingFavApps.forEach((favApp) => {
           let fullApp = allApps.find((a) => a.name === favApp);
 
@@ -314,11 +318,21 @@ function printFavoriteApps() {
             });
           }
         });
+
+        favLayoutNames.forEach((favLayoutName) => {
+          let fullLayout = allLayouts.find((l) => l.name === favLayoutName);
+
+          if (fullLayout) {
+            favLayoutsHtml += favoriteLayoutHTMLTemplate(fullLayout, currentlyActiveLayout);
+          }
+        });
       } else {
-        favAppsHtml = noFavoriteAppsHTML;
+        favAppsHtml = noFavoriteAppsOrLayoutsHTML;
       }
 
       document.querySelector('#fav-apps').innerHTML = favAppsHtml;
+      // put the new favLayoutsHtml in place of the old one
+      document.querySelector('#fav-layouts').innerHTML = favLayoutsHtml;
     });
 }
 

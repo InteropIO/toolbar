@@ -399,12 +399,15 @@ async function getNotificationsConfiguration() {
   const methodExists = await checkNotificationsConfiguration();
 
   if (methodExists) {
-    const { enable, enableToasts } =
+    const { enable, enableToasts, showNotificationBadge } =
       await glue.notifications.getConfiguration();
     const setting = {
       enableNotifications: enable,
       enableToasts,
+      showNotificationBadge,
     };
+
+    showHideNotificationBadge(showNotificationBadge);
 
     setSetting(setting);
   }
@@ -429,22 +432,24 @@ async function trackNotificationsConfigurationChanged() {
         showNotificationBadge,
       };
 
-      if (typeof showNotificationBadge !== 'undefined') {
-        const notificationBadge = document.querySelector(
-          '#notifications-count'
-        );
-
-        if (showNotificationBadge) {
-          notificationBadge.classList.remove('d-none');
-        } else {
-          notificationBadge.classList.add('d-none');
-        }
-      }
+      showHideNotificationBadge(showNotificationBadge);
 
       setSetting(setting);
     });
   }
 }
+
+const showHideNotificationBadge = (flag) => {
+  if (typeof flag !== 'undefined') {
+    const notificationBadge = document.querySelector('#notifications-count');
+
+    if (flag) {
+      notificationBadge.classList.remove('d-none');
+    } else {
+      notificationBadge.classList.add('d-none');
+    }
+  }
+};
 
 async function openNotificationPanel() {
   const glue = await gluePromise;
@@ -685,6 +690,7 @@ async function getPrefs() {
       toolbarAppRows: settings.toolbarAppRows,
       vertical: settings.vertical,
       favoriteApps: settings.favoriteApps,
+      favoriteLayouts: settings.favoriteLayouts,
       schedule: settings.schedule,
     });
     setSettings();
