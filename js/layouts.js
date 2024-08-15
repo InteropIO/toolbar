@@ -10,7 +10,11 @@ import {
 } from './connect-related.js';
 import { escapeHtml, renderAlert } from './utils.js';
 import { getSetting } from './settings.js';
-import { addFavoriteLayout, favoriteLayouts, removeFavoriteLayout } from './favorites.js';
+import {
+  addFavoriteLayout,
+  favoriteLayouts,
+  removeFavoriteLayout,
+} from './favorites.js';
 
 const rxjs = window.rxjs;
 let filteredLayouts;
@@ -127,24 +131,27 @@ function handleLayoutSave() {
 }
 
 async function saveCurrentLayout() {
-  const alertElement = document.querySelector('#layout-save-alert');
+  const alertWrapper = document.querySelector('.layout-save-alert-wrapper');
   const loaderElement = document.querySelector('#layout-save-loader');
-  const layoutName = document.querySelector('#layout-save-name').value;
+  const layoutInput = document.querySelector('#layout-save-name');
+  const saveLayoutsMenu = document.querySelector('#layout-save');
+  const loadLayoutsMenu = document.querySelector('#layout-load');
 
-  if (!layoutName || !alertElement) {
+  if (!layoutInput.value || !alertWrapper) {
     return;
   }
 
   loaderElement.classList.add('show');
 
   try {
-    await saveLayout(escapeHtml(layoutName));
+    await saveLayout(escapeHtml(layoutInput.value));
 
     renderAlert(
-      alertElement,
+      alertWrapper,
       'success',
-      `Layout ${layoutName} has been saved successfully`
+      `Layout ${layoutInput.value} has been saved successfully`
     );
+
   } catch (error) {
     const inputString = error.message;
     const stringLimiter = ', type:';
@@ -153,13 +160,15 @@ async function saveCurrentLayout() {
 
     console.error('error:', error);
     renderAlert(
-      alertElement,
+      alertWrapper,
       'warning',
       `Failed to save the layout. ${errorMessage}`
     );
   }
 
   loaderElement.classList.remove('show');
+  saveLayoutsMenu.classList.add('hide');
+  loadLayoutsMenu.classList.remove('hide');
 }
 
 function layoutHTMLTemplate(layout) {

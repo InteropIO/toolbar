@@ -230,7 +230,9 @@ function handleTopMenuClicks() {
       let appName = topElement.getAttribute('app-name');
 
       startApp(appName);
-    } else if (e.target.matches('#fav-layouts .nav-item, #fav-layouts .nav-item *')) {
+    } else if (
+      e.target.matches('#fav-layouts .nav-item, #fav-layouts .nav-item *')
+    ) {
       // restore a layout from the favorites list
       let topElement = e
         .composedPath()
@@ -511,34 +513,36 @@ function renderAlert(
     return;
   }
 
-  switch (type) {
-    case 'success':
-      domEl.classList.add('alert-success');
-      break;
-    case 'warning':
-      domEl.classList.add('alert-warning');
-      break;
-    case 'danger':
-      domEl.classList.add('alert-danger');
-      break;
-    default:
-      domEl.classList.add('alert-primary');
-  }
+  const alertElement = document.createElement('div');
+
+  alertElement.className = `alert alert-${type} alert-dismissible fade show`;
+  alertElement.setAttribute('role', 'alert');
+
+  alertElement.innerHTML = `
+    <button type="button" class="close" aria-label="Close">
+      <span aria-hidden="true">×</span>
+    </button>
+    <div class="alert-message">${message}</div>
+  `;
+
+  domEl.appendChild(alertElement);
+
+  const closeButton = alertElement.querySelector('.close');
+
+  closeButton.addEventListener('click', () => {
+    clearTimeout(timeout);
+    alertElement.classList.remove('show');
+    setTimeout(() => {
+      alertElement.remove();
+    }, 250);
+  });
 
   const timeout = setTimeout(() => {
-    domEl.classList.remove('show');
+    alertElement.classList.remove('show');
+    setTimeout(() => {
+      alertElement.remove();
+    }, 250);
   }, duration);
-
-  domEl.querySelector('.alert-message').innerText = message;
-
-  domEl.classList.add('show');
-
-  domEl.querySelector('.close').addEventListener('click', () => {
-    if (timeout) {
-      clearTimeout(timeout);
-    }
-    domEl.classList.remove('show');
-  });
 }
 
 async function isOutOfMonitor(viewportBounds) {
