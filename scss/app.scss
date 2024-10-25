@@ -167,6 +167,7 @@ html {
   .settings-system-schedule-restart,
   .settings-system-schedule-shutdown {
     align-items: normal !important;
+    justify-content: flex-start !important;
     gap: 0.5rem;
 
     .select {

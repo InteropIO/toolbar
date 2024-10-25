@@ -1,9 +1,6 @@
 .horizontal {
   &.open-top {
-    justify-content: flex-end;
-
     .viewport {
-      order: 1;
       margin-bottom: 0;
       @include transition("margin-bottom", 50);
 

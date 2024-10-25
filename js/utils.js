@@ -640,29 +640,14 @@ async function handleAppRowsChange() {
   document
     .querySelector('.length-select .select_options')
     .addEventListener('click', async (e) => {
-      const isVertical = getSetting('vertical');
-
       if (e.target.matches('input.select_input[type="radio"]')) {
         const selectedLength = e.target.getAttribute('length-name');
-        const windowBounds = await getPhysicalWindowBounds();
-        const primaryScaleFactor = await getPrimaryScaleFactor();
-        const scaleFactor = await getScaleFactor();
         const newToolbarHeight = getHorizontalToolbarHeight(selectedLength);
 
         setSetting({ toolbarAppRows: selectedLength });
 
         await setWindowSize();
         setDrawerOpenDirection();
-
-        if (!isVertical) {
-          await moveMyWindow({
-            top:
-              (windowBounds.top +
-                currentToolbarHeight / scaleFactor -
-                newToolbarHeight / scaleFactor) *
-              primaryScaleFactor,
-          });
-        }
 
         currentToolbarHeight = newToolbarHeight;
       }
@@ -690,7 +675,7 @@ async function setWindowSize() {
   } else {
     await moveMyWindow({
       width: toolbarWidth.horizontal,
-      height: appLancher.offsetHeight + horizontalHeight * 2,
+      height: appLancher.offsetHeight + horizontalHeight,
     });
   }
 }
@@ -706,16 +691,7 @@ function setDrawerOpenDirection() {
   } else {
     const appLancher = document.querySelector('.viewport');
 
-    app.style.top = `${horizontalHeight}px`;
-
-    if (
-      app.classList.contains('open-top') &&
-      app.classList.contains('has-drawer')
-    ) {
-      app.style.top = 0;
-    } else {
-      app.style.top = `${horizontalHeight}px`;
-    }
+    app.style.top = 0;
 
     if (app.classList.contains('has-drawer')) {
       app.style.maxHeight = `${appLancher.offsetHeight + horizontalHeight}px`;
@@ -786,26 +762,19 @@ function handleOrientationChange() {
   });
 }
 
-async function repositionOnOrientationChange(vertical) {
+async function repositionOnOrientationChange(isVertical) {
   const windowBounds = await getPhysicalWindowBounds();
   const primaryScaleFactor = await getPrimaryScaleFactor();
   const scaleFactor = await getScaleFactor();
-  const horizontalHeight = getHorizontalToolbarHeight();
 
-  if (vertical) {
+  if (isVertical) {
     await moveMyWindow({
-      top:
-        (windowBounds.top + horizontalHeight / scaleFactor) *
-        primaryScaleFactor,
       left:
         (windowBounds.left - toolbarDrawerSize.vertical / scaleFactor) *
         primaryScaleFactor,
     });
   } else {
     await moveMyWindow({
-      top:
-        (windowBounds.top - horizontalHeight / scaleFactor) *
-        primaryScaleFactor,
       left:
         (windowBounds.left + toolbarDrawerSize.vertical / scaleFactor) *
         primaryScaleFactor,

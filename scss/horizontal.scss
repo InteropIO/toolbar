@@ -8,6 +8,7 @@
   .viewport {
     display: flex;
     width: 100%;
+    z-index: 20;
 
     > .nav {
       flex-wrap: nowrap;
@@ -30,7 +31,6 @@
         position: absolute;
         top: 50%;
         right: 0.5em;
-        z-index: 11;
         transform: translateY(-50%);
       }
 
