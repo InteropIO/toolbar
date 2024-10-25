@@ -16,8 +16,8 @@
     }
 
     .accordion {
-      overflow-x: hidden;
-      overflow-y: auto;
+      overflow-x: auto;
+      overflow-y: hidden;
     }
 
     .logo-wordmark {
@@ -148,7 +148,7 @@
       }
     }
 
-    .fav-app-nav {
+    .favorites-nav {
       flex-wrap: nowrap;
     }
 
@@ -159,7 +159,7 @@
         flex-basis: 59px;
         width: 60px;
 
-        &.fav-app-nav {
+        &.favorites-nav {
           flex-grow: 1;
           display: flex;
           align-items: center;

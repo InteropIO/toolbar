@@ -46,7 +46,7 @@
     }
   }
 
-  .fav-app-nav {
+  .favorites-nav {
     flex-grow: 1;
     overflow: hidden;
   }
@@ -85,7 +85,7 @@
       }
     }
 
-    .fav-app-nav {
+    .favorites-nav {
       overflow-y: auto;
     }
 
@@ -108,7 +108,7 @@
       }
     }
 
-    #fav-apps {
+    #favorites {
       & > li:not(.nav-item) {
         opacity: 1;
       }

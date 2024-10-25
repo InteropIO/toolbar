@@ -93,7 +93,7 @@ function handleKeyboardNavigation() {
 
   const isItemAppFavorite = (e) =>
     upTo(e, (el) => {
-      return el?.id === 'fav-apps';
+      return el?.id === 'favorites';
     });
 
   const isItemFromMainMenu = (e) =>

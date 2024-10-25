@@ -222,25 +222,24 @@ function handleTopMenuClicks() {
       }
 
       setDrawerOpenDirection();
-    } else if (e.target.matches('#fav-apps .nav-item, #fav-apps .nav-item *')) {
+    } else if (
+      e.target.matches('#favorites .nav-item, #favorites .nav-item *')
+    ) {
       // start or focus an app from the favorites list
       let topElement = e
         .composedPath()
         .find((e) => e.classList && e.classList.contains('nav-item'));
       let appName = topElement.getAttribute('app-name');
-
-      startApp(appName);
-    } else if (
-      e.target.matches('#fav-layouts .nav-item, #fav-layouts .nav-item *')
-    ) {
-      // restore a layout from the favorites list
-      let topElement = e
-        .composedPath()
-        .find((e) => e.classList && e.classList.contains('nav-item'));
       let layoutName = topElement.getAttribute('layout-name');
       let layoutType = topElement.getAttribute('layout-type');
 
-      restoreLayout(layoutType, layoutName);
+      if (appName) {
+        startApp(appName);
+      }
+
+      if (layoutType && layoutName) {
+        restoreLayout(layoutType, layoutName);
+      }
     }
   });
 }
@@ -359,10 +358,10 @@ function handleLayoutsHover() {
 }
 
 async function handleMouseHover() {
-  document.querySelector('#fav-apps').addEventListener('mousewheel', (e) => {
+  document.querySelector('#favorites').addEventListener('mousewheel', (e) => {
     // TODO: move
     if (document.querySelector('.horizontal')) {
-      document.querySelector('#fav-apps').scrollLeft += Math.round(
+      document.querySelector('#favorites').scrollLeft += Math.round(
         e.deltaY * 0.8
       );
       e.preventDefault();

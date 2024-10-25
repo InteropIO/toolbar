@@ -405,7 +405,7 @@ html {
       }
     }
 
-    #fav-apps {
+    #favorites {
       & > li:not(.nav-item) {
         @include transition("opacity", 0);
         opacity: 0;

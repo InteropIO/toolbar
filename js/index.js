@@ -293,47 +293,64 @@ function printLayouts() {
     } else {
       document.querySelector('#layout-load>ul').innerHTML = noLayoutsHTML;
     }
-    
+
     favoritesModule.updateFavoriteLayouts();
   });
 }
 
 function printFavoriteApps() {
   favoritesModule.favoriteApps
-    .pipe(rxjs.operators.combineLatest(allApplicationsObs, favoritesModule.favoriteLayouts, glueModule.layoutsObs, glueModule.activeLayout))
-    .subscribe(([favApps, allApps, favLayoutNames, allLayouts, currentlyActiveLayout]) => {
-      let favAppsHtml = ``;
-      let favLayoutsHtml = ``;
-      let existingFavApps = favApps.filter((favApp) =>
-        allApps.find((a) => a.name === favApp)
-      );
+    .pipe(
+      rxjs.operators.combineLatest(
+        allApplicationsObs,
+        favoritesModule.favoriteLayouts,
+        glueModule.layoutsObs,
+        glueModule.activeLayout
+      )
+    )
+    .subscribe(
+      ([
+        favApps,
+        allApps,
+        favLayoutNames,
+        allLayouts,
+        currentlyActiveLayout,
+      ]) => {
+        let favAppsHtml = ``;
+        let favLayoutsHtml = ``;
+        let existingFavApps = favApps.filter((favApp) =>
+          allApps.find((a) => a.name === favApp)
+        );
 
-      if (existingFavApps.length > 0 || favLayoutNames.length > 0) {
-        existingFavApps.forEach((favApp) => {
-          let fullApp = allApps.find((a) => a.name === favApp);
+        if (existingFavApps.length > 0 || favLayoutNames.length > 0) {
+          existingFavApps.forEach((favApp) => {
+            let fullApp = allApps.find((a) => a.name === favApp);
 
-          if (fullApp) {
-            favAppsHtml += favoriteApplicationHTMLTemplate(fullApp, {
-              favoriteBtn: false,
-            });
-          }
-        });
+            if (fullApp) {
+              favAppsHtml += favoriteApplicationHTMLTemplate(fullApp, {
+                favoriteBtn: false,
+              });
+            }
+          });
 
-        favLayoutNames.forEach((favLayoutName) => {
-          let fullLayout = allLayouts.find((l) => l.name === favLayoutName);
+          favLayoutNames.forEach((favLayoutName) => {
+            let fullLayout = allLayouts.find((l) => l.name === favLayoutName);
 
-          if (fullLayout) {
-            favLayoutsHtml += favoriteLayoutHTMLTemplate(fullLayout, currentlyActiveLayout);
-          }
-        });
-      } else {
-        favAppsHtml = noFavoriteAppsOrLayoutsHTML;
+            if (fullLayout) {
+              favLayoutsHtml += favoriteLayoutHTMLTemplate(
+                fullLayout,
+                currentlyActiveLayout
+              );
+            }
+          });
+        } else {
+          favAppsHtml = noFavoriteAppsOrLayoutsHTML;
+        }
+
+        document.querySelector('#favorites').innerHTML =
+          favAppsHtml + favLayoutsHtml;
       }
-
-      document.querySelector('#fav-apps').innerHTML = favAppsHtml;
-      // put the new favLayoutsHtml in place of the old one
-      document.querySelector('#fav-layouts').innerHTML = favLayoutsHtml;
-    });
+    );
 }
 
 function printNotificationCount() {
