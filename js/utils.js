@@ -705,7 +705,6 @@ async function setDrawerOpenClasses() {
   const visibleArea = await getVisibleArea(document.querySelector('.viewport'));
   const app = document.querySelector('.app');
   const isVertical = getSetting('vertical');
-  const horizontalHeight = getHorizontalToolbarHeight();
   const drawerOpen = app.classList.contains('has-drawer');
 
   if (drawerOpen) {
@@ -718,16 +717,6 @@ async function setDrawerOpenClasses() {
     } else if (app.classList.contains('open-left')) {
       app.classList.remove('open-left');
     }
-  } else if (visibleArea.bottom + horizontalHeight > workArea.bottom) {
-    if (visibleArea.top - horizontalHeight < workArea.top) {
-      if (app.classList.contains('open-top')) {
-        app.classList.remove('open-top');
-      }
-    } else {
-      app.classList.add('open-top');
-    }
-  } else if (app.classList.contains('open-top')) {
-    app.classList.remove('open-top');
   }
 }
 
