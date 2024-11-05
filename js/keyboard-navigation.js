@@ -460,7 +460,7 @@ function handleKeyboardNavigation() {
   }
 
   document.addEventListener('keydown', (e) => {
-    q('.app').classList.add('expand-wrapper');
+    q('.app').classList.add('expanded');
     q('.viewport').classList.add('expand');
     switch (e.key) {
       case 'Space':

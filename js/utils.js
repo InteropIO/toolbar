@@ -21,7 +21,6 @@ import {
   restoreLayout,
 } from './connect-related.js';
 import {
-  toolbarWidth,
   toolbarDrawerSize,
   initialPosition,
   setSetting,
@@ -33,11 +32,11 @@ import {
   profile_handleRestartClick,
   profile_handleFeedbackClick,
 } from './profile.js';
-
 import {
   handleNotificationClick,
   handleEnableNotifications,
 } from './notifications.js';
+import { setWindowSize } from './window-sizing.js';
 
 import handleKeyboardNavigation from './keyboard-navigation.js';
 
@@ -222,13 +221,14 @@ function handleTopMenuClicks() {
       }
 
       setDrawerOpenDirection();
+      await setWindowSize();
     } else if (
       e.target.matches('#favorites .nav-item, #favorites .nav-item *')
     ) {
       // start or focus an app from the favorites list
       let topElement = e
         .composedPath()
-        .find((e) => e.classList && e.classList.contains('nav-item'));
+        .find((e) => e.classList?.contains('nav-item'));
       let appName = topElement.getAttribute('app-name');
       let layoutName = topElement.getAttribute('layout-name');
       let layoutType = topElement.getAttribute('layout-type');
@@ -247,8 +247,8 @@ function handleTopMenuClicks() {
 function handleCloseDrawerClicks() {
   document.addEventListener('click', (e) => {
     if (e.target.matches('.close-drawer, .close-drawer *')) {
-      let menu = e.composedPath().find((e) => e && e.getAttribute('menu-id'));
-      let menuId = menu && menu.getAttribute('menu-id');
+      let menu = e.composedPath().find((e) => e?.getAttribute('menu-id'));
+      let menuId = menu?.getAttribute('menu-id');
 
       if (menuId) {
         document.querySelector(`[menu-button-id="${menuId}"]`).click();
@@ -371,8 +371,8 @@ async function handleMouseHover() {
   let closeTimeout;
 
   document.querySelector('.app').addEventListener('mouseenter', () => {
+    document.querySelector('.app').classList.add('expanded');
     document.querySelector('.viewport').classList.add('expand');
-    document.querySelector('.app').classList.add('expand-wrapper');
 
     if (closeTimeout) {
       clearTimeout(closeTimeout);
@@ -416,7 +416,7 @@ async function handleMouseHover() {
 
       document.querySelector('.viewport').classList.remove('expand');
       document.querySelector('.show-actions').classList.remove('hover');
-      document.querySelector('.app').classList.remove('expand-wrapper');
+      document.querySelector('.app').classList.remove('expanded');
       document
         .querySelectorAll('.toggle-content')
         .forEach((e) => e.classList.add('hide'));
@@ -634,49 +634,18 @@ async function handleAppRowsChange() {
     'length'
   );
 
-  let currentToolbarHeight = getHorizontalToolbarHeight();
-
   document
     .querySelector('.length-select .select_options')
     .addEventListener('click', async (e) => {
       if (e.target.matches('input.select_input[type="radio"]')) {
         const selectedLength = e.target.getAttribute('length-name');
-        const newToolbarHeight = getHorizontalToolbarHeight(selectedLength);
 
         setSetting({ toolbarAppRows: selectedLength });
 
-        await setWindowSize();
         setDrawerOpenDirection();
-
-        currentToolbarHeight = newToolbarHeight;
+        await setWindowSize();
       }
     });
-}
-
-async function setWindowSize() {
-  const isVertical = getSetting('vertical');
-  const appLancher = document.querySelector('.viewport-header');
-  const appContentHeader = document.querySelector('.app-content-header');
-  const appRowsNumber = getSetting('toolbarAppRows');
-  const navItem = document.querySelector('.applications-nav');
-  const contentItems = document.querySelector('.content-items');
-  const horizontalHeight = getHorizontalToolbarHeight();
-
-  appLancher.style.height = `${appLancher.offsetHeight}px`;
-  appContentHeader.style.height = `${appContentHeader.offsetHeight}px`;
-  contentItems.style.height = `${navItem.offsetHeight * appRowsNumber}px`;
-
-  if (isVertical) {
-    await moveMyWindow({
-      width: toolbarWidth.vertical + toolbarDrawerSize.vertical * 2,
-      height: horizontalHeight,
-    });
-  } else {
-    await moveMyWindow({
-      width: toolbarWidth.horizontal,
-      height: appLancher.offsetHeight + horizontalHeight,
-    });
-  }
 }
 
 function setDrawerOpenDirection() {
@@ -704,19 +673,15 @@ async function setDrawerOpenClasses() {
   const workArea = await getWindowWorkArea();
   const visibleArea = await getVisibleArea(document.querySelector('.viewport'));
   const app = document.querySelector('.app');
-  const isVertical = getSetting('vertical');
-  const drawerOpen = app.classList.contains('has-drawer');
 
-  if (drawerOpen) {
-    return;
-  }
+  if (app.classList.contains('has-drawer')) return;
+
+  const isVertical = getSetting('vertical');
 
   if (isVertical) {
-    if (visibleArea.right + toolbarDrawerSize.vertical > workArea.right) {
-      app.classList.add('open-left');
-    } else if (app.classList.contains('open-left')) {
-      app.classList.remove('open-left');
-    }
+    const shouldOpenLeft =
+      visibleArea.right + toolbarDrawerSize.vertical > workArea.right;
+    app.classList.toggle('open-left', shouldOpenLeft);
   }
 }
 
@@ -965,11 +930,11 @@ export {
   startTutorial,
   escapeHtml,
   getAppIcon,
-  setWindowSize,
   setWindowPosition,
   setDrawerOpenClasses,
   setDrawerOpenDirection,
   elementObserver,
   populateSettingsDropdown,
   renderAlert,
+  getHorizontalToolbarHeight,
 };

@@ -33,6 +33,7 @@ import {
 import { getSetting } from './settings.js';
 import { populateSID } from './profile.js';
 import handleScheduledShutdownRestart from './schedule-shutdown-restart.js';
+import { setWindowSizeOnHover } from './window-sizing.js';
 
 const rxjs = window.rxjs;
 let {
@@ -98,19 +99,20 @@ function observeAppElement() {
     attributes: true,
   };
 
-  function callback(entries) {
-    let newValue;
+  function callback([entry]) {
+    const newValue = entry.target.getAttribute(entry.attributeName);
 
-    entries.forEach((entry) => {
-      newValue = entry.target.getAttribute(entry.attributeName);
+    if (
+      entry.type === 'attributes' &&
+      entry.attributeName === 'class' &&
+      newValue !== entry.oldValue
+    ) {
+      utils.setDrawerOpenDirection();
+      utils.setDrawerOpenClasses();
+      setWindowSizeOnHover();
 
-      if (entry.type === 'attributes' && entry.attributeName === 'class') {
-        if (newValue !== entry.oldValue) {
-          utils.setDrawerOpenDirection();
-          utils.setDrawerOpenClasses();
-        }
-      }
-    });
+      console.log('App classes changed:', newValue);
+    }
   }
 
   utils.elementObserver(app, config, callback);

@@ -113,7 +113,7 @@ function handleLayoutClick() {
 function handleLayoutsSaveMenuItemClick() {
   document.querySelector('#save').addEventListener('click', () => {
     document.querySelector('#layout-save-name').value =
-      activeLayout._value.name || defaultLayout._value.name;
+      activeLayout?._value?.name || defaultLayout?._value?.name;
   });
 }
 
@@ -151,7 +151,6 @@ async function saveCurrentLayout() {
       'success',
       `Layout ${layoutInput.value} has been saved successfully`
     );
-
   } catch (error) {
     const inputString = error.message;
     const stringLimiter = ', type:';

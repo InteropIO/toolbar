@@ -6,11 +6,11 @@ import {
 } from './settings.js';
 import {
   setOrientation,
-  setWindowSize,
   setWindowPosition,
   setDrawerOpenClasses,
   setDrawerOpenDirection,
 } from './utils.js';
+import { setWindowSize } from './window-sizing.js';
 
 console.time('Glue');
 
@@ -707,9 +707,9 @@ async function getPrefs() {
     });
   }
 
-  await setWindowSize();
   setDrawerOpenDirection();
   await setDrawerOpenClasses();
+  await setWindowSize();
   await setWindowPosition();
 
   glue.prefs.subscribe(() => {
