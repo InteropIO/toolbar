@@ -90,13 +90,6 @@ async function init() {
   setWindowSize();
 
   observeSizeChange(app, (width, height) => {
-    console.log(
-      'Trigger moveMyWindow with:',
-      'width:',
-      width,
-      'height:',
-      height
-    );
     glueModule.moveMyWindow({
       width,
       height,

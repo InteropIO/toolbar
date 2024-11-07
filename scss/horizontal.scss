@@ -36,6 +36,8 @@
 
       .dropdown-menu {
         top: 100%;
+        border: none;
+        background-color: var(--t42-body);
       }
     }
 
@@ -248,6 +250,8 @@
         top: 100%;
         flex-direction: column;
         height: 6rem;
+        border: none;
+        background-color: var(--t42-body);
 
         li {
           width: 100%;
