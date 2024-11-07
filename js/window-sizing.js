@@ -28,35 +28,25 @@ function setWindowSize() {
   const hasDrawer = appClasses.includes('has-drawer');
 
   const toolbarHeight = getHorizontalToolbarHeight();
+  const expandedToolbarWidth = 200;
 
-  if (isVertical) {
-    const expandedToolbarWidth = 200;
+  function setVerticalSize() {
+    const calculatedWidth = hasDrawer ? toolbarDrawerSize.vertical : 0;
+
+    app.style.width = isExpanded
+      ? `${expandedToolbarWidth + calculatedWidth}px`
+      : `${toolbarWidth.vertical}px`;
     app.style.height = `${toolbarHeight}px`;
-
-    if (isExpanded) {
-      if (hasDrawer) {
-        app.style.width = `${
-          expandedToolbarWidth + toolbarDrawerSize.vertical
-        }px`;
-      } else {
-        app.style.width = `${expandedToolbarWidth}px`;
-      }
-    } else {
-      app.style.width = `${toolbarWidth.vertical}px`;
-    }
-  } else {
-    app.style.width = `${toolbarWidth.horizontal}px`;
-
-    if (isExpanded) {
-      if (hasDrawer) {
-        app.style.height = `${toolbarHeight}px`;
-      } else {
-        app.style.height = '175px';
-      }
-    } else {
-      app.style.height = '60px';
-    }
   }
+
+  function setHorizontalSize() {
+    const calculatedHeight = hasDrawer ? `${toolbarHeight}px` : '175px';
+
+    app.style.width = `${toolbarWidth.horizontal}px`;
+    app.style.height = isExpanded ? calculatedHeight : '48px';
+  }
+
+  isVertical ? setVerticalSize() : setHorizontalSize();
 }
 
 export { observeSizeChange, setWindowSize };
