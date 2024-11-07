@@ -683,29 +683,7 @@ function handleOrientationChange() {
 
     isVertical = !isVertical;
     setSetting({ vertical: isVertical });
-
-    await repositionOnOrientationChange(isVertical);
   });
-}
-
-async function repositionOnOrientationChange(isVertical) {
-  const windowBounds = await getPhysicalWindowBounds();
-  const primaryScaleFactor = await getPrimaryScaleFactor();
-  const scaleFactor = await getScaleFactor();
-
-  if (isVertical) {
-    await moveMyWindow({
-      left:
-        (windowBounds.left - toolbarDrawerSize.vertical / scaleFactor) *
-        primaryScaleFactor,
-    });
-  } else {
-    await moveMyWindow({
-      left:
-        (windowBounds.left + toolbarDrawerSize.vertical / scaleFactor) *
-        primaryScaleFactor,
-    });
-  }
 }
 
 // Helper function to get a chosen HTML elements' visible area in the window bounds
