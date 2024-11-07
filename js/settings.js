@@ -30,7 +30,7 @@ let settings = {
 };
 const toolbarWidth = {
   vertical: 60,
-  horizontal: 595,
+  horizontal: 650,
 };
 const toolbarDrawerSize = {
   vertical: 300,

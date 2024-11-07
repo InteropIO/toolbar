@@ -72,6 +72,8 @@ function handleEvents() {
   populateAboutPage();
   handleShutdownClick();
   handleTopMenuClicks();
+  handleTopMenuLayoutClicks();
+  handleTopDropdownClicks();
   handleCloseDrawerClicks();
   handleMinimizeClick();
   handleMouseHover();
@@ -160,6 +162,55 @@ function populateAboutPage() {
 function handleShutdownClick() {
   document.querySelector('#shutdown').addEventListener('click', () => {
     shutdown();
+  });
+}
+
+function handleTopDropdownClicks() {
+  const container = document.querySelector('#menu-top');
+  const app = document.querySelector('.app');
+
+  document
+    .querySelector('#dropdownMenuButtonActions')
+    .addEventListener('click', () => {
+      if (app.classList.contains('expanded')) {
+        if (container.classList.contains('show')) {
+          app.classList.remove('expanded');
+          document.querySelector('#layout-menu-tool').classList.remove('hover');
+        } else {
+          app.classList.add('expanded');
+        }
+      } else {
+        app.classList.add('expanded');
+      }
+
+      if (container.classList.contains('show')) {
+        console.log('container contains show');
+      } else {
+        console.log('container does not contain show');
+      }
+    });
+}
+
+function handleTopMenuLayoutClicks() {
+  const container = document.querySelector('#layout-menu-tool');
+
+  container.addEventListener('click', (e) => {
+    if (e.target.matches('#load') || e.target.matches('#save')) {
+      return;
+    }
+
+    e.stopPropagation();
+
+    if (container.classList.contains('hover')) {
+      container.classList.remove('hover');
+      document.querySelector('.app').classList.remove('expanded');
+      document
+        .querySelectorAll('.dropdown-menu')
+        .forEach((el) => el.classList?.remove('show'));
+    } else {
+      container.classList.add('hover');
+      document.querySelector('.app').classList.add('expanded');
+    }
   });
 }
 
@@ -339,7 +390,12 @@ async function handleJumpListAction() {
 }
 
 function handleLayoutsHover() {
+  const isVertical = getSetting('vertical');
   const menuItem = '.show-actions';
+
+  if (!isVertical) {
+    return;
+  }
 
   document.addEventListener('mouseover', (event) => {
     const target = event.target.closest(menuItem);
@@ -355,21 +411,28 @@ function handleLayoutsHover() {
 }
 
 async function handleMouseHover() {
-  document.querySelector('#favorites').addEventListener('mousewheel', (e) => {
-    // TODO: move
-    if (document.querySelector('.horizontal')) {
-      document.querySelector('#favorites').scrollLeft += Math.round(
-        e.deltaY * 0.8
-      );
-      e.preventDefault();
-    }
-  });
+  document.querySelector('#favorites').addEventListener(
+    'mousewheel',
+    (e) => {
+      if (document.querySelector('.horizontal')) {
+        document.querySelector('#favorites').scrollLeft += Math.round(
+          e.deltaY * 0.8
+        );
+        e.preventDefault();
+      }
+    },
+    { passive: false }
+  );
 
   let closeTimeout;
 
   document.querySelector('.app').addEventListener('mouseenter', () => {
-    document.querySelector('.app').classList.add('expanded');
+    const isVertical = getSetting('vertical');
     document.querySelector('.viewport').classList.add('expand');
+
+    if (isVertical) {
+      document.querySelector('.app').classList.add('expanded');
+    }
 
     if (closeTimeout) {
       clearTimeout(closeTimeout);
@@ -378,6 +441,8 @@ async function handleMouseHover() {
   });
 
   document.querySelector('.app').addEventListener('mouseleave', (e) => {
+    const isVertical = getSetting('vertical');
+
     closeTimeout = setTimeout(async () => {
       let { offsetWidth: viewPortWidth, offsetHeight: viewPortHeight } =
         document.querySelector('.viewport');
@@ -411,9 +476,10 @@ async function handleMouseHover() {
         return;
       }
 
+      document.querySelector('.app').classList.remove('expanded');
       document.querySelector('.viewport').classList.remove('expand');
       document.querySelector('.show-actions').classList.remove('hover');
-      document.querySelector('.app').classList.remove('expanded');
+
       document
         .querySelectorAll('.toggle-content')
         .forEach((e) => e.classList.add('hide'));
@@ -675,6 +741,8 @@ function setOrientation() {
       ? col.classList.add('flex-column')
       : col.classList.remove('flex-column');
   });
+
+  app.classList.remove('expanded');
 }
 
 function handleOrientationChange() {
@@ -869,7 +937,6 @@ export {
   setOrientation,
   handleThemeChange,
   handleShutdownClick,
-  handleTopMenuClicks,
   handleCloseDrawerClicks,
   handleModalClose,
   handleMouseHover,

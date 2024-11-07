@@ -111,6 +111,14 @@ function handleLayoutClick() {
 }
 
 function handleLayoutsSaveMenuItemClick() {
+  if (
+    typeof activeLayout?._value?.name === 'undefined' &&
+    typeof defaultLayout?._value?.name === 'undefined'
+  ) {
+    document.querySelector('#layout-save-name').value = '';
+    return;
+  }
+
   document.querySelector('#save').addEventListener('click', () => {
     document.querySelector('#layout-save-name').value =
       activeLayout?._value?.name || defaultLayout?._value?.name;

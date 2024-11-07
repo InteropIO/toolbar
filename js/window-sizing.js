@@ -40,10 +40,14 @@ function setWindowSize() {
   }
 
   function setHorizontalSize() {
-    const calculatedHeight = hasDrawer ? `${toolbarHeight}px` : '175px';
-
     app.style.width = `${toolbarWidth.horizontal}px`;
-    app.style.height = isExpanded ? calculatedHeight : '48px';
+    if (hasDrawer) {
+      app.style.height = `${toolbarHeight}px`;
+    } else if (isExpanded) {
+      app.style.height = '175px';
+    } else {
+      app.style.height = '48px';
+    }
   }
 
   isVertical ? setVerticalSize() : setHorizontalSize();

@@ -3,10 +3,6 @@
 @import "folders";
 
 html {
-  body {
-    background-color: transparent;
-  }
-
   .loaded {
     .app {
       opacity: 1;
@@ -27,6 +23,7 @@ html {
     height: 100%;
     overflow: hidden;
     opacity: 0;
+    @include transition("width", 0);
 
     &.vertical {
       display: inline-flex;
@@ -543,6 +540,9 @@ html {
 
     .menu {
       display: flex;
+      align-items: center;
+      gap: 0.5em;
+      height: 100%;
 
       .icon-window-minimize {
         font-size: 0.5rem;

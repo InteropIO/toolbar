@@ -27,12 +27,15 @@
       .menu {
         position: absolute;
         top: 50%;
-        right: 0.5em;
+        right: 0;
+        z-index: 1;
+        padding: 0 0.5em;
+        background-color: var(--t42-body);
         transform: translateY(-50%);
       }
 
       .dropdown-menu {
-        right: -1em;
+        top: 100%;
       }
     }
 
@@ -286,7 +289,7 @@
     }
 
     &:not(#app-content) {
-      height: auto;
+      height: 100%;
     }
 
     &.hide {
