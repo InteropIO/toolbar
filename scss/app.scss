@@ -4,14 +4,21 @@
 
 html {
   body {
-    display: flex;
-    justify-content: flex-start;
     background-color: transparent;
   }
 
   .loaded {
     .app {
       opacity: 1;
+
+      &::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        border: 3px solid red;
+        pointer-events: none;
+      }
     }
   }
 

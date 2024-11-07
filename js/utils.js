@@ -238,8 +238,6 @@ function handleTopMenuClicks() {
         restoreLayout(layoutType, layoutName);
       }
     }
-
-    setWindowSize();
   });
 }
 

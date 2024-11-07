@@ -9,7 +9,6 @@ import {
   setWindowPosition,
   setDrawerOpenClasses,
 } from './utils.js';
-import { setWindowSize } from './window-sizing.js';
 
 console.time('Glue');
 
@@ -656,7 +655,6 @@ async function getPrefs() {
   }
 
   setOrientation();
-  setWindowSize();
 
   if (glue.windows.my().state === 'minimized') {
     const un = glue.windows.my().onNormal(async () => {
@@ -669,7 +667,6 @@ async function getPrefs() {
 
   glue.prefs.subscribe(() => {
     setOrientation();
-    setWindowSize();
   });
 }
 

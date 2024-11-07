@@ -1,4 +1,4 @@
-import { toolbarWidth, getSetting } from './settings.js';
+import { toolbarWidth, toolbarDrawerSize } from './settings.js';
 import { getHorizontalToolbarHeight } from './utils.js';
 
 function observeSizeChange(element, callback) {
@@ -19,43 +19,44 @@ function observeSizeChange(element, callback) {
   return resizeObserver;
 }
 
-function setInitialWindowSize() {
-  const app = document.querySelector('.app');
-  const isVertical = app.classList.contains('vertical');
-  const toolbarHeight = getHorizontalToolbarHeight();
-
-  if (isVertical) {
-    console.log('am i here?');
-    app.style.width = toolbarWidth.vertical;
-    app.style.height = `${toolbarHeight}px`;
-  } else {
-    console.log('am i here as well?');
-    app.style.width = `${toolbarWidth.horizontal}px`;
-  }
-}
-
 function setWindowSize() {
   const app = document.querySelector('.app');
-  const isVertical = app.classList.contains('vertical');
-  const isExpanded = app.classList.contains('expanded');
-  const hasDrawer = app.classList.contains('has-drawer');
+  const appClasses = Array.from(app.classList);
+
+  const isVertical = appClasses.includes('vertical');
+  const isExpanded = appClasses.includes('expanded');
+  const hasDrawer = appClasses.includes('has-drawer');
+
   const toolbarHeight = getHorizontalToolbarHeight();
 
-  console.log('app classes', Array.from(app.classList));
-
   if (isVertical) {
-    app.style.width = toolbarWidth.vertical;
+    const expandedToolbarWidth = 200;
     app.style.height = `${toolbarHeight}px`;
+
+    if (isExpanded) {
+      if (hasDrawer) {
+        app.style.width = `${
+          expandedToolbarWidth + toolbarDrawerSize.vertical
+        }px`;
+      } else {
+        app.style.width = `${expandedToolbarWidth}px`;
+      }
+    } else {
+      app.style.width = `${toolbarWidth.vertical}px`;
+    }
   } else {
     app.style.width = `${toolbarWidth.horizontal}px`;
 
-    if (hasDrawer) {
-      console.log('has drawer');
-      app.style.height = `${toolbarHeight}px`;
+    if (isExpanded) {
+      if (hasDrawer) {
+        app.style.height = `${toolbarHeight}px`;
+      } else {
+        app.style.height = '175px';
+      }
     } else {
-      app.style.height = `48px`;
+      app.style.height = '60px';
     }
   }
 }
 
-export { observeSizeChange, setInitialWindowSize, setWindowSize };
+export { observeSizeChange, setWindowSize };

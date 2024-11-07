@@ -33,7 +33,7 @@ import {
 import { getSetting } from './settings.js';
 import { populateSID } from './profile.js';
 import handleScheduledShutdownRestart from './schedule-shutdown-restart.js';
-import { observeSizeChange, setInitialWindowSize } from './window-sizing.js';
+import { observeSizeChange, setWindowSize } from './window-sizing.js';
 
 const rxjs = window.rxjs;
 let {
@@ -87,8 +87,7 @@ async function init() {
   populateSID();
   showFeedbackPanel();
   showProfilePanel();
-
-  setInitialWindowSize();
+  setWindowSize();
 
   observeSizeChange(app, (width, height) => {
     console.log(
@@ -112,22 +111,24 @@ function finishLoading() {
 function observeAppElement() {
   const app = document.querySelector('.app');
   const config = {
+    attributes: true,
     attributeFilter: ['class'],
     attributeOldValue: true,
-    attributes: true,
   };
 
-  function callback([entry]) {
-    const newValue = entry.target.getAttribute(entry.attributeName);
+  function handleAttributeChange(entry) {
+    const { attributeName, oldValue, target } = entry;
+    const newValue = target.getAttribute(attributeName);
 
-    if (
-      entry.type === 'attributes' &&
-      entry.attributeName === 'class' &&
-      newValue !== entry.oldValue
-    ) {
+    if (attributeName === 'class' && newValue !== oldValue) {
       utils.setDrawerOpenClasses();
+      setWindowSize(newValue);
       console.log(io.windows.my().bounds);
     }
+  }
+
+  function callback(entries) {
+    entries.forEach(handleAttributeChange);
   }
 
   utils.elementObserver(app, config, callback);
