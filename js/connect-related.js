@@ -8,7 +8,6 @@ import {
   setOrientation,
   setWindowPosition,
   setDrawerOpenClasses,
-  setDrawerOpenDirection,
 } from './utils.js';
 import { setWindowSize } from './window-sizing.js';
 
@@ -63,44 +62,10 @@ gluePromise.then(() => {
   trackWorkspaces();
   trackThemeChanges();
   trackWindowMove();
-  trackDisplayChange();
   trackConnection();
   trackNotificationCount();
-  trackWindowZoom();
   trackNotificationPanelVisibilityChange();
 });
-
-async function trackWindowZoom() {
-  const glue = await gluePromise;
-  applyWindowZoom();
-  trackWindowResize();
-
-  glue.windows.my().onBoundsChanged(() => {
-    applyWindowZoom();
-  });
-}
-
-async function applyWindowZoom() {
-  const glue = await gluePromise;
-  const glueWindowHeight = glue.windows.my().bounds.height;
-  const windowHeight = window.innerHeight;
-  const zoomRatio = windowHeight / glueWindowHeight;
-
-  document.documentElement.style.zoom = zoomRatio;
-}
-
-function applyWindowZoomWithDelay() {
-  setTimeout(() => {
-    applyWindowZoom();
-  }, 1000);
-}
-
-function trackWindowResize() {
-  window.addEventListener('resize', () => {
-    applyWindowZoom();
-    applyWindowZoomWithDelay();
-  });
-}
 
 async function trackApplications() {
   const glue = await gluePromise;
@@ -213,14 +178,6 @@ async function trackWindowMove() {
 
   glue.windows.my().onBoundsChanged(async () => {
     await setDrawerOpenClasses();
-  });
-}
-
-async function trackDisplayChange() {
-  const glue = await gluePromise;
-
-  glue.displays.onDisplayChanged(async () => {
-    await setWindowSize();
   });
 }
 
@@ -699,21 +656,20 @@ async function getPrefs() {
   }
 
   setOrientation();
+  setWindowSize();
 
   if (glue.windows.my().state === 'minimized') {
     const un = glue.windows.my().onNormal(async () => {
       un();
-      await setWindowSize();
     });
   }
 
-  setDrawerOpenDirection();
   await setDrawerOpenClasses();
-  await setWindowSize();
   await setWindowPosition();
 
   glue.prefs.subscribe(() => {
     setOrientation();
+    setWindowSize();
   });
 }
 

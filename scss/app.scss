@@ -3,12 +3,7 @@
 @import "folders";
 
 html {
-  height: 100%;
-  border: 3px solid red;
-
   body {
-    height: 100%;
-    overflow: hidden;
     display: flex;
     justify-content: flex-start;
     background-color: transparent;

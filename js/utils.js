@@ -219,9 +219,6 @@ function handleTopMenuClicks() {
       } else {
         document.querySelector('.app').classList.remove('has-drawer');
       }
-
-      setDrawerOpenDirection();
-      await setWindowSize();
     } else if (
       e.target.matches('#favorites .nav-item, #favorites .nav-item *')
     ) {
@@ -241,6 +238,8 @@ function handleTopMenuClicks() {
         restoreLayout(layoutType, layoutName);
       }
     }
+
+    setWindowSize();
   });
 }
 
@@ -641,32 +640,9 @@ async function handleAppRowsChange() {
         const selectedLength = e.target.getAttribute('length-name');
 
         setSetting({ toolbarAppRows: selectedLength });
-
-        setDrawerOpenDirection();
-        await setWindowSize();
+        setWindowSize();
       }
     });
-}
-
-function setDrawerOpenDirection() {
-  const app = document.querySelector('.app');
-  const isVertical = getSetting('vertical');
-  const horizontalHeight = getHorizontalToolbarHeight();
-
-  if (isVertical) {
-    app.style.top = 0;
-    app.style.maxHeight = `${horizontalHeight}px`;
-  } else {
-    const appLancher = document.querySelector('.viewport');
-
-    app.style.top = 0;
-
-    if (app.classList.contains('has-drawer')) {
-      app.style.maxHeight = `${appLancher.offsetHeight + horizontalHeight}px`;
-    } else {
-      app.style.maxHeight = `${appLancher.offsetHeight}px`;
-    }
-  }
 }
 
 async function setDrawerOpenClasses() {
@@ -711,7 +687,6 @@ function handleOrientationChange() {
     setSetting({ vertical: isVertical });
 
     await repositionOnOrientationChange(isVertical);
-    await setWindowSize();
   });
 }
 
@@ -903,7 +878,6 @@ async function setWindowPosition() {
 
 async function resetWindow() {
   setSetting({ vertical: true });
-  await setWindowSize();
   windowCenter();
 }
 
@@ -932,7 +906,6 @@ export {
   getAppIcon,
   setWindowPosition,
   setDrawerOpenClasses,
-  setDrawerOpenDirection,
   elementObserver,
   populateSettingsDropdown,
   renderAlert,

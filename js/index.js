@@ -33,7 +33,7 @@ import {
 import { getSetting } from './settings.js';
 import { populateSID } from './profile.js';
 import handleScheduledShutdownRestart from './schedule-shutdown-restart.js';
-import { setWindowSizeOnHover } from './window-sizing.js';
+import { observeSizeChange, setInitialWindowSize } from './window-sizing.js';
 
 const rxjs = window.rxjs;
 let {
@@ -47,6 +47,8 @@ let refreshAppsObs = new rxjs.BehaviorSubject(true);
 document.addEventListener('DOMContentLoaded', () => {
   init();
 });
+
+const app = document.querySelector('.app');
 
 async function init() {
   await glueModule.getPrefs();
@@ -85,6 +87,22 @@ async function init() {
   populateSID();
   showFeedbackPanel();
   showProfilePanel();
+
+  setInitialWindowSize();
+
+  observeSizeChange(app, (width, height) => {
+    console.log(
+      'Trigger moveMyWindow with:',
+      'width:',
+      width,
+      'height:',
+      height
+    );
+    glueModule.moveMyWindow({
+      width,
+      height,
+    });
+  });
 }
 
 function finishLoading() {
@@ -107,11 +125,8 @@ function observeAppElement() {
       entry.attributeName === 'class' &&
       newValue !== entry.oldValue
     ) {
-      utils.setDrawerOpenDirection();
       utils.setDrawerOpenClasses();
-      setWindowSizeOnHover();
-
-      console.log('App classes changed:', newValue);
+      console.log(io.windows.my().bounds);
     }
   }
 
