@@ -114,6 +114,10 @@ function renderLogo(theme) {
   }
 }
 
+function getAppElement() {
+  return document.querySelector('.app');
+}
+
 function handleThemeChange() {
   document.querySelectorAll('.theme-select').forEach((a) => {
     a.addEventListener('click', (e) => {
@@ -165,11 +169,11 @@ function handleShutdownClick() {
 }
 
 function handleTopDropdownClicks() {
-  const app = document.querySelector('.app');
+  const app = getAppElement();
 
   document
     .querySelector('#dropdownMenuButtonActions')
-    .addEventListener('click', (e) => {
+    .addEventListener('click', () => {
       if (app.classList.contains('expanded')) {
         if (
           !document.querySelector('.dropdown-menu').classList.contains('show')
@@ -239,6 +243,9 @@ function handleTopMenuClicks() {
       } else {
         document.querySelector('.app').classList.remove('has-drawer');
       }
+
+      await handleOpenLeft();
+      await handleOpenTop();
     } else if (
       e.target.matches('#favorites .nav-item, #favorites .nav-item *')
     ) {
@@ -359,13 +366,13 @@ async function handleJumpListAction() {
 }
 
 function handleLayoutsHover() {
-  const isVertical = getSetting('vertical');
+  const app = getAppElement();
   const menuItem = '.show-actions';
-  const app = document.querySelector('.app');
 
   document.addEventListener('mouseover', (event) => {
     const target = event.target.closest(menuItem);
     const dropdownsOpen = document.querySelectorAll('.dropdown-menu.show');
+    const isVertical = app.classList.contains('vertical');
 
     if (target || dropdownsOpen.length > 0) {
       target?.classList?.add('hover');
@@ -686,25 +693,77 @@ async function handleAppRowsChange() {
     });
 }
 
+async function getAppState() {
+  const app = getAppElement();
+
+  return {
+    isVertical: app.classList.contains('vertical'),
+    isOpenLeft: app.classList.contains('open-left'),
+    isOpenTop: app.classList.contains('open-top'),
+    hasDrawer: app.classList.contains('has-drawer'),
+    appBounds: await getPhysicalWindowBounds(),
+    visibleArea: await getVisibleArea(document.querySelector('.viewport')),
+    workArea: await getWindowWorkArea(),
+  };
+}
+
+async function handleOpenLeft() {
+  const { isVertical, isOpenLeft, hasDrawer, appBounds } = await getAppState();
+
+  if (!isVertical || !isOpenLeft) return;
+
+  if (hasDrawer) {
+    await moveMyWindow({ left: appBounds.left - toolbarDrawerSize.vertical });
+  } else {
+    await moveMyWindow({ left: appBounds.left + toolbarDrawerSize.vertical });
+  }
+}
+
+async function handleOpenTop() {
+  const { isVertical, isOpenTop, hasDrawer, appBounds, visibleArea } =
+    await getAppState();
+  const horizontalHeight = getHorizontalToolbarHeight();
+
+  if (isVertical || !isOpenTop) return;
+
+  if (hasDrawer) {
+    await moveMyWindow({
+      top: appBounds.top + visibleArea.height - horizontalHeight,
+    });
+  } else {
+    await moveMyWindow({
+      top: appBounds.top - visibleArea.height + horizontalHeight,
+    });
+  }
+}
+
 async function setDrawerOpenClasses() {
-  const workArea = await getWindowWorkArea();
-  const visibleArea = await getVisibleArea(document.querySelector('.viewport'));
-  const app = document.querySelector('.app');
+  const app = getAppElement();
+  const isVertical = getSetting('vertical');
+  const { visibleArea, workArea } = await getAppState();
 
   if (app.classList.contains('has-drawer')) return;
 
-  const isVertical = getSetting('vertical');
-
   if (isVertical) {
     const shouldOpenLeft =
-      visibleArea.right + toolbarDrawerSize.vertical > workArea.right;
+      visibleArea.right + toolbarDrawerSize.vertical >= workArea.right;
+
     app.classList.toggle('open-left', shouldOpenLeft);
+    app.classList.remove('open-top');
+  } else {
+    const horizontalHeight = getHorizontalToolbarHeight();
+    const shouldOpenTop =
+      visibleArea.top + horizontalHeight >= workArea.bottom &&
+      visibleArea.bottom - horizontalHeight >= workArea.top;
+
+    app.classList.toggle('open-top', shouldOpenTop);
+    app.classList.remove('open-left');
   }
 }
 
 function setOrientation() {
   const isVertical = getSetting('vertical');
-  const app = document.querySelector('.app');
+  const app = getAppElement();
 
   document.querySelector('#toggle .mode').innerHTML = isVertical
     ? 'horizontal'
