@@ -29,8 +29,8 @@ const monthsOfTheYear = [
 const defaultConfig = {
   enableTime: true,
   noCalendar: true,
-  dateFormat: 'H:i',
-  defaultDate: '00:00',
+  dateFormat: 'h:i K',
+  defaultDate: '12:00 AM',
   // minuteIncrement: 1,
   clickOpens: false,
 };
@@ -73,9 +73,10 @@ async function createInstance(input, config = defaultConfig) {
     instance.open();
   });
 
-  instance.config.onClose.push(async (selectedDates, time) => {
+  instance.config.onClose.push(async (selectedDates, inputTime) => {
     const option = input.id.split('-')[1];
     const prevSettings = getSetting('schedule');
+    const time = parseTimeTo24HourFormat(inputTime);
     const obj = {
       time,
       period: prevSettings[option].period,
@@ -273,6 +274,21 @@ async function cancelSchedule(option) {
   } catch (e) {
     console.error(e);
   }
+}
+
+function parseTimeTo24HourFormat(timeString) {
+  const [time, modifier] = timeString.split(' ');
+  let [hours, minutes] = time.split(':').map(Number);
+
+  if (modifier === 'PM' && hours !== 12) {
+    hours += 12;
+  } else if (modifier === 'AM' && hours === 12) {
+    hours = 0;
+  }
+
+  return `${hours.toString().padStart(2, '0')}:${minutes
+    .toString()
+    .padStart(2, '0')}`;
 }
 
 function parseScheduleToObj(scheduleString) {
