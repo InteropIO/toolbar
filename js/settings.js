@@ -7,6 +7,7 @@ let settings = {
   searchInstruments: true,
   enableNotifications: true,
   enableToasts: true,
+  showNotificationBadge: true,
   toolbarAppRows: '8',
   showHiddenApps: false,
   vertical: true,

@@ -281,7 +281,9 @@ async function getInitialSettings(options) {
       setting.period = 'Daily';
     }
 
-    setting.time = `${hour}:${minute}`;
+    setting.time = `${hour === '*' ? '00' : hour}:${
+      minute === '*' ? '00' : minute
+    }`;
 
     return {
       [option]: {
@@ -366,12 +368,12 @@ async function setInputStatesOnChange(option, checked) {
     intervalDropdown.classList.add('disabled');
     container.classList.add('d-none');
     cancelSchedule(option);
+  } else {
+    input.disabled = false;
+    periodDropdown.classList.remove('disabled');
+    intervalDropdown.classList.remove('disabled');
+    container.classList.remove('d-none');
   }
-
-  input.disabled = false;
-  periodDropdown.classList.remove('disabled');
-  intervalDropdown.classList.remove('disabled');
-  container.classList.remove('d-none');
 }
 
 async function handleScheduleToggleClick() {
