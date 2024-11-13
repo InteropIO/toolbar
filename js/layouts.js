@@ -8,9 +8,15 @@ import {
   clearDefaultLayout,
   setDefaultGlobal,
 } from './connect-related.js';
-import { escapeHtml } from './utils.js';
+import { escapeHtml, renderAlert } from './utils.js';
 import { getSetting } from './settings.js';
+import {
+  addFavoriteLayout,
+  favoriteLayouts,
+  removeFavoriteLayout,
+} from './favorites.js';
 
+const rxjs = window.rxjs;
 let filteredLayouts;
 
 init();
@@ -19,13 +25,14 @@ function init() {
   let allLayouts = layoutsObs.pipe(
     rxjs.operators.map((layouts) => {
       return layouts
+        .toReversed()
         .map((l) => ({ name: l.name, type: l.type }))
         .filter((l) => ['Global', 'Swimlane', 'Workspace'].includes(l.type));
     })
   );
 
   const layoutSearch = rxjs
-    .fromEvent(q('#layout-search'), 'keyup')
+    .fromEvent(document.querySelector('#layout-search'), 'keyup')
     .pipe(
       rxjs.operators.map((event) => {
         return event.target.value.toString().toLowerCase().trim();
@@ -59,16 +66,16 @@ function init() {
 }
 
 function handleLayoutClick() {
-  q('#layout-load>ul').addEventListener('click', (e) => {
+  document.querySelector('#layout-load>ul').addEventListener('click', (e) => {
     const layoutElement = e
       .composedPath()
-      .find((e) => e.getAttribute && e.getAttribute('layout-name'));
+      .find((e) => e.getAttribute?.('layout-name'));
 
     if (!layoutElement) {
       return;
     }
 
-    const name = layoutElement.getAttribute('layout-name');
+    const layoutName = layoutElement.getAttribute('layout-name');
     const type = layoutElement.getAttribute('layout-type');
 
     if (e.target.matches('.delete-layout, .delete-layout *')) {
@@ -80,40 +87,103 @@ function handleLayoutClick() {
       if (isDefault) {
         clearDefaultLayout();
       } else {
-        setDefaultGlobal(name);
+        setDefaultGlobal(layoutName);
+      }
+    } else if (e.target.matches('.add-favorite, .add-favorite *')) {
+      let isLayoutFavorite = favoriteLayouts.value.includes(layoutName);
+
+      if (isLayoutFavorite) {
+        removeFavoriteLayout(layoutName);
+      } else {
+        addFavoriteLayout(layoutName);
       }
     } else if (e.target.matches('.layout-menu-tool, .layout-menu-tool *')) {
       if (e.target.matches('.layout-menu-tool .delete')) {
-        removeLayout(type, name);
+        removeLayout(type, layoutName);
       }
 
       layoutElement.classList.remove('show-actions');
       layoutElement.classList.remove('active');
     } else {
-      restoreLayout(type, name);
+      restoreLayout(type, layoutName);
     }
   });
 }
 
-function handleLayoutSave() {
-  q('#layout-save-btn').addEventListener('click', saveCurrentLayout);
-  q('#layout-save-name').addEventListener('keyup', (e) =>
-    e.key === 'Enter' && e.target.value.length > 0 ? saveCurrentLayout() : null
-  );
+function handleLayoutsSaveMenuItemClick() {
+  if (
+    typeof activeLayout?._value?.name === 'undefined' &&
+    typeof defaultLayout?._value?.name === 'undefined'
+  ) {
+    document.querySelector('#layout-save-name').value = '';
+    return;
+  }
+
+  document.querySelector('#save').addEventListener('click', () => {
+    document.querySelector('#layout-save-name').value =
+      activeLayout?._value?.name || defaultLayout?._value?.name;
+  });
 }
 
-function saveCurrentLayout() {
-  saveLayout(escapeHtml(q('#layout-save-name').value));
-  q('#layout-save-name').value = '';
-  q('#layout-content').classList.add('hide');
-  q('#layout-load').classList.remove('hide');
+function handleLayoutSave() {
+  document
+    .querySelector('#layout-save-btn')
+    .addEventListener('click', saveCurrentLayout);
+  document
+    .querySelector('#layout-save-name')
+    .addEventListener('keyup', (e) =>
+      e.key === 'Enter' && e.target.value.length > 0
+        ? saveCurrentLayout()
+        : null
+    );
+}
+
+async function saveCurrentLayout() {
+  const alertWrapper = document.querySelector('.layout-save-alert-wrapper');
+  const loaderElement = document.querySelector('#layout-save-loader');
+  const layoutInput = document.querySelector('#layout-save-name');
+  const saveLayoutsMenu = document.querySelector('#layout-save');
+  const loadLayoutsMenu = document.querySelector('#layout-load');
+
+  if (!layoutInput.value || !alertWrapper) {
+    return;
+  }
+
+  loaderElement.classList.add('show');
+
+  try {
+    await saveLayout(escapeHtml(layoutInput.value));
+
+    renderAlert(
+      alertWrapper,
+      'success',
+      `Layout ${layoutInput.value} has been saved successfully`
+    );
+  } catch (error) {
+    const inputString = error.message;
+    const stringLimiter = ', type:';
+    const endIndex = inputString.indexOf(stringLimiter);
+    const errorMessage = inputString.substring(0, endIndex);
+
+    console.error('error:', error);
+    renderAlert(
+      alertWrapper,
+      'warning',
+      `Failed to save the layout. ${errorMessage}`
+    );
+  }
+
+  loaderElement.classList.remove('show');
+  saveLayoutsMenu.classList.add('hide');
+  loadLayoutsMenu.classList.remove('hide');
 }
 
 function layoutHTMLTemplate(layout) {
+  const textColor = layout.isDefault ? 'text-primary' : '';
+
   return (
-    `
-  <li class="nav-item ${layout.isActive ? 'app-active' : ''} ${
-      layout.isDefault ? 'default-layout' : ''
+    `<li class="nav-item${layout.isActive ? ' layout-active' : ''}${
+      layout.isDefault ? ' default-layout' : ''
     }" layout-name="${escapeHtml(layout.name)}" layout-type="${layout.type}">
     <div class="nav-link action-menu">
       <i class="icon-03-context-viewer ml-2 mr-4"></i>
@@ -122,13 +192,15 @@ function layoutHTMLTemplate(layout) {
     }</span>
       <div class="action-menu-tool">` +
     (layout.type === 'Global' && !getSetting('saveDefaultLayout')
-      ? `<button class="btn btn-icon secondary set-default ${
-          layout.isDefault ? 'text-primary' : ''
-        }" id="menu-tool-4">
+      ? `<button class="btn btn-icon secondary set-default ${textColor}" id="menu-tool-4">
           <i class="icon-asterisk"></i>
         </button>`
       : '') +
-    `<button class="btn btn-icon secondary delete-layout" id="menu-tool-4">
+    `<button class="btn btn-icon secondary add-favorite">
+          <i class="icon-star-empty-1" draggable="false"></i>
+          <i class="icon-star-full" draggable="false"></i>
+          </button>
+    <button class="btn btn-icon secondary delete-layout" id="menu-tool-4">
           <i class="icon-trash-empty"></i>
         </button>
       </div>
@@ -149,5 +221,6 @@ export {
   layoutHTMLTemplate,
   handleLayoutClick,
   handleLayoutSave,
+  handleLayoutsSaveMenuItemClick,
   noLayoutsHTML,
 };

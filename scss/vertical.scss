@@ -1,12 +1,7 @@
 @import "left";
 
 .vertical {
-  width: auto;
-  left: 300px;
-
   .viewport {
-    height: 100%;
-
     > .flex-column {
       height: 100%;
     }
@@ -27,7 +22,7 @@
       justify-content: center;
       max-width: 0;
       min-width: 0;
-      height: 25%;
+      height: auto;
       margin-left: 0;
       opacity: 0;
       @include transition(all, 0);
@@ -46,7 +41,7 @@
     }
   }
 
-  .fav-app-nav {
+  .favorites-nav {
     flex-grow: 1;
     overflow: hidden;
   }
@@ -85,7 +80,7 @@
       }
     }
 
-    .fav-app-nav {
+    .favorites-nav {
       overflow-y: auto;
     }
 
@@ -108,7 +103,7 @@
       }
     }
 
-    #fav-apps {
+    #favorites {
       & > li:not(.nav-item) {
         opacity: 1;
       }

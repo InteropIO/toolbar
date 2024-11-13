@@ -41,14 +41,14 @@
               <button
                 class="btn btn-icon btn-icon-action minimize"
                 type="button"
-                id="dropdownMenuButton"
+                id="dropdownMenuButtonMinimize"
               >
                 <i class="icon-window-minimize"></i>
               </button>
               <button
                 class="btn btn-icon btn-icon-action"
                 type="button"
-                id="dropdownMenuButton"
+                id="dropdownMenuButtonActions"
                 dropdown-button-id="top-menu"
               >
                 <i class="icon-ellipsis-vert"></i>
@@ -96,9 +96,9 @@
           <li class="favorite position-relative">
             <i class="icon-star-full"></i>
           </li>
-          <li class="fav-app-nav">
+          <li class="favorites-nav">
             <ul
-              id="fav-apps"
+              id="favorites"
               class="nav nav-tabs flex-column accordion"
               column
             ></ul>
@@ -164,20 +164,17 @@
             placeholder="Search Layout..."
           />
         </div>
+        <div class="layout-save-alert-wrapper"></div>
         <ul class="nav nav-tabs flex-column"></ul>
       </div>
 
-      <div
-        class="toggle-content hide"
-        id="layout-content"
-        menu-id="layout-save"
-      >
+      <div class="toggle-content hide" id="layout-save" menu-id="layout-save">
         <div class="p-2">
           <div class="d-flex justify-content-between mb-2">
             <h5 class="draggable m-0">Save Layouts</h5>
             <span class="icon-arrow-up-down close-drawer m-0"></span>
           </div>
-          <div class="input-group">
+          <div class="input-group layout-save-input-group">
             <input
               type="text"
               id="layout-save-name"
@@ -186,6 +183,9 @@
               placeholder="Layout name..."
             />
             <div class="input-group-append">
+              <div class="loader-wrapper">
+                <div id="layout-save-loader" class="loader"></div>
+              </div>
               <button class="btn btn-secondary" id="layout-save-btn">
                 <i class="icon-floppy"></i>
               </button>

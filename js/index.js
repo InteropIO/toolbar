@@ -8,8 +8,9 @@ import {
   runningApps,
   noRunningAppsHTML,
   noApplicationsHTML,
-  noFavoriteAppsHTML,
+  noFavoriteAppsOrLayoutsHTML,
   getItemHTMLTemplate,
+  favoriteLayoutHTMLTemplate,
 } from './applications.js';
 import * as favoritesModule from './favorites.js';
 import {
@@ -17,6 +18,7 @@ import {
   layoutHTMLTemplate,
   handleLayoutClick,
   handleLayoutSave,
+  handleLayoutsSaveMenuItemClick,
   noLayoutsHTML,
 } from './layouts.js';
 import * as glueModule from './connect-related.js';
@@ -31,7 +33,9 @@ import {
 import { getSetting } from './settings.js';
 import { populateSID } from './profile.js';
 import handleScheduledShutdownRestart from './schedule-shutdown-restart.js';
+import { observeSizeChange, setWindowSize } from './window-sizing.js';
 
+const rxjs = window.rxjs;
 let {
   map: rxMap,
   combineLatest: rxCombineLatest,
@@ -43,6 +47,8 @@ let refreshAppsObs = new rxjs.BehaviorSubject(true);
 document.addEventListener('DOMContentLoaded', () => {
   init();
 });
+
+const app = document.querySelector('.app');
 
 async function init() {
   await glueModule.getPrefs();
@@ -68,6 +74,7 @@ async function init() {
   utils.handleLayoutsHover();
   handleLayoutClick();
   handleLayoutSave();
+  handleLayoutsSaveMenuItemClick();
   utils.handleDropDownClicks();
   handleClientAndInstrumentClicks();
   await handleScheduledShutdownRestart();
@@ -80,6 +87,14 @@ async function init() {
   populateSID();
   showFeedbackPanel();
   showProfilePanel();
+  setWindowSize();
+
+  observeSizeChange(app, (width, height) => {
+    glueModule.moveMyWindow({
+      width,
+      height,
+    });
+  });
 }
 
 function finishLoading() {
@@ -87,26 +102,25 @@ function finishLoading() {
 }
 
 function observeAppElement() {
-  const app = q('.app');
+  const app = document.querySelector('.app');
   const config = {
+    attributes: true,
     attributeFilter: ['class'],
     attributeOldValue: true,
-    attributes: true,
   };
 
+  function handleAttributeChange(entry) {
+    const { attributeName, oldValue, target } = entry;
+    const newValue = target.getAttribute(attributeName);
+
+    if (attributeName === 'class' && newValue !== oldValue) {
+      utils.setDrawerOpenClasses();
+      setWindowSize(newValue);
+    }
+  }
+
   function callback(entries) {
-    let newValue;
-
-    entries.forEach((entry) => {
-      newValue = entry.target.getAttribute(entry.attributeName);
-
-      if (entry.type === 'attributes' && entry.attributeName === 'class') {
-        if (newValue !== entry.oldValue) {
-          utils.setDrawerOpenDirection();
-          utils.setDrawerOpenClasses();
-        }
-      }
-    });
+    entries.forEach(handleAttributeChange);
   }
 
   utils.elementObserver(app, config, callback);
@@ -173,7 +187,8 @@ function printApps() {
         hasSearch: search.trim().length > 1,
       });
 
-      q('#search-results').innerHTML = newResultsHTML || noApplicationsHTML;
+      document.querySelector('#search-results').innerHTML =
+        newResultsHTML || noApplicationsHTML;
       favoritesModule.updateFavoriteApps();
     });
 }
@@ -269,9 +284,9 @@ function printRunningApps() {
             favoriteBtn: false,
           }))
       );
-      q('#running-apps').innerHTML = newRunningAppsHTML;
+      document.querySelector('#running-apps').innerHTML = newRunningAppsHTML;
     } else {
-      q('#running-apps').innerHTML = noRunningAppsHTML;
+      document.querySelector('#running-apps').innerHTML = noRunningAppsHTML;
     }
   });
 }
@@ -284,49 +299,81 @@ function printLayouts() {
       layouts.forEach(
         (layout) => (newLayoutsHTML += layoutHTMLTemplate(layout))
       );
-      q('#layout-load>ul').innerHTML = newLayoutsHTML;
+      document.querySelector('#layout-load>ul').innerHTML = newLayoutsHTML;
     } else {
-      q('#layout-load>ul').innerHTML = noLayoutsHTML;
+      document.querySelector('#layout-load>ul').innerHTML = noLayoutsHTML;
     }
+
+    favoritesModule.updateFavoriteLayouts();
   });
 }
 
 function printFavoriteApps() {
   favoritesModule.favoriteApps
-    .pipe(rxjs.operators.combineLatest(allApplicationsObs))
-    .subscribe(([favApps, allApps]) => {
-      let favAppsHtml = ``;
-      let existingFavApps = favApps.filter((favApp) =>
-        allApps.find((a) => a.name === favApp)
-      );
+    .pipe(
+      rxjs.operators.combineLatest(
+        allApplicationsObs,
+        favoritesModule.favoriteLayouts,
+        glueModule.layoutsObs,
+        glueModule.activeLayout
+      )
+    )
+    .subscribe(
+      ([
+        favApps,
+        allApps,
+        favLayoutNames,
+        allLayouts,
+        currentlyActiveLayout,
+      ]) => {
+        let favAppsHtml = ``;
+        let favLayoutsHtml = ``;
+        let existingFavApps = favApps.filter((favApp) =>
+          allApps.find((a) => a.name === favApp)
+        );
 
-      if (existingFavApps.length > 0) {
-        existingFavApps.forEach((favApp) => {
-          let fullApp = allApps.find((a) => a.name === favApp);
+        if (existingFavApps.length > 0 || favLayoutNames.length > 0) {
+          existingFavApps.forEach((favApp) => {
+            let fullApp = allApps.find((a) => a.name === favApp);
 
-          if (fullApp) {
-            favAppsHtml += favoriteApplicationHTMLTemplate(fullApp, {
-              favoriteBtn: false,
-            });
-          }
-        });
-      } else {
-        favAppsHtml = noFavoriteAppsHTML;
+            if (fullApp) {
+              favAppsHtml += favoriteApplicationHTMLTemplate(fullApp, {
+                favoriteBtn: false,
+              });
+            }
+          });
+
+          favLayoutNames.forEach((favLayoutName) => {
+            let fullLayout = allLayouts.find((l) => l.name === favLayoutName);
+
+            if (fullLayout) {
+              favLayoutsHtml += favoriteLayoutHTMLTemplate(
+                fullLayout,
+                currentlyActiveLayout
+              );
+            }
+          });
+        } else {
+          favAppsHtml = noFavoriteAppsOrLayoutsHTML;
+        }
+
+        document.querySelector('#favorites').innerHTML =
+          favAppsHtml + favLayoutsHtml;
       }
-
-      q('#fav-apps').innerHTML = favAppsHtml;
-    });
+    );
 }
 
 function printNotificationCount() {
   glueModule.notificationsCountObs.subscribe((count) => {
     if (count !== null) {
-      q('#notifications-count').innerHTML = count;
+      document.querySelector('#notifications-count').innerHTML = count;
 
       if (count === 0) {
-        q('#notifications-count').classList.add('empty');
+        document.querySelector('#notifications-count').classList.add('empty');
       } else {
-        q('#notifications-count').classList.remove('empty');
+        document
+          .querySelector('#notifications-count')
+          .classList.remove('empty');
       }
     }
   });
@@ -334,7 +381,7 @@ function printNotificationCount() {
 
 function printInitialToastState() {
   const notificationsEnabled = getSetting('enableNotifications');
-  const enableToasts = q('#enable-toasts');
+  const enableToasts = document.querySelector('#enable-toasts');
 
   if (!notificationsEnabled) {
     enableToasts.checked = false;
@@ -347,7 +394,7 @@ async function showFeedbackPanel() {
   const hideFeedback = userProperties.hideFeedbackButton;
 
   if (!hideFeedback) {
-    q('#feedback-panel').classList.remove('d-none');
+    document.querySelector('#feedback-panel').classList.remove('d-none');
   }
 }
 
@@ -356,7 +403,7 @@ async function showProfilePanel() {
   const hideProfile = userProperties.hideProfileButton;
 
   if (hideProfile === true) {
-    q('#profile-panel').classList.add('d-none');
+    document.querySelector('#profile-panel').classList.add('d-none');
   }
 }
 

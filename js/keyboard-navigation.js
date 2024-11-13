@@ -93,7 +93,7 @@ function handleKeyboardNavigation() {
 
   const isItemAppFavorite = (e) =>
     upTo(e, (el) => {
-      return el?.id === 'fav-apps';
+      return el?.id === 'favorites';
     });
 
   const isItemFromMainMenu = (e) =>
@@ -460,7 +460,7 @@ function handleKeyboardNavigation() {
   }
 
   document.addEventListener('keydown', (e) => {
-    q('.app').classList.add('expand-wrapper');
+    q('.app').classList.add('expanded');
     q('.viewport').classList.add('expand');
     switch (e.key) {
       case 'Space':

@@ -12,6 +12,7 @@ let settings = {
   showHiddenApps: false,
   vertical: true,
   favoriteApps: [],
+  favoriteLayouts: [],
   schedule: {
     restart: {
       enable: false,
@@ -28,8 +29,8 @@ let settings = {
   },
 };
 const toolbarWidth = {
-  vertical: 200,
-  horizontal: 540,
+  vertical: 60,
+  horizontal: 650,
 };
 const toolbarDrawerSize = {
   vertical: 300,

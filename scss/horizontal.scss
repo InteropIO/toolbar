@@ -2,12 +2,12 @@
 
 .horizontal {
   width: 100%;
-  max-height: 48px;
   justify-content: flex-start;
 
   .viewport {
     display: flex;
     width: 100%;
+    z-index: 20;
 
     > .nav {
       flex-wrap: nowrap;
@@ -15,8 +15,8 @@
     }
 
     .accordion {
-      overflow-x: hidden;
-      overflow-y: auto;
+      overflow-x: auto;
+      overflow-y: hidden;
     }
 
     .logo-wordmark {
@@ -29,17 +29,41 @@
       .menu {
         position: absolute;
         top: 50%;
-        right: 0.5em;
-        z-index: 11;
+        right: 0;
+        z-index: 1;
+        padding: 0 0.5em;
+        background-color: var(--t42-body);
         transform: translateY(-50%);
       }
 
       .dropdown-menu {
-        right: -1em;
+        top: 100%;
+        border: none;
+        background-color: var(--t42-body);
       }
     }
 
     .app-active {
+      &::before {
+        @include transition("width, left, right", 0);
+        width: 23px;
+        height: 3px;
+        top: unset;
+        right: 30%;
+        bottom: 0;
+        left: 30%;
+      }
+
+      &:hover {
+        &::before {
+          top: unset;
+          width: 100%;
+          left: 0;
+        }
+      }
+    }
+
+    .layout-active {
       &::before {
         @include transition("width, left, right", 0);
         width: 23px;
@@ -128,7 +152,7 @@
       }
     }
 
-    .fav-app-nav {
+    .favorites-nav {
       flex-wrap: nowrap;
     }
 
@@ -139,7 +163,7 @@
         flex-basis: 59px;
         width: 60px;
 
-        &.fav-app-nav {
+        &.favorites-nav {
           flex-grow: 1;
           display: flex;
           align-items: center;
@@ -170,6 +194,10 @@
               overflow-y: scroll;
 
               .app-active::before {
+                height: 2px;
+              }
+
+              .layout-active::before {
                 height: 2px;
               }
             }
@@ -224,6 +252,8 @@
         top: 100%;
         flex-direction: column;
         height: 6rem;
+        border: none;
+        background-color: var(--t42-body);
 
         li {
           width: 100%;
@@ -265,7 +295,7 @@
     }
 
     &:not(#app-content) {
-      height: auto;
+      height: 100%;
     }
 
     &.hide {

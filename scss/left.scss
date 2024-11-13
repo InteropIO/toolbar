@@ -1,7 +1,5 @@
 .vertical {
   &.open-left {
-    @include transition("left, width", 0);
-
     &.has-drawer {
       left: 0;
     }
@@ -12,7 +10,6 @@
 
     .toggle-content {
       width: 300px;
-      @include transition("width, left", 0);
 
       &.hide {
         width: 0px;

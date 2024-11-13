@@ -18,9 +18,9 @@ import {
   getPrimaryScaleFactor,
   windowCenter,
   getPhysicalWindowBounds,
+  restoreLayout,
 } from './connect-related.js';
 import {
-  toolbarWidth,
   toolbarDrawerSize,
   initialPosition,
   setSetting,
@@ -32,15 +32,16 @@ import {
   profile_handleRestartClick,
   profile_handleFeedbackClick,
 } from './profile.js';
-
 import {
   handleNotificationClick,
   handleEnableNotifications,
 } from './notifications.js';
+import { setWindowSize } from './window-sizing.js';
 
 import handleKeyboardNavigation from './keyboard-navigation.js';
 
 const windowMargin = 50;
+const rxjs = window.rxjs;
 
 let pressedKey;
 let keyObs = rxjs
@@ -71,6 +72,7 @@ function handleEvents() {
   populateAboutPage();
   handleShutdownClick();
   handleTopMenuClicks();
+  handleTopDropdownClicks();
   handleCloseDrawerClicks();
   handleMinimizeClick();
   handleMouseHover();
@@ -112,6 +114,10 @@ function renderLogo(theme) {
   }
 }
 
+function getAppElement() {
+  return document.querySelector('.app');
+}
+
 function handleThemeChange() {
   document.querySelectorAll('.theme-select').forEach((a) => {
     a.addEventListener('click', (e) => {
@@ -143,12 +149,14 @@ function handleThemeChange() {
 }
 
 function populateAboutPage() {
+  const glue42gd = window.glue42gd;
+
   document.querySelector('.connect-desktop-version').innerText =
     glue42gd.version;
   document.querySelector('.gw-url').innerText = glue42gd.gwURL;
   document.querySelector('.username').innerText = glue42gd.user;
 
-  gluePromise.then(async (glue) => {
+  gluePromise.then(async () => {
     document.querySelector('.desktop-client-version').innerText =
       await glueVersion();
   });
@@ -160,7 +168,31 @@ function handleShutdownClick() {
   });
 }
 
+function handleTopDropdownClicks() {
+  const app = getAppElement();
+
+  document
+    .querySelector('#dropdownMenuButtonActions')
+    .addEventListener('click', () => {
+      if (app.classList.contains('expanded')) {
+        if (
+          !document.querySelector('.dropdown-menu').classList.contains('show')
+        ) {
+          return;
+        }
+        app.classList.remove('expanded');
+      } else {
+        app.classList.add('expanded');
+      }
+    });
+}
+
 function handleTopMenuClicks() {
+  let prevWndBounds = {
+    width: 0,
+    height: 0,
+  };
+
   document.addEventListener('click', async (e) => {
     if (e.target.matches('a, a *') && e.ctrlKey) {
       e.preventDefault();
@@ -207,7 +239,7 @@ function handleTopMenuClicks() {
 
       menuToToggle.classList.toggle('hide');
 
-      let hasVisibleDrawers = document.querySelector(
+      const hasVisibleDrawers = document.querySelector(
         '.toggle-content:not(.hide)'
       );
 
@@ -217,15 +249,47 @@ function handleTopMenuClicks() {
         document.querySelector('.app').classList.remove('has-drawer');
       }
 
-      setDrawerOpenDirection();
-    } else if (e.target.matches('#fav-apps .nav-item, #fav-apps .nav-item *')) {
+      const app = getAppElement();
+      const bounds = await getVisibleArea(app);
+      const workArea = await getWindowWorkArea();
+
+      if (prevWndBounds.width !== bounds.width) {
+        await handleOpenLeft();
+      }
+
+      if (prevWndBounds.height !== bounds.height) {
+        await handleOpenTop();
+      }
+
+      if (
+        bounds.top < workArea.top ||
+        bounds.left < workArea.left ||
+        bounds.left > workArea.right ||
+        bounds.top > workArea.bottom
+      ) {
+        await setWindowPosition();
+      }
+
+      prevWndBounds.width = bounds.width;
+      prevWndBounds.height = bounds.height;
+    } else if (
+      e.target.matches('#favorites .nav-item, #favorites .nav-item *')
+    ) {
       // start or focus an app from the favorites list
       let topElement = e
         .composedPath()
-        .find((e) => e.classList && e.classList.contains('nav-item'));
+        .find((e) => e.classList?.contains('nav-item'));
       let appName = topElement.getAttribute('app-name');
+      let layoutName = topElement.getAttribute('layout-name');
+      let layoutType = topElement.getAttribute('layout-type');
 
-      startApp(appName);
+      if (appName) {
+        startApp(appName);
+      }
+
+      if (layoutType && layoutName) {
+        restoreLayout(layoutType, layoutName);
+      }
     }
   });
 }
@@ -233,8 +297,8 @@ function handleTopMenuClicks() {
 function handleCloseDrawerClicks() {
   document.addEventListener('click', (e) => {
     if (e.target.matches('.close-drawer, .close-drawer *')) {
-      let menu = e.composedPath().find((e) => e && e.getAttribute('menu-id'));
-      let menuId = menu && menu.getAttribute('menu-id');
+      let menu = e.composedPath().find((e) => e?.getAttribute('menu-id'));
+      let menuId = menu?.getAttribute('menu-id');
 
       if (menuId) {
         document.querySelector(`[menu-button-id="${menuId}"]`).click();
@@ -307,6 +371,7 @@ function handleModalClose() {
 
 async function handleJumpListAction() {
   try {
+    const glue = window.glue;
     const jumpList = glue.windows.my().jumpList;
     const category = await jumpList.categories.find('Tasks');
     const action = {
@@ -327,37 +392,54 @@ async function handleJumpListAction() {
 }
 
 function handleLayoutsHover() {
+  const app = getAppElement();
   const menuItem = '.show-actions';
 
   document.addEventListener('mouseover', (event) => {
     const target = event.target.closest(menuItem);
+    const dropdownsOpen = document.querySelectorAll('.dropdown-menu.show');
+    const isVertical = app.classList.contains('vertical');
 
-    if (target) {
-      target.classList.add('hover');
+    if (target || dropdownsOpen.length > 0) {
+      target?.classList?.add('hover');
+      if (!isVertical) {
+        app.classList.add('expanded');
+      }
     } else {
       document.querySelectorAll(menuItem).forEach((item) => {
         item.classList.remove('hover');
+        if (!isVertical) {
+          app.classList.remove('expanded');
+        }
       });
     }
   });
 }
 
 async function handleMouseHover() {
-  document.querySelector('#fav-apps').addEventListener('mousewheel', (e) => {
-    // TODO: move
-    if (document.querySelector('.horizontal')) {
-      document.querySelector('#fav-apps').scrollLeft += Math.round(
-        e.deltaY * 0.8
-      );
-      e.preventDefault();
-    }
-  });
+  document.querySelector('#favorites').addEventListener(
+    'mousewheel',
+    (e) => {
+      if (document.querySelector('.horizontal')) {
+        document.querySelector('#favorites').scrollLeft += Math.round(
+          e.deltaY * 0.8
+        );
+        e.preventDefault();
+      }
+    },
+    { passive: false }
+  );
 
   let closeTimeout;
 
-  document.querySelector('.app').addEventListener('mouseenter', (e) => {
+  document.querySelector('.app').addEventListener('mouseenter', () => {
+    const isVertical = getSetting('vertical');
+
     document.querySelector('.viewport').classList.add('expand');
-    document.querySelector('.app').classList.add('expand-wrapper');
+
+    if (isVertical) {
+      document.querySelector('.app').classList.add('expanded');
+    }
 
     if (closeTimeout) {
       clearTimeout(closeTimeout);
@@ -366,6 +448,8 @@ async function handleMouseHover() {
   });
 
   document.querySelector('.app').addEventListener('mouseleave', (e) => {
+    const isVertical = getSetting('vertical');
+
     closeTimeout = setTimeout(async () => {
       let { offsetWidth: viewPortWidth, offsetHeight: viewPortHeight } =
         document.querySelector('.viewport');
@@ -399,9 +483,13 @@ async function handleMouseHover() {
         return;
       }
 
+      if (isVertical) {
+        document.querySelector('.app').classList.remove('expanded');
+      }
+
       document.querySelector('.viewport').classList.remove('expand');
       document.querySelector('.show-actions').classList.remove('hover');
-      document.querySelector('.app').classList.remove('expand-wrapper');
+
       document
         .querySelectorAll('.toggle-content')
         .forEach((e) => e.classList.add('hide'));
@@ -487,6 +575,48 @@ function escapeHtml(unsafe) {
     .replace(/'/g, '&#039;');
 }
 
+function renderAlert(
+  domEl,
+  type = 'primary',
+  message = 'Default Alert Message',
+  duration = 5000
+) {
+  if (!domEl) {
+    return;
+  }
+
+  const alertElement = document.createElement('div');
+
+  alertElement.className = `alert alert-${type} alert-dismissible fade show`;
+  alertElement.setAttribute('role', 'alert');
+
+  alertElement.innerHTML = `
+    <button type="button" class="close" aria-label="Close">
+      <span aria-hidden="true">×</span>
+    </button>
+    <div class="alert-message">${message}</div>
+  `;
+
+  domEl.appendChild(alertElement);
+
+  const closeButton = alertElement.querySelector('.close');
+
+  closeButton.addEventListener('click', () => {
+    clearTimeout(timeout);
+    alertElement.classList.remove('show');
+    setTimeout(() => {
+      alertElement.remove();
+    }, 250);
+  });
+
+  const timeout = setTimeout(() => {
+    alertElement.classList.remove('show');
+    setTimeout(() => {
+      alertElement.remove();
+    }, 250);
+  }, duration);
+}
+
 async function isOutOfMonitor(viewportBounds) {
   let monitors = await getMonitorInfo();
   let windowBounds = await getPhysicalWindowBounds();
@@ -513,7 +643,7 @@ function populateSettingsDropdown(
   selectOptionsObj,
   elementName
 ) {
-  selectElement.forEach((item, i) => {
+  selectElement.forEach((item) => {
     let html = ``;
 
     selectOptionsObj.all.forEach((element) => {
@@ -577,130 +707,89 @@ async function handleAppRowsChange() {
     'length'
   );
 
-  let currentToolbarHeight = getHorizontalToolbarHeight();
-
   document
     .querySelector('.length-select .select_options')
     .addEventListener('click', async (e) => {
-      const isVertical = getSetting('vertical');
-
       if (e.target.matches('input.select_input[type="radio"]')) {
         const selectedLength = e.target.getAttribute('length-name');
-        const windowBounds = await getPhysicalWindowBounds();
-        const primaryScaleFactor = await getPrimaryScaleFactor();
-        const scaleFactor = await getScaleFactor();
-        const newToolbarHeight = getHorizontalToolbarHeight(selectedLength);
 
         setSetting({ toolbarAppRows: selectedLength });
-
-        await setWindowSize();
-        setDrawerOpenDirection();
-
-        if (!isVertical) {
-          await moveMyWindow({
-            top:
-              (windowBounds.top +
-                currentToolbarHeight / scaleFactor -
-                newToolbarHeight / scaleFactor) *
-              primaryScaleFactor,
-          });
-        }
-
-        currentToolbarHeight = newToolbarHeight;
+        setWindowSize();
       }
     });
 }
 
-async function setWindowSize() {
-  const isVertical = getSetting('vertical');
-  const appLancher = document.querySelector('.viewport-header');
-  const appContentHeader = document.querySelector('.app-content-header');
-  const appRowsNumber = getSetting('toolbarAppRows');
-  const navItem = document.querySelector('.applications-nav');
-  const contentItems = document.querySelector('.content-items');
-  const horizontalHeight = getHorizontalToolbarHeight();
+async function getAppState() {
+  const app = getAppElement();
 
-  appLancher.style.height = `${appLancher.offsetHeight}px`;
-  appContentHeader.style.height = `${appContentHeader.offsetHeight}px`;
-  contentItems.style.height = `${navItem.offsetHeight * appRowsNumber}px`;
+  return {
+    isVertical: app.classList.contains('vertical'),
+    isOpenLeft: app.classList.contains('open-left'),
+    isOpenTop: app.classList.contains('open-top'),
+    hasDrawer: app.classList.contains('has-drawer'),
+    appBounds: await getPhysicalWindowBounds(),
+    visibleArea: await getVisibleArea(document.querySelector('.viewport')),
+    workArea: await getWindowWorkArea(),
+  };
+}
 
-  if (isVertical) {
-    await moveMyWindow({
-      width: toolbarWidth.vertical + toolbarDrawerSize.vertical * 2,
-      height: horizontalHeight,
-    });
+async function handleOpenLeft() {
+  const { isVertical, isOpenLeft, hasDrawer, appBounds } = await getAppState();
+
+  if (!isVertical || !isOpenLeft) return;
+
+  if (hasDrawer) {
+    await moveMyWindow({ left: appBounds.left - toolbarDrawerSize.vertical });
   } else {
-    await moveMyWindow({
-      width: toolbarWidth.horizontal,
-      height: appLancher.offsetHeight + horizontalHeight * 2,
-    });
+    await moveMyWindow({ left: appBounds.left + toolbarDrawerSize.vertical });
   }
 }
 
-function setDrawerOpenDirection() {
-  const app = document.querySelector('.app');
-  const isVertical = getSetting('vertical');
+async function handleOpenTop() {
+  const { isVertical, isOpenTop, hasDrawer, appBounds, visibleArea } =
+    await getAppState();
   const horizontalHeight = getHorizontalToolbarHeight();
 
-  if (isVertical) {
-    app.style.top = 0;
-    app.style.maxHeight = `${horizontalHeight}px`;
+  if (isVertical || !isOpenTop) return;
+
+  if (hasDrawer) {
+    await moveMyWindow({
+      top: appBounds.top + visibleArea.height - horizontalHeight,
+    });
   } else {
-    const appLancher = document.querySelector('.viewport');
-
-    app.style.top = `${horizontalHeight}px`;
-
-    if (
-      app.classList.contains('open-top') &&
-      app.classList.contains('has-drawer')
-    ) {
-      app.style.top = 0;
-    } else {
-      app.style.top = `${horizontalHeight}px`;
-    }
-
-    if (app.classList.contains('has-drawer')) {
-      app.style.maxHeight = `${appLancher.offsetHeight + horizontalHeight}px`;
-    } else {
-      app.style.maxHeight = `${appLancher.offsetHeight}px`;
-    }
+    await moveMyWindow({
+      top: appBounds.top - visibleArea.height + horizontalHeight,
+    });
   }
 }
 
 async function setDrawerOpenClasses() {
-  const workArea = await getWindowWorkArea();
-  const visibleArea = await getVisibleArea(document.querySelector('.viewport'));
-  const app = document.querySelector('.app');
+  const app = getAppElement();
   const isVertical = getSetting('vertical');
-  const horizontalHeight = getHorizontalToolbarHeight();
-  const drawerOpen = app.classList.contains('has-drawer');
+  const { visibleArea, workArea } = await getAppState();
 
-  if (drawerOpen) {
-    return;
-  }
+  if (app.classList.contains('has-drawer')) return;
 
   if (isVertical) {
-    if (visibleArea.right + toolbarDrawerSize.vertical > workArea.right) {
-      app.classList.add('open-left');
-    } else if (app.classList.contains('open-left')) {
-      app.classList.remove('open-left');
-    }
-  } else if (visibleArea.bottom + horizontalHeight > workArea.bottom) {
-    if (visibleArea.top - horizontalHeight < workArea.top) {
-      if (app.classList.contains('open-top')) {
-        app.classList.remove('open-top');
-      }
-    } else {
-      app.classList.add('open-top');
-    }
-  } else if (app.classList.contains('open-top')) {
+    const shouldOpenLeft =
+      visibleArea.right + toolbarDrawerSize.vertical >= workArea.right;
+
+    app.classList.toggle('open-left', shouldOpenLeft);
     app.classList.remove('open-top');
+  } else {
+    const horizontalHeight = getHorizontalToolbarHeight();
+    const shouldOpenTop =
+      visibleArea.top + horizontalHeight >= workArea.bottom &&
+      visibleArea.bottom - horizontalHeight >= workArea.top;
+
+    app.classList.toggle('open-top', shouldOpenTop);
+    app.classList.remove('open-left');
   }
 }
 
 function setOrientation() {
   const isVertical = getSetting('vertical');
-  const app = document.querySelector('.app');
+  const app = getAppElement();
 
   document.querySelector('#toggle .mode').innerHTML = isVertical
     ? 'horizontal'
@@ -714,6 +803,8 @@ function setOrientation() {
       ? col.classList.add('flex-column')
       : col.classList.remove('flex-column');
   });
+
+  app.classList.remove('expanded');
 }
 
 function handleOrientationChange() {
@@ -722,37 +813,7 @@ function handleOrientationChange() {
 
     isVertical = !isVertical;
     setSetting({ vertical: isVertical });
-
-    await repositionOnOrientationChange(isVertical);
-    await setWindowSize();
   });
-}
-
-async function repositionOnOrientationChange(vertical) {
-  const windowBounds = await getPhysicalWindowBounds();
-  const primaryScaleFactor = await getPrimaryScaleFactor();
-  const scaleFactor = await getScaleFactor();
-  const horizontalHeight = getHorizontalToolbarHeight();
-
-  if (vertical) {
-    await moveMyWindow({
-      top:
-        (windowBounds.top + horizontalHeight / scaleFactor) *
-        primaryScaleFactor,
-      left:
-        (windowBounds.left - toolbarDrawerSize.vertical / scaleFactor) *
-        primaryScaleFactor,
-    });
-  } else {
-    await moveMyWindow({
-      top:
-        (windowBounds.top - horizontalHeight / scaleFactor) *
-        primaryScaleFactor,
-      left:
-        (windowBounds.left + toolbarDrawerSize.vertical / scaleFactor) *
-        primaryScaleFactor,
-    });
-  }
 }
 
 // Helper function to get a chosen HTML elements' visible area in the window bounds
@@ -923,7 +984,6 @@ async function setWindowPosition() {
 
 async function resetWindow() {
   setSetting({ vertical: true });
-  await setWindowSize();
   windowCenter();
 }
 
@@ -939,7 +999,6 @@ export {
   setOrientation,
   handleThemeChange,
   handleShutdownClick,
-  handleTopMenuClicks,
   handleCloseDrawerClicks,
   handleModalClose,
   handleMouseHover,
@@ -950,10 +1009,10 @@ export {
   startTutorial,
   escapeHtml,
   getAppIcon,
-  setWindowSize,
   setWindowPosition,
   setDrawerOpenClasses,
-  setDrawerOpenDirection,
   elementObserver,
   populateSettingsDropdown,
+  renderAlert,
+  getHorizontalToolbarHeight,
 };
