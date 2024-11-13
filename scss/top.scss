@@ -1,12 +1,8 @@
 .horizontal {
   &.open-top {
-    .viewport {
-      order: 1;
-      margin-bottom: 0;
-      @include transition("margin-bottom", 50);
-
+    &.has-drawer {
       .dropdown-menu {
-        top: auto;
+        top: auto !important;
         bottom: 100%;
       }
 
@@ -15,6 +11,12 @@
           top: calc(-6rem + 2px);
         }
       }
+    }
+
+    .viewport {
+      order: 1;
+      margin-bottom: 0;
+      @include transition("margin-bottom", 50);
 
       .nav-item {
         .chevron {

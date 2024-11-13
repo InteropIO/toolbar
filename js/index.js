@@ -116,7 +116,6 @@ function observeAppElement() {
     if (attributeName === 'class' && newValue !== oldValue) {
       utils.setDrawerOpenClasses();
       setWindowSize(newValue);
-      console.log(io.windows.my().bounds);
     }
   }
 

@@ -5,6 +5,8 @@
 html {
   .loaded {
     .app {
+      position: relative;
+      top: 0;
       opacity: 1;
     }
 
@@ -14,7 +16,6 @@ html {
   }
 
   .app {
-    position: relative;
     height: 100%;
     overflow: hidden;
     opacity: 0;

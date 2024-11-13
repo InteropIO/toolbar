@@ -188,6 +188,11 @@ function handleTopDropdownClicks() {
 }
 
 function handleTopMenuClicks() {
+  let prevWndBounds = {
+    width: 0,
+    height: 0,
+  };
+
   document.addEventListener('click', async (e) => {
     if (e.target.matches('a, a *') && e.ctrlKey) {
       e.preventDefault();
@@ -234,7 +239,7 @@ function handleTopMenuClicks() {
 
       menuToToggle.classList.toggle('hide');
 
-      let hasVisibleDrawers = document.querySelector(
+      const hasVisibleDrawers = document.querySelector(
         '.toggle-content:not(.hide)'
       );
 
@@ -244,8 +249,29 @@ function handleTopMenuClicks() {
         document.querySelector('.app').classList.remove('has-drawer');
       }
 
-      await handleOpenLeft();
-      await handleOpenTop();
+      const app = getAppElement();
+      const bounds = await getVisibleArea(app);
+      const workArea = await getWindowWorkArea();
+
+      if (prevWndBounds.width !== bounds.width) {
+        await handleOpenLeft();
+      }
+
+      if (prevWndBounds.height !== bounds.height) {
+        await handleOpenTop();
+      }
+
+      if (
+        bounds.top < workArea.top ||
+        bounds.left < workArea.left ||
+        bounds.left > workArea.right ||
+        bounds.top > workArea.bottom
+      ) {
+        await setWindowPosition();
+      }
+
+      prevWndBounds.width = bounds.width;
+      prevWndBounds.height = bounds.height;
     } else if (
       e.target.matches('#favorites .nav-item, #favorites .nav-item *')
     ) {
