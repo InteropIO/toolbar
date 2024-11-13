@@ -3,15 +3,17 @@
 @import "folders";
 
 html {
+  body {
+    background-color: transparent;
+  }
+
   .loaded {
+    background-color: var(--t42-body);
+
     .app {
       position: relative;
       top: 0;
       opacity: 1;
-    }
-
-    .viewport {
-      background-color: var(--t42-body);
     }
   }
 
