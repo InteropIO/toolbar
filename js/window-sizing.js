@@ -11,6 +11,7 @@ const prevBounds = {
 
 let hadOpenLeft = false;
 let hadOpenTop = false;
+let wasExpanded = false;
 
 function getChangedProperties(prevBounds, newBounds) {
   const diff = {};
@@ -33,6 +34,8 @@ async function setWindowBounds() {
   const isOpenLeft = classNames.includes('open-left');
   const isOpenTop = classNames.includes('open-top');
 
+  console.log('Setting window bounds:', classNames);
+
   const toolbarHeight = getHorizontalToolbarHeight();
   const expandedToolbarWidth = 200;
   const newBounds = {};
@@ -45,6 +48,13 @@ async function setWindowBounds() {
       ? expandedToolbarWidth
       : toolbarWidth.vertical;
     newBounds.height = toolbarHeight;
+
+    if (isExpanded) {
+      wasExpanded = true;
+      newBounds.left = prevBounds.left;
+    } else {
+      wasExpanded = false;
+    }
 
     if (isOpenLeft) {
       hadOpenLeft = true;
@@ -65,7 +75,16 @@ async function setWindowBounds() {
 
     if (isOpenTop) {
       hadOpenTop = true;
-      newBounds.top = appBounds.top + visibleArea.height - horizontalHeight;
+
+      if (isExpanded && hadOpenTop) {
+        wasExpanded = true;
+        newBounds.top = prevBounds.top;
+      } else if (wasExpanded && !isExpanded) {
+        wasExpanded = false;
+        newBounds.top = prevBounds.top;
+      } else {
+        newBounds.top = appBounds.top + visibleArea.height - horizontalHeight;
+      }
     }
 
     if (hadOpenTop && !isOpenTop) {
@@ -79,8 +98,6 @@ async function setWindowBounds() {
   const bounds = getChangedProperties(prevBounds, newBounds);
 
   if (Object.keys(bounds).length === 0) return;
-
-  console.log('Setting window bounds:', bounds);
 
   moveMyWindow(bounds);
 

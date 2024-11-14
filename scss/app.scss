@@ -484,9 +484,6 @@ html {
     }
 
     .show-actions {
-      position: relative;
-      flex-shrink: 0;
-
       &:hover,
       &.hover,
       &.active {

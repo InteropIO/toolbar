@@ -187,6 +187,8 @@ function handleTopMenuClicks() {
   };
 
   document.addEventListener('click', async (e) => {
+    const isVertical = getSetting('vertical');
+
     if (e.target.matches('a, a *') && e.ctrlKey) {
       e.preventDefault();
     }
@@ -236,21 +238,25 @@ function handleTopMenuClicks() {
         '.toggle-content:not(.hide)'
       );
 
-      if (hasVisibleDrawers) {
-        const openDirection = await getDrawerOpenDirection();
+      const openDirection = await getDrawerOpenDirection();
 
+      if (hasVisibleDrawers) {
         document
           .querySelector('.app')
           .classList.add('has-drawer', `open-${openDirection}`);
       } else {
         document.querySelector('.app').classList.remove('has-drawer');
 
-        if (document.querySelector('.app').classList.contains('open-left')) {
-          document.querySelector('.app').classList.remove('open-left');
-        }
+        const openClasses = document.querySelector('.app').classList;
 
-        if (document.querySelector('.app').classList.contains('open-top')) {
-          document.querySelector('.app').classList.remove('open-top');
+        openClasses.forEach((className) => {
+          if (className.startsWith('open-')) {
+            openClasses.remove(className);
+          }
+        });
+
+        if (!isVertical) {
+          document.querySelector('.app').classList.remove('expanded');
         }
       }
 
@@ -379,30 +385,20 @@ async function handleJumpListAction() {
 }
 
 function handleLayoutsHover() {
-  const app = getAppElement();
   const menuItem = '.show-actions';
 
   document.addEventListener('mouseover', (event) => {
     const target = event.target.closest(menuItem);
-    const dropdownsOpen = document.querySelectorAll('.dropdown-menu.show');
-    const isVertical = app.classList.contains('vertical');
 
-    if (target || dropdownsOpen.length > 0) {
+    if (target) {
       target?.classList?.add('hover');
-      if (!isVertical) {
-        app.classList.add('expanded');
-      }
     } else {
       document.querySelectorAll(menuItem).forEach((item) => {
         item.classList.remove('hover');
-        if (!isVertical) {
-          app.classList.remove('expanded');
-        }
       });
     }
   });
 }
-
 async function handleMouseHover() {
   document.querySelector('#favorites').addEventListener(
     'mousewheel',
@@ -790,49 +786,6 @@ async function getVisibleArea(element) {
     width: visibleArea.width / scaleFactor,
     height: visibleArea.height / scaleFactor,
   };
-}
-
-function checkRectangleOffBounds(rect1, rect2) {
-  const offBounds = [];
-
-  // if rect2 moves beyond left boundaries of rect1
-  if (rect2.left < rect1.left) {
-    offBounds.push({
-      left: rect2.left - rect1.left,
-    });
-  }
-
-  // if rect2 moves beyond top boundaries of rect1
-  if (rect2.top < rect1.top) {
-    offBounds.push({
-      top: rect2.top - rect1.top,
-    });
-  }
-
-  // if rect2 moves beyond right boundaries of rect1
-  if (rect2.right > rect1.right) {
-    offBounds.push({
-      right: rect2.right - rect1.right,
-    });
-  }
-
-  // if rect2 moves beyond bottom boundaries of rect1
-  if (rect2.bottom > rect1.bottom) {
-    offBounds.push({
-      bottom: rect2.bottom - rect1.bottom,
-    });
-  }
-
-  return offBounds;
-}
-
-async function checkWindowPosition() {
-  const workArea = await getWindowWorkArea();
-  const visibleArea = await getVisibleArea(
-    document.querySelector('.draggable')
-  );
-
-  return checkRectangleOffBounds(workArea, visibleArea);
 }
 
 async function resetWindow() {
