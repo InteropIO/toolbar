@@ -9,23 +9,16 @@ import {
   refreshApps,
   glueVersion,
   getMonitorInfo,
-  moveMyWindow,
   minimize,
   isMinimizeAllowed,
   openFeedbackForm,
   getWindowWorkArea,
   getScaleFactor,
-  getPrimaryScaleFactor,
   windowCenter,
   getPhysicalWindowBounds,
   restoreLayout,
 } from './connect-related.js';
-import {
-  toolbarDrawerSize,
-  initialPosition,
-  setSetting,
-  getSetting,
-} from './settings.js';
+import { toolbarDrawerSize, setSetting, getSetting } from './settings.js';
 import {
   populateProfileData,
   profile_handleShutdownClick,
@@ -263,16 +256,6 @@ function handleTopMenuClicks() {
 
       const app = getAppElement();
       const bounds = await getVisibleArea(app);
-      const workArea = await getWindowWorkArea();
-
-      if (
-        bounds.top < workArea.top ||
-        bounds.left < workArea.left ||
-        bounds.left > workArea.right ||
-        bounds.top > workArea.bottom
-      ) {
-        await setWindowPosition();
-      }
 
       prevWndBounds.width = bounds.width;
       prevWndBounds.height = bounds.height;
@@ -852,107 +835,6 @@ async function checkWindowPosition() {
   return checkRectangleOffBounds(workArea, visibleArea);
 }
 
-async function setWindowPosition() {
-  const isVertical = getSetting('vertical');
-  const workArea = await getWindowWorkArea();
-  const visibleArea = await getVisibleArea(
-    document.querySelector('.draggable')
-  );
-  const offBounds = await checkWindowPosition();
-  const primaryScaleFactor = await getPrimaryScaleFactor();
-  const scaleFactor = await getScaleFactor();
-  const startPosition = initialPosition / scaleFactor;
-  const drawerSize = toolbarDrawerSize.vertical / scaleFactor;
-
-  if (offBounds.length === 0) return;
-
-  offBounds.forEach(async (offset) => {
-    if (isVertical) {
-      switch (Object.keys(offset)[0]) {
-        case 'left':
-          await moveMyWindow({
-            left:
-              (workArea.left + startPosition - drawerSize) * primaryScaleFactor,
-          });
-          break;
-
-        case 'top':
-          await moveMyWindow({
-            top: (workArea.top + startPosition) * primaryScaleFactor,
-          });
-          break;
-
-        case 'right':
-          await moveMyWindow({
-            left:
-              (workArea.right -
-                visibleArea.width -
-                drawerSize -
-                startPosition) *
-              primaryScaleFactor,
-          });
-          break;
-
-        case 'bottom':
-          await moveMyWindow({
-            top:
-              (workArea.bottom - visibleArea.height - startPosition) *
-              primaryScaleFactor,
-          });
-          break;
-
-        default:
-          break;
-      }
-    } else {
-      const horizontalHeight = getHorizontalToolbarHeight();
-      const drawerHeight = horizontalHeight / scaleFactor;
-
-      switch (Object.keys(offset)[0]) {
-        case 'left':
-          await moveMyWindow({
-            left: (workArea.left + startPosition) * primaryScaleFactor,
-          });
-          break;
-
-        case 'top':
-          await moveMyWindow({
-            top:
-              (workArea.top + startPosition - drawerHeight) *
-              primaryScaleFactor,
-          });
-          break;
-
-        case 'right':
-          await moveMyWindow({
-            left:
-              (workArea.left +
-                workArea.width -
-                visibleArea.width -
-                startPosition) *
-              primaryScaleFactor,
-          });
-          break;
-
-        case 'bottom':
-          await moveMyWindow({
-            top:
-              (workArea.top +
-                workArea.height -
-                visibleArea.height -
-                drawerHeight -
-                startPosition) *
-              primaryScaleFactor,
-          });
-          break;
-
-        default:
-          break;
-      }
-    }
-  });
-}
-
 async function resetWindow() {
   setSetting({ vertical: true });
   windowCenter();
@@ -980,7 +862,6 @@ export {
   startTutorial,
   escapeHtml,
   getAppIcon,
-  setWindowPosition,
   elementObserver,
   populateSettingsDropdown,
   renderAlert,

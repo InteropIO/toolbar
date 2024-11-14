@@ -4,7 +4,7 @@ import {
   getSettings,
   setSetting,
 } from './settings.js';
-import { setOrientation, setWindowPosition } from './utils.js';
+import { setOrientation } from './utils.js';
 
 console.time('Glue');
 
@@ -648,8 +648,6 @@ async function getPrefs() {
       un();
     });
   }
-
-  await setWindowPosition();
 
   glue.prefs.subscribe(() => {
     setOrientation();
