@@ -1,56 +1,90 @@
 import { toolbarWidth, toolbarDrawerSize } from './settings.js';
-import { getHorizontalToolbarHeight } from './utils.js';
+import { getAppState, getHorizontalToolbarHeight } from './utils.js';
+import { moveMyWindow } from './connect-related.js';
 
-function observeSizeChange(element, callback) {
-  const resizeObserver = new ResizeObserver((entries) => {
-    for (let entry of entries) {
-      const { width, height, top, left } = entry.contentRect;
+const prevBounds = {
+  top: 0,
+  left: 0,
+  width: 0,
+  height: 0,
+};
 
-      callback(
-        Math.floor(width),
-        Math.floor(height),
-        Math.floor(top),
-        Math.floor(left)
-      );
+let hadOpenLeft = false;
+let hadOpenTop = false;
+
+function getChangedProperties(prevBounds, newBounds) {
+  const diff = {};
+
+  for (const key in newBounds) {
+    if (newBounds[key] !== prevBounds[key]) {
+      diff[key] = newBounds[key];
     }
-  });
-  resizeObserver.observe(element);
+  }
 
-  return resizeObserver;
+  return diff;
 }
 
-function setWindowSize() {
+async function setWindowBounds() {
   const app = document.querySelector('.app');
-  const appClasses = Array.from(app.classList);
-
-  const isVertical = appClasses.includes('vertical');
-  const isExpanded = appClasses.includes('expanded');
-  const hasDrawer = appClasses.includes('has-drawer');
+  const classNames = Array.from(app.classList);
+  const isVertical = classNames.includes('vertical');
+  const isExpanded = classNames.includes('expanded');
+  const hasDrawer = classNames.includes('has-drawer');
+  const isOpenLeft = classNames.includes('open-left');
+  const isOpenTop = classNames.includes('open-top');
 
   const toolbarHeight = getHorizontalToolbarHeight();
   const expandedToolbarWidth = 200;
+  const newBounds = {};
+  const { appBounds, visibleArea } = await getAppState();
 
   function setVerticalSize() {
-    const calculatedWidth = hasDrawer ? toolbarDrawerSize.vertical : 0;
+    newBounds.width = hasDrawer
+      ? expandedToolbarWidth + toolbarDrawerSize.vertical
+      : isExpanded
+      ? expandedToolbarWidth
+      : toolbarWidth.vertical;
+    newBounds.height = toolbarHeight;
 
-    app.style.width = isExpanded
-      ? `${expandedToolbarWidth + calculatedWidth}px`
-      : `${toolbarWidth.vertical}px`;
-    app.style.height = `${toolbarHeight}px`;
+    if (isOpenLeft) {
+      hadOpenLeft = true;
+      newBounds.left = appBounds.left - toolbarDrawerSize.vertical;
+    }
+
+    if (hadOpenLeft && !isOpenLeft) {
+      newBounds.left = appBounds.left + toolbarDrawerSize.vertical;
+      hadOpenLeft = false;
+    }
   }
 
   function setHorizontalSize() {
-    app.style.width = `${toolbarWidth.horizontal}px`;
-    if (hasDrawer) {
-      app.style.height = `${toolbarHeight}px`;
-    } else if (isExpanded) {
-      app.style.height = '175px';
-    } else {
-      app.style.height = '48px';
+    const horizontalHeight = getHorizontalToolbarHeight();
+
+    newBounds.width = toolbarWidth.horizontal;
+    newBounds.height = hasDrawer ? toolbarHeight : isExpanded ? 175 : 48;
+
+    if (isOpenTop) {
+      hadOpenTop = true;
+      newBounds.top = appBounds.top + visibleArea.height - horizontalHeight;
+    }
+
+    if (hadOpenTop && !isOpenTop) {
+      newBounds.top = appBounds.top - visibleArea.height + horizontalHeight;
+      hadOpenTop = false;
     }
   }
 
   isVertical ? setVerticalSize() : setHorizontalSize();
+
+  const bounds = getChangedProperties(prevBounds, newBounds);
+
+  if (Object.keys(bounds).length === 0) return;
+
+  console.log('Setting window bounds:', bounds);
+
+  moveMyWindow(bounds);
+
+  Object.assign(prevBounds, newBounds);
 }
 
-export { observeSizeChange, setWindowSize };
+export { setWindowBounds };

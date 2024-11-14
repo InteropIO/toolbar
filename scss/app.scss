@@ -13,6 +13,7 @@ html {
     .app {
       position: relative;
       top: 0;
+      height: 100vh;
       opacity: 1;
     }
   }
@@ -566,7 +567,7 @@ html {
       }
 
       .dropdown-menu {
-        top: 32px;
+        top: 100%;
         right: 0;
         left: auto;
       }

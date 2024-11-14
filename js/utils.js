@@ -36,7 +36,7 @@ import {
   handleNotificationClick,
   handleEnableNotifications,
 } from './notifications.js';
-import { setWindowSize } from './window-sizing.js';
+import { setWindowBounds } from './window-sizing.js';
 
 import handleKeyboardNavigation from './keyboard-navigation.js';
 
@@ -244,22 +244,26 @@ function handleTopMenuClicks() {
       );
 
       if (hasVisibleDrawers) {
-        document.querySelector('.app').classList.add('has-drawer');
+        const openDirection = await getDrawerOpenDirection();
+
+        document
+          .querySelector('.app')
+          .classList.add('has-drawer', `open-${openDirection}`);
       } else {
         document.querySelector('.app').classList.remove('has-drawer');
+
+        if (document.querySelector('.app').classList.contains('open-left')) {
+          document.querySelector('.app').classList.remove('open-left');
+        }
+
+        if (document.querySelector('.app').classList.contains('open-top')) {
+          document.querySelector('.app').classList.remove('open-top');
+        }
       }
 
       const app = getAppElement();
       const bounds = await getVisibleArea(app);
       const workArea = await getWindowWorkArea();
-
-      if (prevWndBounds.width !== bounds.width) {
-        await handleOpenLeft();
-      }
-
-      if (prevWndBounds.height !== bounds.height) {
-        await handleOpenTop();
-      }
 
       if (
         bounds.top < workArea.top ||
@@ -714,7 +718,7 @@ async function handleAppRowsChange() {
         const selectedLength = e.target.getAttribute('length-name');
 
         setSetting({ toolbarAppRows: selectedLength });
-        setWindowSize();
+        await setWindowBounds().catch(console.error);
       }
     });
 }
@@ -733,58 +737,25 @@ async function getAppState() {
   };
 }
 
-async function handleOpenLeft() {
-  const { isVertical, isOpenLeft, hasDrawer, appBounds } = await getAppState();
-
-  if (!isVertical || !isOpenLeft) return;
-
-  if (hasDrawer) {
-    await moveMyWindow({ left: appBounds.left - toolbarDrawerSize.vertical });
-  } else {
-    await moveMyWindow({ left: appBounds.left + toolbarDrawerSize.vertical });
-  }
-}
-
-async function handleOpenTop() {
-  const { isVertical, isOpenTop, hasDrawer, appBounds, visibleArea } =
-    await getAppState();
-  const horizontalHeight = getHorizontalToolbarHeight();
-
-  if (isVertical || !isOpenTop) return;
-
-  if (hasDrawer) {
-    await moveMyWindow({
-      top: appBounds.top + visibleArea.height - horizontalHeight,
-    });
-  } else {
-    await moveMyWindow({
-      top: appBounds.top - visibleArea.height + horizontalHeight,
-    });
-  }
-}
-
-async function setDrawerOpenClasses() {
-  const app = getAppElement();
-  const isVertical = getSetting('vertical');
-  const { visibleArea, workArea } = await getAppState();
-
-  if (app.classList.contains('has-drawer')) return;
+async function getDrawerOpenDirection() {
+  const { isVertical, visibleArea, workArea } = await getAppState();
+  let drawerDirection = '';
 
   if (isVertical) {
     const shouldOpenLeft =
       visibleArea.right + toolbarDrawerSize.vertical >= workArea.right;
 
-    app.classList.toggle('open-left', shouldOpenLeft);
-    app.classList.remove('open-top');
+    drawerDirection = shouldOpenLeft ? 'left' : 'right';
   } else {
     const horizontalHeight = getHorizontalToolbarHeight();
     const shouldOpenTop =
       visibleArea.top + horizontalHeight >= workArea.bottom &&
       visibleArea.bottom - horizontalHeight >= workArea.top;
 
-    app.classList.toggle('open-top', shouldOpenTop);
-    app.classList.remove('open-left');
+    drawerDirection = shouldOpenTop ? 'top' : 'bottom';
   }
+
+  return drawerDirection;
 }
 
 function setOrientation() {
@@ -1010,9 +981,9 @@ export {
   escapeHtml,
   getAppIcon,
   setWindowPosition,
-  setDrawerOpenClasses,
   elementObserver,
   populateSettingsDropdown,
   renderAlert,
   getHorizontalToolbarHeight,
+  getAppState,
 };
