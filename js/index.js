@@ -32,7 +32,7 @@ import {
 } from './clients-and-instrument-search.js';
 import { getSetting } from './settings.js';
 import { populateSID } from './profile.js';
-import handleScheduledShutdownRestart from './schedule-shutdown-restart.js';
+import { handleScheduledShutdownRestart } from './schedule-shutdown-restart.js';
 import { setWindowBounds } from './window-sizing.js';
 
 const rxjs = window.rxjs;
