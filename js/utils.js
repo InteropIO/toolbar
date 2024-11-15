@@ -169,10 +169,13 @@ function handleTopDropdownClicks() {
     .addEventListener('click', () => {
       if (app.classList.contains('expanded')) {
         if (
-          !document.querySelector('.dropdown-menu').classList.contains('show')
-        ) {
+          !document
+            .querySelector('.dropdown-menu')
+            .classList.contains('show') ||
+          app.classList.contains('has-drawer')
+        )
           return;
-        }
+
         app.classList.remove('expanded');
       } else {
         app.classList.add('expanded');
@@ -244,6 +247,10 @@ function handleTopMenuClicks() {
         document
           .querySelector('.app')
           .classList.add('has-drawer', `open-${openDirection}`);
+
+        if (!isVertical) {
+          document.querySelector('.app').classList.add('expanded');
+        }
       } else {
         document.querySelector('.app').classList.remove('has-drawer');
 

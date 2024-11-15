@@ -1,6 +1,6 @@
 import { toolbarWidth, toolbarDrawerSize } from './settings.js';
 import { getAppState, getHorizontalToolbarHeight } from './utils.js';
-import { moveMyWindow } from './connect-related.js';
+import { moveMyWindow, getScaleFactor } from './connect-related.js';
 
 const prevBounds = {
   top: 0,
@@ -34,12 +34,11 @@ async function setWindowBounds() {
   const isOpenLeft = classNames.includes('open-left');
   const isOpenTop = classNames.includes('open-top');
 
-  console.log('Setting window bounds:', classNames);
-
   const toolbarHeight = getHorizontalToolbarHeight();
   const expandedToolbarWidth = 200;
   const newBounds = {};
   const { appBounds, visibleArea } = await getAppState();
+  const scaleFactor = await getScaleFactor();
 
   function setVerticalSize() {
     newBounds.width = hasDrawer
@@ -58,17 +57,19 @@ async function setWindowBounds() {
 
     if (isOpenLeft) {
       hadOpenLeft = true;
-      newBounds.left = appBounds.left - toolbarDrawerSize.vertical;
+      newBounds.left =
+        appBounds.left - toolbarDrawerSize.vertical / scaleFactor;
     }
 
     if (hadOpenLeft && !isOpenLeft) {
-      newBounds.left = appBounds.left + toolbarDrawerSize.vertical;
+      newBounds.left =
+        appBounds.left + toolbarDrawerSize.vertical / scaleFactor;
       hadOpenLeft = false;
     }
   }
 
   function setHorizontalSize() {
-    const horizontalHeight = getHorizontalToolbarHeight();
+    const horizontalHeight = getHorizontalToolbarHeight() / scaleFactor;
 
     newBounds.width = toolbarWidth.horizontal;
     newBounds.height = hasDrawer ? toolbarHeight : isExpanded ? 175 : 48;
@@ -78,18 +79,18 @@ async function setWindowBounds() {
 
       if (isExpanded && hadOpenTop) {
         wasExpanded = true;
-        newBounds.top = prevBounds.top;
-      } else if (wasExpanded && !isExpanded) {
+        newBounds.top = appBounds.top + visibleArea.height - horizontalHeight;
+      }
+
+      if (wasExpanded && !isExpanded) {
         wasExpanded = false;
         newBounds.top = prevBounds.top;
-      } else {
-        newBounds.top = appBounds.top + visibleArea.height - horizontalHeight;
       }
     }
 
     if (hadOpenTop && !isOpenTop) {
-      newBounds.top = appBounds.top - visibleArea.height + horizontalHeight;
       hadOpenTop = false;
+      newBounds.top = appBounds.top - visibleArea.height + horizontalHeight;
     }
   }
 
