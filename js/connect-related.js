@@ -4,11 +4,7 @@ import {
   getSettings,
   setSetting,
 } from './settings.js';
-import {
-  setOrientation,
-  setWindowPosition,
-  setDrawerOpenClasses,
-} from './utils.js';
+import { setOrientation } from './utils.js';
 
 console.time('Glue');
 
@@ -60,7 +56,6 @@ gluePromise.then(() => {
   trackLayouts();
   trackWorkspaces();
   trackThemeChanges();
-  trackWindowMove();
   trackConnection();
   trackNotificationCount();
   trackNotificationPanelVisibilityChange();
@@ -169,14 +164,6 @@ async function trackThemeChanges() {
       all: await glue.themes.list(),
       selected,
     });
-  });
-}
-
-async function trackWindowMove() {
-  const glue = await gluePromise;
-
-  glue.windows.my().onBoundsChanged(async () => {
-    await setDrawerOpenClasses();
   });
 }
 
@@ -661,9 +648,6 @@ async function getPrefs() {
       un();
     });
   }
-
-  await setDrawerOpenClasses();
-  await setWindowPosition();
 
   glue.prefs.subscribe(() => {
     setOrientation();
