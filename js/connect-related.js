@@ -396,16 +396,57 @@ const showHideNotificationBadge = (flag) => {
 
 async function openNotificationPanel() {
   const glue = await gluePromise;
-  const panelApp = glue.windows.find(
-    'io-connect-notifications-panel-application'
-  );
+  const isPanelVisible = await glue.notifications.panel.isVisible();
+
+  if (isPanelVisible) {
+    return;
+  }
 
   try {
     await glue.notifications.panel.show();
-    await panelApp.focus();
+
+    const panelApp = await waitForPanelApp(
+      glue,
+      'io-connect-notifications-panel-application',
+      5000
+    );
+
+    if (!panelApp) {
+      console.error('Notifications panel application failed to initialize.');
+      return;
+    }
+
+    await panelApp.show().catch((error) => {
+      console.error('Failed to show notifications panel.', error);
+    });
+
+    await panelApp.focus().catch((error) => {
+      console.error('Failed to focus notifications panel.', error);
+    });
   } catch (error) {
-    console.error('Failed to open notification panel.', error);
+    console.error('Failed to open notifications panel.', error);
   }
+}
+
+async function waitForPanelApp(
+  glue,
+  windowName,
+  timeout = 5000,
+  interval = 100
+) {
+  const startTime = Date.now();
+
+  while (Date.now() - startTime < timeout) {
+    const panelApp = glue.windows.find(windowName);
+
+    if (panelApp) {
+      return panelApp;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, interval));
+  }
+
+  return null;
 }
 
 async function openFeedbackForm() {
