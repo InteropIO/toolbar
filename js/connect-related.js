@@ -10,7 +10,7 @@ console.time('Glue');
 
 const rxjs = window.rxjs;
 
-var gluePromise = new Promise(async (res, rej) => {
+const gluePromise = new Promise(async (res, rej) => {
   window.addEventListener('load', async () => {
     let glue = await Glue({
       appManager: 'full',
@@ -404,49 +404,9 @@ async function openNotificationPanel() {
 
   try {
     await glue.notifications.panel.show();
-
-    const panelApp = await waitForPanelApp(
-      glue,
-      'io-connect-notifications-panel-application',
-      5000
-    );
-
-    if (!panelApp) {
-      console.error('Notifications panel application failed to initialize.');
-      return;
-    }
-
-    await panelApp.show().catch((error) => {
-      console.error('Failed to show notifications panel.', error);
-    });
-
-    await panelApp.focus().catch((error) => {
-      console.error('Failed to focus notifications panel.', error);
-    });
   } catch (error) {
     console.error('Failed to open notifications panel.', error);
   }
-}
-
-async function waitForPanelApp(
-  glue,
-  windowName,
-  timeout = 5000,
-  interval = 100
-) {
-  const startTime = Date.now();
-
-  while (Date.now() - startTime < timeout) {
-    const panelApp = glue.windows.find(windowName);
-
-    if (panelApp) {
-      return panelApp;
-    }
-
-    await new Promise((resolve) => setTimeout(resolve, interval));
-  }
-
-  return null;
 }
 
 async function openFeedbackForm() {
