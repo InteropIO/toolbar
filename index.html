@@ -27,7 +27,7 @@
 
     <div class="app">
       <div id="applicationLauncher" class="viewport">
-        <ul class="nav nav-tabs flex-column" column>
+        <ul id="app-manager-menu-items" class="nav nav-tabs flex-column" column>
           <li class="viewport-header">
             <div class="logo draggable">
               <div class="logo-icon">
@@ -84,7 +84,7 @@
               ></span>
               <span class="text-animation">Layouts</span>
             </a>
-            <ul class="layout-menu-tool">
+            <ul id="layouts-menu-items" class="layout-menu-tool">
               <li id="load" class="nav-item" menu-button-id="layout-load">
                 Load
               </li>
@@ -165,7 +165,7 @@
           />
         </div>
         <div class="layout-save-alert-wrapper"></div>
-        <ul class="nav nav-tabs flex-column"></ul>
+        <ul id="load-layouts-list" class="nav nav-tabs flex-column"></ul>
       </div>
 
       <div class="toggle-content hide" id="layout-save" menu-id="layout-save">
@@ -229,7 +229,7 @@
             <h5>Theme</h5>
           </div>
           <form>
-            <ul class="select theme-select mb-1">
+            <ul id="theme-select" class="select theme-select mb-1">
               <li class="select_items">
                 <input
                   class="select_expand"
@@ -253,7 +253,7 @@
             <h5>Toolbar Length</h5>
           </div>
           <form>
-            <ul class="select length-select mb-2">
+            <ul id="toolbar-length-select" class="select length-select mb-2">
               <li class="select_items">
                 <input
                   class="select_expand"
@@ -348,7 +348,10 @@
             </div>
             <div class="settings-system-schedule-restart-period">
               <form>
-                <ul class="select restart-period-select">
+                <ul
+                  id="platform-restart-preriod-select"
+                  class="select restart-period-select"
+                >
                   <li class="select_items">
                     <input
                       class="select_expand"
@@ -368,7 +371,10 @@
             </div>
             <div class="settings-system-schedule-restart-interval">
               <form>
-                <ul class="select restart-interval-select">
+                <ul
+                  id="platform-restart-interval-select"
+                  class="select restart-interval-select"
+                >
                   <li class="select_items">
                     <input
                       class="select_expand"
@@ -410,7 +416,10 @@
             </div>
             <div class="settings-system-schedule-shutdown-period">
               <form>
-                <ul class="select shutdown-period-select">
+                <ul
+                  id="platform-shutdown-period-select"
+                  class="select shutdown-period-select"
+                >
                   <li class="select_items">
                     <input
                       class="select_expand"
@@ -430,7 +439,10 @@
             </div>
             <div class="settings-system-schedule-shutdown-interval">
               <form>
-                <ul class="select shutdown-interval-select">
+                <ul
+                  id="platform-shutdown-interval-select"
+                  class="select shutdown-interval-select"
+                >
                   <li class="select_items">
                     <input
                       class="select_expand"
@@ -575,7 +587,7 @@
         </div>
         <div class="p-2 border-bottom border-secondary">
           <h5 class="d-flex justify-content-between">Select Theme</h5>
-          <ul class="select theme-select mb-1">
+          <ul id="platform-theme-select" class="select theme-select mb-1">
             <li class="select_items">
               <input
                 class="select_expand"

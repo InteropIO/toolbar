@@ -9,23 +9,16 @@ import {
   refreshApps,
   glueVersion,
   getMonitorInfo,
-  moveMyWindow,
   minimize,
   isMinimizeAllowed,
   openFeedbackForm,
   getWindowWorkArea,
   getScaleFactor,
-  getPrimaryScaleFactor,
   windowCenter,
   getPhysicalWindowBounds,
   restoreLayout,
 } from './connect-related.js';
-import {
-  toolbarDrawerSize,
-  initialPosition,
-  setSetting,
-  getSetting,
-} from './settings.js';
+import { toolbarDrawerSize, setSetting, getSetting } from './settings.js';
 import {
   populateProfileData,
   profile_handleShutdownClick,
@@ -36,7 +29,7 @@ import {
   handleNotificationClick,
   handleEnableNotifications,
 } from './notifications.js';
-import { setWindowSize } from './window-sizing.js';
+import { setWindowBounds } from './window-sizing.js';
 
 import handleKeyboardNavigation from './keyboard-navigation.js';
 
@@ -176,10 +169,13 @@ function handleTopDropdownClicks() {
     .addEventListener('click', () => {
       if (app.classList.contains('expanded')) {
         if (
-          !document.querySelector('.dropdown-menu').classList.contains('show')
-        ) {
+          !document
+            .querySelector('.dropdown-menu')
+            .classList.contains('show') ||
+          app.classList.contains('has-drawer')
+        )
           return;
-        }
+
         app.classList.remove('expanded');
       } else {
         app.classList.add('expanded');
@@ -194,6 +190,8 @@ function handleTopMenuClicks() {
   };
 
   document.addEventListener('click', async (e) => {
+    const isVertical = getSetting('vertical');
+
     if (e.target.matches('a, a *') && e.ctrlKey) {
       e.preventDefault();
     }
@@ -243,32 +241,34 @@ function handleTopMenuClicks() {
         '.toggle-content:not(.hide)'
       );
 
+      const openDirection = await getDrawerOpenDirection();
+
       if (hasVisibleDrawers) {
-        document.querySelector('.app').classList.add('has-drawer');
+        document
+          .querySelector('.app')
+          .classList.add('has-drawer', `open-${openDirection}`);
+
+        if (!isVertical) {
+          document.querySelector('.app').classList.add('expanded');
+        }
       } else {
         document.querySelector('.app').classList.remove('has-drawer');
+
+        const openClasses = document.querySelector('.app').classList;
+
+        openClasses.forEach((className) => {
+          if (className.startsWith('open-')) {
+            openClasses.remove(className);
+          }
+        });
+
+        if (!isVertical) {
+          document.querySelector('.app').classList.remove('expanded');
+        }
       }
 
       const app = getAppElement();
       const bounds = await getVisibleArea(app);
-      const workArea = await getWindowWorkArea();
-
-      if (prevWndBounds.width !== bounds.width) {
-        await handleOpenLeft();
-      }
-
-      if (prevWndBounds.height !== bounds.height) {
-        await handleOpenTop();
-      }
-
-      if (
-        bounds.top < workArea.top ||
-        bounds.left < workArea.left ||
-        bounds.left > workArea.right ||
-        bounds.top > workArea.bottom
-      ) {
-        await setWindowPosition();
-      }
 
       prevWndBounds.width = bounds.width;
       prevWndBounds.height = bounds.height;
@@ -392,30 +392,20 @@ async function handleJumpListAction() {
 }
 
 function handleLayoutsHover() {
-  const app = getAppElement();
   const menuItem = '.show-actions';
 
   document.addEventListener('mouseover', (event) => {
     const target = event.target.closest(menuItem);
-    const dropdownsOpen = document.querySelectorAll('.dropdown-menu.show');
-    const isVertical = app.classList.contains('vertical');
 
-    if (target || dropdownsOpen.length > 0) {
+    if (target) {
       target?.classList?.add('hover');
-      if (!isVertical) {
-        app.classList.add('expanded');
-      }
     } else {
       document.querySelectorAll(menuItem).forEach((item) => {
         item.classList.remove('hover');
-        if (!isVertical) {
-          app.classList.remove('expanded');
-        }
       });
     }
   });
 }
-
 async function handleMouseHover() {
   document.querySelector('#favorites').addEventListener(
     'mousewheel',
@@ -714,7 +704,7 @@ async function handleAppRowsChange() {
         const selectedLength = e.target.getAttribute('length-name');
 
         setSetting({ toolbarAppRows: selectedLength });
-        setWindowSize();
+        await setWindowBounds().catch(console.error);
       }
     });
 }
@@ -733,58 +723,25 @@ async function getAppState() {
   };
 }
 
-async function handleOpenLeft() {
-  const { isVertical, isOpenLeft, hasDrawer, appBounds } = await getAppState();
-
-  if (!isVertical || !isOpenLeft) return;
-
-  if (hasDrawer) {
-    await moveMyWindow({ left: appBounds.left - toolbarDrawerSize.vertical });
-  } else {
-    await moveMyWindow({ left: appBounds.left + toolbarDrawerSize.vertical });
-  }
-}
-
-async function handleOpenTop() {
-  const { isVertical, isOpenTop, hasDrawer, appBounds, visibleArea } =
-    await getAppState();
-  const horizontalHeight = getHorizontalToolbarHeight();
-
-  if (isVertical || !isOpenTop) return;
-
-  if (hasDrawer) {
-    await moveMyWindow({
-      top: appBounds.top + visibleArea.height - horizontalHeight,
-    });
-  } else {
-    await moveMyWindow({
-      top: appBounds.top - visibleArea.height + horizontalHeight,
-    });
-  }
-}
-
-async function setDrawerOpenClasses() {
-  const app = getAppElement();
-  const isVertical = getSetting('vertical');
-  const { visibleArea, workArea } = await getAppState();
-
-  if (app.classList.contains('has-drawer')) return;
+async function getDrawerOpenDirection() {
+  const { isVertical, visibleArea, workArea } = await getAppState();
+  let drawerDirection = '';
 
   if (isVertical) {
     const shouldOpenLeft =
       visibleArea.right + toolbarDrawerSize.vertical >= workArea.right;
 
-    app.classList.toggle('open-left', shouldOpenLeft);
-    app.classList.remove('open-top');
+    drawerDirection = shouldOpenLeft ? 'left' : 'right';
   } else {
     const horizontalHeight = getHorizontalToolbarHeight();
     const shouldOpenTop =
       visibleArea.top + horizontalHeight >= workArea.bottom &&
       visibleArea.bottom - horizontalHeight >= workArea.top;
 
-    app.classList.toggle('open-top', shouldOpenTop);
-    app.classList.remove('open-left');
+    drawerDirection = shouldOpenTop ? 'top' : 'bottom';
   }
+
+  return drawerDirection;
 }
 
 function setOrientation() {
@@ -838,150 +795,6 @@ async function getVisibleArea(element) {
   };
 }
 
-function checkRectangleOffBounds(rect1, rect2) {
-  const offBounds = [];
-
-  // if rect2 moves beyond left boundaries of rect1
-  if (rect2.left < rect1.left) {
-    offBounds.push({
-      left: rect2.left - rect1.left,
-    });
-  }
-
-  // if rect2 moves beyond top boundaries of rect1
-  if (rect2.top < rect1.top) {
-    offBounds.push({
-      top: rect2.top - rect1.top,
-    });
-  }
-
-  // if rect2 moves beyond right boundaries of rect1
-  if (rect2.right > rect1.right) {
-    offBounds.push({
-      right: rect2.right - rect1.right,
-    });
-  }
-
-  // if rect2 moves beyond bottom boundaries of rect1
-  if (rect2.bottom > rect1.bottom) {
-    offBounds.push({
-      bottom: rect2.bottom - rect1.bottom,
-    });
-  }
-
-  return offBounds;
-}
-
-async function checkWindowPosition() {
-  const workArea = await getWindowWorkArea();
-  const visibleArea = await getVisibleArea(
-    document.querySelector('.draggable')
-  );
-
-  return checkRectangleOffBounds(workArea, visibleArea);
-}
-
-async function setWindowPosition() {
-  const isVertical = getSetting('vertical');
-  const workArea = await getWindowWorkArea();
-  const visibleArea = await getVisibleArea(
-    document.querySelector('.draggable')
-  );
-  const offBounds = await checkWindowPosition();
-  const primaryScaleFactor = await getPrimaryScaleFactor();
-  const scaleFactor = await getScaleFactor();
-  const startPosition = initialPosition / scaleFactor;
-  const drawerSize = toolbarDrawerSize.vertical / scaleFactor;
-
-  if (offBounds.length === 0) return;
-
-  offBounds.forEach(async (offset) => {
-    if (isVertical) {
-      switch (Object.keys(offset)[0]) {
-        case 'left':
-          await moveMyWindow({
-            left:
-              (workArea.left + startPosition - drawerSize) * primaryScaleFactor,
-          });
-          break;
-
-        case 'top':
-          await moveMyWindow({
-            top: (workArea.top + startPosition) * primaryScaleFactor,
-          });
-          break;
-
-        case 'right':
-          await moveMyWindow({
-            left:
-              (workArea.right -
-                visibleArea.width -
-                drawerSize -
-                startPosition) *
-              primaryScaleFactor,
-          });
-          break;
-
-        case 'bottom':
-          await moveMyWindow({
-            top:
-              (workArea.bottom - visibleArea.height - startPosition) *
-              primaryScaleFactor,
-          });
-          break;
-
-        default:
-          break;
-      }
-    } else {
-      const horizontalHeight = getHorizontalToolbarHeight();
-      const drawerHeight = horizontalHeight / scaleFactor;
-
-      switch (Object.keys(offset)[0]) {
-        case 'left':
-          await moveMyWindow({
-            left: (workArea.left + startPosition) * primaryScaleFactor,
-          });
-          break;
-
-        case 'top':
-          await moveMyWindow({
-            top:
-              (workArea.top + startPosition - drawerHeight) *
-              primaryScaleFactor,
-          });
-          break;
-
-        case 'right':
-          await moveMyWindow({
-            left:
-              (workArea.left +
-                workArea.width -
-                visibleArea.width -
-                startPosition) *
-              primaryScaleFactor,
-          });
-          break;
-
-        case 'bottom':
-          await moveMyWindow({
-            top:
-              (workArea.top +
-                workArea.height -
-                visibleArea.height -
-                drawerHeight -
-                startPosition) *
-              primaryScaleFactor,
-          });
-          break;
-
-        default:
-          break;
-      }
-    }
-  });
-}
-
 async function resetWindow() {
   setSetting({ vertical: true });
   windowCenter();
@@ -1009,10 +822,9 @@ export {
   startTutorial,
   escapeHtml,
   getAppIcon,
-  setWindowPosition,
-  setDrawerOpenClasses,
   elementObserver,
   populateSettingsDropdown,
   renderAlert,
   getHorizontalToolbarHeight,
+  getAppState,
 };

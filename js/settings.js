@@ -1,4 +1,5 @@
 import { updatePrefs } from './connect-related.js';
+import { scheduleShutdownRestartSaveLayout } from './schedule-shutdown-restart.js';
 
 let settings = {
   showTutorial: true,
@@ -108,7 +109,9 @@ function trackSettingsChange() {
 
       setting[settingElement.dataset.setting] = e.target.checked;
 
-      if (
+      if (e.target.dataset.setting === 'saveDefaultLayout') {
+        scheduleShutdownRestartSaveLayout(e.target.checked);
+      } else if (
         e.target.dataset.setting === 'enableNotifications' &&
         e.target.checked === false
       ) {
@@ -118,17 +121,10 @@ function trackSettingsChange() {
 
         setting = {
           schedule: {
-            shutdown: {
-              enable: prevSetting.shutdown.enable,
-              time: prevSetting.shutdown.time,
-              period: prevSetting.shutdown.period,
-              interval: prevSetting.shutdown.interval,
-            },
+            shutdown: { ...prevSetting.shutdown },
             restart: {
+              ...prevSetting.restart,
               enable: e.target.checked,
-              time: prevSetting.restart.time,
-              period: prevSetting.restart.period,
-              interval: prevSetting.restart.interval,
             },
           },
         };
@@ -137,18 +133,11 @@ function trackSettingsChange() {
 
         setting = {
           schedule: {
-            restart: {
-              enable: prevSetting.restart.enable,
-              time: prevSetting.restart.time,
-              period: prevSetting.restart.period,
-              interval: prevSetting.restart.interval,
-            },
             shutdown: {
+              ...prevSetting.shutdown,
               enable: e.target.checked,
-              time: prevSetting.shutdown.time,
-              period: prevSetting.shutdown.period,
-              interval: prevSetting.shutdown.interval,
             },
+            restart: { ...prevSetting.restart },
           },
         };
       }

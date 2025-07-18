@@ -32,8 +32,8 @@ import {
 } from './clients-and-instrument-search.js';
 import { getSetting } from './settings.js';
 import { populateSID } from './profile.js';
-import handleScheduledShutdownRestart from './schedule-shutdown-restart.js';
-import { observeSizeChange, setWindowSize } from './window-sizing.js';
+import { handleScheduledShutdownRestart } from './schedule-shutdown-restart.js';
+import { setWindowBounds } from './window-sizing.js';
 
 const rxjs = window.rxjs;
 let {
@@ -84,17 +84,11 @@ async function init() {
   glueModule.registerHotkey();
   glueModule.focusWindow(utils.focusInputAfterWindowRecover);
 
+  await setWindowBounds().catch(console.error);
+
   populateSID();
   showFeedbackPanel();
   showProfilePanel();
-  setWindowSize();
-
-  observeSizeChange(app, (width, height) => {
-    glueModule.moveMyWindow({
-      width,
-      height,
-    });
-  });
 }
 
 function finishLoading() {
@@ -109,13 +103,12 @@ function observeAppElement() {
     attributeOldValue: true,
   };
 
-  function handleAttributeChange(entry) {
+  async function handleAttributeChange(entry) {
     const { attributeName, oldValue, target } = entry;
     const newValue = target.getAttribute(attributeName);
 
     if (attributeName === 'class' && newValue !== oldValue) {
-      utils.setDrawerOpenClasses();
-      setWindowSize(newValue);
+      await setWindowBounds().catch(console.error);
     }
   }
 

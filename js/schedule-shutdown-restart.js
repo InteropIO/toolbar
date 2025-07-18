@@ -449,6 +449,7 @@ async function setInputStatesOnChange(option, checked) {
     periodDropdown.classList.add('disabled');
     intervalDropdown.classList.add('disabled');
     container.classList.add('d-none');
+
     try {
       await cancelSchedule(option);
     } catch (e) {
@@ -493,6 +494,7 @@ async function handleScheduleToggleClick() {
               period: prevSettings[option].period,
               interval: prevSettings[option].interval,
             });
+
             try {
               await setSchedule(option, parsedString);
             } catch (e) {
@@ -507,6 +509,38 @@ async function handleScheduleToggleClick() {
           }
         }
       });
+  });
+}
+
+async function scheduleShutdownRestartSaveLayout() {
+  const schedule = getSetting('schedule');
+  const scheduleArray = Object.entries(schedule).map(([key, value]) => ({
+    key,
+    ...value,
+  }));
+
+  scheduleArray.forEach(async (setting) => {
+    const option = setting.key;
+
+    if (setting.enable) {
+      const parsedString = parseScheduleToString({
+        time: schedule[option].time,
+        period: schedule[option].period,
+        interval: schedule[option].interval,
+      });
+
+      try {
+        await setSchedule(option, parsedString);
+      } catch (e) {
+        console.error(e);
+      }
+    } else {
+      try {
+        await cancelSchedule(option);
+      } catch (e) {
+        console.error(e);
+      }
+    }
   });
 }
 
@@ -525,4 +559,4 @@ async function handleScheduledShutdownRestart() {
     .catch(console.error);
 }
 
-export default handleScheduledShutdownRestart;
+export { handleScheduledShutdownRestart, scheduleShutdownRestartSaveLayout };

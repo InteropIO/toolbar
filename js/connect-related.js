@@ -3,18 +3,15 @@ import {
   getSetting,
   getSettings,
   setSetting,
+  toolbarWidth,
 } from './settings.js';
-import {
-  setOrientation,
-  setWindowPosition,
-  setDrawerOpenClasses,
-} from './utils.js';
+import { setOrientation } from './utils.js';
 
 console.time('Glue');
 
 const rxjs = window.rxjs;
 
-var gluePromise = new Promise(async (res, rej) => {
+const gluePromise = new Promise(async (res, rej) => {
   window.addEventListener('load', async () => {
     let glue = await Glue({
       appManager: 'full',
@@ -60,10 +57,10 @@ gluePromise.then(() => {
   trackLayouts();
   trackWorkspaces();
   trackThemeChanges();
-  trackWindowMove();
   trackConnection();
   trackNotificationCount();
   trackNotificationPanelVisibilityChange();
+  trackPlatformShutdown();
 });
 
 async function trackApplications() {
@@ -172,12 +169,31 @@ async function trackThemeChanges() {
   });
 }
 
-async function trackWindowMove() {
+async function trackPlatformShutdown() {
   const glue = await gluePromise;
+  const app = document.querySelector('.app');
+  const viewport = document.querySelector('.viewport');
 
-  glue.windows.my().onBoundsChanged(async () => {
-    await setDrawerOpenClasses();
+  const unSubscribe = glue.appManager.onShuttingDown(async () => {
+    try {
+      const isVertical = app.classList.contains('vertical');
+      const bounds = glue.windows.my().bounds;
+
+      await moveMyWindow({
+        left: bounds.left,
+        top: bounds.top,
+        width: isVertical ? toolbarWidth.vertical : bounds.width,
+        height: isVertical ? bounds.height : 48,
+      });
+
+      app.classList.remove('expanded', 'has-drawer');
+      viewport.classList.remove('expand');
+    } catch (error) {
+      console.error('Failed to set default window size before shutdown', error);
+    }
   });
+
+  return () => unSubscribe();
 }
 
 async function trackNotificationPanelVisibilityChange() {
@@ -409,15 +425,16 @@ const showHideNotificationBadge = (flag) => {
 
 async function openNotificationPanel() {
   const glue = await gluePromise;
-  const panelApp = glue.windows.find(
-    'io-connect-notifications-panel-application'
-  );
+  const isPanelVisible = await glue.notifications.panel.isVisible();
+
+  if (isPanelVisible) {
+    return;
+  }
 
   try {
     await glue.notifications.panel.show();
-    await panelApp.focus();
   } catch (error) {
-    console.error('Failed to open notification panel.', error);
+    console.error('Failed to open notifications panel.', error);
   }
 }
 
@@ -661,9 +678,6 @@ async function getPrefs() {
       un();
     });
   }
-
-  await setDrawerOpenClasses();
-  await setWindowPosition();
 
   glue.prefs.subscribe(() => {
     setOrientation();

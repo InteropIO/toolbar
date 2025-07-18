@@ -1,47 +1,49 @@
 {
-  "title": "AppManager-Embedded",
-  "type": "window",
-  "name": "io-connect-toolbar",
-  "shell": true,
-  "details": {
-    "autoInjectAPI": {
-      "enabled": true,
-      "autoInit": {
-        "appManager": "full",
-        "layouts": "fullWaitSnapshot"
-      }
+    "title": "AppManager-Embedded",
+    "type": "window",
+    "name": "io-connect-toolbar",
+    "shell": true,
+    "details": {
+        "autoInjectAPI": {
+            "enabled": true,
+            "autoInit": {
+                "appManager": "full",
+                "layouts": "fullWaitSnapshot"
+            }
+        },
+        "url": "file://%GDDIR%/assets/app-toolbar/index.html",
+        "mode": "frameless",
+        "top": 100,
+        "left": 100,
+        "width": 60,
+        "height": 48,
+        "isSticky": false,
+        "allowClose": false,
+        "allowMaximize": false,
+        "allowMinimize": false,
+        "allowCollapse": false,
+        "moveAreaPassThroughMouseHover": true,
+        "nativeWindowOpen": "off",
+        "zoom": {
+            "enabled": false
+        },
+        "search": {
+            "enabled": false
+        },
+        "taskbar": {
+            "allowPin": true,
+            "appId": "io-connect-toolbar"
+        },
+        "jumpList": {
+            "enabled": true
+        }
     },
-    "url": "file://%GDDIR%/assets/app-toolbar/index.html",
-    "mode": "frameless",
-    "top": 5,
-    "left": 5,
-    "isSticky": false,
-    "allowClose": false,
-    "allowMaximize": false,
-    "allowMinimize": false,
-    "allowCollapse": false,
-    "moveAreaPassThroughMouseHover": true,
-    "nativeWindowOpen": "off",
-    "zoom": {
-      "enabled": false
-    },
-    "search": {
-      "enabled": false
-    },
-    "taskbar": {
-      "allowPin": true,
-      "appId": "io-connect-toolbar"
-    },
-    "jumpList": {
-      "enabled": true
+    "autoStart": true,
+    "allowMultiple": false,
+    "ignoreSavedLayout": false,
+    "customProperties": {
+        "hideFeedbackButton": true,
+        "hideProfileButton": false,
+        "hideTutorialOnStartup": false
     }
-  },
-  "autoStart": true,
-  "allowMultiple": false,
-  "ignoreSavedLayout": false,
-  "customProperties": {
-    "hideFeedbackButton": true,
-    "hideProfileButton": false,
-    "hideTutorialOnStartup": false
-  }
 }
