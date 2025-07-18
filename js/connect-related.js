@@ -3,6 +3,7 @@ import {
   getSetting,
   getSettings,
   setSetting,
+  toolbarWidth,
 } from './settings.js';
 import { setOrientation } from './utils.js';
 
@@ -59,6 +60,7 @@ gluePromise.then(() => {
   trackConnection();
   trackNotificationCount();
   trackNotificationPanelVisibilityChange();
+  trackPlatformShutdown();
 });
 
 async function trackApplications() {
@@ -165,6 +167,33 @@ async function trackThemeChanges() {
       selected,
     });
   });
+}
+
+async function trackPlatformShutdown() {
+  const glue = await gluePromise;
+  const app = document.querySelector('.app');
+  const viewport = document.querySelector('.viewport');
+
+  const unSubscribe = glue.appManager.onShuttingDown(async () => {
+    try {
+      const isVertical = app.classList.contains('vertical');
+      const bounds = glue.windows.my().bounds;
+
+      await moveMyWindow({
+        left: bounds.left,
+        top: bounds.top,
+        width: isVertical ? toolbarWidth.vertical : bounds.width,
+        height: isVertical ? bounds.height : 48,
+      });
+
+      app.classList.remove('expanded', 'has-drawer');
+      viewport.classList.remove('expand');
+    } catch (error) {
+      console.error('Failed to set default window size before shutdown', error);
+    }
+  });
+
+  return () => unSubscribe();
 }
 
 async function trackNotificationPanelVisibilityChange() {
